@@ -1,7 +1,10 @@
 {% extends 'base.html' %}
 {% block content %}
-<form id="loginForm" action="/login?step=2" method="post">
-	<input type="text" name="username" value="" />
-	<input type="password" name="password" value="" />
+<form action="/login/?step=2" method="post">
+{{ form_login.as_p }}
+<input type="submit" value="Login" />
 </form>
+{% if msg %}
+<div class="msg">{{ msg }}</div>
+{% endif %}
 {% endblock %}
