@@ -82,7 +82,10 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.admin',
     'otl.apps.main',
+    'otl.apps.accounts',
 )
+
+AUTH_PROFILE_MODULE = 'apps.accounts.userprofile'
 
 try:
 	import otl.settings_local
