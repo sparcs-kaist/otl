@@ -4,8 +4,8 @@ from django.contrib.auth.models import User
 
 # 참고 자료로 적어둠.
 # TODO: initial fixture로 옮길 것.
-DEPARTMENT_NAMES = (
-	(08, 'URP', u'URP(학부생연구참여)'),
+DEPARTMENT_NAMES = [
+	(8, 'URP', u'URP(학부생연구참여)'),
 	(10, 'HS', u'인문사회과학부'),
 	(14, 'ED', u'Freshman Design'),
 	(20, 'PH', u'물리학과'),
@@ -38,7 +38,7 @@ DEPARTMENT_NAMES = (
 	(22, 'MA', u'수학전공'), 
 	(24, 'MA', u'응용수학전공'),
 	# 나머지: 자동차기술대학원, 인턴십 프로그램, 타대학 학점교환, 무학과, AP 교과목 등
-)
+]
 
 class Department(models.Model):
 	num_id = models.IntegerField()
@@ -49,6 +49,6 @@ class UserProfile(models.Model):
 	user = models.OneToOneField(User)
 	student_id = models.CharField(max_length=10)
 	language = models.CharField(max_length=15)
-	belongs_to = models.ForeignKey('Department')
-	favorite_departments = models.ManyToManyField('Department')
+	department = models.ForeignKey('Department')
+	favorite_departments = models.ManyToManyField('Department', related_name='favoredby_set')
 
