@@ -3,7 +3,7 @@ from django.template import RequestContext
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from otl.apps.user.forms import LoginForm
-import base64, hashlib, time, random
+import base64, hashlib, time, random, urllib, re
 
 def login(request):
 	step = int(request.GET.get('step', 1))
@@ -53,12 +53,14 @@ def login(request):
 			try:
 				# Retrieve user information finally.
 				id = request.POST['uid']
-				department = request.POST['ku_departmentname'].decode('cp949')
-				fullname = '%s %s' % (request.POST['sn'].decode('cp949'), request.POST['givenname'].decode('cp949'))
+				m = re.search(r'(\d{8})=([^;]+);', _urldecode(request.POST['ku_departmentname'], 'cp949'))
+				department = m.groups()[1]
+				student_id = m.groups()[0]
+				fullname = '%s %s' % (_urldecode(request.POST['sn'], 'cp949'), _urldecode(request.POST['givenname'], 'cp949'))
 				# TODO: call auth.login() to make use of Django user session.
 				return render_to_response('test.html', {
-					'uid': id,
-					'username': '',
+					'userid': id,
+					'student_id': student_id,
 					'department': department,
 					'fullname': fullname,
 				}, context_instance=RequestContext(request))
@@ -68,3 +70,5 @@ def login(request):
 					'msg': u'로그인에 실패하였습니다.',
 				}, context_instance=RequestContext(request))
 
+def _urldecode(s, encoding):
+	return urllib.unquote(str(s)).decode(encoding)
