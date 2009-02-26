@@ -7,6 +7,9 @@ import base64, hashlib, time, random, urllib, re
 
 def login(request):
 	step = int(request.GET.get('step', 1))
+
+	# TODO: httplib을 사용하여 AuthBackend에서 아래의 SSO 인증 처리를 대신할 것.
+
 	if step == 1:
 		# Show login form
 
