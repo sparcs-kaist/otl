@@ -2,4 +2,15 @@ syntax: glob
 hgusers
 *.pyc
 *.db
-test.db
+.*.swp
+otl/test.db
+documents/*.dvi
+documents/*.toc
+documents/*.aux
+documents/*.bb
+documents/*.ilg
+documents/*.ind
+documents/*.log
+documents/*.lof
+documents/*.idx
+documents/*.bak
