@@ -12,8 +12,12 @@ def login(request):
 	if request.method == 'POST':
 		# Do login process
 		f = LoginForm(request.POST)
+		if not f.is_valid():
+			return render_to_response('login.html', {
+				'form_login': f,
+				'msg': u'아이디/비밀번호를 모두 적어야 합니다.',
+			}, context_instance=RequestContext(request))
 
-		print auth
 		user = auth.authenticate(username=request.POST['username'], password=request.POST['password'])
 
 		if user is None: # Login Failed
@@ -37,3 +41,6 @@ def login(request):
 			'form_login': LoginForm(),
 		}, context_instance=RequestContext(request))
 
+def logout(request):
+	auth.logout(request)
+	return HttpResponseRedirect('/')

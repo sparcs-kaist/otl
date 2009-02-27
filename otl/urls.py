@@ -9,6 +9,7 @@ urlpatterns = patterns('',
     # Example:
     (ur'^$', 'otl.apps.main.views.home'),
     (ur'^login/', 'otl.apps.accounts.views.login'),
+    (ur'^logout/', 'otl.apps.accounts.views.logout'),
 
     # Uncomment the admin/doc line below and add 'django.contrib.admindocs' 
     # to INSTALLED_APPS to enable admin documentation:
