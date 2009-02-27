@@ -57,100 +57,115 @@
 	{
 		"pk": "12",
 		"model": "accounts.department",
-		"fields": {"num_id": "36", "code": "CS", "name": "전산학전공"}
+		"fields": {"num_id": "35", "code": "EE", "name": "전기및전자공학전공"}
 	},
 	{
 		"pk": "13",
 		"model": "accounts.department",
-		"fields": {"num_id": "37", "code": "CE", "name": "건설및환경공학과"}
+		"fields": {"num_id": "36", "code": "CS", "name": "전산학전공"}
 	},
 	{
 		"pk": "14",
 		"model": "accounts.department",
-		"fields": {"num_id": "39", "code": "CBE", "name": "생명화학공학과"}
+		"fields": {"num_id": "37", "code": "CE", "name": "건설및환경공학과"}
 	},
 	{
 		"pk": "15",
 		"model": "accounts.department",
-		"fields": {"num_id": "40", "code": "ME", "name": "기계공학과"}
+		"fields": {"num_id": "39", "code": "CBE", "name": "생명화학공학과"}
 	},
 	{
 		"pk": "16",
 		"model": "accounts.department",
-		"fields": {"num_id": "41", "code": "BiS", "name": "바이오및뇌공학과"}
+		"fields": {"num_id": "40", "code": "ME", "name": "기계공학과"}
 	},
 	{
 		"pk": "17",
 		"model": "accounts.department",
-		"fields": {"num_id": "42", "code": "BEP", "name": "Business Economics 프로그램"}
+		"fields": {"num_id": "41", "code": "BiS", "name": "바이오및뇌공학과"}
 	},
 	{
 		"pk": "18",
 		"model": "accounts.department",
-		"fields": {"num_id": "43", "code": "GCT", "name": "문화기술대학원"}
+		"fields": {"num_id": "42", "code": "BEP", "name": "Business Economics 프로그램"}
 	},
 	{
 		"pk": "19",
 		"model": "accounts.department",
-		"fields": {"num_id": "46", "code": "MSE", "name": "의과학대학원"}
+		"fields": {"num_id": "43", "code": "GCT", "name": "문화기술대학원"}
 	},
 	{
 		"pk": "20",
 		"model": "accounts.department",
-		"fields": {"num_id": "53", "code": "MGT", "name": "테크노경영대학원"}
+		"fields": {"num_id": "45", "code": "AT", "name": "자동차기술대학원"}
 	},
 	{
 		"pk": "21",
 		"model": "accounts.department",
-		"fields": {"num_id": "59", "code": "IMB", "name": "아이엠비에이전공"}
+		"fields": {"num_id": "46", "code": "MSE", "name": "의과학대학원"}
 	},
 	{
 		"pk": "22",
 		"model": "accounts.department",
-		"fields": {"num_id": "66", "code": "STP", "name": "과학기술정책대학원프로그램"}
+		"fields": {"num_id": "47", "code": "RE", "name": "로봇공학학제전공"}
 	},
 	{
 		"pk": "23",
 		"model": "accounts.department",
-		"fields": {"num_id": "67", "code": "OSE", "name": "해양시스템공학과"}
+		"fields": {"num_id": "53", "code": "MGT", "name": "테크노경영대학원"}
 	},
 	{
 		"pk": "24",
 		"model": "accounts.department",
-		"fields": {"num_id": "68", "code": "ISE", "name": "지적서비스공학과"}
+		"fields": {"num_id": "59", "code": "IMB", "name": "아이엠비에이전공"}
 	},
 	{
 		"pk": "25",
 		"model": "accounts.department",
-		"fields": {"num_id": "69", "code": "NST", "name": "나노과학기술학과"}
+		"fields": {"num_id": "66", "code": "STP", "name": "과학기술정책대학원프로그램"}
 	},
 	{
 		"pk": "26",
 		"model": "accounts.department",
-		"fields": {"num_id": "70", "code": "BM", "name": "의과학학제전공"}
+		"fields": {"num_id": "67", "code": "OSE", "name": "해양시스템공학과"}
 	},
 	{
 		"pk": "27",
 		"model": "accounts.department",
-		"fields": {"num_id": "71", "code": "PSE", "name": "고분자학학제전공"}
+		"fields": {"num_id": "68", "code": "ISE", "name": "지적서비스공학과"}
 	},
 	{
 		"pk": "28",
 		"model": "accounts.department",
-		"fields": {"num_id": "73", "code": "TE", "name": "정보통신공학학제전공"}
+		"fields": {"num_id": "69", "code": "NST", "name": "나노과학기술학과"}
 	},
 	{
 		"pk": "29",
 		"model": "accounts.department",
-		"fields": {"num_id": "79", "code": "SEP", "name": "소프트웨어전문가과정학제전공"}
+		"fields": {"num_id": "70", "code": "BM", "name": "의과학학제전공"}
 	},
 	{
 		"pk": "30",
 		"model": "accounts.department",
-		"fields": {"num_id": "22", "code": "MA", "name": "수학전공"}
+		"fields": {"num_id": "71", "code": "PSE", "name": "고분자학학제전공"}
 	},
 	{
 		"pk": "31",
+		"model": "accounts.department",
+		"fields": {"num_id": "73", "code": "TE", "name": "정보통신공학학제전공"}
+	},
+	{
+		"pk": "32",
+		"model": "accounts.department",
+		"fields": {"num_id": "79", "code": "SEP", "name": "소프트웨어전문가과정학제전공"}
+	},
+	{
+		"pk": "33",
+		"model": "accounts.department",
+		"fields": {"num_id": "22", "code": "MA", "name": "수학전공"}
+	},
+	{
+		"pk": "34",
 		"model": "accounts.department",
 		"fields": {"num_id": "24", "code": "MA", "name": "응용수학전공"}
 	}
