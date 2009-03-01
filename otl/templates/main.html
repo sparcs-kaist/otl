@@ -1,4 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
 	<p>{{my_variable}}</p>
+	{% if request.user %}
+		<p>Login ID : {{ request.user }}</p>
+	{% endif %}
 {% endblock content %}
