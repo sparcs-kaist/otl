@@ -3,12 +3,13 @@
 \usepackage{palatino}
 \usepackage{cs408}
 
-\title{\textbf{CS408 Capstone Project: OTL}\\ \textit{Preliminary Specification}}
-\author{Team 6\\20050xxx 김민우, 20050145 김준기,\\20060xxx 김종균, 20060xxx 유충국}
+\title{\textbf{CS408 Capstone Project: OTL}\\ \textit{Revised Specification}}
+\author{Team 6\\20050084 김민우, 20050145 김준기,\\20060391 유충국, 20070186 김종균\\\\담당 교수 : 권용래}
 
 \begin{document}
-\date{March 2, 2009}
+\date{March 9, 2009}
 \maketitle
+
 \pagenumbering{roman}
 \tableofcontents
 \listoffigures
@@ -18,17 +19,250 @@
 \pagenumbering{arabic}
 \section{Introduction}
 \subsection{Motivation \& Purpose}
-\subsection{Scope}
-\subsection{Definitions}
-\subsection{Overview}
+우리학교 학생들의 일상에서 시간 관리의 가장 중요한 부분을 차지하는 것은 강의와 과제이 
+다. 따라서 이들이 차지하는 시간을 바탕으로 자신의 일정을 잘 관리하는 것은 학생들에게 매 
+우 필요할 것이다. 
 
-\section{Generic Description}
-\subsection{User Characteristics}
+그러나 KAIST의 수강신청 시스템을 비롯, 교육혁신팀에서 추진하고 있는 Course Management System인 Moodle 등 여러 서비스들이 졲재함에도 불구하고 아직도 많은 과목 
+홈페이지들이 학과별로, 랩별로 다른 곳을 사용하고 있는 등 교내 수강 관련 시스템들의 통합 이 제대로 이루어지지 않고 있어 사용자 입장에서는 원하는 서비스를 이용하기 위해 매번 여러 곳을 돌아다녀야 하는 불편이 있다. 
+
+우리가 제안하는 OTL(Online Timeplanner for Lectures) 서비스는 학우들의 이러한 수요를 충족시키는 것을 목적으로 한다.
+이 서비스는 모의시간표 작성, 과제 스케줄과 연동되는 일정 관리, 최근 들어 점점 많은 비중을 차지하는 조모임을 지원하기 위한 약속 잡기와 간단한 게시판 기능, 과목 홈페이지를 손쉽게 메모하고 찾아가기 위한 과목 즐겨찾기와 같은 기능을 제공한다.
+
+\subsection{Scope}
+이 문서는 다음과 같은 사람들을 위하여 작성되었다.
+\begin{enumerate}
+	\item OTL 서비스의 기획과 사용자에게 주는 가치를 알고자 하는 사람
+	\item OTL 서비스가 어떤 기능을 제공할지 알고자 하는 사람
+	\item OTL 서비스의 개발에 참여하고자 하는 사람
+\end{enumerate}
+
+\subsection{Definitions}
+\begin{theglossary}
+	\glossary{OTL}{Online Timeplanner for Lectures의 줄임말 }
+	\glossary{User}{KAIST 구성원 또는 일반 대학생.}
+	\glossary{Administrator}{서비스를 관리하는 사람 또는 단체.}
+	\glossary{학과\\(Department)}{각 과목을 개설할 권한을 가지고 있는 학교의 전공별 부서.}
+	\glossary{강의 (Lecture)}{아래의 '과목', '개설 과목'을 아울러 이르는 말.}
+	\glossary{과목 (Course)}{학과에서 (보통) 일정하게 개설하는 강의. (예: 2002년에 개설한 CS101과 2009년에 개설한 CS101을 하나의 entity로 간주함) }
+	\glossary{개설 과목(Class)}{어떤 특정 년도의 특정 학기에 열리는 강의. (예: '2009년 봄학기 CS101'과 같이 구체적으로 하나의 특정 수업을 가리킴) }
+	\glossary{과목 홈페이지\\(Course Homepage)}{과목마다 교수 또는 조교가 강의 자료, 공지 사항, 과제 등을 올리거나 학생들과의 소통을 위한 게시판을 운영할 목적으로 만든 홈페이지. CMS의 일부인 경우도 있다.}
+	\glossary{일정(Schedule)}{2가지 종류가 있다. 하나는 하루 또는 여러 날에 걸쳐 진행되는 '종일 일정(full-day schedule)'이고 다른 하나는 하루 내의 시작·끝 시각에 걸쳐 진행되는 '일일 일정(in-day schedule)'이다.}
+	\glossary{CMS}{과목 홈페이지와 강의 관리를 통합해주는 Course Management System.}
+	\glossary{조모임(Group)}{같은 프로젝트나 그룹 과제를 하기 위해 비교적 소수의 학생들이 모인 것.}
+	\glossary{약속\\(Appointment)}{ 하루 이내의 시작, 끝 시간이 명확한 일일 일정.}
+	\glossary{약속 잡기\\(Appointment Arranging)}{여러 사람이 각자의 일정에 따라 적절한 시간을 골라 공통적으로 이용 가능한 시간 중에 최종 약속 시간을 정하는 일.}
+	\glossary{포탈(Portal)}{KAIST에서 제공하는 전자 게시판·행정·수강 관리 서비스. KAIST 구성원들을 위한 통합 인증 서비스(Single-Sign-On)도 제공한다.}
+	\glossary{무들(Moodle)}{동아리 SPARCS에서 관리하고 교육혁신팀에서 지원·추진하고 있는 KAIST 전체를 위한 CMS 서비스. (http://moodle.kaist.ac.kr) 오픈소스로 개발된 CMS 프로젝트 이름이지만, 여기서는 주로 KAIST의 서비스를 말한다.}
+	\glossary{아라(Ara)}{동아리 SPARCS에서 운영하는 학내 게시판 서비스. KAIST의 대표적인 BBS로 많은 학생들이 이용하고 있다.}
+	\glossary{수강지식인(LKIN)}{동아리 SPARCS에서 운영하는 과목 정보 서비스. 과목 별로 학적팀에서 제공하는 강의 평가 및 학생들의 의견을 볼 수 있고 간단한 모의 시간표 작성 기능을 제공한다.}
+	\glossary{노아보드\\(Noah Board)}{게임개발 동아리 하제(Haje)에서 운영하는 전산학과 전용 게시판 서비스. 많은 전산학과 과목들이 이 게시판을 사용하고 있다.}
+	\glossary{SPARCS}{학우들을 위한 각종 웹서비스를 개발·운영하는 KAIST의 학술 동아리. Team 6의 멤버들 중 3명도 이 동아리에 속해 있다.}
+\end{theglossary}
+
+\section{General Description of OTL}
+\subsection{Product Perspective}
+
+(TODO: 이 서비스가 하는 일을 한 마디로 요약해서 설명)
+
+\subsection{Product Functions}
+\subsubsection{Main Features}
+\begin{enumerate}
+	\item\textbf{모의 시간표 작성}
+
+	다음 학기 수강 신청 시, 모의 시간표를 미리 짜볼 수 있게 한다.
+	현재 학생들이 포탈에서 얻을 수 있는 다음 학기 수강 과목 정보는 시각적인 효과 전혀 없이 텍스트로만 제공되어 다음 학기 시간표를 미리 짜보는 것이 매우 불편하다.
+	강의 시간, 시험 시간이 겹치면 안 되므로 이것을 학생 각자가 일일이 계산하는 수밖에 없다.
+	이러한 불편을 없애기 위해 다음 학기 수강 신청 기간 적에 모의 시간표를 작성할 수 있는 서비스를 제공한다.
+
+	\item\textbf{일정 관리}
+
+	강의 일정, 조 모임 일정에 특화된 일정 관리를 할 수 있게 한다.
+	대학생의 일정은 강의 일정, 조 모임 일정, 개인 일정, 동아리 일정 등등이 있는데, 각각마다 중요도가 다르고 학기 단위로 규칙 적인 것, 일시적인 것 등이 있어 기졲의 일반적인 일정 관리 서비스로는 불편한 점이 있다.
+	강의 시간표 짜기에서 짜 놓은 시간표를 토대로 일정 관리를 할 수 있게 함으로써 대학생의 강의 일정에 특화된 일정 관리 서비스를 제공한다. 
+
+	\item\textbf{약속 잡기}
+
+	다수의 사람들이 같은 시간에 만나야 할 때, 시간 약속 잡기가 매우 어렵고 시간이 오래 걸리게 되는 불편함이 있다.
+	강의 보충시간, 조 모임 시간 등등 여러 사람들과 시간 약속을 잡아야 하는 일이 자주 생기는데, 각자의 일정이 모두 달라 약속 시간을 조율하기 어렵다.
+	각자의 가능한 일정을 확인하여 최대한 겹치지 않는 약속 시간을 잡을 수 있게 해준다.
+
+\end{enumerate}
+
+\subsubsection{Additional Features}
+\begin{enumerate}
+	\item\textbf{조모임 보드}
+
+	강의 중 조별 활동에 특화된 게시판이 필요하다.
+	조별 활동이 있는 과목들이 많은데, 메신저 ID를 주고 받거나, 외부 커뮤니티 서비스를 이용하는 경우가 많았다.
+	그러나 이러한 방법들은 불편할 뿐만 아니라, 해당 과목이 종강되었을 때, 관리하기가 어려운 단점이 있다. 
+	따라서 해당 조원들만 읽기, 쓰기, 수정, 삭제 등이 가능한 게시판을 제공한다. 
+
+	\item\textbf{과목 즐겨찾기}
+
+	수강 과목 홈페이지 링크를 한 곳에 모아서 보여준다.
+	Moodle이 현재 공식적인 과목 홈페이지이긴 하지만, 생긴지 얼마 안되어 모든 과목 홈페이지가 moodle에 있지는 않다.
+	따라서 학생들은 학기마다 각 과목 홈페이지를 따로따로 찾아 다녀야 하는 불편함이 있고, 이를 즐겨찾기에 저장한다 하더라도 자신의 컴퓨터가 아닌 다른 컴퓨터를 통해 과목 홈페이지에 접근하려면 다시 검색해야 하는 불편이 따른다.
+	각 과목 홈페이지 링크들을 한 곳에 모아 어디에서든지 OTL 서비스에 접속하면 자신이 수강하는 과목 홈페이지에 쉽게 접근할 수 있게 한다. 
+
+	\item\textbf{아라 Lecture 보드 연동}
+
+	OTL 서비스의 Q\&A 역할을 한다.
+	수강 과목에 대한 여러 가지 질문들을 올리는 현재의 아라 Lecture 보드를 연동하여 궁금한 것이나 유용한 정보를 얻을 수 있도록 한다.
+	OTL만의 새로운 Q\&A 게시판을 만들게 되면 아라 Lecture 보드 사용자와 OTL 사용자가 분산되어 정보의 중복·분산도 발생하므로, 현재 많은 사용자를 확보하고 있는 아라 Lecture 보드와 연동한다.
+
+\end{enumerate}
+
+\subsection{User Characterstics}
+
+(TODO: 어떤 사용자들이 이 시스템을 이용할 것인지 설명)
+
 \subsection{Constraints \& Assumptions}
+
+\begin{enumerate}
+	\item 사용자들은 랩탑 또는 데스크탑 PC를 이용하여 인터넷에 접속, 웹브라우저를 이용할 수 있다.
+	우리는 Web 기반의 서비스를 제공한다.
+
+	\item KAIST 구성원들은 포탈 ID를 이용해 인증받을 수 있고, 우리 서비스도 이것을 이용해 사용자를 인증한다.
+	(향후 이 서비스가 다른 학교에도 제공되면 해당 학교의 시스템과 연동한다.)
+
+	\item 각 과목의 과제 제출 기한(due-date) 정보는 Moodle 서비스와 연동한다.
+
+	\item 아라 Lecture 게시판은 강의 관련 질문·답변의 장일뿐만 아니라 OTL 서비스 사용자를 위한 Q\&A 게시판 역할을 할 수 있다.
+
+\end{enumerate}
 
 \section{Requirements}
 \subsection{Functional Requirements}
-\subsection{Interface Requirements}
+\subsubsection{Main Features}
+\begin{enumerate}
+	\item\textbf{모의 시간표 짜기}
+	\begin{itemize}
+		\item 학기 별 모의 시간표 짜기\\
+		다음학기 수강 신청 시에 모의 시간표를 짤 수 있게 하여 다음학기에 대한 계획 수립에 도움을 준다. 
+		\item 강의실 위치를 지도에 표시\\
+		추가된 과목의 강의실을 지도에 표시하여 위치 정보를 제공하고, 동선 파악을 쉽게 할 수 있게 한다. 
+		\item 일정관리에 강의 시간표 추가\\
+		여러 개의 후보 시간표들 중 하나를 확정하면 일정에 넣고 다른 개인 일정과 함께 볼 수 있다. 
+		\item 자동 저장\\
+		과목을 시간표에 추가 또는 삭제 시 변동 내용을 사용자의 명시적인 명령 없이 자동으로 저장하여 실수로 데이터 변경 사항을 날릴 가능성을 줄인다. 
+		\item 학교 과목 DB와 연동\\
+		학교 과목 DB를 실시간으로 연동하여 개설 과목 정보가 바뀌었을 때에도 정확한 정보를 제공한다. 
+		\item 시험 시간표\\
+		강의 시간뿐만 아니라 시험 시간표도 제공하여 하루에 너무 많은 시험이 몰리거나 겹치는 일이 없도록 도와준다. 
+		\item Rollover로 과목 정보를 표시\\
+		시간표에 추가된 과목이나 추가할 과목 목록의 항목에 마우스 커서를 가져다대면 해당 정보가 표시되게 한다.
+		\item 과목 검색\\
+		학과별, 분야별, 이름, 시간 정보 등으로 과목을 검색할 수 있다.
+	\end{itemize}
+	\item\textbf{일정 관리}
+	\begin{itemize}
+		\item 주 단위 일정 제공\\
+		일정 관리 소프트웨어·서비스에서 가장 많이 사용되는 주 단위 일정 보기를 기본으로 제공한다. 
+		\item 월 단위 미니 달력\\
+		1년 중 언제의 일정을 보고 있는지 알기 쉽도록 현재 주가 강조된 작은 달력을 제공한다.
+		\item 종일 일정, 일일 일정\\
+		여러 날에 걸쳐 진행되거나 특정한 due-date를 표시할 수 있는 종일 일정과 특정 시간에만 국한된 일일 일정의 추가·편집·보기 기능을 제공한다.
+		\item 카테고리의 종류\\
+		강의 시간표, 개인 일정, 강의 일정 (시험, 숙제), 조모임 일정이 있으며, 각각의 색깔 변경을 가능하게 한다. 또한 개인 일정은 하위 카테고리를 사용자가 관리할 수 있게 한다.
+		\item 인쇄하기\\
+		인쇄 전용 화면을 제공하여 사용자가 종이로도 일정을 볼 수 있게 한다.
+		\item 일정 항목이 겹칠 때 조작, 읽기가 용이하게 배치하기\\
+		일정 배치 알고리즘을 통하여 겹치는 일정 항목들을 최대한 보기 좋게 배치한다.
+		\item 날짜 기준 변경\\
+		하루의 시작은 새벽 5시로 하고, 한 주의 시작은 월요일로 하되 시작 요일은 바꿀 수 있다.
+		\item Mouse Interaction\\
+		일정 추가, 일정의 시작시간 변경, 일정의 끝나는 시간 변경 시 마우스 드래그를 통해 가능하도록 지원한다.
+		\item Seamless Interaction\\
+		일정 추가, 변경 시 세부 정보 입력란은 화면 전환 없이 바로 입력·반영할 수 있도록 한다.
+		\item 오늘, 현재 시간은 강조 표시한다.
+		\item 과제 Due-Date 연동\\
+		사용자의 강의 시간표를 참고하여 Moodle에 올라온 assignment 정보를 일정관리에 종일 일정 또는 일일 일정 형태로 보여준다. 
+	\end{itemize}
+	\item\textbf{약속 잡기}
+	\begin{itemize}
+		\item 외부 접근 링크 제공\\
+		이메일, 다른 게시판 등 다른 수단을 이용하여 약속 잡기에 참여할 수 있도록 한다.
+		\item 조모임 보드에서는 embed 가능
+		\item 조모임 보드에 글을 작성할 때, 약속 잡기 글을 올릴 수 있고, 해당 조 구성원들이 약속 잡기에 자동으로 참여할 수 있게 한다.
+		\item 약속의 단위는 30분으로 한다.
+		\item 참여자들에게 하고 싶은 말을 적을 수 있다.
+		\item 생성자는 강조되어 보여질 후보시간을 정할 수 있으나 의무나 강제는 아니다.
+		\item 약속잡기가 완료되면 각자의 일정에 복사, notify 후 이 약속 잡기 item은 읽기 전용으로 바뀐다. 
+		\item 1개월이 지나면 자동으로 지워진다. 
+		\item 알고리즘\\
+		약속을 맺고자 하는 사람들이 각자의 일정으로부터 가능한 시간대를 체크하고 공통적으로 가능한 시간 등을 gradation으로 강조 표시한다.
+		약속을 처음 제안 했던 사람이 최종 약속 시간을 결정하면, 참여자들에게 이를 알리고 각자의 일일 일정으로 일정 관리에 추가한다. 
+	\end{itemize}
+	\item\textbf{계정 관리}
+	\begin{itemize}
+		\item 가입하기\\
+		ID로 인증한 후 자기 정보를 확인·수정하고었 서비스 이용을 시작한다. 
+		\item 로그인하기\\ 
+		포탈 ID로 인증하여 등록된 사용자 정보를 가져와 서비스 이용을 시작한다. 
+		\item 자기 정보 수정하기\\
+		자신의 사용자 정보(학과, 관심 학과, 이메일 등)를 수정한다. 
+		\item 다른 사람 정보 조회하기\\
+		ID를 아는 다른 사람의 이름과 학과를 볼 수 있다. 
+		\item 탈퇴하기\\
+		이 서비스에 등록된 자신의 모든 정보를 삭제하고 이용을 중지한다. 
+	\end{itemize}
+\end{enumerate}
+\subsubsection{Additional Features}
+\begin{enumerate}
+	\item\textbf{조모임 보드}
+	\begin{itemize}
+		\item 기본적인 게시판 기능 제공\\
+		글 쓰기, 보기, 삭제, 수정, 검색이 가능하게 한다.
+		이 게시판은 일반 게시판과 달리 빠른 커뮤니케이션을 위해 제목을 생략하고 글 내용이 바로 목록에 보여지는 형태를 취한다.
+		\item 시간 약속 잡기 글을 쓸 수 있게 한다.
+		\item 그룹 정하기\\
+		그룹 만들기 $\rightarrow$ 목록으로 검색 $\rightarrow$ 전용 비밀번호 + 하고 싶은 말.
+		\item 그룹 검색/목록\\
+		카테고리로 학과/과목 구분
+		\item 생성된 그룹은 해당 학기가 끝나면 목록에서 숨겨지고 old로 처리한다. 
+	\end{itemize}
+	\item\textbf{과목 즐겨찾기}
+	\begin{itemize}
+		\item Favorite list에 과목 홈페이지 링크를 추가, 삭제할 수 있다.
+		\item 다른 사람들이 Recently added list에 올린 과목 홈페이지 링크를 보여주고 추가하면 자신의 Favorite list에 추가한다.
+		\item 다른 사람들이 올린 과목 홈페이지 링크를 검색할 수 있다.
+		\item 한 학기가 지나면 old로 처리하여 숨긴다.
+		\item 서비스의 어느 페이지에서도 볼 수 있도록 side bar에 자신의 Favorite list를 조그맣게 표시한다.
+	\end{itemize}
+	\item\textbf{아라 Lecture 보드 연동}
+	\begin{itemize}
+		\item 아라와 Arara API로 연동\\
+		Ara 서비스에서 제공하는 API를 이용한다. 
+		\item 글쓰기는 제공하지 않는 읽기 전용 게시판\\
+		글 목록 보여주기, 글 보기 기능을 제공한다. 
+		\item 불특정 다수를 위한 Q\&A 게시판
+	\end{itemize}
+\end{enumerate}
+\subsection{External Interface Requirements}
+(TODO: 이 시스템과 연동되는 다른 시스템과의 연동, 이 시스템과 사용자와의 관계에 관한 요구사항 정리)
+\subsection{Performance Requirements}
+Mouse interaction이 많은 만큼, 관련된 AJAX 호출이 빠르게 수행되어야 하는데 보통 이는 2초를 넘지 않아야 한다.
+페이지 자체가 전환될 때는 5초를 넘지 않는 것이 좋다.
+(시간이 오래 걸리는 동작의 경우 '로딩 중'과 같은 메시지를 표시하여 사용자가 자기가 내린 명령이 수행되고 있음을 인지시키는 방법을 사용할 수도 있다.)
+다수의 사용자가 동시에 한 서버에 접속해 사용하기 때문에 네트워크 트래픽을 줄이고 응답성을 향상시키기 위해서 HTTP 자체 및 우리가 사용할 웹프레임워크에서 제공하는 cache 기능을 적극적으로 활용해야 한다.
 \subsection{Other Requirements}
+\subsubsection{Nonfunctional Requirements}
+\begin{enumerate}
+	\item KAIST의 포탈 SSO 인증뿐만 아니라 다른 학교의 시스템과도 연동할 수 있도록 인증 처리 부분을 확장 가능하게 해야 한다.
+	\item 학우들이 필요로 하는 수강 지원 기능들이 추가될 수 있도록 유연한 시스템 설계를 하여야 한다.
+\end{enumerate}
+\subsubsection{User Interfaces}
+\begin{enumerate}
+	\item Mouse Interaction\\
+	마우스 드래그만으로 일정 항목을 생성하거나 고칠 수 있게 하고, 마우스 커서를 세부 정보가 들어있는 항목 위에 가져가면 툴팁이나 별도의 정보표시 영역을 통해 세부 정보를 보여준다.
+	이 서비스가 웹어플리케이션이라는 특성상 AJAX 기법을 사용한다. 
+	\item UI Design\\
+	Typography와 적젃한 색상 배치, 이미지를 활용하여 가시성·가독성을 높이고 사용자에게 꼭 필요한 설명을 제공하여 사용하기 쉽게 한다.
+	또한 방금 실행한 동작의 결과를 알려주어 사용자가 자기가 한 일을 쉽게 인지할 수 있게 한다.
+	\item 웹 접근성 및 호환성\\
+	XHTML 1.0 / CSS 2.1 표준을 준수하고 unobstrusive Javascript를 사용해 웹 접근성을 확보한다.
+	서비스가 여러 종류의 웹브라우저(최소한 Internet Explorer 7.0 이상과 Firefox 3.0 이상)에서 동작할 수 있도록 한다. 
+\end{enumerate}
 
 \end{document}
