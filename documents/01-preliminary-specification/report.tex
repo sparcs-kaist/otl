@@ -144,7 +144,8 @@ OTL 서비스가 제공하는 핵심 기능들은 다음과 같다.
 \section{Requirements}
 \subsection{Functional Requirements}
 \subsubsection{Main Features}
-\begin{enumerate}
+\renewcommand{\theenumi}{FR.\arabic{enumi}.\arabic{enumii}}
+\begin{funcreq}
 	\item\textbf{모의 시간표 짜기}
 	\begin{enumerate}
 		\item 학기 별 모의 시간표 짜기\\
@@ -203,9 +204,10 @@ OTL 서비스가 제공하는 핵심 기능들은 다음과 같다.
 		약속을 맺고자 하는 사람들이 각자의 일정으로부터 가능한 시간대를 체크하고 공통적으로 가능한 시간 등을 gradation으로 강조 표시한다.
 		약속을 처음 제안 했던 사람이 최종 약속 시간을 결정하면, 참여자들에게 이를 알리고 각자의 일일 일정으로 일정 관리에 추가한다. 
 	\end{enumerate}
-\end{enumerate}
+\end{funcreq}
 \subsubsection{Additional Features}
-\begin{enumerate}
+\begin{funcreq}
+	\setcounter{enumi}{3}
 	\item\textbf{조모임 보드}
 	\begin{enumerate}
 		\item 기본적인 게시판 기능 제공\\
@@ -234,10 +236,11 @@ OTL 서비스가 제공하는 핵심 기능들은 다음과 같다.
 		글 목록 보여주기, 글 보기 기능을 제공한다. 
 		\item 불특정 다수를 위한 Q\&A 게시판
 	\end{enumerate}
-\end{enumerate}
+\end{funcreq}
 \subsubsection{Basic Features}
 아래는 주요 기능은 아니지만 가입형 인터넷 서비스가 기본으로 갖추어야 할 기능들이다.
-\begin{enumerate}
+\begin{funcreq}
+	\setcounter{enumi}{6}
 	\item\textbf{계정 관리}
 	\begin{enumerate}
 		\item 가입하기\\
@@ -251,10 +254,10 @@ OTL 서비스가 제공하는 핵심 기능들은 다음과 같다.
 		\item 탈퇴하기\\
 		이 서비스에 등록된 자신의 모든 정보를 삭제하고 이용을 중지한다. 
 	\end{enumerate}
-\end{enumerate}
+\end{funcreq}
 
 \subsection{External Interface Requirements}
-\insertImageNF{usecase_and_externalinterface.pdf}{Usecases \& External Interface Requirements}{usecase}{0.8\textwidth}
+\insertImageNF{usecase_and_externalinterface.pdf}{Usecases \& External Interface Requirements}{usecase}{0.9\textwidth}
 
 \subsection{Performance Requirements}
 Mouse interaction이 많은 만큼, 관련된 AJAX 호출이 빠르게 수행되어야 하는데 보통 이는 2초를 넘지 않아야 한다.

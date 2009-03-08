@@ -99,3 +99,10 @@
 %}
 \def\figurename{그림}
 
+\newenvironment{funcreq}
+{
+	\renewcommand{\theenumi}{FR.\arabic{enumi}}
+	\renewcommand{\theenumii}{\arabic{enumi}.\arabic{enumii}}
+	\begin{enumerate}
+}
+{\end{enumerate}}
