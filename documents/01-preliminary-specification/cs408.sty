@@ -30,7 +30,7 @@
 \newenvironment{compactItemize}
 {
 	\begin{itemize}
-	\setlength{\itemsep}{-3pt}
+	\setlength{\itemsep}{3pt}
 	\setlength{\parsep}{2pt}
 	\setlength{\topsep}{2pt}
 	\setlength{\partopsep}{2pt}
@@ -102,7 +102,7 @@
 \newenvironment{funcreq}
 {
 	\begin{enumerate}
-	\renewcommand{\labelenumi}{FR.\arabic{enumi}}
+	\renewcommand{\labelenumi}{\bf FR.\arabic{enumi}}
 	\renewcommand{\labelenumii}{FR.\arabic{enumi}.\arabic{enumii}}
 }
 {\end{enumerate}}
