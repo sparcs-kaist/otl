@@ -55,8 +55,24 @@ class KAISTSSOBackend:
 
 		try:
 			user = User.objects.get(username__exact=kuser_info['uid'])
+
+			# If this user already exists in our database, just pass or update his info.
+			profile = UserProfile.objects.get(user=user)
+			changed = False
+			if profile.department.name != kuser_info['department']:
+				profile.department = Department.objects.get(name=kuser_info['department'])
+				changed = True
+			if profile.student_id != kuser_info['student_id']:
+				profile.student_id = kuser_info['student_id']
+				changed = True
+
+			if changed:
+				profile.save()
 			return user
+
 		except User.DoesNotExist:
+
+			# If this user doesn't exist yet, make records for him.
 			user = User(username=kuser_info['uid'])
 			user.first_name = kuser_info['givenname']
 			user.last_name = kuser_info['sn']
