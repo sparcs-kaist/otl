@@ -1,5 +1,6 @@
 # encoding: utf8
 from django.db import models
+from django.contrib import admin
 from django.contrib.auth.models import User
 
 class Department(models.Model):
@@ -9,6 +10,11 @@ class Department(models.Model):
 
 	def __unicode__(self):
 		return u'%s(%d) "%s"' % (self.code, self.num_id, self.name)
+
+class DepartmentAdmin(admin.ModelAdmin):
+	ordering = ('num_id',)
+	list_display = ('num_id', 'code', 'name')
+admin.site.register(Department, DepartmentAdmin)
 
 class UserProfile(models.Model):
 	user = models.OneToOneField(User)
@@ -20,3 +26,6 @@ class UserProfile(models.Model):
 	def __unicode__(self):
 		return u'%s %s (%s)' % (self.user.username, self.student_id, self.department.code)
 
+class UserProfileAdmin(admin.ModelAdmin):
+	list_display = ('user', 'student_id', 'department')
+admin.site.register(UserProfile, UserProfileAdmin)
