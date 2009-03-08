@@ -34,17 +34,18 @@ body {
 #userInfo {
 	position: absolute;
 	right: 10px;
-	top: 10px;
+	top: 12px;
+	font-size: 0.9em;
 }
 
 #userInfo a {
-	color: white;
+	color: #ddd;
 }
 
 #wrap {
 	margin: 0 auto;
 	width: 1022px;
-	background: url(./images/bg_top.png) no-repeat 0 40px;
+	background: url(./images/bg_top.png) no-repeat 0 43px;
 }
 
 #navigation {
