@@ -16,7 +16,6 @@ body {
 	position: relative;
 	border-bottom: 5px solid #ccc;
 	height: 45px;
-	margin-bottom: 10px;
 }
 
 #header h1 {
@@ -43,7 +42,7 @@ body {
 #navigation a {
 	display: block;
 	padding: 4px 7px;
-	background: #ccc;
+	background: #ddd;
 	color: #333;
 	text-decoration: none;
 }
@@ -54,6 +53,11 @@ body {
 }
 
 #navigation li.selected a {
-	background-color: black;
-	color: white;
+	background-color: #ccc;
+	color: #333;
+}
+
+#content {
+	padding-top: 10px;
+	background-color: #ccc;
 }
