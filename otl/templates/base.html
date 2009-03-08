@@ -8,15 +8,21 @@
 <body>
 <div id="wrap">
 	<div id="header">
-		<h1>Online Timeplanner for Lectures</h1>
+		<h1><span class="logo-color1">Online</span> <span class="logo-color2">Timeplanner</span> with <span class="logo-color3">Lectures</span></h1>
+		<div id="userInfo">
+			{% if request.user.is_authenticated %}
+			{{ request.user }} | <a href="/accounts/myinfo">내 계정</a> | <a href="/logout/">로그아웃</a>
+			{% else %}
+			<a href="/login/">로그인</a>
+			{% endif %}
+		</div>
 		<div id="navigation">
 			<ul>
-				<li class="selected"><a href="/">Home</a></li>
-				<li><a href="/timetable/">모의 시간표</a></li>
-				<li><a href="/calendar/">일정 관리</a></li>
-				<li><a href="/groups/">조모임</a></li>
-				<li><a href="/lectures/">과목 즐겨찾기</a></li>
-				<li><a href="/account/">내 계정</a></li>
+				<li{% ifequal section 'home' %} class="selected"{% endifequal %}><a href="/">Home</a></li>
+				<li{% ifequal section 'timetable' %} class="selected"{% endifequal %}><a href="/timetable/">모의 시간표</a></li>
+				<li{% ifequal section 'calendar' %} class="selected"{% endifequal %}><a href="/calendar/">일정 관리</a></li>
+				<li{% ifequal section 'groups' %} class="selected"{% endifequal %}><a href="/groups/">조모임</a></li>
+				<li{% ifequal section 'favorites' %} class="selected"{% endifequal %}><a href="/favorites/">과목 즐겨찾기</a></li>
 			</ul>
 		</div>
 	</div>

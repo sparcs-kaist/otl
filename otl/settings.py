@@ -82,6 +82,10 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.admin',
     'otl.apps.main',
+    'otl.apps.timetable',
+    'otl.apps.calendar',
+    'otl.apps.groups',
+    'otl.apps.favorites',
     'otl.apps.accounts',
 )
 

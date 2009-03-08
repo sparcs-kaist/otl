@@ -6,16 +6,15 @@ from django.contrib import admin
 # admin.autodiscover()
 
 urlpatterns = patterns('',
-    # Example:
     (ur'^$', 'otl.apps.main.views.home'),
     (ur'^login/', 'otl.apps.accounts.views.login'),
     (ur'^logout/', 'otl.apps.accounts.views.logout'),
 
-    # Uncomment the admin/doc line below and add 'django.contrib.admindocs' 
-    # to INSTALLED_APPS to enable admin documentation:
-    # (r'^admin/doc/', include('django.contrib.admindocs.urls')),
+    (ur'^timetable/', include('otl.apps.timetable.urls')),
+    (ur'^calendar/', include('otl.apps.calendar.urls')),
+    (ur'^groups/', include('otl.apps.groups.urls')),
+    (ur'^favorites/', include('otl.apps.favorites.urls')),
 
-    # Uncomment the next line to enable the admin:
     (ur'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': './media'}),
     (ur'^admin/(.*)', admin.site.root),
 )

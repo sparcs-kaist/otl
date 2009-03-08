@@ -6,58 +6,95 @@
 }
 
 body {
-	font-family: Trebuchet MS, Verdana, 나눔고딕, NanumGothic, Dotum, AppleGothic, sans-serif;
-	font-size: 0.85em;
-	background: #f2f2f2;
-	color: #333;
+	font-family: Trebuchet MS, Verdana, Malgun Gothic, Dotum, AppleGothic, sans-serif;
+	font-size: 0.8em;
+	background: white url(./images/bg_black.jpg) repeat-x left -50px;
+	color: #eee;
+	text-align: center;
 }
 
 #header {
 	position: relative;
-	border-bottom: 5px solid #ccc;
-	height: 45px;
+	border-bottom: 5px solid #333;
+	height: 120px;
+	width: 1000px;
+	margin: 0 auto;
 }
 
 #header h1 {
 	position: absolute;
+	font-size: 14pt;
 	left: 10px;
-	bottom: 0;
+	top: 10px;
+	color: white;
+}
+.logo-color2 { color: rgb(0,204,255); }
+.logo-color3 { color: rgb(250,0,136); }
+
+#userInfo {
+	position: absolute;
+	right: 10px;
+	top: 10px;
+}
+
+#userInfo a {
+	color: white;
+}
+
+#wrap {
+	margin: 0 auto;
+	width: 1022px;
+	background: url(./images/bg_top.png) no-repeat 0 40px;
 }
 
 #navigation {
 	position: absolute;
-	right: 10px;
+	width: 100%;
+	height: 45px;
+	background: #eee;
 	bottom: 0;
 }
 
 #navigation ul {
+	position: absolute;
+	right: 10px;
+	bottom: 0;
 	list-style: none;
 }
 
 #navigation li {
 	float: left;
-	margin: 0 5px;
+	margin: 0 3px;
 }
 
 #navigation a {
 	display: block;
-	padding: 4px 7px;
-	background: #ddd;
+	padding: 8px 12px 6px 12px;
+	background: #e5e5e5 url(./images/tab_bg.gif) repeat-x left top;
 	color: #333;
+	font-size: 0.9em;
+	border-top: 1px solid #ddd;
+	border-left: 1px solid #ddd;
+	border-right: 1px solid #ddd;
 	text-decoration: none;
 }
 
 #navigation a:hover {
-	background-color: #666;
+	background: #555;
 	color: #fc9;
 }
 
 #navigation li.selected a {
-	background-color: #ccc;
-	color: #333;
+	background: #333;
+	color: white;
 }
 
 #content {
-	padding-top: 10px;
-	background-color: #ccc;
+	padding: 10px;
+	color: #222;
+	text-align: left;
+}
+
+#footer {
+	padding: 10px;
 }
