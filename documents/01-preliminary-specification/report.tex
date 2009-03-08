@@ -237,19 +237,18 @@ OTL 시스템의 사용자는 크게 다음과 같은 두 부류로 나누어진
 		글 쓰기, 보기, 삭제, 수정, 검색이 가능하게 한다.
 		이 게시판은 일반 게시판과 달리 빠른 커뮤니케이션을 위해 제목을 생략하고 글 내용이 바로 목록에 보여지는 형태를 취한다.
 		\item 시간 약속 잡기 글을 쓸 수 있게 한다.
-		\item 그룹 정하기\\
-		그룹 만들기 $\rightarrow$ 목록으로 검색 $\rightarrow$ 전용 비밀번호 + 하고 싶은 말.
+		\item 그룹 정하기 과정은 그룹 만들기 $\rightarrow$ 목록으로 검색 $\rightarrow$ 전용 비밀번호 + 하고 싶은 말을 기입하는 것으로 이루어진다.
 		\item 그룹 검색/목록\\
-		카테고리로 학과/과목 구분
+		카테고리로 학과/과목을 구분한다.
 		\item 생성된 그룹은 해당 학기가 끝나면 목록에서 숨겨지고 old로 처리한다. 
 	\end{enumerate}
 	\item\textbf{과목 즐겨찾기}
 	\begin{enumerate}
 		\item Favorite list에 과목 홈페이지 링크를 추가, 삭제할 수 있다.
-		\item 다른 사람들이 Recently added list에 올린 과목 홈페이지 링크를 보여주고 추가하면 자신의 Favorite list에 추가한다.
+		\item 다른 사람들이 recently added list에 올린 과목 홈페이지 링크를 보여주고 추가하면 자신의 favorite list에 추가한다.
 		\item 다른 사람들이 올린 과목 홈페이지 링크를 검색할 수 있다.
 		\item 한 학기가 지나면 old로 처리하여 숨긴다.
-		\item 서비스의 어느 페이지에서도 볼 수 있도록 side bar에 자신의 Favorite list를 조그맣게 표시한다.
+		\item 서비스의 어느 페이지에서도 볼 수 있도록 side bar에 자신의 favorite list를 조그맣게 표시한다.
 	\end{enumerate}
 	\item\textbf{아라 Lecture 보드 연동}
 	\begin{enumerate}
@@ -283,8 +282,25 @@ OTL 시스템의 사용자는 크게 다음과 같은 두 부류로 나누어진
 \insertImageNF{usecase_and_externalinterface.pdf}{Usecases \& External Interface Requirements}{usecase}{0.9\textwidth}
 \begin{enumerate}
 	\item 사용자와 OTL
+
+	사용자는 웹브라우저를 사용하여 OTL 서비스에 접근한다.
+
 	\item 관리자와 OTL
-	\item OTL과 외부 System
+
+	관리자는 웹브라우저를 사용하여 OTL 서비스에 접근하고 별도의 전용 관리자 인터페이스를 사용할 수 있다.
+
+	\item OTL과 Moodle System
+
+	OTL 서비스는 Moodle의 데이터베이스에 접근하여 각 과목의 과제 정보를 얻어온다.
+
+	\item OTL과 Ara System
+
+	OTL 서비스는 Arara API를 이용하여 Lecture 보드의 게시물 목록과 글 내용을 얻어온다.
+
+	\item OTL과 KAIST System
+
+	OTL 서비스는 Portal SSO 서비스를 이용하여 사용자를 인증하고, 전용 API를 사용하여 개설과목 DB를 얻어온다. (현재 IT개발팀과 구체적인 내용은 협의 중)
+
 \end{enumerate}
 \subsection{Performance Requirements}
 Mouse interaction이 많은 만큼, 관련된 AJAX 호출이 빠르게 수행되어야 하는데 보통 이는 2초를 넘지 않아야 한다.
