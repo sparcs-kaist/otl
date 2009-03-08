@@ -1,8 +1,59 @@
 @charset "utf-8";
 
+* {
+	margin: 0;
+	padding: 0;
+}
+
 body {
 	font-family: Trebuchet MS, Verdana, 나눔고딕, NanumGothic, Dotum, AppleGothic, sans-serif;
 	font-size: 0.85em;
 	background: #f2f2f2;
 	color: #333;
+}
+
+#header {
+	position: relative;
+	border-bottom: 5px solid #ccc;
+	height: 45px;
+	margin-bottom: 10px;
+}
+
+#header h1 {
+	position: absolute;
+	left: 10px;
+	bottom: 0;
+}
+
+#navigation {
+	position: absolute;
+	right: 10px;
+	bottom: 0;
+}
+
+#navigation ul {
+	list-style: none;
+}
+
+#navigation li {
+	float: left;
+	margin: 0 5px;
+}
+
+#navigation a {
+	display: block;
+	padding: 4px 7px;
+	background: #ccc;
+	color: #333;
+	text-decoration: none;
+}
+
+#navigation a:hover {
+	background-color: #666;
+	color: #fc9;
+}
+
+#navigation li.selected a {
+	background-color: black;
+	color: white;
 }

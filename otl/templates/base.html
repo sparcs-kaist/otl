@@ -1,15 +1,24 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<title>{{title}}</title>
+	<title>OTL - {{title}}</title>
 	<link rel="stylesheet" type="text/css" href="/media/common.css" />
 {% block headers %}{% endblock %}
 </head>
 <body>
 <div id="wrap">
-	<div id="header"><h1>{{title}}</h1></div>
-	<div id="navigation">
-		<!-- TODO -->
+	<div id="header">
+		<h1>Online Timeplanner for Lectures</h1>
+		<div id="navigation">
+			<ul>
+				<li class="selected"><a href="/">Home</a></li>
+				<li><a href="/timetable/">모의 시간표</a></li>
+				<li><a href="/calendar/">일정 관리</a></li>
+				<li><a href="/groups/">조모임</a></li>
+				<li><a href="/lectures/">과목 즐겨찾기</a></li>
+				<li><a href="/account/">내 계정</a></li>
+			</ul>
+		</div>
 	</div>
 	<div id="content">
 		{% block content %}{% endblock %}
