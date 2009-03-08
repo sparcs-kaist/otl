@@ -8,6 +8,7 @@
 body {
 	font-family: Trebuchet MS, Verdana, Malgun Gothic, Dotum, AppleGothic, sans-serif;
 	font-size: 0.8em;
+	line-height: 1.0;
 	background: white url(./images/bg_black.jpg) repeat-x left -50px;
 	color: #eee;
 	text-align: center;
@@ -35,7 +36,8 @@ body {
 	position: absolute;
 	right: 10px;
 	top: 12px;
-	font-size: 0.9em;
+	font-size: 9pt;
+	padding: 3px;
 }
 
 #userInfo a {
@@ -51,8 +53,9 @@ body {
 #navigation {
 	position: absolute;
 	width: 100%;
-	height: 45px;
+	height: 43px;
 	background: #eee;
+	left: 0;
 	bottom: 0;
 }
 
@@ -70,10 +73,10 @@ body {
 
 #navigation a {
 	display: block;
-	padding: 8px 12px 6px 12px;
+	padding: 10px 12px 8px 12px;
 	background: #e5e5e5 url(./images/tab_bg.gif) repeat-x left top;
 	color: #333;
-	font-size: 0.9em;
+	font-size: 9pt;
 	border-top: 1px solid #ddd;
 	border-left: 1px solid #ddd;
 	border-right: 1px solid #ddd;
