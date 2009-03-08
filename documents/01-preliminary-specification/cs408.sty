@@ -18,12 +18,12 @@
 	{\setlength\parindent{0em}\begin{longtable}{|l|p{12em}|p{14.0em}|}}
 	{\end{longtable}\setlength\parindent{1em}}
 \newenvironment{theglossary}
-	{\vspace{3.0em}}
+	{}
 	{}
 \renewcommand{\glossary}[2]{
 	\paragraph{}
 	\begin{tabular}[c]{l|p{22.5em}}
-		\parbox{8em}{\textbf{#1}} & #2
+		\begin{minipage}[t]{8em}\textbf{#1}\end{minipage} & #2
 	\end{tabular}
 	\vspace{-1.0em}
 }
