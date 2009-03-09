@@ -1,0 +1,69 @@
+@charset "utf-8";
+
+h3 {
+	margin-top: 15px;
+}
+
+#myFavorites ul,
+#publicFavorites ul {
+	list-style: none;
+	width: 100%;
+}
+
+#myFavorites li,
+#publicFavorites li {
+	position: relative;
+	border-bottom: 1px solid #ccc;
+	padding: 5px 8px;
+}
+
+#myFavorites li:first-child,
+#publicFavorites li:first-child {
+	border-top: 1px solid #ccc;
+}
+
+#myFavorites li:hover,
+#publicFavorites li:hover {
+	background-color: #f2f2f2;
+}
+
+#myFavorites h4,
+#publicFavorites h4 {
+	margin-bottom: 4px;
+	font-size: 10pt;
+}
+
+#publicFavorites .submitter {
+	display: block;
+	position: absolute;
+	top: 4px;
+	right: 8px;
+}
+a.control-delete, a.control-add {
+	display: block;
+	position: absolute;
+	bottom: 3px;
+	right: 8px;
+}
+
+#myFavorites a.control-delete {
+	color: #c00;
+	padding: 2px 2px 2px 20px;
+	background: url(./images/icon_delete.png) no-repeat left center;
+}
+#publicFavorites a.control-add {
+	color: #0a0;
+	padding: 2px 2px 2px 20px;
+	background: url(./images/icon_add.png) no-repeat left center;
+}
+
+#search-form {
+	margin: 10px;
+}
+#search-query {
+	width: 500px;
+	margin: 0 8px;
+}
+#search-form input[type=submit] {
+	padding: 2px 4px;
+}

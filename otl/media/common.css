@@ -109,6 +109,29 @@ input[type=submit] {
 	text-align: left;
 }
 
+.pages {
+	margin: 8px;
+	text-align: center;
+}
+
+.pages a {
+	text-decoration: none;
+	color: #555;
+	margin: 0 3px;
+}
+.pages a.selected {
+	font-weight: bold;
+	color: red;
+}
+.pages a.prev-page {
+	padding-left: 9px;
+	background: url(./images/icon_page_prev.png) no-repeat left center;
+}
+.pages a.next-page {
+	padding-right: 9px;
+	background: url(./images/icon_page_next.png) no-repeat right center;
+}
+
 #footer {
 	padding: 10px;
 }
