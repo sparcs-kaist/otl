@@ -1,6 +1,6 @@
 @charset "utf-8";
 
-a#create-group, a#join-group {
+a#create-appointment, a#join-appointment {
 	padding: 10px 15px;
 	background: #f8f8f8;
 	color: #333;

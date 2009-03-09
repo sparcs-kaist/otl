@@ -1,4 +1,10 @@
 {% extends 'base.html' %}
+{% block headers %}
+<link rel="stylesheet" type="text/css" href="/media/appointment.css" />
+{% endblock %}
 {% block content %}
 <h2>약속 잡기</h2>
+<a id="create-appointment" href="#">약속 만들기</a>
+<a id="join-appointment" href="#">약속 참여하기</a>
+<p style="text-align:center"><img src="/media/images/temp_appointment_prototype.png" /></p>
 {% endblock %}
