@@ -84,6 +84,7 @@ INSTALLED_APPS = (
     'otl.apps.main',
     'otl.apps.timetable',
     'otl.apps.calendar',
+    'otl.apps.appointment',
     'otl.apps.groups',
     'otl.apps.favorites',
     'otl.apps.accounts',

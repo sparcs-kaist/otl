@@ -12,6 +12,7 @@ urlpatterns = patterns('',
 
     (ur'^timetable/', include('otl.apps.timetable.urls')),
     (ur'^calendar/', include('otl.apps.calendar.urls')),
+    (ur'^appointment/', include('otl.apps.appointment.urls')),
     (ur'^groups/', include('otl.apps.groups.urls')),
     (ur'^favorites/', include('otl.apps.favorites.urls')),
     (ur'^board/', include('otl.apps.board.urls')),
