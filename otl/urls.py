@@ -1,12 +1,13 @@
 from django.conf.urls.defaults import *
 from django.contrib import admin
+from django.http import HttpResponseRedirect
 
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
 # admin.autodiscover()
 
 urlpatterns = patterns('',
-    (ur'^$', 'otl.apps.main.views.home'),
+    (ur'^$', lambda request: HttpResponseRedirect('/calendar/')),
     (ur'^login/', 'otl.apps.accounts.views.login'),
     (ur'^logout/', 'otl.apps.accounts.views.logout'),
 
