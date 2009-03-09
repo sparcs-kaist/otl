@@ -134,10 +134,11 @@ input[type=submit] {
 
 #footer {
 	padding: 10px;
+	color: #999;
 }
 
 h2 {
-	margin: 0.3em;
+	margin: 0.3em 0.3em 1em 0.3em;
 }
 
 h3 {

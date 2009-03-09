@@ -1,4 +1,12 @@
 {% extends 'base.html' %}
+{% block headers %}
+<link rel="stylesheet" type="text/css" href="/media/groups.css" />
+{% endblock %}
 {% block content %}
 <h2>조모임</h2>
+<a href="#">조모임 보드 만들기</a>
+<a href="#">조모임 보드 가입하기</a>
+<h3>조모임 보드 찾아보기</h3>
+<form id="search-form" method="get" action="/groups/search/">
+</form>
 {% endblock %}

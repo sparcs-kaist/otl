@@ -14,6 +14,7 @@ urlpatterns = patterns('',
     (ur'^calendar/', include('otl.apps.calendar.urls')),
     (ur'^groups/', include('otl.apps.groups.urls')),
     (ur'^favorites/', include('otl.apps.favorites.urls')),
+    (ur'^board/', include('otl.apps.board.urls')),
 
     (ur'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': './media'}),
     (ur'^admin/(.*)', admin.site.root),
