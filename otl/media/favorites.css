@@ -3,11 +3,14 @@
 h3 {
 	margin-top: 15px;
 }
+#publicFavorites {
+	position: relative;
+}
 
 #myFavorites ul,
 #publicFavorites ul {
 	list-style: none;
-	width: 100%;
+	position: relative;
 }
 
 #myFavorites li,
@@ -39,13 +42,22 @@ h3 {
 	top: 4px;
 	right: 8px;
 }
+
+#add-public-favorite {
+	position: absolute;
+	top: 2px;
+	right: 5px;
+}
+#add-public-favorite a {
+	color: #56c;
+}
+
 a.control-delete, a.control-add {
 	display: block;
 	position: absolute;
 	top: 20px;
 	right: 8px;
 }
-
 #myFavorites a.control-delete {
 	color: #c00;
 	padding: 2px 2px 2px 20px;
