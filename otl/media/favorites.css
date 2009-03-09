@@ -42,7 +42,7 @@ h3 {
 a.control-delete, a.control-add {
 	display: block;
 	position: absolute;
-	bottom: 3px;
+	top: 20px;
 	right: 8px;
 }
 
