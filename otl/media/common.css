@@ -7,11 +7,21 @@
 
 body {
 	font-family: Trebuchet MS, Verdana, Malgun Gothic, Dotum, AppleGothic, sans-serif;
-	font-size: 0.8em;
+	font-size: 9pt;
 	line-height: 1.0;
 	background: white url(./images/bg_black.jpg) repeat-x left -50px;
 	color: #eee;
 	text-align: center;
+}
+
+input, textarea {
+	font-size: 9pt;
+	line-height: 1.2;
+	padding: 2px;
+}
+
+input[type=submit] {
+	padding: 4px;
 }
 
 #header {
@@ -94,11 +104,36 @@ body {
 }
 
 #content {
-	padding: 10px;
+	padding: 15px 25px;
 	color: #222;
 	text-align: left;
 }
 
 #footer {
 	padding: 10px;
+}
+
+h2 {
+	margin: 0.3em;
+}
+
+h3 {
+	margin: 0.4em;
+}
+
+p {
+	margin: 0.4em;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+td, th {
+	border: 1px solid #ccc;
+}
+
+form td, th {
+	border: 0 none;
+	padding: 3px;
 }
