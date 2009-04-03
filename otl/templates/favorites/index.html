@@ -3,102 +3,48 @@
 <link rel="stylesheet" type="text/css" href="/media/favorites.css" />
 {% endblock %}
 {% block content %}
-<h2>과목 즐겨찾기</h2>
+<h2>과목 즐겨찾기 ({{current_year}}년 {{current_semester}}학기)</h2>
 <div id="myFavorites">
 	<h3>내 즐겨찾기</h3>
+{% if request.user.is_authenticated %}
 	<ul>
+	{% for item in favorite_list %}
 		<li>
-			<h4>CS492B: 자연언어처리특강</h4>
-			<a class="favorite-link" href="http://nlp.kaist.ac.kr/~cs492/">http://nlp.kaist.ac.kr/~cs492/</a>
-			<a class="control-delete" href="#">Delete</a>
+			<h4>{{item.course_code}}: {{item.course_name}}</h4>
+			<a class="favorite-link" href="{{item.url}}">{{item.url}}</a>
+			<a class="control-delete" href="/favorites/delete/{{item.id}}">Delete</a>
 		</li>
-		<li>
-			<h4>HS297: 한국문화사</h4>
-			<a class="favorite-link" href="http://hs.kaist.ac.kr">http://hs.kaist.ac.kr</a>
-			<a class="control-delete" href="#">Delete</a>
-		</li>
-		<li>
-			<h4>CS441: 전산망개론</h4>
-			<a class="favorite-link" href="http://nclab.kaist.ac.kr/lecture/cs441_2009_Spring/">http://nclab.kaist.ac.kr/lecture/cs441_2009_Spring/</a>
-			<a class="control-delete" href="#">Delete</a>
-		</li>
+	{% endfor %}
 	</ul>
+{% else %}
+	<p>로그인하지 않았습니다. :)</p>
+{% endif %}
 </div>
 <div id="publicFavorites">
 	<h3>다른 사람들의 즐겨찾기</h3>
 	<div id="add-public-favorite">
-		<a href="#">새 즐겨찾기 추가하기</a>
+		<a href="/favorites/create">새 즐겨찾기 추가하기</a>
 	</div>
 	<ul>
+	{% for item in recently_added_list %}
 		<li>
-			<h4>CS101: 기초프로그래밍</h4>
-			<a class="favorite-link" href="http://cs101.kaist.ac.kr">http://cs101.kaist.ac.kr</a>
-			<span class="submitter">올린이 : <a href="/accounts/view/USER1">USER1</a></span>
-			<a class="control-add" href="#">Add</a>
+			<h4>{{item.course_code}}: {{item.course_name}}</h4>
+			<a class="favorite-link" href="{{item.url}}">{{item.url}}</a>
+			<span class="submitter">올린이 : <a href="/accounts/view/{{item.writer.user.username}}">{{item.writer.user}}</a></span>
+			<a class="control-add" href="/favorite/add/{{item.id}}">Add</a>
 		</li>
-		<li>
-			<h4>PH211: 수리물리학I</h4>
-			<a class="favorite-link" href="http://cosmology.kaist.ac.kr/pm1/">http://cosmology.kaist.ac.kr/pm1/</a>
-			<span class="submitter">올린이 : <a href="/accounts/view/USER2">USER2</a></span>
-			<a class="control-add" href="#">Add</a>
-		</li>
-		<li>
-			<h4>ID201: 디자인 문화와 기술</h4>
-			<a class="favorite-link" href="http://dpl.kaist.ac.kr/wess/default.asp">http://dpl.kaist.ac.kr/wess/default.asp</a>
-			<span class="submitter">올린이 : <a href="/accounts/view/USER3">USER3</a></span>
-			<a class="control-add" href="#">Add</a>
-		</li>
-		<li>
-			<h4>ID201: 디자인 문화와 기술</h4>
-			<a class="favorite-link" href="http://dpl.kaist.ac.kr/wess/default.asp">http://dpl.kaist.ac.kr/wess/default.asp</a>
-			<span class="submitter">올린이 : <a href="/accounts/view/USER3">USER3</a></span>
-			<a class="control-add" href="#">Add</a>
-		</li>
-		<li>
-			<h4>ID201: 디자인 문화와 기술</h4>
-			<a class="favorite-link" href="http://dpl.kaist.ac.kr/wess/default.asp">http://dpl.kaist.ac.kr/wess/default.asp</a>
-			<span class="submitter">올린이 : <a href="/accounts/view/USER3">USER3</a></span>
-			<a class="control-add" href="#">Add</a>
-		</li>
-		<li>
-			<h4>ID201: 디자인 문화와 기술</h4>
-			<a class="favorite-link" href="http://dpl.kaist.ac.kr/wess/default.asp">http://dpl.kaist.ac.kr/wess/default.asp</a>
-			<span class="submitter">올린이 : <a href="/accounts/view/USER3">USER3</a></span>
-			<a class="control-add" href="#">Add</a>
-		</li>
-		<li>
-			<h4>ID201: 디자인 문화와 기술</h4>
-			<a class="favorite-link" href="http://dpl.kaist.ac.kr/wess/default.asp">http://dpl.kaist.ac.kr/wess/default.asp</a>
-			<span class="submitter">올린이 : <a href="/accounts/view/USER3">USER3</a></span>
-			<a class="control-add" href="#">Add</a>
-		</li>
-		<li>
-			<h4>ID201: 디자인 문화와 기술</h4>
-			<a class="favorite-link" href="http://dpl.kaist.ac.kr/wess/default.asp">http://dpl.kaist.ac.kr/wess/default.asp</a>
-			<span class="submitter">올린이 : <a href="/accounts/view/USER3">USER3</a></span>
-			<a class="control-add" href="#">Add</a>
-		</li>
-		<li>
-			<h4>ID201: 디자인 문화와 기술</h4>
-			<a class="favorite-link" href="http://dpl.kaist.ac.kr/wess/default.asp">http://dpl.kaist.ac.kr/wess/default.asp</a>
-			<span class="submitter">올린이 : <a href="/accounts/view/USER3">USER3</a></span>
-			<a class="control-add" href="#">Add</a>
-		</li>
-		<li>
-			<h4>ID201: 디자인 문화와 기술</h4>
-			<a class="favorite-link" href="http://dpl.kaist.ac.kr/wess/default.asp">http://dpl.kaist.ac.kr/wess/default.asp</a>
-			<span class="submitter">올린이 : <a href="/accounts/view/USER3">USER3</a></span>
-			<a class="control-add" href="#">Add</a>
-		</li>
+	{% endfor %}
 	</ul>
 	<div class="pages">
-		<a class="prev-page" href="#">Prev</a>
-		<a class="page" href="#">1</a>
-		<a class="page" href="#">2</a>
-		<a class="page selected" href="#">3</a>
-		<a class="page" href="#">4</a>
-		<a class="page" href="#">5</a>
-		<a class="next-page" href="#">Next</a>
+		{% if current_page.has_previous %}
+		<a class="prev-page" href="?page={{current_page.prev_page}}">Prev</a>
+		{% endif %}
+		{% for page in current_page.paginator.page_range %}
+		<a class="page{% ifequal page.number current_page.number %} selected{% endifequal %}" href="?page={{page.number}}">{{page.number}}</a>
+		{% endfor %}
+		{% if current_page.has_next %}
+		<a class="next-page" href="?page={{current_page.next_page}}">Next</a>
+		{% endif %}
 	</div>
 	<form id="search-form" method="get" action="/favorites/search/">
 		<p><label for="search-query">검색 : </label><input type="text" id="search-query" name="query" value="" /><input type="submit" value="Find" /></p>
