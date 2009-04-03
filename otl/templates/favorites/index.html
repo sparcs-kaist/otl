@@ -6,7 +6,7 @@
 <h2>과목 즐겨찾기 ({{current_year}}년 {{current_semester}}학기)</h2>
 <div id="myFavorites">
 	<h3>내 즐겨찾기</h3>
-{% if request.user.is_authenticated %}
+{% if user.is_authenticated %}
 	<ul>
 	{% for item in favorite_list %}
 		<li>

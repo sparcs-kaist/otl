@@ -91,8 +91,8 @@ INSTALLED_APPS = (
 )
 
 AUTHENTICATION_BACKENDS = (
-	'otl.apps.accounts.backends.KAISTSSOBackend',
 	'django.contrib.auth.backends.ModelBackend',
+	'otl.apps.accounts.backends.KAISTSSOBackend',
 )
 AUTH_PROFILE_MODULE = 'apps.accounts.userprofile'
 
