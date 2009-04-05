@@ -22,6 +22,7 @@
 		{code:'',name:'궁리실험관', x:422,y:373}
 	];
 
+
 	Data.Lectures =
 	[
 		{id:'1',year:'2008',term:'3',dept:'전산전공',classification:'기초필수',course_no:'CE202','class':'A',code:'37.231',title:'데이타구조',lec_time:'2',lab_time:'3',credit:'3',prof:'김민우',times:'화16:00~18:00,수16:00~19:00,목12:00~13:00',classroom:'창의학습관:304',fixed_num:'200',remarks:'영어강의',examtime:'화:14:00~16:00'},
@@ -522,9 +523,15 @@
 			</select>
 		</div>
 		<div id="lecture_container">
-			<div id="lecture_tabs"></div>
-			<div id="lecture_contents"></div>
-			<div id="lecture_contents_footer"><div></div></div>
+			<div class="left" style="width:15%;padding:0;margin:0;">
+				<div id="lecture_tabs"></div>
+				<div class="clear"></div>
+			</div>
+			<div class="left" style="width:85%;padding:0;margin:0;">
+				<div id="lecture_contents"></div>
+				<div id="lecture_contents_footer"><div></div></div>
+			</div>
+			<div class="clear"></div>
 		</div>
 	</div>
 	<div id="center">

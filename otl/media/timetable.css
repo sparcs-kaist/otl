@@ -153,22 +153,16 @@
     text-align:center;
 }
 
-#lecture_tabs
-{
-    border:1px solid #fff;
-}
-
 #lecture_tabs .lecture_tab
 {
-    float:left;
-    margin-right:2px;
+    margin-bottom:3px;
     cursor:pointer;
     background:#E1ECFE url('images/corner_tl.gif') left top no-repeat;
 }
 #lecture_tabs .lecture_tab div
 {
-    padding:2px 7px;
-    background:transparent url('images/corner_tr.gif') right top no-repeat;
+    padding:3px 7px;
+    background:transparent url('images/corner_bl.gif') left bottom no-repeat;
 }
 
 #lecture_tabs .active
