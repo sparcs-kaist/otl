@@ -2,7 +2,7 @@
 	{
 		"pk": "1",
 		"model": "auth.user",
-		"fields": {"username": "otl_admin", "password": "sha1$b9f57$f32e40189adeeaa1a1ba52c1848b55755af80d57", "email": "otl@server.daybreaker.info", "first_name": "Admin", "last_name": "Almighty", "is_staff": true, "is_active": true, "is_superuser": true, "date_joined": "2009-04-05 17:51:20"}
+		"fields": {"username": "otl_admin", "password": "sha1$20583$72c4c5f36ff80b75be00b0eaac973822034b32f8", "email": "otl@server.daybreaker.info", "first_name": "Admin", "last_name": "Almighty", "is_staff": true, "is_active": true, "is_superuser": true, "date_joined": "2009-04-05 17:51:20"}
 	},
 	{
 		"pk": "1",
