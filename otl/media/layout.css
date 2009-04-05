@@ -63,16 +63,21 @@ body
 }
 #header-content
 {
-    padding-top:30px;
+    padding-top:20px;
 }
 
 #header-content h2
 {
-    padding-left:120px;
-    line-height:45px;
-    background:url('images/logo.jpg') left top no-repeat;
+	color:#000;
 }
 
+#header-content h2 span.logo
+{
+	display:inline-block;
+    height:75px;
+	width:170px;
+    background:url('images/otl.png') left top no-repeat;
+}
 
 #content
 {
@@ -81,12 +86,19 @@ body
 
 #footer
 {
-    margin-top:10px;
     border-top:1px solid #E7E7E7;
     background-color:#F3F3F3;
     background-color:#000;
     text-align:center;
     color:#eee;
+
+	padding-top:20px;
+	height:100px;
+}
+
+#copyright
+{
+	text-align:center;
 }
 
 
