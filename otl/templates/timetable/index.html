@@ -460,40 +460,10 @@
 			<a id="test" >테스트</a>
 			<label>학과&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-size:11px">(<a href="#">관심학과 설정</a>)</span></label>
 			<select id="department">
-				<option>전체보기</option>
-				<option>Freshman Design</option>
-				<option>건설환경</option>
-				<option>고분자학학제</option>
-				<option>공필</option>
-				<option>금융전공</option>
-				<option>기계공학</option>
-				<option>나노과학기술학</option>
-				<option>로봇공학</option>
-				<option>문화기술</option>
-				<option>물리</option>
-				<option>바이오및뇌공학</option>
-				<option>반도체학</option>
-				<option>비즈니스</option>
-				<option>산업공학</option>
-				<option>산업디자인</option>
-				<option>생명과학</option>
-				<option>생명화공</option>
-				<option>소프트웨어학제</option>
-				<option>수리과학</option>
-				<option>신소재공학</option>
-				<option>아이엠비에전</option>
-				<option>원자력양자</option>
-				<option>의과학대</option>
-				<option>의과학학제</option>
-				<option>이큐전공</option>
-				<option>인문사회과학부</option>
-				<option>자기대학원</option>
-				<option>전기전자전공</option>
-				<option>전산전공</option>
-				<option>정경원</option>
-				<option>정보통신학제</option>
-				<option>테크노경영대학</option>
-				<option>화학</option>
+				<option value=".">전체보기</option>
+				{% for item in departments %}
+				<option value="{{ item.code }}">{{ item.name }}</option>
+				{% endfor %}
 			</select>
 			<ul>
 				<li>인문사회학과</li>
