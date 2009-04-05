@@ -49,7 +49,9 @@ def add(request, course_id):
 	if request.user.is_authenticated():
 		course_selected = CourseLink.objects.get( id__exact = course_id )
 		user = request.user
+		count = course_selected.favored_count
 		course_selected.favored_by.add( user )
+		CourseLink.objects.filter(id__exact = course_id).update(favored_count = count + 1)
 
 		favorite_list = CourseLink.objects.filter(favored_by__exact=request.user)
 	else:
@@ -75,9 +77,9 @@ def create(request):
 	new_semester = request.GET.get('semester')
 	new_url = request.GET.get('url')
 	new_writer = request.user
-	new_written = time.ctime()
-
-	new_course_link = CourseLink.objects.create(course_code = new_code, course_name = new_name, year = new_year, semester = new_semester, url = new_url, writer = new_writer, written = new_written)
+	new_written = time.strftime('%Y-%m-%d %H:%M:%S')
+	print(new_written)
+	new_course_link = CourseLink.objects.create(course_code = new_code, course_name = new_name, year = new_year, semester = new_semester, url = new_url, writer = new_writer, written = new_written , favored_count = 0)
 	
 	page = request.GET.get('page',1)
 	new_courselink_pages = Paginator(CourseLink.objects.all().order_by('-written'), NUM_PER_PAGE)
@@ -90,8 +92,10 @@ def create(request):
 
 def delete(request, course_id):
 	user = request.user
-	delete_course = CourseLink.objects.get(id = course_id)
+	delete_course = CourseLink.objects.get(id__exact = course_id)
+	count = course_selected.favored_count
 	delete_course.favored_by.remove(user)
+	CourseLink.objects.filter(id__exact = course_id).update(favored_count = count - 1)
 	favorite_list = CourseLink.objects.filter(favored_by__exact=request.user)
 
 	return render_to_response('favorites/index.html', {

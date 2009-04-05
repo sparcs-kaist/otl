@@ -22,9 +22,16 @@
 </div>
 <div id="publicFavorites">
 	<h3>다른 사람들의 즐겨찾기</h3>
-	<div id="add-public-favorite">
-		<a href="/favorites/create">새 즐겨찾기 추가하기</a>
-	</div>
+	<form id="create-form" method="get" action="/favorites/create/">
+		<div id="add-public-favorite">
+			즐겨찾기 등록 : code <input type="text" id="code" name="code" value="" size="5"/>
+			name <input type="text" id="name" name="name" value="" size="5"/>
+			year <input type="text" id="year" name="year" value="" size="4"/>
+			semester <input type="text" id="semester" name="semester" value="" size="1"/>
+			url <input type="text" id="url" name="url" value="" size="5"/>
+			<input type="submit" value="등록" />
+		</div>
+	</form>
 	<ul>
 	{% for item in recently_added_list %}
 		<li>
@@ -54,7 +61,7 @@
 				<h4>{{item.year}} {{item.semester}} {{item.course_code}}: {{item.course_name}}</h4>
 				<a class="search-link" href="{{item.url}}">{{item.url}}</a>
 				<span class="submitter">올린이 : <a href="/accounts/view/{{item.writer.username}}">{{item.writer.username}}</a></span>
-				<a class="control-add" href="/favorite/add/{{item.id}}">Add</a>
+				<a class="control-add" href="/favorites/add/{{item.id}}">Add</a>
 			</li>
 		{% endfor%}
 		</ul>
