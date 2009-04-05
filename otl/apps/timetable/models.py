@@ -86,6 +86,10 @@ class ClassTime(models.Model):
 	def get_end_numeric(self):
 		"""0시 0분을 기준으로 분 단위로 계산된 종료 시간을 반환한다."""
 		return int(self.end[0:2]) * 60 + int(self.end[4:6])
+	
+	@staticmethod
+	def numeric_time_to_str(numeric_time):
+		return u'%s:%s' % (numeric_time // 60, numeric_time % 60)
 
 	def __unicode__(self):
 		return u'[%s] %s, %s-%s @%s' % (self.lecture.code, self.get_day_display(), self.begin, self.end, self.room_ko)
