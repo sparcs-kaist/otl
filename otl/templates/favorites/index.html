@@ -12,7 +12,7 @@
 		<li>
 			<h4>{{item.course_code}}: {{item.course_name}}</h4>
 			<a class="favorite-link" href="{{item.url}}">{{item.url}}</a>
-			<a class="control-delete" href="/favorites/delete/?delete={{item.id}}">Delete</a>
+			<a class="control-delete" href="/favorites/delete/{{item.id}}">Delete</a>
 		</li>
 	{% endfor %}
 	</ul>
@@ -31,7 +31,7 @@
 			<h4>{{item.course_code}}: {{item.course_name}}</h4>
 			<a class="favorite-link" href="{{item.url}}">{{item.url}}</a>
 			<span class="submitter">올린이 : <a href="/accounts/view/{{item.writer.username}}">{{item.writer.username}}</a></span>
-			<a class="control-add" href="/favorites/add/?id={{item.id}}">Add</a>
+			<a class="control-add" href="/favorites/add/{{item.id}}">Add</a>
 		</li>
 	{% endfor %}
 	</ul>
@@ -54,7 +54,7 @@
 				<h4>{{item.year}} {{item.semester}} {{item.course_code}}: {{item.course_name}}</h4>
 				<a class="search-link" href="{{item.url}}">{{item.url}}</a>
 				<span class="submitter">올린이 : <a href="/accounts/view/{{item.writer.username}}">{{item.writer.username}}</a></span>
-				<a class="control-add" href="/favorite/add/?id={{item.id}}">Add</a>
+				<a class="control-add" href="/favorite/add/{{item.id}}">Add</a>
 			</li>
 		{% endfor%}
 		</ul>
