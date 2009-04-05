@@ -1,0 +1,38 @@
+[
+	{
+		"pk": 1,
+		"model": "favorites.courselink",
+		"fields": {
+			"course_name": "\uc804\uc0b0\ub9dd\uac1c\ub860",
+			"course_code": "CS441",
+			"url": "http://example.com",
+			"writer": 1,
+			"favored_count": 1,
+			"favored_by": [1]
+		}
+	},
+	{
+		"pk": 2,
+		"model": "favorites.courselink",
+		"fields": {
+			"course_name": "Operating System",
+			"course_code": "CS330",
+			"url": "http://example.com",
+			"writer": 1,
+			"favored_count": 0,
+			"favored_by": []
+		}
+	},
+	{
+		"pk": 3,
+		"model": "favorites.courselink",
+		"fields": {
+			"course_name": "\ud55c\uad6d\ubb38\ud654\uc0ac",
+			"course_code": "HS297",
+			"url": "http://example.com",
+			"writer": 1,
+			"favored_count": 0,
+			"favored_by": []
+		}
+	}
+]
