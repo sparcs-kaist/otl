@@ -64,7 +64,7 @@ def _lectures_to_json(lectures):
 			'au': lecture.credit_au,
 			'fixed_num': lecture.limit,
 			'prof': lecture.professor,
-			'times': [{'day': schedule.get_day_display(), 'start': schedule.get_begin_numeric(), 'end': schedule.get_end_numeric(), 'classroom': schedule.room_ko} for schedule in lecture.classtime_set.all()],
+			'times': [{'day': schedule.get_day_display(), 'start': schedule.get_begin_numeric(), 'end': schedule.get_end_numeric(), 'classroom': schedule.room_ko, 'type': schedule.get_type_display()} for schedule in lecture.classtime_set.all()],
 			'remarks': u'영어강의' if lecture.is_english else u'',
 			'examtime': {'day': exam.get_day_display(), 'start': exam.get_begin_numeric(), 'end': exam.get_end_numeric()} if exam != None else None,
 		}
