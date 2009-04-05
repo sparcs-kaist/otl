@@ -2,6 +2,7 @@
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.core.paginator import Paginator
+from django.conf import settings
 from django.contrib.auth.models import User
 from otl.apps.favorites.models import CourseLink
 import time
@@ -16,12 +17,12 @@ NUM_PER_PAGE = 10
 
 def index(request):
 	if request.user.is_authenticated():
-		favorite_list = CourseLink.objects.filter(favored_by__exact=request.user)
+		favorite_list = CourseLink.objects.filter(year=settings.CURRENT_YEAR, semester=settings.CURRENT_SEMESTER, favored_by__exact=request.user)
 	else:
 		favorite_list = None
 	
 	page = request.GET.get('page', 1)
-	courselink_pages = Paginator(CourseLink.objects.all().order_by('-written'), NUM_PER_PAGE)
+	courselink_pages = Paginator(CourseLink.objects.filter(year=settings.CURRENT_YEAR, semester=settings.CURRENT_SEMESTER).order_by('-written'), NUM_PER_PAGE)
 	current_page = courselink_pages.page(page)
 	# TODO: 나중에 영문 과목명과 한글 과목명 처리는 어떻게?
 
@@ -37,7 +38,7 @@ def index(request):
 def search(request):
 	search_page = request.GET.get('search-page',1)
 	search_code = request.GET.get('query')
-	search_list = Paginator(CourseLink.objects.filter(course_code__exact = search_code).order_by('-year','-semester','favored_count'), NUM_PER_PAGE)
+	search_list = Paginator(CourseLink.objects.filter(year=settings.CURRENT_YEAR, semester=settings.CURRENT_SEMESTER, course_code__exact = search_code).order_by('-year','-semester','favored_count'), NUM_PER_PAGE)
 	current_search_page = search_list.page(search_page)
 
 	return render_to_response('favorites/index.html', {

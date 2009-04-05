@@ -10,7 +10,7 @@ except:
 	import simplejson as json
 
 def index(request):
-	lectures = Lecture.objects.filter(year__exact=settings.CURRENT_YEAR, semester__exact=settings.CURRENT_SEMESTER)
+	lectures = Lecture.objects.filter(year=settings.CURRENT_YEAR, semester=settings.CURRENT_SEMESTER)
 	lectures_output = _lectures_to_json(lectures)
 	return render_to_response('timetable/index.html', {
 		'section': 'timetable',
@@ -25,7 +25,7 @@ def lecture_filter(request):
 	begin = request.GET.get('start', None)
 	end = request.GET.get('end', None)
 
-	lectures = Lectures.objects.all()
+	lectures = Lectures.objects.filter(year=settings.CURRENT_YEAR, semester=settings.CURRENT_SEMESTER)
 	
 	if department != None:
 		lectures = lectures.filter(department__name__exact=department)
