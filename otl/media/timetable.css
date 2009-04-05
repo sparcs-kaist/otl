@@ -1,0 +1,340 @@
+
+#timetable
+{
+    clear:both;
+    margin:0;
+    padding:0;
+    background:#C3D9FF url('images/corner_tl.gif') left top no-repeat;
+}
+#timetable-wrap
+{
+    position:relative;
+    background:transparent url('images/corner_tr.gif') right top no-repeat;
+    margin:0;
+    padding:0 10px 10px;
+}
+
+#timetable_footer
+{
+    width:100% !important;
+    width:582px;
+    background:#C3D9FF url('images/corner_bl.gif') left bottom no-repeat;
+}
+
+#timetable_footer div
+{
+    height:5px;
+    background:transparent url('images/corner_br.gif') right bottom no-repeat;
+}
+
+#colheaders
+{
+    position:relative;
+    height:24px;
+    margin-left:60px;
+}
+
+.chead
+{
+    float:left;
+    width:100px;
+    text-align:center;
+    line-height:24px;
+    font-size:14px;
+}
+
+
+#tablebody
+{
+    position:relative;
+    width:560px !important;
+    width:562px;
+    height:672px !important;
+    height:674px;
+    border:1px solid #A2BBDD;
+}
+
+#rowheaders
+{
+    position:absolute;
+    width:60px;
+    height:100%;
+    left:0pt;
+    top:0pt;
+}
+
+.rhead
+{
+    position:relative;
+    width:100%;
+    height:42px;
+    background:#E8EEF7 url('images/timetable/dot.gif') bottom repeat-x;
+}
+
+.rheadtext
+{
+    position:absolute;
+    top:5px;
+    right:5px;
+    color:#446688;
+    font-size:11px;
+}
+
+#grid-wrap
+{
+    position:absolute;
+    cursor:pointer;
+    left:60px;
+    top:0pt;
+    width:500px;
+    height:100%;
+
+}
+
+
+#grid
+{
+    position:absolute;
+    left:0;
+    right:0;
+    width:100%;
+    height:100%;
+    background:#fff url('images/timetable/cell_100.gif') repeat;
+}
+
+#lmodules_container
+{
+    position:absolute;
+    left:0;
+    top:0;
+    width:100%;
+    height:100%;
+}
+
+.lmodules
+{
+    position:absolute;
+    left:0;
+    top:0;
+    width:100%;
+    height:100%;
+}
+
+
+.lmodule
+{
+    position:absolute;
+    left:303px;
+    top:42px;
+    width:96px;
+    height:82px;
+}
+
+.lmodule .bg
+{
+    position:absolute;
+    left:0pt;
+    right:0pt;
+    width:100%;
+    height:100%;
+    background:#C3D9FF;
+    border:1px solid #DDD;
+    opacity:0.5;
+    filter:alpha(opacity=50);
+}
+
+.lmodule .textbody
+{
+    height:100%;
+    overflow:hidden;
+    position:absolute;
+    line-height:21px;
+    font-size:11px;
+    text-align:center;
+}
+
+#lecture_tabs
+{
+    border:1px solid #fff;
+}
+
+#lecture_tabs .lecture_tab
+{
+    float:left;
+    margin-right:2px;
+    cursor:pointer;
+    background:#E1ECFE url('images/corner_tl.gif') left top no-repeat;
+}
+#lecture_tabs .lecture_tab div
+{
+    padding:2px 7px;
+    background:transparent url('images/corner_tr.gif') right top no-repeat;
+}
+
+#lecture_tabs .active
+{
+    background-color:#C3D9FF;
+}
+
+#lecture_contents
+{
+    clear:both;
+    background:#C3D9FF url('images/corner_tr.gif') right top no-repeat;
+    padding:5px;
+}
+
+#lecture_contents_footer
+{
+    background:#C3D9FF url('images/corner_bl.gif') left bottom no-repeat;
+}
+#lecture_contents_footer div
+{
+    height:5px;
+    background:transparent url('images/corner_br.gif') right bottom no-repeat;
+}
+
+
+#timetable_tabs
+{
+    float:left;
+}
+
+#timetable_tabs .timetable_tab
+{
+    float:left;
+    margin-left:4px;
+    background:#E1ECFE url('images/corner_tl.gif') left top no-repeat;
+}
+
+#timetable_tabs .active
+{
+    background-color:#C3D9FF;
+}
+
+#timetable_tabs .timetable_tab a
+{
+    display:block;
+    text-decoration:none;
+    padding:2px 8px;
+    background:transparent url('images/corner_tr.gif') right top no-repeat;
+    cursor:pointer;
+}
+
+
+#container 
+{
+    padding-top:10px;
+}
+
+#center
+{
+    margin:0 10px;
+    float:left;
+    width:580px;
+}
+
+#left-side
+{
+    float:left;
+    width:180px
+}
+
+#right-side
+{
+ 
+    float:right;
+    width:200px;
+}
+
+
+
+
+.lecture_content a
+{
+    text-decoration:none;
+    display:block;
+    margin-bottom:2px;
+    padding:1px 5px;
+    cursor:pointer;
+    background:#fff;
+}
+
+.lecture_content a:hover
+{
+    color:#333;
+    background:#E1ECFE;
+}
+
+.lecture_content a.clicked
+{
+    background:#D1EFD5;
+}
+
+#map-wrap
+{
+    padding:0;
+    margin:0;
+    position:relative;
+}
+
+#map-drag-container
+{
+    position:relative;
+    width:200px;
+    height:300px;
+    border:1px solid #DDD;
+    overflow:hidden;
+    cursor:move;
+}
+
+#dragmap
+{
+    position:absolute;
+    left:0;
+    top:0;
+    width:684px;
+    height:614px;
+    background:#fff url('images/kaist_map.jpg') 0 0 no-repeat;
+}
+
+#map-text
+{
+    position:absolute;
+    left:-1000px;
+    top:-1000px;
+    border:1px solid #DDD;
+    background:#fff;
+    color:#000;
+    font-size:12px;
+    font-weight:bold;
+    padding:0 3px;
+}
+
+#map-arrow
+{
+    position:absolute;
+    height:37px;
+    width:48px;
+    left:0;
+    bottom:-37px;
+    background:transparent url('images/timetable/map_arrow.png') 0 0 no-repeat;
+}
+
+
+#cellselected
+{
+    position:absolute;
+    left:0;
+    top:0;
+    width:99px;
+    height:20px;
+    background:#DDD;
+    border:1px solid black;
+    opacity:0.4;
+    filter:alpha(opacity=40);
+}
+
+#cellselected.clicked
+{
+    background:black;
+}

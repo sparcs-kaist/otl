@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+		<title>OTL - {{title}}</title>
+		<link rel="stylesheet" type="text/css" href="/media/default.css" />
+		<link rel="stylesheet" type="text/css" href="/media/layout.css" />
+		{% block headers %}{% endblock %}
+    </head>
+    <body>
+        <div id="gbar">
+            <div id="gbar-content">
+                <h1 id="global-logo">
+                    <span>Online</span>
+                    <span style="color:#00CCFF">Time planner</span>
+                    <span style="font-size:12px">for</span>
+                    <span style="color:#FA0088">Lectures</span>
+                    &nbsp;
+                    <div class="none">
+                    <small>powered by <span style="color:#FF3399">S</span><span style="color:#33CC66">P</span><span style="color:#00CCFF">A</span><span style="color:#FF9900">R</span><span style="color:#33CCCC">C</span><span style="color:#9966FF">S</span></small>
+                    </div>
+                </h1> 
+                <p id="global-services" class="none">
+                    <a href="#">Talk</a>
+                    <a href="#">Lecture</a>
+                    <a href="#">Movie</a>
+                    <a href="#">Food</a>
+                    <a href="#">Road</a>
+                    <a href="#">Chat</a>
+                    <a href="#">Buy&amp;Sell</a>
+                </p>
+                <p id="global-info">
+					{% if user.is_authenticated %}
+					{{ user }} | <a href="/accounts/myinfo">내 계정</a> | <a href="/logout/">로그아웃</a>
+					{% else %}
+					<a href="/login/">로그인</a>
+					{% endif %}
+                </p>
+                <div class="clear"></div>
+            </div>
+        </div>
+        <div id="header">
+            <div id="header-content">
+                <h2>KAIST 수강 도우미</h2>
+				<div id="navigation">
+					<div class="navigation-wrap">
+						<a class="left{% ifequal section 'calendar' %} selected{% endifequal %}" href="/calendar/">일정 관리</a>
+						<a class="left{% ifequal section 'appointment' %} selected{% endifequal %}" href="/appointment/">약속 잡기</a>
+						<a class="left{% ifequal section 'groups' %} selected{% endifequal %}" href="/groups/">조모임</a>
+						<a class="left{% ifequal section 'favorites' %} selected{% endifequal %}" href="/favorites/">과목 즐겨찾기</a>
+						<a class="left{% ifequal section 'board' %} selected{% endifequal %}" href="/board/lecture/">과목 Q&amp;A</a>
+						<a class="left{% ifequal section 'timetable' %} selected{% endifequal %}" href="/timetable/">모의 시간표</a>
+						<a class="right{% ifequal section 'info' %} selected{% endifequal %}" href="#">개발자 노트</a>
+						<div class="clear"></div>
+					</div>
+				</div>
+            </div>
+        </div>
+        <div id="container">
+        <div id="content-wrap">
+            <div id="content">
+				{% block content %}{% endblock %}
+            </div><!--content-->
+        </div><!--content-wrap-->
+        </div><!--container-->
+        <div id="footer">
+            <div id="footer-content">
+                <div class="ft-box">
+                    <h3>Site Map</h3>
+                    <p>
+                    </p>
+                </div>
+                <div class="ft-box">
+                    <p>
+                        <h3>Site Map</h3>
+                    </p>
+                </div>
+                <div class="ft-box">
+                    <p>
+                        <h3>Site Map</h3>
+                    </p>
+                </div>
+				<p id="copyright">Copyright &copy;2009, OTL Team</p>
+                <div class="clear"></div>
+            </div>
+        </div>
+    </body>
+</html>
