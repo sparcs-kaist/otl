@@ -3,6 +3,7 @@ from django.db import models
 from django.contrib import admin
 from otl.apps.accounts.models import Department
 from otl.apps.common import *
+import re
 
 class Lecture(models.Model):
 	"""특정 년도·학기에 개설된 과목 instance를 가리키는 모델"""
@@ -16,10 +17,10 @@ class Lecture(models.Model):
 	type = models.CharField(max_length=12)		   			# 과목구분 (한글; '전필', '전선', '기필', ...)
 	type_en = models.CharField(max_length=36)	   			# 과목구분 (영문; 'Major Required', 'Major Elective', ...)
 	audience = models.IntegerField(choices=AUDIENCE_TYPES)	# 학년구분
-	credit = models.IntegerField()				   			# 학점
-	credit_au = models.IntegerField()			   			# AU
-	class_time = models.CharField(max_length=100, blank=True)	# 수업시간 (문자열로 설명만 되어 있는 것)
-	lab = models.CharField(max_length=100, blank=True)		# 실험시간 (상동)
+	credit = models.IntegerField(default=3)		   			# 학점
+	num_classes = models.IntegerField(default=3)			# 강의 시간
+	num_labs = models.IntegerField(default=0)				# 실험 시간
+	credit_au = models.IntegerField(default=0)	   			# AU
 	limit = models.IntegerField(default=0)		   			# 인원제한
 	professor = models.CharField(max_length=100)   			# 교수님 이름 (한글)
 	professor_en = models.CharField(max_length=100)			# 교수님 이름 (영문)
@@ -28,6 +29,13 @@ class Lecture(models.Model):
 
 	def __unicode__(self):
 		return u'%s (%d:%s) %s' % (self.code, self.year, self.get_semester_display(), self.title)
+	
+	def get_code_numeric(self):
+		"""숫자로 된 'XX.YYY' 형태의 과목 코드를 돌려준다."""
+		matches = re.search(ur'^([a-zA-Z]+)(\d+)$', self.code)
+		department_code = matches.group(1)
+		lecture_code = matches.group(2)
+		return u'%d.%s' % (Department.objects.get(code=department_code).num_id, lecture_code)
 
 	class Meta:
 		unique_together = ('code', 'year', 'semester', 'department', 'class_no')
@@ -42,6 +50,14 @@ class ExamTime(models.Model):
 	day = models.SmallIntegerField(choices=WEEKDAYS)	# 시험 요일
 	begin = models.CharField(max_length=5)				# hh:mm 형태의 시험 시작 시간 (24시간제)
 	end = models.CharField(max_length=5)				# hh:mm 형태의 시험 종료 시간 (24시간제)
+
+	def get_begin_numeric(self):
+		"""0시 0분을 기준으로 분 단위로 계산된 시작 시간을 반환한다."""
+		return int(self.begin[0:2]) * 60 + int(self.begin[4:6])
+
+	def get_end_numeric(self):
+		"""0시 0분을 기준으로 분 단위로 계산된 종료 시간을 반환한다."""
+		return int(self.end[0:2]) * 60 + int(self.end[4:6])
 
 	def __unicode__(self):
 		return u'[%s] %s, %s-%s' % (self.lecture.code, self.get_day_display(), self.begin, self.end)
@@ -62,6 +78,14 @@ class ClassTime(models.Model):
 	room_ko = models.CharField(max_length=60, blank=True, null=True)	# 수업 장소 (한글)
 	room_en = models.CharField(max_length=60, blank=True, null=True)	# 수업 장소 (영문)
 	unit_time = models.SmallIntegerField(blank=True, null=True)			# 수업 교시
+
+	def get_begin_numeric(self):
+		"""0시 0분을 기준으로 분 단위로 계산된 시작 시간을 반환한다."""
+		return int(self.begin[0:2]) * 60 + int(self.begin[4:6])
+
+	def get_end_numeric(self):
+		"""0시 0분을 기준으로 분 단위로 계산된 종료 시간을 반환한다."""
+		return int(self.end[0:2]) * 60 + int(self.end[4:6])
 
 	def __unicode__(self):
 		return u'[%s] %s, %s-%s @%s' % (self.lecture.code, self.get_day_display(), self.begin, self.end, self.room_ko)

@@ -97,6 +97,10 @@ AUTHENTICATION_BACKENDS = (
 )
 AUTH_PROFILE_MODULE = 'apps.accounts.userprofile'
 
+# Should be overriden at settings_local.py
+CURRENT_YEAR = 2009
+CURRENT_SEMESTER = 1
+
 try:
 	import otl.settings_local
 except ImportError:
