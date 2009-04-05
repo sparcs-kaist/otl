@@ -5,6 +5,8 @@
 		"fields": {
 			"course_name": "\uc804\uc0b0\ub9dd\uac1c\ub860",
 			"course_code": "CS441",
+			"year": 2009,
+			"semester": 1,
 			"url": "http://example.com",
 			"writer": 1,
 			"favored_count": 1,
@@ -17,6 +19,8 @@
 		"fields": {
 			"course_name": "Operating System",
 			"course_code": "CS330",
+			"year": 2009,
+			"semester": 1,
 			"url": "http://example.com",
 			"writer": 1,
 			"favored_count": 0,
@@ -29,6 +33,8 @@
 		"fields": {
 			"course_name": "\ud55c\uad6d\ubb38\ud654\uc0ac",
 			"course_code": "HS297",
+			"year": 2009,
+			"semester": 1,
 			"url": "http://example.com",
 			"writer": 1,
 			"favored_count": 0,
