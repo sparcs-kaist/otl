@@ -1,5 +1,706 @@
-{% extends 'base.html' %}
+{% extends 'layout.html' %}
+{% block headers %}
+	<link rel="stylesheet" type="text/css" href="/media/table.css" />
+	<link rel="stylesheet" type="text/css" href="/media/timetable.css" />
+	<script type="text/javascript" src="/media/js/mootools/mootools-1.2.1-core-yc.js"></script>
+	<script type="text/javascript" src="/media/js/mootools/mootools-1.2-more-yc.js"></script>
+	<script>
+	var Data = {};
+	Data.Map = 
+	[
+		{code:'N7',name:'기계공학동', x:227,y:247},
+		{code:'W1',name:'응용공학동', x:217,y:515},
+		{code:'E11',name:'창의학습관', x:368,y:356},
+		{code:'N4',name:'대학 1호관', x:432,y:251},
+		{code:'N5',name:'대학 2호관', x:517,y:243},
+		{code:'N8',name:'대학 3호관', x:435,y:231},
+		{code:'E6',name:'자연과학동', x:474,y:391},
+		{code:'E16',name:'정문술빌딩', x:367,y:313},
+		{code:'E2',name:'산업경영동', x:405,y:495},
+		{code:'E7',name:'의과학연구센터', x:529,y:369},
+		{code:'E3',name:'정보전자동', x:494,y:446},
+		{code:'',name:'궁리실험관', x:422,y:373}
+	];
+
+	Data.Lectures =
+	[
+		{id:'1',year:'2008',term:'3',dept:'전산전공',classification:'기초필수',course_no:'CE202','class':'A',code:'37.231',title:'데이타구조',lec_time:'2',lab_time:'3',credit:'3',prof:'김민우',times:'화16:00~18:00,수16:00~19:00,목12:00~13:00',classroom:'창의학습관:304',fixed_num:'200',remarks:'영어강의',examtime:'화:14:00~16:00'},
+		{id:'2',year:'2008',term:'3',dept:'전산전공',classification:'기초필수',course_no:'CE202','class':'A',code:'37.231',title:'오토마타',lec_time:'2',lab_time:'3',credit:'3',prof:'김민우',times:'화16:00~18:00,수8:30~10:00,금16:00~18:00',classroom:'창의학습관:304',fixed_num:'200',remarks:'영어강의',examtime:'화:14:00~16:00'},
+		{id:'3',year:'2008',term:'3',dept:'전산전공',classification:'기초선택',course_no:'CE202','class':'A',code:'37.231',title:'자연어처리',lec_time:'2',lab_time:'3',credit:'3',prof:'김민우',times:'화16:00~18:00,목16:00~18:00',classroom:'창의학습관:304',fixed_num:'200',remarks:'영어강의',examtime:'화:14:00~16:00'},
+		{id:'4',year:'2008',term:'3',dept:'전산전공',classification:'기초선택',course_no:'CE202','class':'A',code:'37.231',title:'결정구조 및 회절',lec_time:'2',lab_time:'3',credit:'3',prof:'김민우',times:'수16:00~18:00',classroom:'창의학습관:304',fixed_num:'200',remarks:'영어강의',examtime:'화:14:00~16:00'},
+		{id:'5',year:'2008',term:'3',dept:'전산전공',classification:'기초선택',course_no:'CE202','class':'A',code:'37.231',title:'시스템 프로그래밍',lec_time:'2',lab_time:'3',credit:'3',prof:'김민우',times:'목16:00~18:00',classroom:'창의학습관:304',fixed_num:'200',remarks:'영어강의',examtime:'화:14:00~16:00'},
+		{id:'6',year:'2008',term:'3',dept:'물리',classification:'기초선택',course_no:'CE202','class':'A',code:'37.231',title:'운영체제',lec_time:'2',lab_time:'3',credit:'3',prof:'김민우',times:'금16:00~18:00',classroom:'창의학습관:304',fixed_num:'200',remarks:'영어강의',examtime:'화:14:00~16:00'},
+		{id:'7',year:'2008',term:'3',dept:'물리',classification:'기초선택',course_no:'CE202','class':'A',code:'37.231',title:'알고리즘',lec_time:'2',lab_time:'3',credit:'3',prof:'김민우',times:'월16:00~18:00',classroom:'창의학습관:304',fixed_num:'200',remarks:'영어강의',examtime:'화:14:00~16:00'},
+		{id:'8',year:'2008',term:'3',dept:'물리',classification:'기초선택',course_no:'CE202','class':'B',code:'37.231',title:'데이타베이스개론',lec_time:'2',lab_time:'3',credit:'3',prof:'김민우',times:'수16:00~18:00',classroom:'정보전자동:304',fixed_num:'200',remarks:'영어강의',examtime:'화:14:00~16:00'},
+		{id:'9',year:'2008',term:'3',dept:'물리',classification:'전공선택',course_no:'CE202','class':'B',code:'37.231',title:'네트워크',lec_time:'2',lab_time:'3',credit:'3',prof:'김민우',times:'월16:00~18:00,수16:00~18:00',classroom:'정보전자동:304',fixed_num:'200',remarks:'영어강의',examtime:'화:14:00~16:00'},
+		{id:'10',year:'2008',term:'3',dept:'물리',classification:'전공필수',course_no:'CE202','class':'B',code:'37.231',title:'미적II',lec_time:'2',lab_time:'3',credit:'3',prof:'김민우',times:'화16:00~18:00,금8:00~10:00',classroom:'정보전자동:304',fixed_num:'200',remarks:'영어강의',examtime:'화:14:00~16:00'},
+		{id:'11',year:'2008',term:'3',dept:'물리',classification:'전공필수',course_no:'CE202','class':'B',code:'37.231',title:'데이타구조',lec_time:'2',lab_time:'3',credit:'3',prof:'김민우',times:'수:9:00~18:00',classroom:'기계공학동:304',fixed_num:'200',remarks:'영어강의',examtime:'화:14:00~16:00'},
+		{id:'12',year:'2008',term:'3',dept:'수리과학',classification:'전공필수',course_no:'CE202','class':'C',code:'37.231',title:'오토마타',lec_time:'2',lab_time:'3',credit:'3',prof:'김민우',times:'화16:00~18:00',classroom:'기계공학동:304',fixed_num:'200',remarks:'영어강의',examtime:'화:14:00~16:00'},
+		{id:'13',year:'2008',term:'3',dept:'수리과학',classification:'전공필수',course_no:'CE202','class':'C',code:'37.231',title:'자연어처리',lec_time:'2',lab_time:'3',credit:'3',prof:'김민우',times:'화16:00~18:00,목18:00~20:00',classroom:'기계공학동:304',fixed_num:'200',remarks:'영어강의',examtime:'화:14:00~16:00'},
+		{id:'14',year:'2008',term:'3',dept:'수리과학',classification:'전공필수',course_no:'CE202','class':'C',code:'37.231',title:'결정구조 및 회절',lec_time:'2',lab_time:'3',credit:'3',prof:'김민우',times:'화16:00~18:00',classroom:'궁리실험관:304',fixed_num:'200',remarks:'영어강의',examtime:'화:14:00~16:00'},
+		{id:'15',year:'2008',term:'3',dept:'수리과학',classification:'기초필수',course_no:'CE202','class':'C',code:'37.231',title:'시스템 프로그래밍',lec_time:'2',lab_time:'3',credit:'3',prof:'김민우',times:'화16:00~18:00',classroom:'궁리실험관:304',fixed_num:'200',remarks:'영어강의',examtime:'화:14:00~16:00'},
+		{id:'16',year:'2008',term:'3',dept:'수리과학',classification:'기초필수',course_no:'CE202','class':'C',code:'37.231',title:'운영체제',lec_time:'2',lab_time:'3',credit:'3',prof:'김민우',times:'화16:00~18:00',classroom:'궁리실험관:304',fixed_num:'200',remarks:'영어강의',examtime:'화:14:00~16:00'},
+		{id:'17',year:'2008',term:'3',dept:'산업공학',classification:'기초필수',course_no:'CE202','class':'C',code:'37.231',title:'알고리즘',lec_time:'2',lab_time:'3',credit:'3',prof:'김민우',times:'월8:00~18:00',classroom:'궁리실험관:304',fixed_num:'200',remarks:'영어강의',examtime:'화:14:00~16:00'},
+		{id:'18',year:'2008',term:'3',dept:'산업공학',classification:'기초필수',course_no:'CE202','class':'D',code:'37.231',title:'데이타베이스개론',lec_time:'2',lab_time:'3',credit:'3',prof:'김민우',times:'수16:00~18:00',classroom:'창의학습관:304',fixed_num:'200',remarks:'영어강의',examtime:'화:14:00~16:00'},
+		{id:'19',year:'2008',term:'3',dept:'산업공학',classification:'기초필수',course_no:'CE202','class':'D',code:'37.231',title:'네트워크',lec_time:'2',lab_time:'3',credit:'3',prof:'김민우',times:'금16:00~18:00',classroom:'창의학습관:304',fixed_num:'200',remarks:'영어강의',examtime:'화:14:00~16:00'},
+		{id:'20',year:'2008',term:'3',dept:'산업공학',classification:'기초필수',course_no:'CE202','class':'D',code:'37.231',title:'미적II',lec_time:'2',lab_time:'3',credit:'3',prof:'김민우',times:'금16:00~18:00,화12:00~14:00',classroom:'창의학습관:304',fixed_num:'200',remarks:'영어강의',examtime:'화:14:00~16:00'}
+	];
+
+	var Mootabs = new Class({
+		initialize: function(tabs, contents, trigerEvent) 
+		{
+			if (trigerEvent==null) trigerEvent = 'mouseover';
+
+			this.tabs = $(tabs).getChildren();
+			this.contents = $(contents).getChildren();
+			this.tabs.each(function(item,key) 
+			{
+				item.addEvent(trigerEvent, function()
+					{
+						this.activate(key);
+					}.bind(this)
+				);
+			}.bind(this));
+			this.contents.each(function(item)
+			{
+				item.addClass('none');
+			});
+
+			this.activate(0);
+		},
+		activate: function(key)
+		{
+			this.tabs.each(function(item,index)
+			{
+				if (index==key)
+					item.addClass('active');
+				else
+					item.removeClass('active');
+			});
+			this.contents.each(function(item,index)
+			{
+				if (index==key) item.removeClass('none');
+				else item.addClass('none');
+			});
+			this.activeKey = key;
+		}
+	});
+
+	UDF=
+	{
+		modulecolors:['#FFFFCC','#59BFB3','#3366CC','#336699','#6633CC','#DD4477','#CC3333','#109618','EE8800','#AAAA11'],
+		cumulativeOffset : function(el)
+		{
+			var valueT = 0, valueL = 0;
+			do {
+				valueT += el.offsetTop  || 0;
+				valueL += el.offsetLeft || 0;
+				el = el.offsetParent;
+			} while (el);
+			return {x:valueL,y:valueT};
+		},
+		mousePos:function(e, wrap)
+		{
+			var event =new Event(e);
+			var pos= UDF.cumulativeOffset(wrap);
+			return { 
+				x:(event.page.x-pos.x),
+				y:(event.page.y-pos.y)
+			}
+		},
+		clickable : function(o)
+		{
+			o.addEvent('mousedown',function(){ o.addClass('clicked') });
+			document.addEvent('mouseup',function(){ o.removeClass('clicked') });
+		}
+	}
+
+	Map = {
+		initialize:function()
+		{
+			this.container = $('map-drag-container');
+			this.dragmap = $('dragmap');
+			this.maptext= $('map-text');
+			this.settings = 
+			{
+				cW:this.container.offsetWidth,
+				cH:this.container.offsetHeight,
+				dW:this.dragmap.offsetWidth,
+				dH:this.dragmap.offsetHeight
+			}
+
+			this.dragging = false;
+			this.clickPos = null
+
+			this.dragmap.setStyle('left',-258);
+			this.dragmap.setStyle('top',-270);
+			this.registHandles();
+		},
+		registHandles:function()
+		{
+			this.fx = new Fx.Morph(this.dragmap, {
+				wait:false,
+				duration:250,
+				transition: Fx.Transitions.Quad.easeInOut
+				});
+
+			this.dragmap.addEvent('mousedown',this.onClick.bindWithEvent(this));
+			document.addEvent('mousemove', this.onMove.bindWithEvent(this));
+			document.addEvent('mouseup', this.onEnd.bindWithEvent(this));
+
+			$('test').addEvent('click',
+				function()
+				{
+					this.find(Data.Map.getRandom().name);
+				}.bind(this)
+			);
+		},
+		onClick:function(e)
+		{
+			this.dragging=true;
+			this.clickPos = UDF.mousePos(e,this.dragmap);
+		},
+		onMove:function(e)
+		{
+			if (this.dragging)
+			{
+				var pos = UDF.mousePos(e,this.container);
+				pos.x-=this.clickPos.x;
+				pos.y-=this.clickPos.y;
+
+				var s = this.settings;
+				var left = (pos.x).limit((s.cW-s.dW+2), 0);
+				var top = (pos.y).limit((s.cH-s.dH+2), 0);
+				this.dragmap.style.left=left+'px';
+				this.dragmap.style.top=top+'px';
+
+				e.stop();
+			}
+		},
+		onEnd:function(e)
+		{
+			if (this.dragging)
+			{
+				this.dragging=false;
+				e.stop();
+			}
+		},
+		move:function(x,y)
+		{
+			var s = this.settings;
+
+			x-=(s.cW/2);
+			y-=(s.cH/2);
+
+			var left = (x).limit(0, s.dW-s.cW);
+			var top = (y).limit(0, s.dH-s.cH);
+			this.fx.start({
+					left : (-left),
+					top :(-top)
+				});
+		},
+		find:function(name)
+		{
+			var arr = Data.Map.filter(function(item)
+			{
+				return item.name==name;
+			});
+			if (arr.length==0) return;
+
+			var item = arr[0];
+			var x = item.x;
+			var y = item.y;
+			this.maptext.style.left=(x-6)+'px';
+			this.maptext.style.top=(y-60)+'px';
+			$('map-name').innerHTML=item.code+' '+item.name;
+			this.move(x,y);
+		}
+	};
+
+	LectureList ={
+		initialize:function(tabs,contents)
+		{
+			this.tabs = $('lecture_tabs');
+			this.contents = $('lecture_contents');
+			this.data = $A(Data.Lectures);
+			this.dept = $('department');
+			this.classf= $('classification');
+
+			this.registHandles();
+			this.onChange();
+		},
+		registHandles:function()
+		{
+			this.dept.addEvent('change',this.onChange.bind(this,'dept'));
+			this.classf.addEvent('change',this.onChange.bind(this,'dept'));
+		},
+		onChange:function()
+		{
+			var dept = this.dept.options[this.dept.selectedIndex].text;
+			var classification = this.classf.options[this.classf.selectedIndex].text;
+			this.filter(dept,classification);
+		},
+		filter:function(dept,classification)
+		{
+			var filtered = (dept=='전체보기') ? this.data : this.data.filter(function(item) {return item.dept==dept});
+			var filtered = (classification=="전체보기") ? filtered : filtered.filter(function(item) {return item.classification==classification});
+			
+			var category = (classification=="전체보기") ? 'classification' : 'dept';
+
+			var cluster = this.clustering(filtered, category)
+			this.build(cluster, category);
+		},
+		buildTabs:function(n)
+		{
+			this.tabs.empty();
+			for (var i=1;i<=n;i++)
+				new Element('div',{'html':i}).inject(new Element('div',{'class':'lecture_tab'}).inject(this.tabs));
+		},
+		getCategories:function(arr,category)
+		{
+			var categories = [];
+			arr.each(function(item)
+			{
+				var key = $H(item).get(category);
+				if (!categories.contains(key))
+					categories.push(key);
+			});
+			return categories;
+		},
+		clustering:function(arr,category)
+		{
+			var categories = this.getCategories(arr,category);
+			var ret = [];
+			categories.each(function(key)
+			{
+				arr.each(function(item){ 
+					if($H(item).get(category)==key) ret.push(item) 
+				});
+			});
+			return ret;
+		},
+		build:function(cluster,category)
+		{
+			this.contents.empty(); 
+			var max = 8;
+			var count=0;
+			var content = new Element('div',{'class':'lecture_content'}).inject(this.contents);
+			var currCategory;
+			cluster.each(function(item)
+			{
+				var key = $H(item).get(category);
+				if (currCategory!=key)
+				{
+					currCategory = key;
+					if(count<max) new Element('h4',{'html':currCategory}).inject(content);
+				}
+
+				if (count>=max)
+				{
+					content = new Element('div',{'class':'lecture_content'}).inject(this.contents);
+					new Element('h4',{'html':currCategory}).inject(content);
+					count=0;
+				}
+				else count++;
+
+				var el = new Element('a',{'html':item.title}).inject(content);
+				UDF.clickable(el);
+
+				el.addEvent('mouseover',Timetable.updator.bind(Timetable,item));
+				el.addEvent('mouseout',function(){$('overlap_modules').empty()});
+			}.bind(this));
+			this.buildTabs(this.contents.getChildren().length);
+			new Mootabs('lecture_tabs','lecture_contents');
+		}
+	};
+
+	Timetable ={
+		initialize:function()
+		{
+			this.grid = $('grid');
+			this.overlap = $('overlap_modules');
+
+			this.isEnter=false;
+			this.cell = {row:0,col:0};
+
+			this.options=
+			{
+				cellHeight:21,
+				cellWidth:100
+			}
+			this.selection=$('cellselected');
+
+			this.tab = new Mootabs('timetable_tabs','timetable_contents','mousedown');
+
+			this.registHandles();
+		},
+		registHandles:function()
+		{
+			UDF.clickable(this.selection);
+			this.selection.addEvent('mousedown',this.onClick.bindWithEvent(this));
+			this.grid.addEvent('mouseover',function()
+				{
+					this.isEnter=true;
+				}.bind(this));
+			this.grid.addEvent('mouseout',function(){
+					this.isEnter=false;
+				}.bind(this));
+			document.addEvent('mousemove',this.onMove.bindWithEvent(this));
+		},
+		onClick:function(e)
+		{
+			var pos = UDF.mousePos(e,this.grid);
+			var cell = this.getCell(pos);
+			alert(cell.row+ ' '+cell.col);
+			e.stop();
+		},
+		onMove:function(e)
+		{
+			if(this.isEnter)
+			{
+				var pos = UDF.mousePos(e,this.grid);
+				this.cell = this.getCell(pos);
+
+
+				var x = (this.cell.col * this.options.cellWidth)+1;
+				var y = (this.cell.row * this.options.cellHeight);
+
+				this.selection.style.left=x+'px';
+				this.selection.style.top=y+'px';
+				e.stop();
+			}
+		},
+		getCell:function(coords)
+		{
+			var row = Math.floor(coords.y/this.options.cellHeight);
+			var col = Math.floor(coords.x/this.options.cellWidth);
+			return {row:row,col:col};
+		},
+		updator: function(obj)
+		{
+			var h = $H(obj);
+			var keys= h.getKeys();
+			keys.each(function(key)
+			{
+				if ($('DS_'+key)!=null)
+					$('DS_'+key).innerHTML=h.get(key);
+			});
+
+			var classroom = obj.classroom.split(':')[0]
+			Map.find(classroom);
+
+			var times = this.parseTimes(obj);
+			this.buildlmodules(times);
+		},
+		parseTimes:function(obj)
+		{
+			var days = ['월','화','수','목','금'];
+			//var str = '화14:00~16:00,수8:00~9:00'
+			var ret = [];
+			var str=obj.times.trim();
+			var arr= str.split(',');
+			arr.each(function(item)
+			{
+				var day = days.indexOf(item.substring(0,1));
+				var tmp = item.substring(1).split('~');
+				var start = tmp[0].split(':');
+				var end = tmp[1].split(':');
+				ret.push(
+					{
+						item:obj,
+						day:day, 
+						start: (start[0].toInt()*60)+start[1].toInt(),
+						end : (end[0].toInt()*60)+end[1].toInt()
+					});
+			});
+			return ret;
+		},
+		buildlmodule:function(obj)
+		{
+			var lmodule=new Element('div',{'class':'lmodule'});
+			var bg=new Element('div',{'class':'bg'});
+			var textbody=new Element('div',{'class':'textbody'});
+			bg.inject(lmodule);
+			textbody.inject(lmodule);
+			textbody.set('html','<strong>'+obj.item.title+'</strong><br />'+obj.item.prof+'<br />'+obj.item.classroom+'<br />');
+			
+			var left = obj.day*100+3;
+			var top = Math.floor((obj.start-480)/30)*21;
+			var height =Math.floor((obj.end-obj.start)/30)*21 -2;
+
+			bg.set({'styles':{'background':UDF.modulecolors[Math.floor(Math.random()*10)]}});
+			lmodule.set({'styles':{'left':left,'top':top,'height':height}});
+			return lmodule;
+		},
+		buildlmodules:function(arr)
+		{
+			this.overlap.empty();
+			arr.each(function(item)
+			{
+				var lmodule = this.buildlmodule(item);
+				lmodule.inject(this.overlap);
+			}.bind(this));
+		}
+	};
+
+	window.addEvent('domready',function() 
+	{
+		LectureList.initialize();
+		Map.initialize();
+		Timetable.initialize();
+	});
+	</script>
+{% endblock %}
 {% block content %}
-<h2>모의 시간표 짜기</h2>
-<img src="/media/images/temp_timetable_prototype.png" />
+	<div id="left-side">
+		<div style="margin-bottom:10px">
+			<div id="dump"></div>
+			<a id="test" >테스트</a>
+			<label>학과&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-size:11px">(<a href="#">관심학과 설정</a>)</span></label>
+			<select id="department">
+				<option>전체보기</option>
+				<option>Freshman Design</option>
+				<option>건설환경</option>
+				<option>고분자학학제</option>
+				<option>공필</option>
+				<option>금융전공</option>
+				<option>기계공학</option>
+				<option>나노과학기술학</option>
+				<option>로봇공학</option>
+				<option>문화기술</option>
+				<option>물리</option>
+				<option>바이오및뇌공학</option>
+				<option>반도체학</option>
+				<option>비즈니스</option>
+				<option>산업공학</option>
+				<option>산업디자인</option>
+				<option>생명과학</option>
+				<option>생명화공</option>
+				<option>소프트웨어학제</option>
+				<option>수리과학</option>
+				<option>신소재공학</option>
+				<option>아이엠비에전</option>
+				<option>원자력양자</option>
+				<option>의과학대</option>
+				<option>의과학학제</option>
+				<option>이큐전공</option>
+				<option>인문사회과학부</option>
+				<option>자기대학원</option>
+				<option>전기전자전공</option>
+				<option>전산전공</option>
+				<option>정경원</option>
+				<option>정보통신학제</option>
+				<option>테크노경영대학</option>
+				<option>화학</option>
+			</select>
+			<ul>
+				<li>인문사회학과</li>
+				<li>전산 학과</li>
+				<li>수학과</li>
+			</ul>
+			<br />
+			<label>과목구분</label>
+			<select id="classification">
+				<option>전체보기</option>
+				<option>기초필수</option>
+				<option>기초선택</option>
+				<option>전공필수</option>
+				<option>전공선택</option>
+				<option>교양필수</option>
+				<option>교양필수(체육)</option>
+				<option>교양선택</option>
+				<option>자유선택</option>
+				<option>공통필수</option>
+				<option>인문사회선택</option>
+				<option>선택(석/박사)</option>
+				<option>개별연구</option>
+				<option>졸업연구</option>
+				<option>세미나</option>
+				<option>논문세미나</option>
+				<option>현장실습및연구</option>
+			</select>
+		</div>
+		<div id="lecture_container">
+			<div id="lecture_tabs"></div>
+			<div id="lecture_contents"></div>
+			<div id="lecture_contents_footer"><div></div></div>
+		</div>
+	</div>
+	<div id="center">
+		<div id="center-top">
+			<table cellspacing="0" cellpadding="0" border="0">
+				<thead>
+					<tr>
+						<th>강의장소</th>
+						<th>시험시간</th>
+						<th class="end">기타</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td id="DS_classroom">공동실험실</td>
+						<td id="DS_examtime">12:00~13:00</td>
+						<td id="DS_remarks"class="end">영어강의</td>
+					</tr>
+				</tbody>
+			</table>
+			<table cellspacing="0" cellpadding="0" border="0">
+				<thead>
+					<tr>
+						<th>과목코드</th>
+						<th>분반</th>
+						<th>과목명</th>
+						<th>교수님</th>
+						<th>강의시간</th>
+						<th>실험시간</th>
+						<th class="end">학점</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td id="DS_course_no">MS213</td>
+						<td id="DS_class">A</td>
+						<td id="DS_title">결정구조 및 회절</td>
+						<td id="DS_prof">김민우</td>
+						<td id="DS_lec_time">2</td>
+						<td id="DS_lab_time">3</td>
+						<td id="DS_credit" class="end">3</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div id="timetable_menu">
+			<div class="left">
+				<select class="left">
+					<option>2008년 가을학기</option>
+					<option>2008년 여름학기</option>
+					<option>2009년 봄학기</option>
+				</select>
+				<div id="timetable_tabs">
+					<div class="timetable_tab active"><a>시간표 1</a></div>
+					<div class="timetable_tab"><a>시간표 2</a></div>
+					<div class="timetable_tab"><a>시간표 3</a></div>
+				</div>
+			</div>
+			<div class="right">
+				<a href="#">내 캘린더에 추가</a> |
+				<a href="#">초기화</a> |
+				<a href="#">인쇄</a>
+			</div>
+			&nbsp;
+		</div>
+		<div id="timetable">
+		<div id="timetable-wrap">
+			<div id="colheaders">
+				<div class="chead"><span>월</span></div>
+				<div class="chead"><span>화</span></div>
+				<div class="chead"><span>수</span></div>
+				<div class="chead"><span>목</span></div>
+				<div class="chead"><span>금</span></div>
+			</div>
+			<div id="tablebody">
+				<div id="rowheaders">
+					<div class="rhead"><span class="rheadtext">오전 8시</span></div>
+					<div class="rhead"><span class="rheadtext">오전 9시</span></div>
+					<div class="rhead"><span class="rheadtext">오전 10시</span></div>
+					<div class="rhead"><span class="rheadtext">오전 11시</span></div>
+					<div class="rhead"><span class="rheadtext">오전 12시</span></div>
+					<div class="rhead"><span class="rheadtext">오후 1시</span></div>
+					<div class="rhead"><span class="rheadtext">오후 2시</span></div>
+					<div class="rhead"><span class="rheadtext">오후 3시</span></div>
+					<div class="rhead"><span class="rheadtext">오후 4시</span></div>
+					<div class="rhead"><span class="rheadtext">오후 5시</span></div>
+					<div class="rhead"><span class="rheadtext">오후 6시</span></div>
+					<div class="rhead"><span class="rheadtext">오후 7시</span></div>
+					<div class="rhead"><span class="rheadtext">오후 8시</span></div>
+					<div class="rhead"><span class="rheadtext">오후 9시</span></div>
+					<div class="rhead"><span class="rheadtext">오후 10시</span></div>
+					<div class="rhead"><span class="rheadtext">오후 11시</span></div>
+				</div>
+				<div id="grid-wrap">
+					<div id="grid">
+						<div id="timetable_contents">
+							<div class="lmodules">
+								<div class="lmodule">
+									<div class="bg"></div>
+									<div class="textbody">
+										공학설계이론 방법론 및 원리<br />
+										메리케서린톰슨<br />
+										응용공학동 #4202<br />
+									</div>
+								</div>
+							</div>
+							<div class="lmodules"></div>
+							<div class="lmodules"></div>
+							<div class="lmodules"></div>
+						</div>
+						<div id="overlap_modules"class="lmodules"></div>
+					</div><!--grid-->
+					<div id="cellselected"></div>
+				</div>
+			</div><!--tablebody-->
+		</div><!--timetable-wrap-->
+		</div><!--timetable-->
+		<div id="timetable_footer"><div></div></div>
+	</div>
+	<div id="right-side">
+		<div id="map">
+			<h4>강의실 장소</h4>
+			<div id="map-wrap">
+				<div id="map-drag-container">
+					<div id="dragmap">
+						<div id="map-text"><span id="map-name">지도 데이터 준비중 입니다.</span><div id="map-arrow"></div></div>
+					</div>
+				</div>
+			</div>
+			<span>지도 출처 : 카이스트 홈페이지</span>
+		</div>
+		<br />
+		<div id="info">
+			<table cellspacing="0" cellpadding="0" border="0">
+				<tr>
+					<th style="width:50%">학점</th>
+					<th>AU</th>
+				</tr>
+				<tr>
+					<td id="total_credit">21</td>
+					<td id="total_au" class="end">3</td>
+				</tr>
+			</table>
+		</div>
+		<div id="examtable">
+			<table cellspacing="0" cellpadding="0" border="0">
+				<tr>
+					<th colspan="2">
+				시험시간표
+					</th>
+				</tr>
+				<tr>
+					<td style="width:16px">월</td>
+					<td class="end">자연어 처리</td>
+				</tr>
+				<tr class="even">
+					<td>화</td>
+					<td class="end">&nbsp;</td>
+				</tr>
+				<tr>
+					<td>수</td>
+					<td class="end">&nbsp;</td>
+				</tr>
+				<tr class="even">
+					<td>목</td>
+					<td class="end">&nbsp;</td>
+				</tr>
+				<tr>
+					<td>금</td>
+					<td class="end">&nbsp;</td>
+				</tr>
+			</table>
+		</div>
+		<div id="pro">
+			<h4>교수님 정보</h4>
+			<img src="http://192.168.2.200/~julingks/nexr/files/photos/4.jpg" style="width:200px"/>
+		</div>
+	</div>
+	<div class="clear"></div>
 {% endblock %}
