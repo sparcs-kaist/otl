@@ -22,8 +22,15 @@
 </div>
 <div id="publicFavorites">
 	<h3>다른 사람들의 즐겨찾기</h3>
-	<div id="add-public-favorite">
-		<a href="/favorites/create">새 즐겨찾기 추가하기</a>
+	<div id="create-form" method="get" action="/favorites/create/">
+		<div id="add-public-favorite">
+			즐겨찾기 등록 : code <input type="text" id="code" name="code" value="" size="5"/>
+			name <input type="text" id="name" name="name" value="" size="5"/>
+			year <input type="text" id="year" name="year" value="" size="4"/>
+			semester <input type="text" id="semester" name="semester" value="" size="1"/>
+			url <input type="text" id="url" name="url" value="" size="5"/>
+			<input type="submit" value="등록" />
+		</div>
 	</div>
 	<ul>
 	{% for item in recently_added_list %}
@@ -37,13 +44,13 @@
 	</ul>
 	<div class="pages">
 		{% if current_page.has_previous %}
-		<a class="prev-page" href="?page={{current_page.prev_page}}">Prev</a>
+		<a class="prev-page" href="?page={{current_page.previous_page_number}}">Prev</a>
 		{% endif %}
 		{% for page in current_page.paginator.page_range %}
 		<a class="page{% ifequal page.number current_page.number %} selected{% endifequal %}" href="?page={{page.number}}">{{page.number}}</a>
 		{% endfor %}
 		{% if current_page.has_next %}
-		<a class="next-page" href="?page={{current_page.next_page}}">Next</a>
+		<a class="next-page" href="?page={{current_page.next_page_number}}">Next</a>
 		{% endif %}
 	</div>
 	<form id="search-form" method="get" action="/favorites/search/">
@@ -54,19 +61,19 @@
 				<h4>{{item.year}} {{item.semester}} {{item.course_code}}: {{item.course_name}}</h4>
 				<a class="search-link" href="{{item.url}}">{{item.url}}</a>
 				<span class="submitter">올린이 : <a href="/accounts/view/{{item.writer.username}}">{{item.writer.username}}</a></span>
-				<a class="control-add" href="/favorite/add/{{item.id}}">Add</a>
+				<a class="control-add" href="/favorites/add/{{item.id}}">Add</a>
 			</li>
 		{% endfor%}
 		</ul>
 		<div class="search-pages">
 			{% if search_page.has_previous %}
-			<a class="search-prev-page" href="?search-page={{search_page.prev_page}}">Prev</a>
+			<a class="search-prev-page" href="?search-page={{search_page.previous_page_number}}">Prev</a>
 			{% endif %}
 			{% for page in search_page.paginator.page_range %}
 			<a class="search-page{% ifequal page.number search_page.number %} selected{% endifequal %}" href="?page={{page.number}}">{{page.number}}</a>
 			{% endfor %}
 			{% if search_page.has_next %}
-			<a class="search-next-page" href="?search-page={{search_page.next_page}}">Next</a>
+			<a class="search-next-page" href="?search-page={{search_page.next_page_number}}">Next</a>
 			{% endif %}
 		</div>
 	</form>

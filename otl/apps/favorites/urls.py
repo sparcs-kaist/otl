@@ -6,5 +6,6 @@ urlpatterns = patterns('',
 	(ur'^search/$', views.search),
 	(ur'^delete/(\d+)$', views.delete),
 	(ur'^add/(\d+)$', views.add),
+	(ur'^create/$', views.create),
 )
 

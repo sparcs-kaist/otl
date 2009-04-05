@@ -4,7 +4,7 @@
 	<link rel="stylesheet" type="text/css" href="/media/timetable.css" />
 	<script type="text/javascript" src="/media/js/mootools/mootools-1.2.1-core-yc.js"></script>
 	<script type="text/javascript" src="/media/js/mootools/mootools-1.2-more-yc.js"></script>
-	<script>
+	<script type="text/javascript">
 	var Data = {};
 	Data.Map = 
 	[
@@ -23,7 +23,8 @@
 	];
 
 
-	Data.Lectures =
+	Data.Lectures = {{lectures_json|safe}};
+	/*
 	[
 		{id:'1',year:'2008',term:'3',dept:'전산학전공',classification:'기초필수',course_no:'CE202','class':'A',code:'37.231',title:'데이타구조',lec_time:'2',lab_time:'3',credit:'3',prof:'김민우',times:[{day:'화',start:480,end:600},{day:'수',start:480,end:600}],classroom:'창의학습관:304',fixed_num:'200',remarks:'영어강의',examtime:'화:14:00~16:00'},
 		{id:'1',year:'2008',term:'3',dept:'전산학전공',classification:'기초필수',course_no:'CE202','class':'A',code:'37.231',title:'데이타구조',lec_time:'2',lab_time:'3',credit:'3',prof:'김민우',times:[{day:'화',start:480,end:600},{day:'수',start:480,end:600}],classroom:'창의학습관:304',fixed_num:'200',remarks:'영어강의',examtime:'화:14:00~16:00'},
@@ -33,6 +34,7 @@
 		{id:'1',year:'2008',term:'3',dept:'전산학전공',classification:'기초필수',course_no:'CE202','class':'A',code:'37.231',title:'데이타구조',lec_time:'2',lab_time:'3',credit:'3',prof:'김민우',times:[{day:'화',start:480,end:600},{day:'수',start:480,end:600}],classroom:'창의학습관:304',fixed_num:'200',remarks:'영어강의',examtime:'화:14:00~16:00'},
 		{id:'1',year:'2008',term:'3',dept:'전산학전공',classification:'기초필수',course_no:'CE202','class':'A',code:'37.231',title:'데이타구조',lec_time:'2',lab_time:'3',credit:'3',prof:'김민우',times:[{day:'화',start:480,end:600},{day:'수',start:480,end:600}],classroom:'창의학습관:304',fixed_num:'200',remarks:'영어강의',examtime:'화:14:00~16:00'}
 	];
+	*/
 
 	var Mootabs = new Class({
 		initialize: function(tabs, contents, trigerEvent) 
