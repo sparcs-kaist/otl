@@ -7,6 +7,7 @@ class Department(models.Model):
 	num_id = models.IntegerField()
 	code = models.CharField(max_length=5)
 	name = models.CharField(max_length=60)
+	name_en = models.CharField(max_length=60, null=True)
 
 	def __unicode__(self):
 		return u'%s(%d) "%s"' % (self.code, self.num_id, self.name)
@@ -28,4 +29,9 @@ class UserProfile(models.Model):
 
 class UserProfileAdmin(admin.ModelAdmin):
 	list_display = ('user', 'student_id', 'department')
+
+class UserAdmin(admin.ModelAdmin):
+	list_display = ('username', 'email', 'first_name', 'last_name')
+
 admin.site.register(UserProfile, UserProfileAdmin)
+admin.site.register(User, UserAdmin)

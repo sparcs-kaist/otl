@@ -1,0 +1,198 @@
+* {
+    margin:0pt;
+    padding:0pt;
+    outline-color:invert;
+    outline-style:none;
+    outline-width:0pt;
+}
+
+body 
+{
+    background:#fff url(images/bg.png) repeat-x scroll 0 0;
+    color:#555555;
+    font-family:'Lucida Grande',Geneva,Verdana,Arial,Helvetica,sans-serif;
+    font-size:76%;
+    font-size-adjust:none;
+    font-stretch:normal;
+    font-style:normal;
+    font-variant:normal;
+    font-weight:normal;
+    line-height:165%;
+    margin:0pt;
+    padding:0pt;
+    text-align:left;
+}
+
+a 
+{
+    background-color:inherit;
+    color:#183048;
+    text-decoration:none;
+}
+
+a:hover 
+{
+    color:#333;
+    text-decoration:underline;
+}
+
+h1, h2, h3 
+{
+    color:#111111;
+    font-family:'Trebuchet MS',Arial,Sans-serif;
+    font-size:1em;
+    font-size-adjust:none;
+    font-stretch:normal;
+    font-style:normal;
+    font-variant:normal;
+    font-weight:bold;
+    line-height:normal;
+}
+
+h1 
+{
+    font-size:1.8em;
+}
+
+h2 
+{
+    color:#003366;
+    font-size:1.6em;
+    letter-spacing:-1px;
+}
+
+h3 
+{
+    color:#3A4849;
+    font-size:1.3em;
+}
+
+p, hr, h1, h2, h3, form 
+{
+    margin:10px 15px;
+}
+
+ul, ol 
+{
+    padding:0pt 15px;
+}
+
+hr 
+{
+    border-bottom:1px solid #EBEBEB;
+    border-style:none none solid;
+    border-width:0pt 0pt 1px;
+    clear:both;
+    height:1px;
+    margin:0pt 15px 0pt 0pt;
+    padding:0pt;
+}
+
+hr.hidden 
+{
+    clear:both;
+    visibility:hidden;
+}
+
+img.border
+{
+    border:1px solid #DADADA;
+    padding:5px;
+}
+
+img.float-right 
+{
+    margin:5px 0px 5px 15px;
+}
+
+img.float-left 
+{
+    margin:5px 15px 5px 0px;
+}
+
+
+code 
+{
+    background:#FAFAFA none repeat scroll 0%;
+    border:1px solid #EAEAEA;
+    color:#333333;
+    display:block;
+    font-family:'Courier New','Lucida Console',monospace;
+    font-size:1.1em;
+    font-size-adjust:none;
+    font-stretch:normal;
+    font-style:normal;
+    font-variant:normal;
+    font-weight:500;
+    line-height:1.5em;
+    margin:5px 0pt;
+    overflow:auto;
+    padding:1em;
+    width:95%;
+}
+
+
+form 
+{
+    background:#F3F3F3 none repeat scroll 0%;
+    border:1px solid #EAEAEA;
+    padding:5px;
+}
+
+label 
+{
+    display:block;
+}
+
+
+.left 
+{
+    float:left;
+}
+.right 
+{
+    float:right;
+}
+
+.clear 
+{
+    clear:both;
+}
+
+.none
+{
+    display:none;
+}
+
+.block 
+{
+    display:block;
+}
+
+.hide 
+{
+    display:none;
+}
+
+.blue 
+{
+    color:#003366;
+}
+
+.green 
+{
+    color:#498B48;
+}
+
+.pink
+{
+    color:#DB0048;
+}
+
+.red
+{
+    color:red;
+}
+
+
+
