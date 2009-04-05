@@ -32,3 +32,30 @@ def index(request):
 		'recently_added_list': current_page.object_list,
 		'current_page': current_page,
 	}, context_instance=RequestContext(request))
+
+def add(request):
+	if request.user.is_authenticated():
+		course_id = request.GET.get('id');
+		course_selected = CourseLink.objects.get( id__exact = course_id )
+		user = request.user
+		course_selected.favored_by.add( user )
+
+		favorite_list = CourseLink.objects.filter(favored_by__exact=request.user)
+	else:
+		favorites_list = None
+
+	page = request.GET.get('page', 1)
+	courselink_pages = Paginator(CourseLink.objects.all().order_by('-written'), NUM_PER_PAGE)
+	current_page = courselink_pages.page(page)
+
+	return render_to_response('favorites/index.html', {
+		'section': 'favorites',
+		'current_year': 2009, # TODO: 공통적으로 사용할 수 있게 middleware로 처리하는 게 좋을 듯.
+		'current_semester': SEMESTER_NAMES[1],
+		'favorite_list': favorite_list,
+		'recently_added_list': current_page.object_list,
+		'current_page': current_page,
+	}, context_instance=RequestContext(request))
+
+	
+
