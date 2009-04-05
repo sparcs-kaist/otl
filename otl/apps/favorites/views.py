@@ -45,9 +45,8 @@ def search(request):
 		'search_page': current_search_page,
 	}, context_instance=RequestContext(request))
 	
-def add(request):
+def add(request, course_id):
 	if request.user.is_authenticated():
-		course_id = request.GET.get('id');
 		course_selected = CourseLink.objects.get( id__exact = course_id )
 		user = request.user
 		course_selected.favored_by.add( user )
@@ -92,8 +91,7 @@ def create(request):
 # def add(request):
 
 
-def delete(request):
-	course_id = request.GET.get('delete')
+def delete(request, course_id):
 	user = request.user
 	delete_course = CourseLink.objects.get(id = course_id)
 	delete_course.favored_by.remove(user)
