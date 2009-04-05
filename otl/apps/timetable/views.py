@@ -32,11 +32,11 @@ def lecture_filter(request):
 	if type != None:
 		lectures = lectures.filter(type__exact=type)
 	if day != None:
-		lectures = lectures.classtime_set.filter(day__exact=day)
+		lectures = lectures.filter(classtime__day__exact=day)
 	if begin != None:
-		lectures = lectures.classtime_set.filter(begin__exact=ClassTime.numeric_time_to_str(begin))
+		lectures = lectures.filter(classtime__begin__exact=ClassTime.numeric_time_to_str(begin))
 	if end != None:
-		lectures = lectures.classtime_set.filter(end__exact=ClassTime.numeric_time_to_str(end))
+		lectures = lectures.filter(classtime__end__exact=ClassTime.numeric_time_to_str(end))
 
 	output = _lectures_to_json(lectures)
 	return HttpResponse(output)
