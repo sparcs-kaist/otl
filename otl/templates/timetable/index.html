@@ -159,6 +159,7 @@
 		{
 			this.dragging=true;
 			this.clickPos = UDF.mousePos(e,this.dragmap);
+			e.stop();
 		},
 		onMove:function(e)
 		{
@@ -699,7 +700,6 @@
 		</div>
 		<div id="pro">
 			<h4>교수님 정보</h4>
-			<img src="http://192.168.2.200/~julingks/nexr/files/photos/4.jpg" style="width:200px"/>
 		</div>
 	</div>
 	<div class="clear"></div>
