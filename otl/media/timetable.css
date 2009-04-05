@@ -128,6 +128,7 @@
     top:42px;
     width:96px;
     height:82px;
+	color:#000;
 }
 
 .lmodule .bg
@@ -138,9 +139,12 @@
     width:100%;
     height:100%;
     background:#C3D9FF;
+    background:#FFC7FE;
     border:1px solid #DDD;
-    opacity:0.5;
-    filter:alpha(opacity=50);
+	/*
+    opacity:0.8;
+    filter:alpha(opacity=80);
+	*/
 }
 
 .lmodule .textbody
@@ -149,7 +153,7 @@
     overflow:hidden;
     position:absolute;
     line-height:21px;
-    font-size:11px;
+    font-size:12px;
     text-align:center;
 }
 
@@ -323,9 +327,8 @@
     width:99px;
     height:20px;
     background:#DDD;
-    border:1px solid black;
-    opacity:0.4;
-    filter:alpha(opacity=40);
+    opacity:0.5;
+    filter:alpha(opacity=50);
 }
 
 #cellselected.clicked
