@@ -54,7 +54,7 @@
 				<h4>{{item.year}} {{item.semester}} {{item.course_code}}: {{item.course_name}}</h4>
 				<a class="search-link" href="{{item.url}}">{{item.url}}</a>
 				<span class="submitter">올린이 : <a href="/accounts/view/{{item.writer.username}}">{{item.writer.username}}</a></span>
-				<a class="control-add" href="/favorite/add/{{item.id}}">Add</a>
+				<a class="control-add" href="/favorite/add/?id={{item.id}}">Add</a>
 			</li>
 		{% endfor%}
 		</ul>
@@ -68,6 +68,7 @@
 			{% if search_page.has_next %}
 			<a class="search-next-page" href="?search-page={{search_page.next_page}}">Next</a>
 			{% endif %}
+		</div>
 	</form>
 </div>
 {% endblock %}
