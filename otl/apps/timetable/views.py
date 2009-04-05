@@ -18,7 +18,7 @@ def index(request):
 		'lectures_json': lectures_output,
 	}, context_instance=RequestContext(request))
 
-def filter(request):
+def lecture_filter(request):
 	department = request.GET.get('dept', None)
 	type = request.GET.get('type', None)
 	day = request.GET.get('day', None)
