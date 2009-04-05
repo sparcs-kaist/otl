@@ -2,8 +2,13 @@
 from django.db import models
 from otl.apps.accounts.models import Department
 
+CLASS_TYPES = (
+	('l', u'강의'),
+	('e', u'실험'),
+)
+
 class Lecture(models.Model):
-"""특정 년도·학기에 개설된 과목 instance를 가리키는 모델"""
+	"""특정 년도·학기에 개설된 과목 instance를 가리키는 모델"""
 	code = models.CharField(max_length=10)					# 과목코드
 	year = models.IntegerField()							# 개설년도 (4자리 숫자)
 	semester = models.SmallIntegerField()		   			# 개설학기 (1=봄, 2=여름, 3=가을, 4=겨울)
@@ -27,19 +32,19 @@ class Lecture(models.Model):
 		unique_together = ('code', 'year', 'semester', 'department', 'class_no')
 
 class ExamTime(models.Model):
-"""Lecture에 배정된 시험 시간."""
+	"""Lecture에 배정된 시험 시간."""
 	lecture = models.ForeignKey(Lecture)
 	day = models.SmallIntegerField()				# 시험 요일 (1~5: 월~금)
 	begin = models.CharField(max_length=5)			# hh:mm 형태의 시험 시작 시간 (24시간제)
 	end = models.CharField(max_length=5)			# hh:mm 형태의 시험 종료 시간 (24시간제)
 
 class ClassTime(models.Model):
-"""Lecture에 배정된 강의 시간. 보통 하나의 Lecture가 여러 개의 강의 시간을 가진다."""
+	"""Lecture에 배정된 강의 시간. 보통 하나의 Lecture가 여러 개의 강의 시간을 가진다."""
 	lecture = models.ForeignKey(Lecture)			
 	day = models.SmallIntegerField()
 	begin = models.CharField(max_length=5)
 	end = models.CharField(max_length=5)
-	type = models.CharField(max_length=1, choices=CLASS_TYPE)
+	type = models.CharField(max_length=1, choices=CLASS_TYPES)
 	building = models.CharField(max_length=10)	# 건물 고유ID (잘 사용되지 않음)
 	room = models.CharField(max_length=60)		# 호실 (잘 사용되지 않음)
 	room_ko = models.CharField(max_length=60)	# 수업 장소 (한글)
@@ -47,7 +52,7 @@ class ClassTime(models.Model):
 	unit_time = models.SmallIntegerField()		# 수업 교시
 
 class Syllabus(models.Model):
-"""Lecture에 대한 강의계획서 정보. 첨부파일로만 나오고 비어있는 경우도 있음."""
+	"""Lecture에 대한 강의계획서 정보. 첨부파일로만 나오고 비어있는 경우도 있음."""
 	lecture = models.ForeignKey(Lecture)
 	professor_info = models.CharField(max_length=60)			# 교수님 정보
 	abstract = models.TextField(null=True)						# 요약 정보
