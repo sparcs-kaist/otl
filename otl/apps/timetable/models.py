@@ -51,7 +51,7 @@ class Lecture(models.Model):
 	is_english = models.BooleanField()						# 영어강의 여부
 
 	def __unicode__(self):
-		return '%s (%d:%s) %s' % (self.code, self.year, self.get_semester_display(), self.title)
+		return u'%s (%d:%s) %s' % (self.code, self.year, self.get_semester_display(), self.title)
 
 	class Meta:
 		unique_together = ('code', 'year', 'semester', 'department', 'class_no')
@@ -68,7 +68,7 @@ class ExamTime(models.Model):
 	end = models.CharField(max_length=5)				# hh:mm 형태의 시험 종료 시간 (24시간제)
 
 	def __unicode__(self):
-		return '[%s] %s, %s-%s' % (self.lecture.code, self.get_day_display(), self.begin, self.end)
+		return u'[%s] %s, %s-%s' % (self.lecture.code, self.get_day_display(), self.begin, self.end)
 
 class ExamTimeAdmin(admin.ModelAdmin):
 	list_display = ('lecture', 'day', 'begin', 'end')
@@ -88,7 +88,7 @@ class ClassTime(models.Model):
 	unit_time = models.SmallIntegerField()		# 수업 교시
 
 	def __unicode__(self):
-		return '[%s] %s, %s-%s @%s' % (self.lecture.code, self.get_day_display(), self.begin, self.end, self.room_ko)
+		return u'[%s] %s, %s-%s @%s' % (self.lecture.code, self.get_day_display(), self.begin, self.end, self.room_ko)
 
 class ClassTimeAdmin(admin.ModelAdmin):
 	list_display = ('lecture', 'day', 'begin', 'end', 'room_ko')
@@ -107,7 +107,7 @@ class Syllabus(models.Model):
 	attachment = models.CharField(max_length=260, null=True)	# 첨부파일 이름
 
 	def __unicode__(self):
-		return '%s (%s)' % (self.lecture.code, self.professor_info)
+		return u'%s (%s)' % (self.lecture.code, self.professor_info)
 
 class SyllabusAdmin(admin.ModelAdmin):
 	list_display = ('lecture', 'professor_info', 'abstract', 'url', 'attachment')
