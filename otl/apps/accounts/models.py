@@ -29,4 +29,9 @@ class UserProfile(models.Model):
 
 class UserProfileAdmin(admin.ModelAdmin):
 	list_display = ('user', 'student_id', 'department')
+
+class UserAdmin(admin.ModelAdmin):
+	list_display = ('username', 'email', 'first_name', 'last_name')
+
 admin.site.register(UserProfile, UserProfileAdmin)
+admin.site.register(User, UserAdmin)
