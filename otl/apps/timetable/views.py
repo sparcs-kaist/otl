@@ -63,6 +63,7 @@ def _lectures_to_json(lectures):
 			'credit': lecture.credit,
 			'au': lecture.credit_au,
 			'fixed_num': lecture.limit,
+			'classroom': lecture.classtime_set.filter(lecture=lecture, type__exact='l')[0].room_ko,
 			'prof': lecture.professor,
 			'times': [{'day': schedule.day, 'start': schedule.get_begin_numeric(), 'end': schedule.get_end_numeric(), 'classroom': schedule.room_ko, 'type': schedule.get_type_display()} for schedule in lecture.classtime_set.all()],
 			'remarks': u'영어강의' if lecture.is_english else u'',
