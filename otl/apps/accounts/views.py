@@ -26,12 +26,13 @@ def login(request):
 				'msg': u'로그인에 실패하였습니다.',
 			}, context_instance=RequestContext(request))
 		else: # Login Ok
-			profile = UserProfile.objects.get(user=user)
+			if not user.is_superuser:
+				profile = UserProfile.objects.get(user=user)
 			auth.login(request, user)
 			return render_to_response('test.html', {
 				'userid': user.username,
-				'student_id': profile.student_id,
-				'department': profile.department,
+				'student_id': '99990001' if user.is_superuser else profile.student_id,
+				'department': None if user.is_superuser else profile.department,
 				'fullname': '%s %s' % (user.first_name, user.last_name),
 			}, context_instance=RequestContext(request))
 		
