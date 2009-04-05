@@ -7,10 +7,10 @@ from otl.apps.favorites.models import CourseLink
 import time
 
 SEMESTER_NAMES = {
-	1: u'ë´?,
-	2: u'?¬ë¦„',
-	3: u'ê°€??,
-	4: u'ê²¨ìš¸',
+	1: u'º½',
+	2: u'¿©¸§',
+	3: u'°¡À»',
+	4: u'°Ü¿ï',
 }
 NUM_PER_PAGE = 10
 

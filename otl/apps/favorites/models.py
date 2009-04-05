@@ -12,7 +12,7 @@ class CourseLink(models.Model):
 	url = models.URLField()
 	favored_count = models.IntegerField(default=0)
 	writer = models.ForeignKey(User, related_name='courselink_set')
-	written = models.DateTimeField() # written, last_updated??ê´€?µì ?¼ë¡œ ?‘ì„±/?˜ì • ?œê°„???œí˜„?˜ëŠ” ???¬ìš©??
+	written = models.DateTimeField()
 	favored_by = models.ManyToManyField(User, related_name='favorite_set', blank=True)
 
 class CourseLinkAdmin(admin.ModelAdmin):
