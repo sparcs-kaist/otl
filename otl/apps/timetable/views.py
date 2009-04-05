@@ -4,6 +4,7 @@ from django.template import RequestContext
 from django.conf import settings
 from otl.apps.accounts.models import Department
 from otl.apps.timetable.models import Lecture, ExamTime, ClassTime, Syllabus
+from StringIO import StringIO
 try:
 	import json
 except:
@@ -70,5 +71,7 @@ def _lectures_to_json(lectures):
 			'examtime': {'day': exam.day, 'start': exam.get_begin_numeric(), 'end': exam.get_end_numeric()} if exam != None else None,
 		}
 		all.append(item)
-	return json.dumps(all, indent=4)
+	io = StringIO()
+	json.dump(all, io, ensure_ascii=False, indent=4)
+	return io.getvalue()
 
