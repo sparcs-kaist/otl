@@ -12,7 +12,7 @@
 		<li>
 			<h4>{{item.course_code}}: {{item.course_name}}</h4>
 			<a class="favorite-link" href="{{item.url}}">{{item.url}}</a>
-			<a class="control-delete" href="/favorites/delete/{{item.id}}">Delete</a>
+			<a class="control-delete" href="/favorites/delete/?delete={{item.id}}">Delete</a>
 		</li>
 	{% endfor %}
 	</ul>
@@ -48,6 +48,26 @@
 	</div>
 	<form id="search-form" method="get" action="/favorites/search/">
 		<p><label for="search-query">검색 : </label><input type="text" id="search-query" name="query" value="" /><input type="submit" value="Find" /></p>
+		<ul>
+		{% for item in search_list %}
+			<li>
+				<h4>{{item.year}} {{item.semester}} {{item.course_code}}: {{item.course_name}}</h4>
+				<a class="search-link" href="{{item.url}}">{{item.url}}</a>
+				<span class="submitter">올린이 : <a href="/accounts/view/{{item.writer.username}}">{{item.writer.username}}</a></span>
+				<a class="control-add" href="/favorite/add/{{item.id}}">Add</a>
+			</li>
+		{% endfor%}
+		</ul>
+		<div class="search-pages">
+			{% if search_page.has_previous %}
+			<a class="search-prev-page" href="?search-page={{search_page.prev_page}}">Prev</a>
+			{% endif %}
+			{% for page in search_page.paginator.page_range %}
+			<a class="search-page{% ifequal page.number search_page.number %} selected{% endifequal %}" href="?page={{page.number}}">{{page.number}}</a>
+			{% endfor %}
+			{% if search_page.has_next %}
+			<a class="search-next-page" href="?search-page={{search_page.next_page}}">Next</a>
+			{% endif %}
 	</form>
 </div>
 {% endblock %}
