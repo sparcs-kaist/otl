@@ -4,9 +4,10 @@ from django.template import RequestContext
 from django.core.paginator import Paginator
 from django.contrib.auth.models import User
 from otl.apps.favorites.models import CourseLink
+from otl.settings import *
 import time
 
-SEMESTER_NAMES = {
+SEMESTER_NAMES = { #TODO: 봄, 여름, 가을, 겨울 은 언어지원 어떻게?
 	1: u'봄',
 	2: u'여름',
 	3: u'가을',
@@ -27,20 +28,34 @@ def index(request):
 
 	return render_to_response('favorites/index.html', {
 		'section': 'favorites',
-		'current_year': 2009, # TODO: 공통적으로 사용할 수 있게 middleware로 처리하는 게 좋을 듯.
-		'current_semester': SEMESTER_NAMES[1],
+		'current_year': CURRENT_YEAR, 
+		'current_semester': SEMESTER_NAMES[CURRENT_SEMESTER],
 		'favorite_list': favorite_list,
 		'recently_added_list': current_page.object_list,
 		'current_page': current_page,
 	}, context_instance=RequestContext(request))
 
 def search(request):
+	if request.user.is_authenticated():
+		favorite_list = CourseLink.objects.filter(favored_by__exact=request.user)
+	else:
+		favorite_list = None
+	page = request.GET.get('page', 1)
+	courselink_pages = Paginator(CourseLink.objects.all().order_by('-written'), NUM_PER_PAGE)
+	current_page = courselink_pages.page(page)
+
 	search_page = request.GET.get('search-page',1)
 	search_code = request.GET.get('query')
 	search_list = Paginator(CourseLink.objects.filter(course_code__exact = search_code).order_by('-year','-semester','favored_count'), NUM_PER_PAGE)
 	current_search_page = search_list.page(search_page)
 
 	return render_to_response('favorites/index.html', {
+		'section': 'favorites',
+		'current_year': CURRENT_YEAR, 
+		'current_semester': SEMESTER_NAMES[CURRENT_SEMESTER],
+		'favorite_list': favorite_list,
+		'recently_added_list': current_page.object_list,
+		'current_page': current_page,
 		'search_list': search_list.object_list,
 		'search_page': current_search_page,
 	}, context_instance=RequestContext(request))

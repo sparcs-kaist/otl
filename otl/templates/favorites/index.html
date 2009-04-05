@@ -29,7 +29,7 @@
 			year <input type="text" id="year" name="year" value="" size="4"/>
 			semester <input type="text" id="semester" name="semester" value="" size="1"/>
 			url <input type="text" id="url" name="url" value="" size="5"/>
-			<input type="submit" value="등록" />
+			<input id="create-form" type="submit" value="등록" />
 		</div>
 	</div>
 	<ul>
@@ -59,7 +59,7 @@
 		{% for item in search_list %}
 			<li>
 				<h4>{{item.year}} {{item.semester}} {{item.course_code}}: {{item.course_name}}</h4>
-				<a class="search-link" href="{{item.url}}">{{item.url}}</a>
+				<a class="search-link" href="{{item.url}}">{{item.url}}<img src="http://open.thumbshots.org/image.aspx?url={{item.url}}"/></a>
 				<span class="submitter">올린이 : <a href="/accounts/view/{{item.writer.username}}">{{item.writer.username}}</a></span>
 				<a class="control-add" href="/favorites/add/{{item.id}}">Add</a>
 			</li>
