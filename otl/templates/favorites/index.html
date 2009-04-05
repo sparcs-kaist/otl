@@ -11,7 +11,7 @@
 	{% for item in favorite_list %}
 		<li>
 			<h4>{{item.course_code}}: {{item.course_name}}</h4>
-			<a class="favorite-link" href="{{item.url}}">{{item.url}}</a>
+			<a class="favorite-link" href="{{item.url}}">{{item.url}}<img src="http://open.thumbshots.org/image.aspx?url={{item.url}}" /></a>
 			<a class="control-delete" href="/favorites/delete/{{item.id}}">Delete</a>
 		</li>
 	{% endfor %}
@@ -36,7 +36,7 @@
 	{% for item in recently_added_list %}
 		<li>
 			<h4>{{item.course_code}}: {{item.course_name}}</h4>
-			<a class="favorite-link" href="{{item.url}}">{{item.url}}</a>
+			<a class="favorite-link" href="{{item.url}}">{{item.url}}<img src="http://open.thumbshots.org/image.aspx?url={{item.url}}" /></a>
 			<span class="submitter">올린이 : <a href="/accounts/view/{{item.writer.username}}">{{item.writer.username}}</a></span>
 			<a class="control-add" href="/favorites/add/{{item.id}}">Add</a>
 		</li>
