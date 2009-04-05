@@ -8,6 +8,7 @@
 			"year": 2009,
 			"semester": 1,
 			"url": "http://example.com",
+			"written": "2009-04-05 09:00:00",
 			"writer": 1,
 			"favored_count": 1,
 			"favored_by": [1]
@@ -22,6 +23,7 @@
 			"year": 2009,
 			"semester": 1,
 			"url": "http://example.com",
+			"written": "2009-04-05 10:00:00",
 			"writer": 1,
 			"favored_count": 0,
 			"favored_by": []
@@ -36,6 +38,7 @@
 			"year": 2009,
 			"semester": 1,
 			"url": "http://example.com",
+			"written": "2009-04-05 11:00:00",
 			"writer": 1,
 			"favored_count": 0,
 			"favored_by": []
