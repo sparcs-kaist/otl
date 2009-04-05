@@ -30,7 +30,7 @@
                 </p>
                 <p id="global-info">
 					{% if user.is_authenticated %}
-					{{ user }} | <a href="/accounts/myinfo">내 계정</a> | <a href="/logout/">로그아웃</a>
+					{{ user }}{% if user.is_superuser %} (관리자){% endif %} | <a href="/accounts/myinfo">내 계정</a> | <a href="/logout/">로그아웃</a>
 					{% else %}
 					<a href="/login/">로그인</a>
 					{% endif %}
