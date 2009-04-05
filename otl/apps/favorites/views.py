@@ -7,9 +7,9 @@ from otl.apps.favorites.models import CourseLink
 import time
 
 SEMESTER_NAMES = {
-	1: u'봄',
-	2: u'여름',
-	3: u'가을',
+	1: u'�?,
+	2: u'?�름',
+	3: u'가??,
 	4: u'겨울',
 }
 NUM_PER_PAGE = 10
@@ -23,11 +23,11 @@ def index(request):
 	page = request.GET.get('page', 1)
 	courselink_pages = Paginator(CourseLink.objects.all().order_by('-written'), NUM_PER_PAGE)
 	current_page = courselink_pages.page(page)
-	# TODO: 나중에 영문 과목명과 한글 과목명 처리는 어떻게?
+	# TODO: ?�중???�문 과목명과 ?��? 과목�?처리???�떻�?
 
 	return render_to_response('favorites/index.html', {
 		'section': 'favorites',
-		'current_year': 2009, # TODO: 공통적으로 사용할 수 있게 middleware로 처리하는 게 좋을 듯.
+		'current_year': 2009, # TODO: 공통?�으�??�용?????�게 middleware�?처리?�는 �?좋을 ??
 		'current_semester': SEMESTER_NAMES[1],
 		'favorite_list': favorite_list,
 		'recently_added_list': current_page.object_list,
@@ -45,9 +45,8 @@ def search(request):
 		'search_page': current_search_page,
 	}, context_instance=RequestContext(request))
 	
-def add(request):
+def add(request, course_id):
 	if request.user.is_authenticated():
-		course_id = request.GET.get('id');
 		course_selected = CourseLink.objects.get( id__exact = course_id )
 		user = request.user
 		course_selected.favored_by.add( user )
@@ -89,8 +88,7 @@ def create(request):
 		'current_page': current_page,
 	}, context_instance=RequestContext(request))
 
-def delete(request):
-	course_id = request.GET.get('delete')
+def delete(request, course_id):
 	user = request.user
 	delete_course = CourseLink.objects.get(id = course_id)
 	delete_course.favored_by.remove(user)

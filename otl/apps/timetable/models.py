@@ -53,15 +53,15 @@ class ExamTimeAdmin(admin.ModelAdmin):
 class ClassTime(models.Model):
 	"""Lecture에 배정된 강의 시간. 보통 하나의 Lecture가 여러 개의 강의 시간을 가진다."""
 	lecture = models.ForeignKey(Lecture)			
-	day = models.SmallIntegerField()
+	day = models.SmallIntegerField(choices=WEEKDAYS)
 	begin = models.CharField(max_length=5)
 	end = models.CharField(max_length=5)
 	type = models.CharField(max_length=1, choices=CLASS_TYPES)
-	building = models.CharField(max_length=10)	# 건물 고유ID (잘 사용되지 않음)
-	room = models.CharField(max_length=60)		# 호실 (잘 사용되지 않음)
-	room_ko = models.CharField(max_length=60)	# 수업 장소 (한글)
-	room_en = models.CharField(max_length=60)	# 수업 장소 (영문)
-	unit_time = models.SmallIntegerField()		# 수업 교시
+	building = models.CharField(max_length=10, blank=True, null=True)	# 건물 고유ID (잘 사용되지 않음)
+	room = models.CharField(max_length=60, blank=True, null=True)		# 호실 (잘 사용되지 않음)
+	room_ko = models.CharField(max_length=60, blank=True, null=True)	# 수업 장소 (한글)
+	room_en = models.CharField(max_length=60, blank=True, null=True)	# 수업 장소 (영문)
+	unit_time = models.SmallIntegerField(blank=True, null=True)			# 수업 교시
 
 	def __unicode__(self):
 		return u'[%s] %s, %s-%s @%s' % (self.lecture.code, self.get_day_display(), self.begin, self.end, self.room_ko)
