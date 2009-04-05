@@ -93,7 +93,7 @@ def create(request):
 def delete(request, course_id):
 	user = request.user
 	delete_course = CourseLink.objects.get(id__exact = course_id)
-	count = course_selected.favored_count
+	count = delete_course.favored_count
 	delete_course.favored_by.remove(user)
 	CourseLink.objects.filter(id__exact = course_id).update(favored_count = count - 1)
 	favorite_list = CourseLink.objects.filter(favored_by__exact=request.user)
