@@ -23,8 +23,6 @@ def index(request):
 
 	return render_to_response('favorites/index.html', {
 		'section': 'favorites',
-		'current_year': settings.CURRENT_YEAR, 
-		'current_semester': SEMESTER_TYPES[settings.CURRENT_SEMESTER][1],
 		'favorite_list': favorite_list,
 		'recently_added_list': current_page.object_list,
 		'current_page': current_page,
@@ -46,8 +44,6 @@ def search(request):
 
 	return render_to_response('favorites/index.html', {
 		'section': 'favorites',
-		'current_year': settings.CURRENT_YEAR, 
-		'current_semester': SEMESTER_TYPES[settings.CURRENT_SEMESTER][1],
 		'favorite_list': favorite_list,
 		'recently_added_list': current_page.object_list,
 		'current_page': current_page,
@@ -73,8 +69,6 @@ def add(request, course_id):
 
 	return render_to_response('favorites/index.html', {
 		'section': 'favorites',
-		'current_year': settings.CURRENT_YEAR,
-		'current_semester': SEMESTER_TYPES[settings.CURRENT_SEMESTER][1],
 		'favorite_list': favorite_list,
 		'recently_added_list': current_page.object_list,
 		'current_page': current_page,
