@@ -5,15 +5,9 @@ from django.core.paginator import Paginator
 from django.conf import settings
 from django.contrib.auth.models import User
 from otl.apps.favorites.models import CourseLink
-from otl.settings import *
+from otl.apps.common import *
 import time
 
-SEMESTER_NAMES = { #TODO: 봄, 여름, 가을, 겨울 은 언어지원 어떻게?
-	1: u'봄',
-	2: u'여름',
-	3: u'가을',
-	4: u'겨울',
-}
 NUM_PER_PAGE = 10
 
 def index(request):
@@ -29,8 +23,8 @@ def index(request):
 
 	return render_to_response('favorites/index.html', {
 		'section': 'favorites',
-		'current_year': CURRENT_YEAR, 
-		'current_semester': SEMESTER_NAMES[CURRENT_SEMESTER],
+		'current_year': settings.CURRENT_YEAR, 
+		'current_semester': SEMESTER_TYPES[settings.CURRENT_SEMESTER][1],
 		'favorite_list': favorite_list,
 		'recently_added_list': current_page.object_list,
 		'current_page': current_page,
@@ -52,8 +46,8 @@ def search(request):
 
 	return render_to_response('favorites/index.html', {
 		'section': 'favorites',
-		'current_year': CURRENT_YEAR, 
-		'current_semester': SEMESTER_NAMES[CURRENT_SEMESTER],
+		'current_year': settings.CURRENT_YEAR, 
+		'current_semester': SEMESTER_TYPES[settings.CURRENT_SEMESTER][1],
 		'favorite_list': favorite_list,
 		'recently_added_list': current_page.object_list,
 		'current_page': current_page,
@@ -79,8 +73,8 @@ def add(request, course_id):
 
 	return render_to_response('favorites/index.html', {
 		'section': 'favorites',
-		'current_year': 2009,
-		'current_semester': SEMESTER_NAMES[1],
+		'current_year': settings.CURRENT_YEAR,
+		'current_semester': SEMESTER_TYPES[settings.CURRENT_SEMESTER][1],
 		'favorite_list': favorite_list,
 		'recently_added_list': current_page.object_list,
 		'current_page': current_page,

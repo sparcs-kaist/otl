@@ -1,14 +1,11 @@
 # encoding: utf-8
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+from django.utils import simplejson as json
 from django.conf import settings
 from otl.apps.accounts.models import Department
 from otl.apps.timetable.models import Lecture, ExamTime, ClassTime, Syllabus
 from StringIO import StringIO
-try:
-	import json
-except:
-	import simplejson as json
 
 def index(request):
 	lectures = Lecture.objects.filter(year=settings.CURRENT_YEAR, semester=settings.CURRENT_SEMESTER)
