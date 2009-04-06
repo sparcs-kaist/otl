@@ -105,7 +105,8 @@ AUTHENTICATION_BACKENDS = (
 AUTH_PROFILE_MODULE = 'apps.accounts.userprofile'
 
 # Should be overriden at settings_local.py
-CURRENT_YEAR = 2009
+from datetime import date
+CURRENT_YEAR = 2009 # context_processors.globaltime may override this with the system clock.
 CURRENT_SEMESTER = 1
 NEXT_YEAR = 2009
 NEXT_SEMESTER = 3
