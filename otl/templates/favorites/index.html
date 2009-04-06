@@ -22,7 +22,7 @@
 </div>
 <div id="publicFavorites">
 	<h3>다른 사람들의 즐겨찾기</h3>
-	<div id="create-form" method="get" action="/favorites/create/">
+	<form id="create-form" method="get" action="/favorites/create/">
 		<div id="add-public-favorite">
 			즐겨찾기 등록 : code <input type="text" id="code" name="code" value="" size="5"/>
 			name <input type="text" id="name" name="name" value="" size="5"/>
@@ -31,7 +31,7 @@
 			url <input type="text" id="url" name="url" value="" size="5"/>
 			<input id="create-form" type="submit" value="등록" />
 		</div>
-	</div>
+	</form>
 	<ul>
 	{% for item in recently_added_list %}
 		<li>
