@@ -59,6 +59,13 @@ TEMPLATE_LOADERS = (
     'django.template.loaders.app_directories.load_template_source',
 #     'django.template.loaders.eggs.load_template_source',
 )
+TEMPLATE_CONTEXT_PROCESSORS = (
+	'django.core.context_processors.auth',
+	'django.core.context_processors.debug',
+	'django.core.context_processors.i18n',
+	'django.core.context_processors.media',
+	'otl.context_processors.globaltime',
+)
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
@@ -98,8 +105,11 @@ AUTHENTICATION_BACKENDS = (
 AUTH_PROFILE_MODULE = 'apps.accounts.userprofile'
 
 # Should be overriden at settings_local.py
-CURRENT_YEAR = 2009
+from datetime import date
+CURRENT_YEAR = 2009 # context_processors.globaltime may override this with the system clock.
 CURRENT_SEMESTER = 1
+NEXT_YEAR = 2009
+NEXT_SEMESTER = 3
 
 try:
 	import otl.settings_local
