@@ -27,13 +27,26 @@
 	/*
 	Data.Lectures = 
 	[
-		{id:'1',year:'2008',term:'3',dept:'전산학전공',classification:'기초필수',course_no:'CE202','class':'A',code:'37.231',title:'데이타구조',lec_time:'2',lab_time:'3',credit:'3',prof:'김민우',times:[{day:'화',start:480,end:600},{day:'수',start:480,end:600}],classroom:'창의학습관:304',fixed_num:'200',remarks:'영어강의',examtime:'화:14:00~16:00'},
-		{id:'1',year:'2008',term:'3',dept:'전산학전공',classification:'기초필수',course_no:'CE202','class':'A',code:'37.231',title:'데이타구조',lec_time:'2',lab_time:'3',credit:'3',prof:'김민우',times:[{day:'화',start:480,end:600},{day:'수',start:480,end:600}],classroom:'창의학습관:304',fixed_num:'200',remarks:'영어강의',examtime:'화:14:00~16:00'},
-		{id:'1',year:'2008',term:'3',dept:'전산학전공',classification:'기초필수',course_no:'CE202','class':'A',code:'37.231',title:'데이타구조',lec_time:'2',lab_time:'3',credit:'3',prof:'김민우',times:[{day:'화',start:480,end:600},{day:'수',start:480,end:600}],classroom:'창의학습관:304',fixed_num:'200',remarks:'영어강의',examtime:'화:14:00~16:00'},
-		{id:'1',year:'2008',term:'3',dept:'전산학전공',classification:'기초필수',course_no:'CE202','class':'A',code:'37.231',title:'데이타구조',lec_time:'2',lab_time:'3',credit:'3',prof:'김민우',times:[{day:'화',start:480,end:600},{day:'수',start:480,end:600}],classroom:'창의학습관:304',fixed_num:'200',remarks:'영어강의',examtime:'화:14:00~16:00'},
-		{id:'1',year:'2008',term:'3',dept:'전산학전공',classification:'기초필수',course_no:'CE202','class':'A',code:'37.231',title:'데이타구조',lec_time:'2',lab_time:'3',credit:'3',prof:'김민우',times:[{day:'화',start:480,end:600},{day:'수',start:480,end:600}],classroom:'창의학습관:304',fixed_num:'200',remarks:'영어강의',examtime:'화:14:00~16:00'},
-		{id:'1',year:'2008',term:'3',dept:'전산학전공',classification:'기초필수',course_no:'CE202','class':'A',code:'37.231',title:'데이타구조',lec_time:'2',lab_time:'3',credit:'3',prof:'김민우',times:[{day:'화',start:480,end:600},{day:'수',start:480,end:600}],classroom:'창의학습관:304',fixed_num:'200',remarks:'영어강의',examtime:'화:14:00~16:00'},
-		{id:'1',year:'2008',term:'3',dept:'전산학전공',classification:'기초필수',course_no:'CE202','class':'A',code:'37.231',title:'데이타구조',lec_time:'2',lab_time:'3',credit:'3',prof:'김민우',times:[{day:'화',start:480,end:600},{day:'수',start:480,end:600}],classroom:'창의학습관:304',fixed_num:'200',remarks:'영어강의',examtime:'화:14:00~16:00'}
+		{
+			id:'1',
+			year:'2008',
+			term:'3',
+			dept:'전산학전공',
+			classification:'기초필수',
+			course_no:'CE202',
+			'class':'A',
+			code:'37.231',
+			title:'데이타구조',
+			lec_time:'2',
+			lab_time:'3',
+			credit:'3',
+			prof:'김민우',
+			times:[{day:'화',start:480,end:600},{day:'수',start:480,end:600}],
+			classroom:'창의학습관 304',
+			fixed_num:'200',
+			remarks:'영어강의',
+			examtime:{day:'화,start:480,end:630}
+		}
 	];
 	*/
 
@@ -74,6 +87,10 @@
 				else item.addClass('none');
 			});
 			this.activeKey = key;
+		},
+		getActiveTab:function()
+		{
+			return this.contents[this.activeKey];
 		}
 	});
 
@@ -297,7 +314,8 @@
 
 				var el = new Element('a',{'html':item.title}).inject(content);
 				UDF.clickable(el);
-
+				
+				el.addEvent('mousedown',Timetable.onMousedown.bind(Timetable,item));
 				el.addEvent('mouseover',Timetable.onMouseover.bind(Timetable,item));
 				el.addEvent('mouseout',Timetable.onMouseout.bind(Timetable,item));
 			}.bind(this));
@@ -306,9 +324,9 @@
 		}
 	};
 
-	Timetable ={
+	RangeSearch = {
 		initialize:function()
-		{
+	   	{
 			this.grid = $('grid');
 			this.overlap = $('overlap_modules');
 			this.overlap.setStyle('display','none');
@@ -324,13 +342,10 @@
 			this.selection=$('cellselected');
 			this.selection.setStyle('display','none');
 
-			this.tab = new Mootabs('timetable_tabs','timetable_contents','mousedown');
-
-			this.registHandles();
+			this.registHandlers();
 		},
-		registHandles:function()
+		registHandlers:function()
 		{
-			//UDF.clickable(this.selection);
 			this.grid.addEvent('mousedown',this.onMousedown.bindWithEvent(this));
 			document.addEvent('mouseup',this.onEnd.bindWithEvent(this));
 			document.addEvent('mousemove',this.onDrag.bindWithEvent(this));
@@ -396,6 +411,31 @@
 			var row = Math.floor(coords.y/this.options.cellHeight);
 			var col = Math.floor(coords.x/this.options.cellWidth);
 			return {row:row,col:col};
+		}
+		
+	};
+
+	
+
+	Timetable ={
+		initialize:function()
+		{
+			this.grid = $('grid');
+			this.overlap = $('overlap_modules');
+			this.overlap.setStyle('display','none');
+			this.tabs = new Mootabs('timetable_tabs','timetable_contents','mousedown');
+			this.registHandlers();
+		},
+		registHandlers:function()
+	   	{
+			$('clean_table').addEvent('click',this.cleanTable.bind(this));
+	   	},
+		cleanTable:function()
+		{
+			if(confirm('현재 시간표를 초기화 하시겠습니까?'))
+			{
+				this.tabs.getActiveTab().empty();
+			}
 		},
 		onMouseout:function()
 		{
@@ -403,15 +443,18 @@
 			$('add_au').empty();
 			this.overlap.setStyle('display','none');
 		},
-		onMouseover:function(obj)
+		onMousedown:function(obj)
 		{
-			this.updator(obj);
+			this.updator(this.tabs.getActiveTab(),obj);
 		},
-		updator: function(obj)
+		onMouseover:function(obj)
 		{
 			this.overlap.setStyle('display','block');
 			this.overlap.empty();
-
+			this.updator(this.overlap,obj);
+		},
+		updator: function(wrap,obj)
+		{
 			var h = $H(obj);
 			var keys= h.getKeys();
 			keys.each(function(key)
@@ -442,9 +485,9 @@
 
 			var classroom = obj.classroom.split(' ')[0]
 			Map.find(classroom);
-			this.buildlmodules(obj);
+			this.buildlmodules(wrap,obj);
 		},
-		buildlmodules:function(obj)
+		buildlmodules:function(wrap,obj)
 		{
 			var bgcolor = UDF.modulecolors[Math.floor(Math.random()*10)];
 			obj.times.each(function(time)
@@ -462,7 +505,7 @@
 
 				bg.set({'styles':{'background':bgcolor}});
 				lmodule.set({'styles':{'left':left,'top':top,'height':height}});
-				lmodule.inject(this.overlap);
+				lmodule.inject(wrap);
 			}.bind(this));
 		}
 	};
@@ -472,6 +515,7 @@
 		LectureList.initialize();
 		Map.initialize();
 		Timetable.initialize();
+		RangeSearch.initialize();
 	});
 	</script>
 {% endblock %}
@@ -579,7 +623,7 @@
 			</div>
 			<div class="right">
 				<a href="#">내 일정에 추가</a> |
-				<a href="#">초기화</a> |
+				<a id="clean_table" style="cursor:pointer">초기화</a> |
 				<a href="#">인쇄</a>
 			</div>
 			&nbsp;
@@ -592,6 +636,7 @@
 				<div class="chead"><span>수</span></div>
 				<div class="chead"><span>목</span></div>
 				<div class="chead"><span>금</span></div>
+				<div id="col_hd_sel"></div>
 			</div>
 			<div id="tablebody">
 				<div id="rowheaders">
@@ -611,6 +656,7 @@
 					<div class="rhead"><span class="rheadtext">오후 9시</span></div>
 					<div class="rhead"><span class="rheadtext">오후 10시</span></div>
 					<div class="rhead"><span class="rheadtext">오후 11시</span></div>
+					<div id="row_hd_sel"></div>
 				</div>
 				<div id="grid-wrap">
 					<div id="grid">

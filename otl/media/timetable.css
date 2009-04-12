@@ -34,6 +34,15 @@
     margin-left:60px;
 }
 
+#col_hd_sel
+{
+	position:absolute;
+	height:100%;
+	width:100%;
+	left:0;
+	top:0;
+}
+
 .chead
 {
     float:left;
@@ -61,6 +70,15 @@
     height:100%;
     left:0pt;
     top:0pt;
+}
+
+#rowheaders #row_hd_sel
+{
+	position:absolute;
+	width:100%;
+	height:100%;
+	left:0;
+	top:0;
 }
 
 .rhead
