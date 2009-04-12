@@ -3,6 +3,7 @@ hgusers
 *.pyc
 *.db
 .*.swp
+settings_local.py
 otl/test.db
 documents/*.dvi
 documents/*.toc

@@ -112,6 +112,11 @@ CURRENT_SEMESTER = 1
 NEXT_YEAR = 2009
 NEXT_SEMESTER = 3
 
+SCHOLARDB_HOST = ''
+SCHOLARDB_USER = ''
+SCHOLARDB_PASSWORD = ''
+SCHOLARDB_NAME = ''
+
 try:
 	import otl.settings_local
 except ImportError:
