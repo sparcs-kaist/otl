@@ -14,14 +14,14 @@
     padding:0 10px 10px;
 }
 
-#timetable_footer
+#timetable-footer
 {
     width:100% !important;
     width:582px;
     background:#C3D9FF url('images/corner_bl.gif') left bottom no-repeat;
 }
 
-#timetable_footer div
+#timetable-footer div
 {
     height:5px;
     background:transparent url('images/corner_br.gif') right bottom no-repeat;
@@ -248,7 +248,7 @@
 #left-side
 {
     float:left;
-    width:180px
+    width:180px;
 }
 
 #right-side

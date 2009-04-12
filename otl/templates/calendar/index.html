@@ -1,5 +1,145 @@
-{% extends 'layout.html' %}
-{% block content %}
-<h2>일정 관리</h2>
-<p style="text-align:center"><img src="/media/images/temp_calendar_prototype.png" /></p>
-{% endblock %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>OTL - Calendar</title>
+	<link rel="stylesheet" type="text/css" href="/media/default.css" />
+	<link rel="stylesheet" type="text/css" href="/media/calendar.css"/>
+	<link rel="stylesheet" type="text/css" href="/media/js/calendarview/calendarview.css"/>
+
+	<script type="text/javascript" src="/media/js/prototype/prototype-1.6.0.3.js"></script>
+	<script type="text/javascript" src="/media/js/layoutmanager/src/layout_manager.js"></script>
+	<script type="text/javascript" src="/media/js/calendarview/calendarview.js"></script>
+	<script type="text/javascript">
+
+	var layoutManager = null;
+	Event.observe(window, "load", function() { 
+		Calendar.setup({
+			parentElement : 'calendar'
+		});
+		layoutManager = new LayoutManager() 
+	});
+
+	</script>
+</head>
+<body>
+	<div id="wrap" class="lm_container">
+		<div id="global-bar" class="lm_top">
+			gmail canlendar docs photos reader more  login
+		</div><!--lm_top-->
+		<div class="lm_left" style="width:10px"></div>
+		<div id="left-side" class="lm_left">
+			<div class="lm_container">
+				<div id="logo-wrap"  class="lm_top">
+					<h1>OTL</h1>
+					beta
+				</div>
+				<div id="calendar-wrap" class="lm_top">
+					<div id="calendar">
+					</div>
+				</div>
+				<div class="lm_center">
+					<br />
+					<div class="side-box">
+						<div class="top"><div>my calendar</div></div>
+						<div class="content"><div>
+							<ul>
+								<li>calendar 1</li>
+								<li>calendar 2</li>
+								<li>calendar 3</li>
+								<li>calendar 4</li>
+								<li>calendar 5</li>
+							</ul>
+						</div></div>
+						<div class="bottom"><div>
+							설정 만들기
+						</div></div>
+					</div>
+				</div>
+				<div class="lm_right" style="width:6px"></div>
+			</div>
+		</div><!--lm_top-->
+		<div class="lm_center">
+			<div class="lm_container">
+				<div id="search-bar" class="lm_top">
+					<input type="text" />
+					내 캘린더 검색
+				</div>
+				<div id="message-bar" class="lm_top">
+					<span style="background:#FAD163">일정이 삭제 되었습니다. 실행취소</span>
+				</div>
+				<div id="navigation" class="lm_top">
+					오늘 2009년 4월 13일 – 19일  새로고침
+				</div>
+				<div id="center-left" class="lm_left"></div>
+				<div id="center" class="lm_center">
+					<div class="lm_container">
+						<div id="timetable-top" class="lm_top">
+							<div class="lm_container">
+								<div class="lm_left" style="width:61px">
+
+								</div>
+								<div class="lm_center">
+									<div id="colheaders">
+										<div class="chead"><span>월</span></div>
+										<div class="chead"><span>화</span></div>
+										<div class="chead"><span>수</span></div>
+										<div class="chead"><span>목</span></div>
+										<div class="chead"><span>금</span></div>
+										<div class="chead"><span>토</span></div>
+										<div class="chead"><span>일</span></div>
+										<div class="clear"></div>
+									</div>
+									<div id="day-schedule">
+										days-schelue
+									</div>
+								</div>
+								<div class="lm_right" style="width:17px"></div>
+							</div>
+						</div>
+						<div class="lm_top" style="height:6px;background:#C3D9FF"></div>
+						<div id="timetable-wrap" class="lm_center">
+							<div id="timetable">
+								<div id="rowheaders" class="lm_left">
+									<div class="rhead"><span>오후 10시</span></div>
+									<div class="rhead"><span>오후 10시</span></div>
+									<div class="rhead"><span>오후 10시</span></div>
+									<div class="rhead"><span>오후 10시</span></div>
+									<div class="rhead"><span>오후 10시</span></div>
+									<div class="rhead"><span>오후 10시</span></div>
+									<div class="rhead"><span>오후 10시</span></div>
+									<div class="rhead"><span>오후 10시</span></div>
+									<div class="rhead"><span>오후 10시</span></div>
+									<div class="rhead"><span>오후 10시</span></div>
+
+									<div class="rhead"><span>오후 10시</span></div>
+									<div class="rhead"><span>오후 10시</span></div>
+									<div class="rhead"><span>오후 10시</span></div>
+									<div class="rhead"><span>오후 10시</span></div>
+									<div class="rhead"><span>오후 10시</span></div>
+									<div class="rhead"><span>오후 10시</span></div>
+									<div class="rhead"><span>오후 10시</span></div>
+									<div class="rhead"><span>오후 10시</span></div>
+									<div class="rhead"><span>오후 10시</span></div>
+									<div class="rhead"><span>오후 10시</span></div>
+
+									<div class="rhead"><span>오후 10시</span></div>
+									<div class="rhead"><span>오후 10시</span></div>
+									<div class="rhead"><span>오후 10시</span></div>
+									<div class="rhead"><span>오후 10시</span></div>
+								</div><!--rowheaders-->
+								<div id="grid-wrap">
+									<div id="grid">
+									</div>
+								</div>
+							</div><!--timetable-->
+						</div> <!--timetable-wrap-->
+					</div><!--lm_container-->
+				</div><!--center-->
+				<div id="center-bottom" class="lm_bottom"><div></div></div>
+				<div class="lm_bottom" style="height:8px;"></div>
+			</div><!--lm_container-->
+		</div><!--wrap-->
+		<div class="lm_right" style="width:10px"></div>
+	</div><!--lm_container-->
+</body>
+</html>

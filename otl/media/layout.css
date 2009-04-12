@@ -22,15 +22,14 @@ body
 #gbar
 {
     color:#eee;
-    height:30px;
+    height:20px;
 }
 
 
-#gbar h1
+#global-logo
 {
     font-family:Arial;
-    font-size:18px;
-    font-weight:bold;
+    font-size:14px;
     color:#F3F3F3;
     float:left;
 }
@@ -63,7 +62,7 @@ body
 }
 #header-content
 {
-    padding-top:20px;
+    padding-top:10px;
 }
 
 #header-content h2
@@ -81,7 +80,7 @@ body
 
 #content
 {
-    padding:10px;
+	padding:0;
 }
 
 #footer

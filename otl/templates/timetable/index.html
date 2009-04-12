@@ -315,7 +315,7 @@
 				var el = new Element('a',{'html':item.title}).inject(content);
 				UDF.clickable(el);
 				
-				el.addEvent('mousedown',Timetable.onMousedown.bind(Timetable,item));
+				el.addEvent('mousedown',Timetable.addLecture.bind(Timetable,item));
 				el.addEvent('mouseover',Timetable.onMouseover.bind(Timetable,item));
 				el.addEvent('mouseout',Timetable.onMouseout.bind(Timetable,item));
 			}.bind(this));
@@ -443,18 +443,18 @@
 			$('add_au').empty();
 			this.overlap.setStyle('display','none');
 		},
-		onMousedown:function(obj)
+		addLecture:function(obj)
 		{
-			this.updator(this.tabs.getActiveTab(),obj);
+			var bgcolor = UDF.modulecolors[Math.floor(Math.random()*10)];
+			this.buildlmodules(this.tabs.getActiveTab(),obj,bgcolor);
 		},
-		onMouseover:function(obj)
+		deleteLecture:function()
+	  	{
+			
+	  	},
+		onMouseover: function(obj)
 		{
-			this.overlap.setStyle('display','block');
-			this.overlap.empty();
-			this.updator(this.overlap,obj);
-		},
-		updator: function(wrap,obj)
-		{
+
 			var h = $H(obj);
 			var keys= h.getKeys();
 			keys.each(function(key)
@@ -485,11 +485,16 @@
 
 			var classroom = obj.classroom.split(' ')[0]
 			Map.find(classroom);
-			this.buildlmodules(wrap,obj);
+
+
+			this.overlap.setStyle('display','block');
+			this.overlap.empty();
+
+			var bgcolor = '#FF9933';
+			this.buildlmodules(this.overlap,obj,bgcolor);
 		},
-		buildlmodules:function(wrap,obj)
+		buildlmodules:function(wrap,obj,bgcolor)
 		{
-			var bgcolor = UDF.modulecolors[Math.floor(Math.random()*10)];
 			obj.times.each(function(time)
 			{
 				var lmodule=new Element('div',{'class':'lmodule'});
@@ -681,7 +686,7 @@
 			</div><!--tablebody-->
 		</div><!--timetable-wrap-->
 		</div><!--timetable-->
-		<div id="timetable_footer"><div></div></div>
+		<div id="timetable-footer"><div></div></div>
 	</div>
 	<div id="right-side">
 		<div id="map">
