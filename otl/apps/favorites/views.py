@@ -4,6 +4,8 @@ from django.template import RequestContext
 from django.core.paginator import Paginator
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.http import HttpResponseRedirect
+
 from otl.apps.favorites.models import CourseLink
 from otl.apps.common import *
 import time
@@ -68,12 +70,7 @@ def add(request, course_id):
 	courselink_pages = Paginator( CourseLink.objects.filter(year=settings.CURRENT_YEAR, semester=settings.CURRENT_SEMESTER).order_by('-written')[0:3], NUM_PER_PAGE)
 	current_page = courselink_pages.page(page)
 
-	return render_to_response('favorites/index.html', {
-		'section': 'favorites',
-		'favorite_list': favorite_list,
-		'recently_added_list': current_page.object_list,
-		'current_page': current_page,
-	}, context_instance=RequestContext(request))
+	return HttpResponseRedirect('/favorites/');
 
 def create(request):
 	if request.user.is_authenticated():
@@ -92,12 +89,7 @@ def create(request):
 	courselink_pages = Paginator( CourseLink.objects.filter(year=settings.CURRENT_YEAR, semester=settings.CURRENT_SEMESTER).order_by('-written')[0:3], NUM_PER_PAGE)
 	current_page = new_courselink_pages.page(page)
 
-	return render_to_response('favorites/index.html', {
-		'section': 'favorites',
-		'favorite_list': favorite_list,
-		'recently_added_list': current_page.object_list,
-		'current_page': current_page,
-	}, context_instance=RequestContext(request))
+	return HttpResponseRedirect('/favorites/');
 
 def delete(request, course_id):
 	if request.user.is_authenticated():
@@ -113,12 +105,7 @@ def delete(request, course_id):
 	courselink_pages = Paginator( CourseLink.objects.filter(year=settings.CURRENT_YEAR, semester=settings.CURRENT_SEMESTER).order_by('-written')[0:3], NUM_PER_PAGE)
 	current_page = courselink_pages.page(page)
 
-	return render_to_response('favorites/index.html', {
-		'section': 'favorites',
-		'favorite_list': favorite_list,
-		'recently_added_list': current_page.object_list,
-		'current_page': current_page,
-	}, context_instance=RequestContext(request))
+	return HttpResponseRedirect('/favorites/');
 
 def morelist(request):
 	if request.user.is_authenticated():
@@ -129,10 +116,11 @@ def morelist(request):
 	courselink_pages = Paginator(CourseLink.objects.filter(year=settings.CURRENT_YEAR, semester=settings.CURRENT_SEMESTER).order_by('-written'), NUM_PER_PAGE)
 	current_page = courselink_pages.page(page)
 	# TODO: 나중에 영문 과목명과 한글 과목명 처리는 어떻게?
-
+	
 	return render_to_response('favorites/index.html', {
 		'section': 'favorites',
 		'favorite_list': favorite_list,
 		'recently_added_list': current_page.object_list,
 		'current_page': current_page,
+
 	}, context_instance=RequestContext(request))
