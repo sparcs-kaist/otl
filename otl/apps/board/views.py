@@ -27,7 +27,7 @@ def list_ara(request):
 	except:
 		return HttpResponseBadRequest()
 
-	article_result = server.article_manager.article_list(session, 'garbages', page_no, NUM_PER_PAGE)
+	article_result = server.article_manager.article_list(session, 'Lecture', page_no, NUM_PER_PAGE)
 	article_list = article_result.hit
 
 	# Pre-conversion
