@@ -117,7 +117,13 @@ SCHOLARDB_USER = ''
 SCHOLARDB_PASSWORD = ''
 SCHOLARDB_NAME = ''
 
+ARARA_HOST = ''
+ARARA_BASE_PORT = 0
+ARARA_USER = ''
+ARARA_PASSWORD = ''
+ARARA_SESSION_TIMEOUT = 3600
+
 try:
-	import otl.settings_local
+	from otl.settings_local import *
 except ImportError:
 	pass

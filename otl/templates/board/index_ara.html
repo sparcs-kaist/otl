@@ -1,5 +1,14 @@
 {% extends 'layout.html' %}
 {% block content %}
 <h2>아라 Lecture 게시판</h2>
-<p style="text-align:center"><img src="/media/images/temp_lectureboard_prototype.png" /></p>
+<table id="board-arara">
+	<thead>
+		<tr><th>작성자</th><th>제목</th></tr>
+	</thead>
+	<tbody>
+	{% for article in article_list %}
+		<tr><td>{{article.author_username}}</td><td>{{article.title}}</td></tr>
+	{% endfor %}
+	</tbody>
+</table>
 {% endblock %}
