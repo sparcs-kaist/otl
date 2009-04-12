@@ -22,16 +22,16 @@ class TimetableTestCase(TestCase):
 
 		self.assertEqual(response.status_code, 200, 'Status check')
 		self.assertEqual(result['result'], 'OK', 'Result message check')
-		self.assertTrue(Timetable.objects.get(lecture__pk = 2) != None, 'DB consistency check')
+		self.assertTrue(Timetable.objects.get(lecture__pk = 2, table_id = 1) != None, 'DB consistency check')
 
 	def testDeleteFromTimetable(self):
 		# Add a test data
-		response = self.client.get('/timetable/add/', {'table_id': 1, 'lecture_id': 1})
+		response = self.client.get('/timetable/add/', {'table_id': 2, 'lecture_id': 1})
 		result = json.loads(response.content)
 
 		self.assertEqual(response.status_code, 200, 'Status check')
 		self.assertEqual(result['result'], 'OK', 'Result message check')
-		self.assertTrue(Timetable.objects.get(lecture__pk = 1) != None, 'DB consistency check')
+		self.assertTrue(Timetable.objects.get(lecture__pk = 1, table_id = 2) != None, 'DB consistency check')
 
 		# Try to delete a wrong data
 		response = self.client.get('/timetable/delete/', {'table_id': 999, 'lecture_id': 1})
@@ -42,26 +42,26 @@ class TimetableTestCase(TestCase):
 		self.assertTrue(Timetable.objects.get(lecture__pk = 1) != None, 'DB consistency check')
 
 		# Try to delete the test data
-		response = self.client.get('/timetable/delete/', {'table_id': 1, 'lecture_id': 1})
+		response = self.client.get('/timetable/delete/', {'table_id': 2, 'lecture_id': 1})
 		result = json.loads(response.content)
 
 		self.assertEqual(response.status_code, 200, 'Status check')
 		self.assertEqual(result['result'], 'OK', 'Result message check')
-		self.assertRaises(ObjectDoesNotExist, lambda: Timetable.objects.get(lecture__pk = 1))
+		self.assertRaises(ObjectDoesNotExist, lambda: Timetable.objects.get(lecture__pk = 1, table_id = 2))
 
 	def testAddToTimetableOverlapped(self):
 		# Try to add the test data
-		response = self.client.get('/timetable/add/', {'table_id': 1, 'lecture_id': 3})
+		response = self.client.get('/timetable/add/', {'table_id': 3, 'lecture_id': 3})
 		result = json.loads(response.content)
 
 		self.assertEqual(response.status_code, 200, 'Status check')
 		self.assertEqual(result['result'], 'OK', 'Result message check')
-		self.assertTrue(Timetable.objects.get(lecture__pk = 3) != None, 'DB consistency check')
+		self.assertTrue(Timetable.objects.get(lecture__pk = 3, table_id = 3) != None, 'DB consistency check')
 
 		# Try to add the overlapping data
-		response = self.client.get('/timetable/add/', {'table_id': 1, 'lecture_id': 1})
+		response = self.client.get('/timetable/add/', {'table_id': 3, 'lecture_id': 1})
 		result = json.loads(response.content)
 
 		self.assertEqual(response.status_code, 200, 'Status check')
 		self.assertEqual(result['result'], 'OVERLAPPED', 'Result message check')
-		self.assertRaises(ObjectDoesNotExist, lambda: Timetable.objects.get(lecture__pk = 1))
+		self.assertRaises(ObjectDoesNotExist, lambda: Timetable.objects.get(lecture__pk = 1, table_id = 3))
