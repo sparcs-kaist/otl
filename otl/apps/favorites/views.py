@@ -6,6 +6,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from otl.apps.favorites.models import CourseLink
 from otl.apps.common import *
+from django.db.models import Q
 import time
 
 NUM_PER_PAGE = 10
@@ -16,16 +17,13 @@ def index(request):
 	else:
 		favorite_list = None
 	
-	page = request.GET.get('page', 1)
-	courselink_pages = Paginator( CourseLink.objects.filter(year=settings.CURRENT_YEAR, semester=settings.CURRENT_SEMESTER).order_by('-written')[0:3], NUM_PER_PAGE)
-	current_page = courselink_pages.page(page)
+	courselink_pages = CourseLink.objects.filter(year=settings.CURRENT_YEAR, semester=settings.CURRENT_SEMESTER).order_by('-written')[0:3]
 	# TODO: 나중에 영문 과목명과 한글 과목명 처리는 어떻게?
 
 	return render_to_response('favorites/index.html', {
 		'section': 'favorites',
 		'favorite_list': favorite_list,
-		'recently_added_list': current_page.object_list,
-		'current_page': current_page,
+		'recently_added_list': courselink_pages,
 	}, context_instance=RequestContext(request))
 
 def search(request):
@@ -33,21 +31,24 @@ def search(request):
 		favorite_list = CourseLink.objects.filter(year=settings.CURRENT_YEAR, semester=settings.CURRENT_SEMESTER, favored_by__exact=request.user)
 	else:
 		favorite_list = None
-	page = request.GET.get('page', 1)
-	courselink_pages = Paginator( CourseLink.objects.filter(year=settings.CURRENT_YEAR, semester=settings.CURRENT_SEMESTER).order_by('-written')[0:3], NUM_PER_PAGE)
-	current_page = courselink_pages.page(page)
+	courselink_pages = CourseLink.objects.filter(year=settings.CURRENT_YEAR, semester=settings.CURRENT_SEMESTER).order_by('-written')[0:3]
+
+	search_code = request.GET.get('query')
+	if search_code == None:
+		pass
+	else:
+		search_list = Paginator(CourseLink.objects.filter(Q(year=settings.CURRENT_YEAR), Q(semester=settings.CURRENT_SEMESTER), Q(course_code__icontains = search_code)|Q(course_name__icontains = search_code)|Q(url__icontains = search_code)).order_by('-year','-semester','-favored_count','-written'), NUM_PER_PAGE)
 
 	search_page = request.GET.get('search-page',1)
-	search_code = request.GET.get('query')
-	search_list = Paginator(CourseLink.objects.filter(year=settings.CURRENT_YEAR, semester=settings.CURRENT_SEMESTER, course_code__exact = search_code).order_by('-year','-semester','favored_count'), NUM_PER_PAGE)
+	print(search_page)
 	current_search_page = search_list.page(search_page)
 
 	return render_to_response('favorites/index.html', {
 		'section': 'favorites',
+		'search_code': search_code,
 		'favorite_list': favorite_list,
-		'recently_added_list': current_page.object_list,
-		'current_page': current_page,
-		'search_list': search_list.object_list,
+		'recently_added_list': courselink_pages,
+		'search_list': current_search_page.object_list,
 		'search_page': current_search_page,
 	}, context_instance=RequestContext(request))
 	
@@ -64,15 +65,12 @@ def add(request, course_id):
 	else:
 		favorites_list = None
 	favorite_list = CourseLink.objects.filter(year=settings.CURRENT_YEAR, semester=settings.CURRENT_SEMESTER, favored_by__exact=request.user)
-	page = request.GET.get('page', 1)
-	courselink_pages = Paginator( CourseLink.objects.filter(year=settings.CURRENT_YEAR, semester=settings.CURRENT_SEMESTER).order_by('-written')[0:3], NUM_PER_PAGE)
-	current_page = courselink_pages.page(page)
+	courselink_pages = CourseLink.objects.filter(year=settings.CURRENT_YEAR, semester=settings.CURRENT_SEMESTER).order_by('-written')[0:3]
 
 	return render_to_response('favorites/index.html', {
 		'section': 'favorites',
 		'favorite_list': favorite_list,
-		'recently_added_list': current_page.object_list,
-		'current_page': current_page,
+		'recently_added_list': courselink_pages,
 	}, context_instance=RequestContext(request))
 
 def create(request):
@@ -88,15 +86,12 @@ def create(request):
 		new_course_link = CourseLink.objects.create(course_code = new_code, course_name = new_name, year = new_year, semester = new_semester, url = new_url, writer = new_writer, written = new_written , favored_count = 0)
 	else:
 		favorite_list = None
-	page = request.GET.get('page',1)
-	courselink_pages = Paginator( CourseLink.objects.filter(year=settings.CURRENT_YEAR, semester=settings.CURRENT_SEMESTER).order_by('-written')[0:3], NUM_PER_PAGE)
-	current_page = new_courselink_pages.page(page)
+	courselink_pages = CourseLink.objects.filter(year=settings.CURRENT_YEAR, semester=settings.CURRENT_SEMESTER).order_by('-written')[0:3]
 
 	return render_to_response('favorites/index.html', {
 		'section': 'favorites',
 		'favorite_list': favorite_list,
-		'recently_added_list': current_page.object_list,
-		'current_page': current_page,
+		'recently_added_list': courselink_pages,
 	}, context_instance=RequestContext(request))
 
 def delete(request, course_id):
@@ -105,19 +100,15 @@ def delete(request, course_id):
 		delete_course = CourseLink.objects.get(id__exact = course_id)
 		count = delete_course.favored_count
 		delete_course.favored_by.remove(user)
-		CourseLink.objects.filter(id__exact = course_id).update(favored_count = count - 1)
+		CourseLink.objects.filter(id__exact = course_id).update(favored_count = count -1)
 		favorite_list = CourseLink.objects.filter(year=settings.CURRENT_YEAR, semester=settings.CURRENT_SEMESTER, favored_by__exact=request.user)
 	else:
 		favorite_list = None
-	page = request.GET.get('page',1)
-	courselink_pages = Paginator( CourseLink.objects.filter(year=settings.CURRENT_YEAR, semester=settings.CURRENT_SEMESTER).order_by('-written')[0:3], NUM_PER_PAGE)
-	current_page = courselink_pages.page(page)
-
+	courselink_pages = CourseLink.objects.filter(year=settings.CURRENT_YEAR, semester=settings.CURRENT_SEMESTER).order_by('-written')[0:3]
 	return render_to_response('favorites/index.html', {
 		'section': 'favorites',
 		'favorite_list': favorite_list,
-		'recently_added_list': current_page.object_list,
-		'current_page': current_page,
+		'recently_added_list': courselink_pages,
 	}, context_instance=RequestContext(request))
 
 def morelist(request):
@@ -128,7 +119,6 @@ def morelist(request):
 	page = request.GET.get('page', 1)
 	courselink_pages = Paginator(CourseLink.objects.filter(year=settings.CURRENT_YEAR, semester=settings.CURRENT_SEMESTER).order_by('-written'), NUM_PER_PAGE)
 	current_page = courselink_pages.page(page)
-	# TODO: 나중에 영문 과목명과 한글 과목명 처리는 어떻게?
 
 	return render_to_response('favorites/index.html', {
 		'section': 'favorites',
