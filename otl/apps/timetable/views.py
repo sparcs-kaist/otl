@@ -5,12 +5,12 @@ from django.utils import simplejson as json
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from otl.apps.accounts.models import Department
-from otl.apps.timetable.models import Lecture, ExamTime, ClassTime, Syllabus
+from otl.apps.timetable.models import Lecture, ExamTime, ClassTime, Syllabus, Timetable
 from StringIO import StringIO
 
 def index(request):
 	lectures = Lecture.objects.filter(year=settings.CURRENT_YEAR, semester=settings.CURRENT_SEMESTER)
-	lectures_output = _lectures_to_json(lectures)
+	lectures_output = _lectures_to_output(lectures)
 	return render_to_response('timetable/index.html', {
 		'section': 'timetable',
 		'departments': Department.objects.all(),
@@ -37,7 +37,7 @@ def lecture_filter(request):
 	if end != None:
 		lectures = lectures.filter(classtime__end__exact=ClassTime.numeric_time_to_str(end))
 
-	output = _lectures_to_json(lectures)
+	output = _lectures_to_output(lectures)
 	return HttpResponse(output)
 
 @login_required
@@ -45,25 +45,59 @@ def add_to_timetable(request):
 	user = request.user
 	table_id = request.GET.get('table_id', None)
 	lecture_id = request.GET.get('lecture_id', None)
-	pass
+	
+	lecture = Lecture.objects.get(pk=lecture_id)
+	timetable = Timetable(user, lecture, lecture.year, lecture.semester, table_id)
+	timetable.save()
+	lectures = Lecture.objects.filter(timetable__table_id__exact=table_id, timetable__user__exact=user, year=settings.NEXT_YEAR, semester=settings.NEXT_SEMESTER)
+	# TODO: check overlapped time
+
+	result = 'ok'
+	if request.is_ajax():
+		return HttpResponse(json.dumps({
+			'result': result,
+			'lectures': _lectures_to_output(lectures, False),
+		}, ensure_ascii=False, indent=4))
+	else:
+		return HttpResponseRedirect('/timetable/')
 
 @login_required
 def delete_from_timetable(rqeuest):
 	user = request.user
 	table_id = request.GET.get('table_id', None)
 	lecture_id = request.GET.get('lecture_id', None)
-	pass
+
+	lectures = Lecture.objects.filter(timetable__table_id__exact=table_id, timetable__user__exact=user, year=settings.NEXT_YEAR, semester=settings.NEXT_SEMESTER)
+
+	result = 'ok'
+	if request.is_ajax():
+		return HttpResponse(json.dumps({
+			'result': result,
+			'lectures': _lectures_to_output(lectures, False),
+		}, ensure_ascii=False, indent=4))
+	else:
+		return HttpResponseRedirect('/timetable/')
 
 @login_required
 def view_timetable(request, user, table_id):
 	user = request.user
 	table_id = request.GET.get('table_id', None)
-	pass
+
+	lectures = Lecture.objects.filter(timetable__table_id__exact=table_id, timetable__user__exact=user, year=settings.NEXT_YEAR, semester=settings.NEXT_SEMESTER)
+
+	result = 'ok'
+	if request.is_ajax():
+		return HttpResponse(json.dumps({
+			'result': result,
+			'lectures': _lectures_to_output(lectures, False),
+		}, ensure_ascii=False, indent=4))
+	else:
+		return HttpResponseRedirect('/timetable/')
 
 
 # -- Private functions --
 
-def _lectures_to_json(lectures):
+def _lectures_to_output(lectures, conv_to_json=True):
 	all = []
 	for lecture in lectures:
 		try:
@@ -92,7 +126,10 @@ def _lectures_to_json(lectures):
 			'examtime': {'day': exam.day, 'start': exam.get_begin_numeric(), 'end': exam.get_end_numeric()} if exam != None else None,
 		}
 		all.append(item)
-	io = StringIO()
-	json.dump(all, io, ensure_ascii=False, indent=4)
-	return io.getvalue()
+	if conv_to_json:
+		io = StringIO()
+		json.dump(all, io, ensure_ascii=False, indent=4)
+		return io.getvalue()
+	else:
+		return all
 
