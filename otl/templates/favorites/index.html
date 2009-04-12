@@ -59,15 +59,19 @@
 	<form id="search-form" method="get" action="/favorites/search/">
 		<p><label for="search-query">검색 : </label><input type="text" id="search-query" name="query" /><input type="submit" value="Find" /></p>
 		<ul>
-		{% for item in search_list %}
-			<li>
-				<h4>{{item.year}} {{item.semester}} {{item.course_code}}: {{item.course_name}}</h4>
-				<a class="search-link" href="{{item.url}}">{{item.url}}<img src="http://open.thumbshots.org/image.aspx?url={{item.url}}"/></a>
-				<span class="submitter">올린이 : <a href="/accounts/view/{{item.writer.username}}">{{item.writer.username}}</a></span>
-				추가한 사람 수 : {{item.favored_count}}
-				<a class="control-add" href="/favorites/add/{{item.id}}">Add</a>
-			</li>
-		{% endfor%}
+			{% if search_list %}
+				{% for item in search_list %}
+				<li>
+					<h4>{{item.year}} {{item.semester}} {{item.course_code}}: {{item.course_name}}</h4>
+					<a class="search-link" href="{{item.url}}">{{item.url}}<img src="http://open.thumbshots.org/image.aspx?url={{item.url}}"/></a>
+					<span class="submitter">올린이 : <a href="/accounts/view/{{item.writer.username}}">{{item.writer.username}}</a></span>
+					추가한 사람 수 : {{item.favored_count}}
+					<a class="control-add" href="/favorites/add/{{item.id}}">Add</a>
+				</li>
+				{% endfor%}
+			{% else %}
+				<p>검색 결과가 없습니다.</p>
+			{% endif %}
 		</ul>
 		<div class="search-pages">
 			{% if search_page.has_previous %}

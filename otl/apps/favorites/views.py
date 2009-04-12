@@ -12,6 +12,7 @@ from django.db.models import Q
 import time
 
 NUM_PER_PAGE = 10
+RECENTLY_PER_PAGE=3
 
 def index(request):
 	if request.user.is_authenticated():
@@ -19,7 +20,7 @@ def index(request):
 	else:
 		favorite_list = None
 	
-	courselink_pages = CourseLink.objects.filter(year=settings.CURRENT_YEAR, semester=settings.CURRENT_SEMESTER).order_by('-written')[0:3]
+	courselink_pages = CourseLink.objects.filter(year=settings.CURRENT_YEAR, semester=settings.CURRENT_SEMESTER).order_by('-written')[0:RECENTLY_PER_PAGE]
 	# TODO: 나중에 영문 과목명과 한글 과목명 처리는 어떻게?
 
 	return render_to_response('favorites/index.html', {
@@ -33,18 +34,13 @@ def search(request):
 		favorite_list = CourseLink.objects.filter(year=settings.CURRENT_YEAR, semester=settings.CURRENT_SEMESTER, favored_by__exact=request.user)
 	else:
 		favorite_list = None
-	courselink_pages = CourseLink.objects.filter(year=settings.CURRENT_YEAR, semester=settings.CURRENT_SEMESTER).order_by('-written')[0:3]
+	courselink_pages = CourseLink.objects.filter(year=settings.CURRENT_YEAR, semester=settings.CURRENT_SEMESTER).order_by('-written')[0:RECENTLY_PER_PAGE]
 
 	search_code = request.GET.get('query')
-	if search_code == None:
-		pass
-	else:
-		search_list = Paginator(CourseLink.objects.filter(Q(year=settings.CURRENT_YEAR), Q(semester=settings.CURRENT_SEMESTER), Q(course_code__icontains = search_code)|Q(course_name__icontains = search_code)|Q(url__icontains = search_code)).order_by('-year','-semester','-favored_count','-written'), NUM_PER_PAGE)
-
+	search_list = Paginator(CourseLink.objects.filter(Q(year=settings.CURRENT_YEAR), Q(semester=settings.CURRENT_SEMESTER), Q(course_code__icontains = search_code)|Q(course_name__icontains = search_code)|Q(url__icontains = search_code)).order_by('-year','-semester','-favored_count','-written'), NUM_PER_PAGE)
 	search_page = request.GET.get('search-page',1)
 	print(search_page)
 	current_search_page = search_list.page(search_page)
-
 	return render_to_response('favorites/index.html', {
 		'section': 'favorites',
 		'search_code': search_code,
@@ -63,6 +59,8 @@ def add(request, course_id):
 		if n==0:
 			course_selected.favored_by.add( user )
 			CourseLink.objects.filter(id__exact = course_id).update(favored_count = count + 1)
+	else:
+		favorite_list = None
 
 	return HttpResponseRedirect('/favorites/');
 
@@ -76,6 +74,8 @@ def create(request):
 		new_writer = request.user
 		new_written = time.strftime('%Y-%m-%d %H:%M:%S')
 		new_course_link = CourseLink.objects.create(course_code = new_code, course_name = new_name, year = new_year, semester = new_semester, url = new_url, writer = new_writer, written = new_written , favored_count = 0)
+	else:
+		favorite_list = None
 
 	return HttpResponseRedirect('/favorites/');
 
@@ -86,6 +86,8 @@ def delete(request, course_id):
 		count = delete_course.favored_count
 		delete_course.favored_by.remove(user)
 		CourseLink.objects.filter(id__exact = course_id).update(favored_count = count -1)
+	else:
+		favorite_list = None
 	return HttpResponseRedirect('/favorites/');
 
 def morelist(request):
