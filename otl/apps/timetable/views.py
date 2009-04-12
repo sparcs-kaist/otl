@@ -51,15 +51,15 @@ def add_to_timetable(request):
 	lectures = []
 	try:
 		lecture = Lecture.objects.get(pk=lecture_id)
-		lectures = Lecture.objects.filter(timetable__table_id__exact=table_id, timetable__user__exact=user, year=settings.NEXT_YEAR, semester=settings.NEXT_SEMESTER)
+		lectures = Lecture.objects.filter(timetable__table_id=table_id, timetable__user=user, year=settings.NEXT_YEAR, semester=settings.NEXT_SEMESTER)
 		for existing_lecture in lectures:
 			if existing_lecture.check_classtime_overlapped(lecture):
 				raise OverlappingTimeError()
-			# TODO: check also exam time?
+			# We don't check overlapped exam times.
 		timetable = Timetable(user=user, lecture=lecture, year=lecture.year, semester=lecture.semester, table_id=table_id)
 		timetable.save()
 
-		lectures = Lecture.objects.filter(timetable__table_id__exact=table_id, timetable__user__exact=user, year=settings.NEXT_YEAR, semester=settings.NEXT_SEMESTER)
+		lectures = Lecture.objects.filter(timetable__table_id=table_id, timetable__user=user, year=settings.NEXT_YEAR, semester=settings.NEXT_SEMESTER)
 		result = 'OK'
 	except ObjectDoesNotExist:
 		result = 'NOT_EXIST'
@@ -83,7 +83,7 @@ def delete_from_timetable(request):
 	try:
 		lecture = Lecture.objects.get(pk=lecture_id)
 		Timetable.objects.get(user=user, lecture=lecture, year=lecture.year, semester=lecture.semester, table_id=table_id).delete()
-		lectures = Lecture.objects.filter(timetable__table_id__exact=table_id, timetable__user__exact=user, year=settings.NEXT_YEAR, semester=settings.NEXT_SEMESTER)
+		lectures = Lecture.objects.filter(timetable__table_id=table_id, timetable__user=user, year=settings.NEXT_YEAR, semester=settings.NEXT_SEMESTER)
 		result = 'OK'
 	except ObjectDoesNotExist:
 		result = 'NOT_EXIST'
@@ -96,16 +96,16 @@ def delete_from_timetable(request):
 	}, ensure_ascii=False, indent=4))
 
 @login_required
-def view_timetable(request, user, table_id):
+def view_timetable(request):
 	user = request.user
 	table_id = request.GET.get('table_id', None)
 
 	lectures = []
 	try:
-		lectures = Lecture.objects.filter(timetable__table_id__exact=table_id, timetable__user__exact=user, year=settings.NEXT_YEAR, semester=settings.NEXT_SEMESTER)
+		lectures = Lecture.objects.filter(timetable__table_id=table_id, timetable__user=user, year=settings.NEXT_YEAR, semester=settings.NEXT_SEMESTER)
 		result = 'OK'
 	except ObjectDoesNotExist:
-		result = 'FAILED'
+		result = 'OK'
 	except:
 		result = 'ERROR'
 

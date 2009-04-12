@@ -47,7 +47,7 @@ class Lecture(models.Model):
 
 		for mt in my_times:
 			for tt in their_times:
-				if (mt.end > tt.begin and mt.end < tt.end) or (mt.begin < tt.end and mt.end > tt.end):
+				if not (mt.end <= tt.begin or mt.begin >= tt.end) and mt.day == tt.day:
 					return True
 		return False
 
