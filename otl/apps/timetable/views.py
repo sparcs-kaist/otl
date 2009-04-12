@@ -3,6 +3,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils import simplejson as json
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
 from otl.apps.accounts.models import Department
 from otl.apps.timetable.models import Lecture, ExamTime, ClassTime, Syllabus
 from StringIO import StringIO
