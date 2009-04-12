@@ -39,6 +39,17 @@ class Lecture(models.Model):
 		department_code = matches.group(1)
 		lecture_code = matches.group(2)
 		return u'%d.%s' % (Department.objects.get(code=department_code).num_id, lecture_code)
+	
+	def check_classtime_overlapped(self, another_lecture):
+		"""이 과목과 주어진 다른 과목의 강의 시간 중 겹치는 것이 있는지 검사한다."""
+		my_times = self.classtime_set.all()
+		their_times = another_lecture.classtime_set.all()
+
+		for mt in my_times:
+			for tt in their_times:
+				if (mt.end > tt.begin and mt.end < tt.end) or (mt.begin < tt.end and mt.end > tt.end):
+					return True
+		return False
 
 	class Meta:
 		unique_together = ('code', 'year', 'semester', 'department', 'class_no')
@@ -139,6 +150,9 @@ class Timetable(models.Model):
 class TimetableAdmin(admin.ModelAdmin):
 	list_display = ('user', 'lecture', 'year', 'semester', 'table_id')
 	ordering = ('user', 'year', 'semester', 'table_id')
+
+class OverlappingTimeError(Exception):
+	pass
 
 admin.site.register(Lecture, LectureAdmin)
 admin.site.register(ExamTime, ExamTimeAdmin)

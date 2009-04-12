@@ -2,7 +2,7 @@
 	{
 		"pk": "1",
 		"model": "auth.user",
-		"fields": {"username": "otl_admin", "password": "sha1$20583$72c4c5f36ff80b75be00b0eaac973822034b32f8", "email": "otl@server.daybreaker.info", "first_name": "Admin", "last_name": "Almighty", "is_staff": true, "is_active": true, "is_superuser": true, "date_joined": "2009-04-05 17:51:20"}
+		"fields": {"username": "otl_admin", "password": "sha1$20583$72c4c5f36ff80b75be00b0eaac973822034b32f8", "email": "otl@server.daybreaker.info", "first_name": "Admin", "last_name": "Almighty", "is_staff": true, "is_active": true, "is_superuser": true, "date_joined": "2009-04-05 17:00:00"}
 	},
 	{
 		"pk": "1",
@@ -173,5 +173,15 @@
 		"pk": "34",
 		"model": "accounts.department",
 		"fields": {"num_id": "24", "code": "MA", "name": "응용수학전공"}
+	},
+	{
+		"pk": "1",
+		"model": "accounts.userprofile",
+		"fields": {"user": "2", "student_id": "20990001", "language": "ko-KR", "department": "13", "favorite_departments": []}
+	},
+	{
+		"pk": "2",
+		"model": "auth.user",
+		"fields": {"username": "test_user", "password": "sha1$20583$72c4c5f36ff80b75be00b0eaac973822034b32f8", "email": "otl@server.daybreaker.info", "first_name": "Maruta", "last_name": "X", "is_staff": false, "is_active": true, "is_superuser": false, "date_joined": "2009-04-05 18:00:00"}
 	}
 ]

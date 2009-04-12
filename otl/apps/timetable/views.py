@@ -1,11 +1,13 @@
 # encoding: utf-8
 from django.shortcuts import render_to_response
+from django.http import HttpResponse
 from django.template import RequestContext
 from django.utils import simplejson as json
 from django.conf import settings
+from django.core.exceptions import *
 from django.contrib.auth.decorators import login_required
 from otl.apps.accounts.models import Department
-from otl.apps.timetable.models import Lecture, ExamTime, ClassTime, Syllabus, Timetable
+from otl.apps.timetable.models import Lecture, ExamTime, ClassTime, Syllabus, Timetable, OverlappingTimeError
 from StringIO import StringIO
 
 def index(request):
@@ -46,53 +48,71 @@ def add_to_timetable(request):
 	table_id = request.GET.get('table_id', None)
 	lecture_id = request.GET.get('lecture_id', None)
 	
-	lecture = Lecture.objects.get(pk=lecture_id)
-	timetable = Timetable(user, lecture, lecture.year, lecture.semester, table_id)
-	timetable.save()
-	lectures = Lecture.objects.filter(timetable__table_id__exact=table_id, timetable__user__exact=user, year=settings.NEXT_YEAR, semester=settings.NEXT_SEMESTER)
-	# TODO: check overlapped time
+	lectures = []
+	try:
+		lecture = Lecture.objects.get(pk=lecture_id)
+		lectures = Lecture.objects.filter(timetable__table_id__exact=table_id, timetable__user__exact=user, year=settings.NEXT_YEAR, semester=settings.NEXT_SEMESTER)
+		for existing_lecture in lectures:
+			if existing_lecture.check_classtime_overlapped(lecture):
+				raise OverlappingTimeError()
+			# TODO: check also exam time?
+		timetable = Timetable(user=user, lecture=lecture, year=lecture.year, semester=lecture.semester, table_id=table_id)
+		timetable.save()
 
-	result = 'ok'
-	if request.is_ajax():
-		return HttpResponse(json.dumps({
-			'result': result,
-			'lectures': _lectures_to_output(lectures, False),
-		}, ensure_ascii=False, indent=4))
-	else:
-		return HttpResponseRedirect('/timetable/')
+		lectures = Lecture.objects.filter(timetable__table_id__exact=table_id, timetable__user__exact=user, year=settings.NEXT_YEAR, semester=settings.NEXT_SEMESTER)
+		result = 'OK'
+	except ObjectDoesNotExist:
+		result = 'NOT_EXIST'
+	except OverlappingTimeError:
+		result = 'OVERLAPPED'
+	except:
+		result = 'ERROR'
+
+	return HttpResponse(json.dumps({
+		'result': result,
+		'data': _lectures_to_output(lectures, False),
+	}, ensure_ascii=False, indent=4))
 
 @login_required
-def delete_from_timetable(rqeuest):
+def delete_from_timetable(request):
 	user = request.user
 	table_id = request.GET.get('table_id', None)
 	lecture_id = request.GET.get('lecture_id', None)
 
-	lectures = Lecture.objects.filter(timetable__table_id__exact=table_id, timetable__user__exact=user, year=settings.NEXT_YEAR, semester=settings.NEXT_SEMESTER)
+	lectures = []
+	try:
+		lecture = Lecture.objects.get(pk=lecture_id)
+		Timetable.objects.get(user=user, lecture=lecture, year=lecture.year, semester=lecture.semester, table_id=table_id).delete()
+		lectures = Lecture.objects.filter(timetable__table_id__exact=table_id, timetable__user__exact=user, year=settings.NEXT_YEAR, semester=settings.NEXT_SEMESTER)
+		result = 'OK'
+	except ObjectDoesNotExist:
+		result = 'NOT_EXIST'
+	except:
+		result = 'ERROR'
 
-	result = 'ok'
-	if request.is_ajax():
-		return HttpResponse(json.dumps({
-			'result': result,
-			'lectures': _lectures_to_output(lectures, False),
-		}, ensure_ascii=False, indent=4))
-	else:
-		return HttpResponseRedirect('/timetable/')
+	return HttpResponse(json.dumps({
+		'result': result,
+		'data': _lectures_to_output(lectures, False),
+	}, ensure_ascii=False, indent=4))
 
 @login_required
 def view_timetable(request, user, table_id):
 	user = request.user
 	table_id = request.GET.get('table_id', None)
 
-	lectures = Lecture.objects.filter(timetable__table_id__exact=table_id, timetable__user__exact=user, year=settings.NEXT_YEAR, semester=settings.NEXT_SEMESTER)
+	lectures = []
+	try:
+		lectures = Lecture.objects.filter(timetable__table_id__exact=table_id, timetable__user__exact=user, year=settings.NEXT_YEAR, semester=settings.NEXT_SEMESTER)
+		result = 'OK'
+	except ObjectDoesNotExist:
+		result = 'FAILED'
+	except:
+		result = 'ERROR'
 
-	result = 'ok'
-	if request.is_ajax():
-		return HttpResponse(json.dumps({
-			'result': result,
-			'lectures': _lectures_to_output(lectures, False),
-		}, ensure_ascii=False, indent=4))
-	else:
-		return HttpResponseRedirect('/timetable/')
+	return HttpResponse(json.dumps({
+		'result': result,
+		'data': _lectures_to_output(lectures, False),
+	}, ensure_ascii=False, indent=4))
 
 
 # -- Private functions --
