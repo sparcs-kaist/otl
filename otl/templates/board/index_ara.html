@@ -3,12 +3,35 @@
 <h2>아라 Lecture 게시판</h2>
 <table id="board-arara">
 	<thead>
-		<tr><th>작성자</th><th>제목</th></tr>
+		<tr>
+			<th class="author">작성자</th>
+			<th class="title">제목</th>
+			<th class="date">작성시간</th>
+			<th class="vote">추천</th>
+			<th class="hit">조회</th>
+		</tr>
 	</thead>
 	<tbody>
 	{% for article in article_list %}
-		<tr><td>{{article.author_username}}</td><td>{{article.title}}</td></tr>
+		<tr{% if article.deleted %} class="deleted"{% endif %}>
+			<td class="author">{{article.author_nickname}}</td>
+			<td class="title"><a href="/board/lecture/{{article.id}}/?page={{page_no}}">{{article.title}}</a>{% if article.reply_count %} <span class="replies">[{{article.reply_count}}]</span>{% endif %}</td>
+			<td class="date">{{article.date|date:"Y/m/d"}}</td>
+			<td class="vote">{{article.vote}}</td>
+			<td class="hit">{{article.hit}}</td>
+		</tr>
 	{% endfor %}
 	</tbody>
 </table>
+<div class="pages">
+{% if pages.prev_page_group %}
+	<a href="/board/lecture/?page={{pages.prev_page_group}}">PREV</a>
+{% endif %}
+{% for page in pages.current_page_indices %}
+	<a href="/board/lecture/?page={{page}}">{{page}}</a>
+{% endfor %}
+{% if pages.next_page_group %}
+	<a href="/board/lecture/?page={{pages.next_page_group}}">NEXT</a>
+{% endif %}
+</div>
 {% endblock %}
