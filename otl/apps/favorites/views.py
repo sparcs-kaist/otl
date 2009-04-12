@@ -55,25 +55,19 @@ def search(request):
 	}, context_instance=RequestContext(request))
 	
 def add(request, course_id):
-	if request.user.is_authenticated():
-		course_selected = CourseLink.objects.get( id__exact = course_id )
+	if request.user.is_authenticated():	
 		user = request.user
+		course_selected = CourseLink.objects.get( id__exact = course_id )
 		count = course_selected.favored_count
 		n=user.favorite_set.filter(id__exact = course_id).count()
 		if n==0:
 			course_selected.favored_by.add( user )
 			CourseLink.objects.filter(id__exact = course_id).update(favored_count = count + 1)
-		favorite_list = CourseLink.objects.filter(favored_by__exact=request.user)
-	else:
-		favorites_list = None
-	favorite_list = CourseLink.objects.filter(year=settings.CURRENT_YEAR, semester=settings.CURRENT_SEMESTER, favored_by__exact=request.user)
-	courselink_pages = CourseLink.objects.filter(year=settings.CURRENT_YEAR, semester=settings.CURRENT_SEMESTER).order_by('-written')[0:3]
 
 	return HttpResponseRedirect('/favorites/');
 
 def create(request):
 	if request.user.is_authenticated():
-		favorite_list = CourseLink.objects.filter(year=settings.CURRENT_YEAR, semester=settings.CURRENT_SEMESTER, favored_by__exact=request.user)
 		new_code = request.GET.get('code')
 		new_name = request.GET.get('name')
 		new_year = request.GET.get('year')
@@ -82,9 +76,6 @@ def create(request):
 		new_writer = request.user
 		new_written = time.strftime('%Y-%m-%d %H:%M:%S')
 		new_course_link = CourseLink.objects.create(course_code = new_code, course_name = new_name, year = new_year, semester = new_semester, url = new_url, writer = new_writer, written = new_written , favored_count = 0)
-	else:
-		favorite_list = None
-	courselink_pages = CourseLink.objects.filter(year=settings.CURRENT_YEAR, semester=settings.CURRENT_SEMESTER).order_by('-written')[0:3]
 
 	return HttpResponseRedirect('/favorites/');
 
@@ -95,10 +86,6 @@ def delete(request, course_id):
 		count = delete_course.favored_count
 		delete_course.favored_by.remove(user)
 		CourseLink.objects.filter(id__exact = course_id).update(favored_count = count -1)
-		favorite_list = CourseLink.objects.filter(year=settings.CURRENT_YEAR, semester=settings.CURRENT_SEMESTER, favored_by__exact=request.user)
-	else:
-		favorite_list = None
-	courselink_pages = CourseLink.objects.filter(year=settings.CURRENT_YEAR, semester=settings.CURRENT_SEMESTER).order_by('-written')[0:3]
 	return HttpResponseRedirect('/favorites/');
 
 def morelist(request):
