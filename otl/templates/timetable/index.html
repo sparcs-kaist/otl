@@ -25,6 +25,7 @@
 
 	Data.Lectures = {{lectures_json|safe}};
 	/*
+	Data.Lectures = 
 	[
 		{id:'1',year:'2008',term:'3',dept:'전산학전공',classification:'기초필수',course_no:'CE202','class':'A',code:'37.231',title:'데이타구조',lec_time:'2',lab_time:'3',credit:'3',prof:'김민우',times:[{day:'화',start:480,end:600},{day:'수',start:480,end:600}],classroom:'창의학습관:304',fixed_num:'200',remarks:'영어강의',examtime:'화:14:00~16:00'},
 		{id:'1',year:'2008',term:'3',dept:'전산학전공',classification:'기초필수',course_no:'CE202','class':'A',code:'37.231',title:'데이타구조',lec_time:'2',lab_time:'3',credit:'3',prof:'김민우',times:[{day:'화',start:480,end:600},{day:'수',start:480,end:600}],classroom:'창의학습관:304',fixed_num:'200',remarks:'영어강의',examtime:'화:14:00~16:00'},
@@ -134,8 +135,8 @@
 				transition: Fx.Transitions.Quad.easeInOut
 				});
 
-			this.dragmap.addEvent('mousedown',this.onClick.bindWithEvent(this));
-			document.addEvent('mousemove', this.onMove.bindWithEvent(this));
+			this.dragmap.addEvent('mousedown',this.onMousedown.bindWithEvent(this));
+			document.addEvent('mousemove', this.onDrag.bindWithEvent(this));
 			document.addEvent('mouseup', this.onEnd.bindWithEvent(this));
 
 			$('test').addEvent('click',
@@ -145,13 +146,13 @@
 				}.bind(this)
 			);
 		},
-		onClick:function(e)
+		onMousedown:function(e)
 		{
 			this.dragging=true;
 			this.clickPos = UDF.mousePos(e,this.dragmap);
 			e.stop();
 		},
-		onMove:function(e)
+		onDrag:function(e)
 		{
 			if (this.dragging)
 			{
@@ -297,8 +298,8 @@
 				var el = new Element('a',{'html':item.title}).inject(content);
 				UDF.clickable(el);
 
-				el.addEvent('mouseover',Timetable.updator.bind(Timetable,item));
-				el.addEvent('mouseout',function(){$('overlap_modules').empty()});
+				el.addEvent('mouseover',Timetable.onMouseover.bind(Timetable,item));
+				el.addEvent('mouseout',Timetable.onMouseout.bind(Timetable,item));
 			}.bind(this));
 			this.buildTabs(this.contents.getChildren().length);
 			new Mootabs('lecture_tabs','lecture_contents');
@@ -310,8 +311,9 @@
 		{
 			this.grid = $('grid');
 			this.overlap = $('overlap_modules');
+			this.overlap.setStyle('display','none');
 
-			this.isEnter=false;
+			this.dragging=false;
 			this.cell = {row:0,col:0};
 
 			this.options=
@@ -320,6 +322,7 @@
 				cellWidth:100
 			}
 			this.selection=$('cellselected');
+			this.selection.setStyle('display','none');
 
 			this.tab = new Mootabs('timetable_tabs','timetable_contents','mousedown');
 
@@ -327,65 +330,123 @@
 		},
 		registHandles:function()
 		{
-			UDF.clickable(this.selection);
-			this.selection.addEvent('mousedown',this.onClick.bindWithEvent(this));
-			this.grid.addEvent('mouseover',function()
-				{
-					this.isEnter=true;
-				}.bind(this));
-			this.grid.addEvent('mouseout',function(){
-					this.isEnter=false;
-				}.bind(this));
-			document.addEvent('mousemove',this.onMove.bindWithEvent(this));
+			//UDF.clickable(this.selection);
+			this.grid.addEvent('mousedown',this.onMousedown.bindWithEvent(this));
+			document.addEvent('mouseup',this.onEnd.bindWithEvent(this));
+			document.addEvent('mousemove',this.onDrag.bindWithEvent(this));
 		},
-		onClick:function(e)
+		onMousedown:function(e)
 		{
+			this.dragging=true;
 			var pos = UDF.mousePos(e,this.grid);
-			var cell = this.getCell(pos);
-			alert(cell.row+ ' '+cell.col);
+			this.cell = this.getCell(pos);
+
+			var x = (this.cell.col * this.options.cellWidth)+1;
+			var y = (this.cell.row * this.options.cellHeight);
+			this.selection.setStyles(
+				{
+					display:'block',
+					left:x,
+					top:y,
+					width:this.options.cellWidth,
+					height:this.options.cellHeight
+				}
+			);
 			e.stop();
 		},
-		onMove:function(e)
+		onDrag:function(e)
 		{
-			if(this.isEnter)
+			if(this.dragging)
 			{
 				var pos = UDF.mousePos(e,this.grid);
-				this.cell = this.getCell(pos);
-
-
-				var x = (this.cell.col * this.options.cellWidth)+1;
-				var y = (this.cell.row * this.options.cellHeight);
-
-				this.selection.style.left=x+'px';
-				this.selection.style.top=y+'px';
+				var cell = this.getCell(pos);
+				var c1 = Math.max(Math.min(cell.col,this.cell.col),0); 
+				var r1 = Math.max(Math.min(cell.row,this.cell.row),0);
+				var c2 = Math.min(Math.max(cell.col,this.cell.col),4);
+				var r2 = Math.min(Math.max(cell.row,this.cell.row),31);
+				this.draw(c1,r1,c2,r2);
 				e.stop();
 			}
 		},
+		onEnd:function(e)
+	  	{
+			if(this.dragging)
+			{
+				this.selection.setStyle('display','none');
+				this.dragging=false;
+			}
+	  	},
+		draw:function(col1,row1,col2,row2)
+	 	{
+			var x = col1 * this.options.cellWidth + 1; // +1 fix
+			var y = row1 * this.options.cellHeight;
+			var width = (col2-col1+1) * this.options.cellWidth;
+			var height = (row2-row1+1) * this.options.cellHeight;
+			this.selection.setStyles(
+				{
+					left:x,
+					top:y,
+					width:width,
+					height:height
+				}
+			);
+	 	},
 		getCell:function(coords)
 		{
 			var row = Math.floor(coords.y/this.options.cellHeight);
 			var col = Math.floor(coords.x/this.options.cellWidth);
 			return {row:row,col:col};
 		},
+		onMouseout:function()
+		{
+			$('add_credit').empty();
+			$('add_au').empty();
+			this.overlap.setStyle('display','none');
+		},
+		onMouseover:function(obj)
+		{
+			this.updator(obj);
+		},
 		updator: function(obj)
 		{
+			this.overlap.setStyle('display','block');
+			this.overlap.empty();
+
 			var h = $H(obj);
 			var keys= h.getKeys();
 			keys.each(function(key)
 			{
 				if ($('DS_'+key)!=null)
-					$('DS_'+key).innerHTML=h.get(key);
+				{
+					var item = h.get(key);
+					if (item!=null)
+					{
+						if(key=='examtime')
+						{
+							var days=['월','화','수','목','금'];
+							var time=Math.floor(item.start/60)+':'+(item.start%60)+'~'+Math.floor(item.end/60)+':'+(item.end%60);
+							$('DS_'+key).innerHTML=days[item.day-1]+time;
+						}
+						if(key=='credit'||key=='au')
+						{
+							$('add_'+key).set('text','(+'+item+')');
+							$('DS_'+key).set('text',item);
+						}
+						else
+						{
+							$('DS_'+key).set('text',item);
+						}
+					}
+				}
 			});
 
-			var classroom = obj.classroom.split(':')[0]
+			var classroom = obj.classroom.split(' ')[0]
 			Map.find(classroom);
 			this.buildlmodules(obj);
 		},
 		buildlmodules:function(obj)
 		{
-			var days = ['월','화','수','목','금'];
 			var bgcolor = UDF.modulecolors[Math.floor(Math.random()*10)];
-			this.overlap.empty();
 			obj.times.each(function(time)
 			{
 				var lmodule=new Element('div',{'class':'lmodule'});
@@ -395,7 +456,7 @@
 				textbody.inject(lmodule);
 				textbody.set('html','<strong>'+obj.title+'</strong><br />'+obj.prof+'<br />'+obj.classroom+'<br />');
 
-				var left = days.indexOf(time.day)*100+3;
+				var left = (time.day-1)*100+3;
 				var top = Math.floor((time.start-480)/30)*21;
 				var height =Math.floor((time.end-time.start)/30)*21 -2;
 
@@ -558,7 +619,7 @@
 								<div class="lmodule">
 									<div class="bg"></div>
 									<div class="textbody">
-										<strong>공학설계이론 방법론 및 원리</strong><br />
+										<a href="#"><strong>공학설계이론 방법론 및 원리</strong></a><br />
 										메리케서린톰슨<br />
 										응용공학동 #4202<br />
 									</div>
@@ -567,9 +628,9 @@
 							<div id="timetable2" class="lmodules"></div>
 							<div id="timetable3" class="lmodules"></div>
 						</div>
-						<div id="overlap_modules"class="lmodules"></div>
+						<div id="overlap_modules"class="lmodules"></div><!-- 과목목록 마우스 룰오버시 -->
+						<div id="cellselected"></div>
 					</div><!--grid-->
-					<div id="cellselected"></div>
 				</div>
 			</div><!--tablebody-->
 		</div><!--timetable-wrap-->
@@ -596,8 +657,16 @@
 					<th>AU</th>
 				</tr>
 				<tr>
-					<td id="total_credit">21</td>
-					<td id="total_au" class="end">3</td>
+					<td style="text-align:left";>
+						&nbsp;&nbsp;&nbsp;&nbsp;
+						<span id="total_credit">21</span>&nbsp;
+						<span id="add_credit" class="green"></span>
+					</td>
+					<td style="text-align:left"; class="end">
+						&nbsp;&nbsp;&nbsp;&nbsp;
+						<span id="total_au">3</span>&nbsp;
+						<span id="add_au" class="blue"></span>
+					</td>
 				</tr>
 			</table>
 		</div>
@@ -610,23 +679,35 @@
 				</tr>
 				<tr>
 					<td style="width:16px">월</td>
-					<td class="end">자연어 처리</td>
+					<td class="end"><span id="examtime1">자연어 처리 14:00~15:00</span><span id="add_examtime1" class="blue"></span></td>
 				</tr>
 				<tr class="even">
 					<td>화</td>
-					<td class="end">&nbsp;</td>
+					<td class="end">
+						<span id="examtime2"></span>
+						<span id="add_examtime2" class="blue"></span>
+					</td>
 				</tr>
 				<tr>
 					<td>수</td>
-					<td class="end">&nbsp;</td>
+					<td class="end">
+						<span id="examtime3"></span>
+						<span id="add_examtime3" class="blue"></span>
+					</td>
 				</tr>
 				<tr class="even">
 					<td>목</td>
-					<td class="end">&nbsp;</td>
+					<td class="end">
+						<span id="examtime4"></span>
+						<span id="add_examtime4" class="blue"></span>
+					</td>
 				</tr>
 				<tr>
 					<td>금</td>
-					<td class="end">&nbsp;</td>
+					<td class="end">
+						<span id="examtime5"></span>
+						<span id="add_examtime5" class="blue"></span>
+					</td>
 				</tr>
 			</table>
 		</div>

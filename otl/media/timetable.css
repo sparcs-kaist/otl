@@ -83,7 +83,6 @@
 #grid-wrap
 {
     position:absolute;
-    cursor:pointer;
     left:60px;
     top:0pt;
     width:500px;
@@ -131,6 +130,7 @@
 	color:#000;
 }
 
+
 .lmodule .bg
 {
     position:absolute;
@@ -141,10 +141,6 @@
     background:#C3D9FF;
     background:#FFC7FE;
     border:1px solid #DDD;
-	/*
-    opacity:0.8;
-    filter:alpha(opacity=80);
-	*/
 }
 
 .lmodule .textbody
@@ -326,12 +322,8 @@
     top:0;
     width:99px;
     height:20px;
-    background:#DDD;
-    opacity:0.5;
-    filter:alpha(opacity=50);
+    background:#000;
+    opacity:0.3;
+    filter:alpha(opacity=30);
 }
 
-#cellselected.clicked
-{
-    background:black;
-}
