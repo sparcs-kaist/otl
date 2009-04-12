@@ -57,7 +57,7 @@
 		{% endif %}
 	</div>
 	<form id="search-form" method="get" action="/favorites/search/">
-		<p><label for="search-query">검색 : </label><input type="text" id="search-query" name="query" value="" /><input type="submit" value="Find" /></p>
+		<p><label for="search-query">검색 : </label><input type="text" id="search-query" name="query" /><input type="submit" value="Find" /></p>
 		<ul>
 		{% for item in search_list %}
 			<li>
@@ -71,13 +71,13 @@
 		</ul>
 		<div class="search-pages">
 			{% if search_page.has_previous %}
-			<a class="search-prev-page" href="?search-page={{search_page.previous_page_number}}">Prev</a>
+			<a class="search-prev-page" href="?query={{search_code}}&search-page={{search_page.previous_page_number}}">Prev</a>
 			{% endif %}
 			{% for page in search_page.paginator.page_range %}
-			<a class="search-page{% ifequal page.number search_page.number %} selected{% endifequal %}" href="?page={{page.number}}">{{page.number}}</a>
+			<a class="search-page{% ifequal page.number search_page.number %} selected{% endifequal %}" href="?query={{search_code}}&search-page={{page.number}}">{{page.number}}</a>
 			{% endfor %}
 			{% if search_page.has_next %}
-			<a class="search-next-page" href="?search-page={{search_page.next_page_number}}">Next</a>
+			<a class="search-next-page" href="?query={{search_code}}&search-page={{search_page.next_page_number}}">Next</a>
 			{% endif %}
 		</div>
 	</form>
