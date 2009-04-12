@@ -103,7 +103,7 @@ AUTHENTICATION_BACKENDS = (
 	'otl.apps.accounts.backends.KAISTSSOBackend',
 )
 AUTH_PROFILE_MODULE = 'apps.accounts.userprofile'
-LOGIN_ULR = '/login/'
+LOGIN_URL = '/login/'
 
 # Should be overriden at settings_local.py
 from datetime import date
