@@ -1,0 +1,192 @@
+body, html { 
+	overflow:hidden; 
+	width:100%; 
+	height:100%; 
+	margin:0; 
+	padding:0;
+}
+
+
+#global-bar
+{
+	height:25px;
+}
+
+#logo-wrap
+{
+	height:64px;
+}
+
+#left-side 
+{
+	width:185px;
+}
+
+
+#calendar-wrap
+{
+    background:#C3D9FF url('images/corner_tl.gif') left top no-repeat;
+}
+
+#calendar
+{
+	padding-top:8px;
+	padding-left:8px;
+	padding-bottom:8px;
+    background:transparent url('images/corner_bl.gif') left bottom no-repeat;
+}
+
+#search-bar
+{
+	height:20px;
+}
+
+#message-bar
+{
+	height:20px;
+}
+
+#navigation
+{
+	height:20px;
+}
+
+
+#center-left
+{
+	width:8px;
+    background:#C3D9FF url('images/corner_tl.gif') left top no-repeat;
+}
+
+#center-bottom
+{
+    background:#C3D9FF url('images/corner_bl.gif') left bottom no-repeat;
+	height:8px;
+}
+
+#center-bottom div
+{
+	height:100%;
+    background:transparent url('images/corner_br.gif') right bottom no-repeat;
+}
+
+
+#timetable-top
+{
+	height:64px;  /* colheadrs.height + day-schedule.height */
+    background:#C3D9FF url('images/corner_tr.gif') top right no-repeat;
+}
+
+#colheaders
+{
+	height:22px;
+	width:100%;
+}
+
+#colheaders .chead
+{
+	height:100%;
+	width:14.2857%;
+	float:left;
+	line-height:22px;
+	text-align:center;
+	background:#88AACC;
+}
+
+#day-schedule
+{
+	height:42px;
+	width:100%;
+	background:#E8EEF7;
+	border-top:1px solid #A2BBDD;
+	border-left:1px solid #A2BBDD;
+	border-right:1px solid #fff;
+	border-bottom:1px solid #fff;
+}
+
+#timetable-wrap
+{
+	position:relative;
+	margin:0;
+	padding:0;
+	border-top:1px solid #A2BBDD;
+	border-left:1px solid #A2BBDD;
+	border-bottom:1px solid #fff;
+	overflow-x:hidden;
+	overflow-y:scroll;
+}
+
+#timetable
+{
+	position:relative;
+	width:100%;
+	height:1008px;
+}
+
+#rowheaders
+{
+	position:absolute;
+	left:0;
+	top:0;
+	width:60px;
+	height:100%;
+}
+
+#rowheaders .rhead
+{
+	position:relative;
+	width:100%;
+	height:42px;
+	background:#E8EEF7 url('images/timetable/dot.gif') bottom repeat-x;
+}
+
+#rowheaders .rhead span
+{
+	position:absolute;
+	top:2px;
+	right:2px;
+	color#446688;
+	font-size:11px;
+}
+
+#grid-wrap
+{
+	position:absolute;
+	left:60px;
+	top:0;
+	width:100%; /* -60px */
+	height:100%;
+    background:#fff url('images/timetable/cell_100.gif') repeat;
+}
+
+
+.side-box .top
+{
+    background:#C3D9FF url('images/corner_tl.gif') top left no-repeat;
+}
+.side-box .top div
+{
+    background:transparent url('images/corner_tr.gif') top right no-repeat;
+}
+
+.side-box .content
+{
+    background:#C3D9FF;
+	padding-left:2px;
+	padding-right:2px;
+}
+
+.side-box .content div
+{
+	background:#fff;
+}
+.side-box .bottom 
+{
+    background:#C3D9FF url('images/corner_bl.gif') bottom left no-repeat;
+}
+
+.side-box .bottom div
+{
+	height:100%;
+    background:transparent url('images/corner_br.gif') bottom right no-repeat;
+}
