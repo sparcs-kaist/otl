@@ -3,6 +3,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils import simplejson as json
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
 from otl.apps.accounts.models import Department
 from otl.apps.timetable.models import Lecture, ExamTime, ClassTime, Syllabus
 from StringIO import StringIO
@@ -38,6 +39,29 @@ def lecture_filter(request):
 
 	output = _lectures_to_json(lectures)
 	return HttpResponse(output)
+
+@login_required
+def add_to_timetable(request):
+	user = request.user
+	table_id = request.GET.get('table_id', None)
+	lecture_id = request.GET.get('lecture_id', None)
+	pass
+
+@login_required
+def delete_from_timetable(rqeuest):
+	user = request.user
+	table_id = request.GET.get('table_id', None)
+	lecture_id = request.GET.get('lecture_id', None)
+	pass
+
+@login_required
+def view_timetable(request, user, table_id):
+	user = request.user
+	table_id = request.GET.get('table_id', None)
+	pass
+
+
+# -- Private functions --
 
 def _lectures_to_json(lectures):
 	all = []

@@ -1,6 +1,7 @@
 # encoding: utf-8
 from django.db import models
 from django.contrib import admin
+from django.contrib.auth.models import User
 from otl.apps.accounts.models import Department
 from otl.apps.common import *
 import re
@@ -26,6 +27,8 @@ class Lecture(models.Model):
 	professor_en = models.CharField(max_length=100)			# 교수님 이름 (영문)
 	notice = models.CharField(max_length=200, blank=True)	# 비고
 	is_english = models.BooleanField()						# 영어강의 여부
+
+	timetable_relation = models.ManyToManyField(User, through='Timetable', null=True, blank=True)
 
 	def __unicode__(self):
 		return u'%s (%d:%s) %s' % (self.code, self.year, self.get_semester_display(), self.title)
@@ -119,8 +122,27 @@ class SyllabusAdmin(admin.ModelAdmin):
 
 # TODO: 수강신청 현황 View에 대응하는 Table
 
+
+class Timetable(models.Model):
+	user = models.ForeignKey(User)
+	lecture = models.ForeignKey(Lecture)
+	year = models.IntegerField()
+	semester = models.IntegerField()
+	table_id = models.IntegerField()
+
+	def __unicode__(self):
+		return u'%s\'s %s in table [%d]' % (self.user.username, self.lecture.code, self.table_id)
+
+	class Meta:
+		unique_together = (('user', 'lecture', 'year', 'semester', 'table_id'),)
+
+class TimetableAdmin(admin.ModelAdmin):
+	list_display = ('user', 'lecture', 'year', 'semester', 'table_id')
+	ordering = ('user', 'year', 'semester', 'table_id')
+
 admin.site.register(Lecture, LectureAdmin)
 admin.site.register(ExamTime, ExamTimeAdmin)
 admin.site.register(ClassTime, ClassTimeAdmin)
 admin.site.register(Syllabus, SyllabusAdmin)
+admin.site.register(Timetable, TimetableAdmin)
 # vim: set ts=4 sts=4 sw=4 noet:
