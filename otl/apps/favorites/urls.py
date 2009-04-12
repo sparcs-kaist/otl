@@ -7,5 +7,6 @@ urlpatterns = patterns('',
 	(ur'^delete/(\d+)$', views.delete),
 	(ur'^add/(\d+)$', views.add),
 	(ur'^create/$', views.create),
+	(ur'^morelist/$', views.morelist),
 )
 
