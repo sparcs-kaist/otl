@@ -39,7 +39,6 @@ def search(request):
 	search_code = request.GET.get('query')
 	search_list = Paginator(CourseLink.objects.filter(Q(year=settings.CURRENT_YEAR), Q(semester=settings.CURRENT_SEMESTER), Q(course_code__icontains = search_code)|Q(course_name__icontains = search_code)|Q(url__icontains = search_code)).order_by('-year','-semester','-favored_count','-written'), NUM_PER_PAGE)
 	search_page = request.GET.get('search-page',1)
-	print(search_page)
 	current_search_page = search_list.page(search_page)
 	return render_to_response('favorites/index.html', {
 		'section': 'favorites',
@@ -104,5 +103,5 @@ def morelist(request):
 		'favorite_list': favorite_list,
 		'recently_added_list': current_page.object_list,
 		'current_page': current_page,
-
 	}, context_instance=RequestContext(request))
+
