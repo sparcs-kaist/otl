@@ -127,10 +127,18 @@ LayoutContainer = Class.create({
                  
 // Layout manager: handles N layout container
 LayoutManager = Class.create({
-  initialize: function(root) {
+  initialize: function(root,handlers) {
     this.root = root || document.body;
+
+	//added
+	if (handlers) 
+		this.resizeHandler = handlers.resizeHandler;
+	else 
+		this.resizeHandler = function() {};
+
     this.init();
     Event.observe(window, "resize", this.resize.bind(this))
+
   },
   
   reset: function() {
@@ -150,6 +158,8 @@ LayoutManager = Class.create({
   
   resize: function() {           
     this.containers.invoke("updateSize"); 
+	//added
+	this.resizeHandler();
   },
   
   addElement: function(element, doResize) {

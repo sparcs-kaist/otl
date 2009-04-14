@@ -156,9 +156,29 @@ body, html {
 	top:0;
 	width:100%; /* -60px */
 	height:100%;
-    background:#fff url('images/timetable/cell_100.gif') repeat;
+    background:#fff;
 }
 
+#grid
+{
+	position:relative;
+	width:100%;
+	height:100%;
+}
+
+#grid .block-day
+{
+	position:relative;
+	float:left;
+	width:14.2857%;
+	height:100%;
+	background:transparent url('images/timetable/cell_100.gif') repeat-y;
+}
+
+#grid .block-day .schedule
+{
+
+}
 
 .side-box .top
 {
@@ -190,3 +210,4 @@ body, html {
 	height:100%;
     background:transparent url('images/corner_br.gif') bottom right no-repeat;
 }
+

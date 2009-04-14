@@ -13,12 +13,12 @@
 
 	var layoutManager = null;
 	Event.observe(window, "load", function() { 
-		Calendar.setup({
-			parentElement : 'calendar'
-		});
-		layoutManager = new LayoutManager() 
+		var resizeHandler = function()
+		{
+			$('grid-wrap').style.width=($('grid-wrap').parentNode.offsetWidth-$('rowheaders').offsetWidth)+'px';
+		};
+		layoutManager = new LayoutManager(null,{resizeHandler:resizeHandler}); 
 	});
-
 	</script>
 </head>
 <body>
@@ -129,6 +129,13 @@
 								</div><!--rowheaders-->
 								<div id="grid-wrap">
 									<div id="grid">
+										<div class="block-day"></div>
+										<div class="block-day"></div>
+										<div class="block-day"></div>
+										<div class="block-day"></div>
+										<div class="block-day"></div>
+										<div class="block-day"></div>
+										<div class="block-day"></div>
 									</div>
 								</div>
 							</div><!--timetable-->
