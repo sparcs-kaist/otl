@@ -13,7 +13,10 @@ from StringIO import StringIO
 def index(request):
 	lectures = Lecture.objects.filter(year=settings.NEXT_YEAR, semester=settings.NEXT_SEMESTER)
 	lectures_output = _lectures_to_output(lectures) # TODO: 기본값으로 한 학과의 과목 정보만 보여주도록 한다.
-	my_lectures = [_lectures_to_output(Lecture.objects.filter(year=settings.NEXT_YEAR, semester=settings.NEXT_SEMESTER, timetable__table_id=id), False) for id in xrange(0,3)]
+	if request.user.is_authenticated():
+		my_lectures = [_lectures_to_output(Lecture.objects.filter(year=settings.NEXT_YEAR, semester=settings.NEXT_SEMESTER, timetable__user=request.user, timetable__table_id=id), False) for id in xrange(0,3)]
+	else:
+		my_lectures = [[], [], []]
 	return render_to_response('timetable/index.html', {
 		'section': 'timetable',
 		'departments': Department.objects.all(),
@@ -57,7 +60,6 @@ def search(request):
 @login_required
 def add_to_timetable(request):
 	user = request.user
-	assert user.is_authenticated()
 	table_id = request.GET.get('table_id', None)
 	lecture_id = request.GET.get('lecture_id', None)
 	
@@ -91,7 +93,6 @@ def add_to_timetable(request):
 @login_required
 def delete_from_timetable(request):
 	user = request.user
-	assert user.is_authenticated()
 	table_id = request.GET.get('table_id', None)
 	lecture_id = request.GET.get('lecture_id', None)
 
@@ -114,7 +115,6 @@ def delete_from_timetable(request):
 @login_required
 def view_timetable(request):
 	user = request.user
-	assert user.is_authenticated()
 	table_id = request.GET.get('table_id', None)
 
 	lectures = []
