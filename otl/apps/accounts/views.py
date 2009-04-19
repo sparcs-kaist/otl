@@ -20,6 +20,7 @@ def login(request):
 			if not f.is_valid():
 				return render_to_response('login.html', {
 					'form_login': f,
+					'error': True,
 					'msg': u'아이디/비밀번호를 모두 적어야 합니다.',
 				}, context_instance=RequestContext(request))
 
@@ -28,6 +29,7 @@ def login(request):
 			if user is None: # Login Failed
 				return render_to_response('login.html', {
 					'form_login': f,
+					'error': True,
 					'msg': u'로그인에 실패하였습니다.',
 				}, context_instance=RequestContext(request))
 			else: # Login OK

@@ -19,7 +19,7 @@ ul.actions {
 	list-style: none;
 }
 
-/* TODO: 이것들을 common.css로 빼낼까? */
+/* TODO: 이것들을 default.css로 빼낼까? */
 .actions li {
 	margin: 0 5px;
 	float: left;

@@ -1,12 +1,13 @@
 {% extends 'layout.html' %}
+{% block headers %}
+<link rel="stylesheet" type="text/css" href="/media/accounts.css" />
+{% endblock %}
 {% block content %}
+{% if msg %}<div class="msg{% if error %} error{% endif %}">{{ msg }}</div>{% endif %}
 <form action="/login/" method="post">
 <table>
 {{ form_login.as_table }}
 <tr><td colspan="2"><input type="submit" value="Login" /></td></tr>
 </table>
 </form>
-{% if msg %}
-<div class="msg">{{ msg }}</div>
-{% endif %}
 {% endblock %}
