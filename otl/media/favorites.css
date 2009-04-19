@@ -79,3 +79,9 @@ a.control-delete, a.control-add {
 #search-form input[type=submit] {
 	padding: 2px 4px;
 }
+.favorite-link-img, .search-link-img{
+	display:none;
+}
+.favorite-link, .search-link{
+}
+

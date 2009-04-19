@@ -10,10 +10,12 @@
 	<ul>
 	{% for item in favorite_list %}
 		<li>
-			<h4>{{item.course_code}}: {{item.course_name}}</h4>
-			<a class="favorite-link" href="{{item.url}}">{{item.url}}<img src="http://open.thumbshots.org/image.aspx?url={{item.url}}" /></a>
-			추가한 사람 수 : {{item.favored_count}}
-			<a class="control-delete" href="/favorites/delete/{{item.id}}">Delete</a>
+			<img class="favorite-link-img" src="http://open.thumbshots.org/image.aspx?url={{item.url}}" />	
+			<a class="favorite-link" href="{{item.url}}">	
+				<h4>{{item.course_code}}: {{item.course_name}} (등록수 : {{item.favored_count}})</h4>
+				{{item.url}}
+			</a>
+			<a class="control-delete" href="/favorites/delete/{{item.id}}">Delete</a>:
 		</li>
 	{% endfor %}
 	</ul>
@@ -27,9 +29,7 @@
 	<form id="create-form" method="get" action="/favorites/create/">
 		<div id="add-public-favorite">
 			즐겨찾기 등록 : code <input type="text" id="code" name="code" value="" size="5"/>
-			name <input type="text" id="name" name="name" value="" size="5"/>
-			year <input type="text" id="year" name="year" value="" size="4"/>
-			semester <input type="text" id="semester" name="semester" value="" size="1"/>
+			name <input type="text" id="name" name="name" value="" size="5"/>	
 			url <input type="text" id="url" name="url" value="" size="5"/>
 			<input id="create-form" type="submit" value="등록" />
 		</div>
@@ -37,10 +37,12 @@
 	<ul>
 	{% for item in recently_added_list %}
 		<li>
-			<h4>{{item.course_code}}: {{item.course_name}}</h4>
-			<a class="favorite-link" href="{{item.url}}">{{item.url}}<img src="http://open.thumbshots.org/image.aspx?url={{item.url}}" /></a>
-			<span class="submitter">올린이 : <a href="/accounts/view/{{item.writer.username}}">{{item.writer.username}}</a></span>
-			추가한 사람 수 : {{item.favored_count}}
+			<a class="favorite-link-img" href="{{item.url}}"><img src="http://open.thumbshots.org/image.aspx?url={{item.url}}" /></a>
+			<a class="favorite-link" href="{{item.url}}">
+				<h4>{{item.course_code}}: {{item.course_name}} (등록수 : {{item.favored_count}})</h4>
+				{{item.url}}
+			</a>
+			<span class="submitter">올린이 : <a href="/accounts/view/{{item.writer.username}}">{{item.writer.username}}</a></span>	
 			<a class="control-add" href="/favorites/add/{{item.id}}">Add</a>
 		</li>
 	{% endfor %}
@@ -62,10 +64,12 @@
 			{% if search_list %}
 				{% for item in search_list %}
 				<li>
-					<h4>{{item.year}} {{item.semester}} {{item.course_code}}: {{item.course_name}}</h4>
-					<a class="search-link" href="{{item.url}}">{{item.url}}<img src="http://open.thumbshots.org/image.aspx?url={{item.url}}"/></a>
+					<a class="search-link-img" href="{{item.url}}"><img src="http://open.thumbshots.org/image.aspx?url={{item.url}}"/></a>
+					<a class="search-link" href="{{item.url}}">
+						<h4>{{item.year}} {{item.semester}} {{item.course_code}}: {{item.course_name}} ( 등록수 : {{item.favored_count}} )</h4>
+						{{item.url}}
+					</a>
 					<span class="submitter">올린이 : <a href="/accounts/view/{{item.writer.username}}">{{item.writer.username}}</a></span>
-					추가한 사람 수 : {{item.favored_count}}
 					<a class="control-add" href="/favorites/add/{{item.id}}">Add</a>
 				</li>
 				{% endfor%}

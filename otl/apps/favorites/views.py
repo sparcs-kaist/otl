@@ -67,12 +67,12 @@ def create(request):
 	if request.user.is_authenticated():
 		new_code = request.GET.get('code')
 		new_name = request.GET.get('name')
-		new_year = request.GET.get('year')
-		new_semester = request.GET.get('semester')
-		new_url = request.GET.get('url')
+		new_url = request.GET.get('url').strip()
+		if new_url[0:7] not in 'http://':
+			new_url = 'http://' + new_url
 		new_writer = request.user
-		new_written = time.strftime('%Y-%m-%d %H:%M:%S')
-		new_course_link = CourseLink.objects.create(course_code = new_code, course_name = new_name, year = new_year, semester = new_semester, url = new_url, writer = new_writer, written = new_written , favored_count = 0)
+		new_course_link = CourseLink.objects.create(course_code = new_code, course_name = new_name, year = settings.CURRENT_YEAR, \
+				semester = settings.CURRENT_SEMESTER, url = new_url, writer= new_writer, favored_count = 0)
 	else:
 		favorite_list = None
 
