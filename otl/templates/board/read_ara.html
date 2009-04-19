@@ -1,0 +1,15 @@
+{% extends 'layout.html' %}
+{% block content %}
+<h2>아라 Lecture 게시판</h2>
+{% for article in article_list %}
+<div class="article-container article-depth-{{article.depth}}">
+	<h3>{{article.title}}</h3>
+	<div class="article-info">
+		<span class="nickname">nickname: {{article.author_nickname}}</span>
+	</div>
+	<div class="article-content">
+		{{article.content|safe|linebreaksbr}}
+	</div>
+</div>
+{% endfor %}
+{% endblock %}
