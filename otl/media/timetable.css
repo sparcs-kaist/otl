@@ -163,12 +163,17 @@
 
 .lmodule .textbody
 {
+    position:absolute;
     height:100%;
     overflow:hidden;
-    position:absolute;
     line-height:21px;
     font-size:12px;
     text-align:center;
+}
+
+.cursor
+{
+	cursor:pointer;
 }
 
 #lecture_tabs .lecture_tab
@@ -248,7 +253,7 @@
 #left-side
 {
     float:left;
-    width:180px;
+    width:200px;
 }
 
 #right-side

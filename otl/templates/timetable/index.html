@@ -91,7 +91,11 @@
 		getActiveTab:function()
 		{
 			return this.contents[this.activeKey];
-		}
+		},
+		getTableId:function()
+	   {
+		   return this.activeKey;
+	   }
 	});
 
 	UDF=
@@ -332,7 +336,7 @@
 			this.overlap.setStyle('display','none');
 
 			this.dragging=false;
-			this.cell = {row:0,col:0};
+			this.startCell = {row:0,col:0};
 
 			this.options=
 			{
@@ -354,10 +358,10 @@
 		{
 			this.dragging=true;
 			var pos = UDF.mousePos(e,this.grid);
-			this.cell = this.getCell(pos);
+			this.startCell = this.getCell(pos);
 
-			var x = (this.cell.col * this.options.cellWidth)+1;
-			var y = (this.cell.row * this.options.cellHeight);
+			var x = (this.startCell.col * this.options.cellWidth)+1;
+			var y = (this.startCell.row * this.options.cellHeight);
 			this.selection.setStyles(
 				{
 					display:'block',
@@ -374,12 +378,9 @@
 			if(this.dragging)
 			{
 				var pos = UDF.mousePos(e,this.grid);
-				var cell = this.getCell(pos);
-				var c1 = Math.max(Math.min(cell.col,this.cell.col),0); 
-				var r1 = Math.max(Math.min(cell.row,this.cell.row),0);
-				var c2 = Math.min(Math.max(cell.col,this.cell.col),4);
-				var r2 = Math.min(Math.max(cell.row,this.cell.row),31);
-				this.draw(c1,r1,c2,r2);
+				var currentCell = this.getCell(pos);
+				var cell = this.modCell(this.startCell,currentCell);
+				this.draw(cell.c1,cell.r1,cell.c2,cell.r2);
 				e.stop();
 			}
 		},
@@ -387,10 +388,29 @@
 	  	{
 			if(this.dragging)
 			{
+				var pos = UDF.mousePos(e,this.grid);
+				var endCell = this.getCell(pos);
 				this.selection.setStyle('display','none');
+				var cell = this.modCell(this.startCell,endCell);
+
+				var startDay = cell.c1;
+				var endDay = cell.c2;
+				var startTime = cell.r1*30+480;
+				var endTime = cell.r2*30+480;
+
+				alert(startDay+' '+endDay+' '+startTime+' '+endTime);
 				this.dragging=false;
 			}
 	  	},
+		modCell:function(cell1,cell2)
+		{
+			return {
+				c1 :Math.max(Math.min(cell1.col,cell2.col),0),
+				r1 :Math.max(Math.min(cell1.row,cell2.row),0),
+				c2 :Math.min(Math.max(cell1.col,cell2.col),4),
+				r2 :Math.min(Math.max(cell1.row,cell2.row),31)
+			};
+		},
 		draw:function(col1,row1,col2,row2)
 	 	{
 			var x = col1 * this.options.cellWidth + 1; // +1 fix
@@ -446,11 +466,21 @@
 		addLecture:function(obj)
 		{
 			var bgcolor = UDF.modulecolors[Math.floor(Math.random()*10)];
+<<<<<<< /home/julingks/cs408/otl/templates/timetable/index.html
+			this.buildlmodules(this.tabs.getActiveTab(),obj,bgcolor,true);
+=======
 			this.buildlmodules(this.tabs.getActiveTab(),obj,bgcolor);
+>>>>>>> /tmp/index.html~other.iIbF4G
 		},
-		deleteLecture:function()
+		deleteLecture:function(e,obj)
 	  	{
-			
+			if(confirm(obj.title+' 을(를) 예비 시간표에서 삭제 하시겠습니까?'))
+			{
+				var lecture_id=obj.id;
+				var table_id = Timetable.tabs.getTableId();
+				alert(table_id+' '+lecture_id+' ');
+			}
+			e.stop();
 	  	},
 		onMouseover: function(obj)
 		{
@@ -468,7 +498,7 @@
 						{
 							var days=['월','화','수','목','금'];
 							var time=Math.floor(item.start/60)+':'+(item.start%60)+'~'+Math.floor(item.end/60)+':'+(item.end%60);
-							$('DS_'+key).innerHTML=days[item.day-1]+time;
+							$('DS_'+key).innerHTML=days[item.day]+time;
 						}
 						if(key=='credit'||key=='au')
 						{
@@ -491,9 +521,9 @@
 			this.overlap.empty();
 
 			var bgcolor = '#FF9933';
-			this.buildlmodules(this.overlap,obj,bgcolor);
+			this.buildlmodules(this.overlap,obj,bgcolor,false);
 		},
-		buildlmodules:function(wrap,obj,bgcolor)
+		buildlmodules:function(wrap,obj,bgcolor,enableDelete)
 		{
 			obj.times.each(function(time)
 			{
@@ -502,7 +532,14 @@
 				var textbody=new Element('div',{'class':'textbody'});
 				bg.inject(lmodule);
 				textbody.inject(lmodule);
-				textbody.set('html','<strong>'+obj.title+'</strong><br />'+obj.prof+'<br />'+obj.classroom+'<br />');
+				var html;
+				if (enableDelete) 
+				{
+					textbody.set('html','<a class="cursor"><strong>'+obj.title+'</strong></a><br />'+obj.prof+'<br />'+obj.classroom+'<br />');
+					textbody.getElements('a').addEvent('mousedown',Timetable.deleteLecture.bindWithEvent(Timetable,obj));
+				}
+				else
+					textbody.set('html','<strong>'+obj.title+'</strong><br />'+obj.prof+'<br />'+obj.classroom+'<br />');
 
 				var left = (time.day-1)*100+3;
 				var top = Math.floor((time.start-480)/30)*21;
@@ -666,16 +703,7 @@
 				<div id="grid-wrap">
 					<div id="grid">
 						<div id="timetable_contents">
-							<div id="timetable1"class="lmodules">
-								<div class="lmodule">
-									<div class="bg"></div>
-									<div class="textbody">
-										<a href="#"><strong>공학설계이론 방법론 및 원리</strong></a><br />
-										메리케서린톰슨<br />
-										응용공학동 #4202<br />
-									</div>
-								</div>
-							</div>
+							<div id="timetable1" class="lmodules"></div>
 							<div id="timetable2" class="lmodules"></div>
 							<div id="timetable3" class="lmodules"></div>
 						</div>
@@ -687,7 +715,7 @@
 		</div><!--timetable-wrap-->
 		</div><!--timetable-->
 		<div id="timetable-footer"><div></div></div>
-	</div>
+	</div><!--center-->
 	<div id="right-side">
 		<div id="map">
 			<h4>강의실 장소</h4>
@@ -765,6 +793,6 @@
 		<div id="pro">
 			<h4>교수님 정보</h4>
 		</div>
-	</div>
-	<div class="clear"></div>
+	</div><!--right-side-->
+	<div class="clear" style="height:10px;"></div>
 {% endblock %}
