@@ -40,6 +40,7 @@ def login(request):
 					return render_to_response('login_agreement.html', {
 						'username': user.username,
 						'kuser_info': user.kuser_info,
+						'form_profile': ProfileForm(),
 					}, context_instance=RequestContext(request))
 				else:
 					# Already existing user

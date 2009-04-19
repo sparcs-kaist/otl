@@ -1,6 +1,6 @@
 {% extends 'layout.html' %}
 {% block headers %}
-<link rel="stylesheet" type="text/css" href="/media/login.css" />
+<link rel="stylesheet" type="text/css" href="/media/accounts.css" />
 <script type="text/javascript" src="/media/js/mootools/mootools-1.2.1-core-yc.js"></script>
 <script type="text/javascript">
 //<![CDATA[
@@ -46,11 +46,7 @@ document.addEvent('domready', function() {
 		</p>
 		<p>추가로 다음의 정보가 필요합니다.</p>
 		<p>
-			<label for="language">사용 언어 :</label>
-			<select name="language" id="language">
-				<option value="ko-kr" selected="selected">한국어 (Korean)</option>
-				<option value="en-us">영어 (English)</option>
-			</select>
+			{{form_profile.language.label_tag}}{{form_profile.language}}
 		</p>
 		<p><input type="submit" value="전송하기" /></p>
 	</form>
