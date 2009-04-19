@@ -121,6 +121,7 @@
 
 	UDF=
 	{
+		days : ['월','화','수','목','금'],
 		modulecolors : ['#FFC7FE','#FFCECE','#DFE8F3','#D1E9FF','#D2F1EE','#FFEAD1','#E1D1FF','#FAFFC1','#D4FFC1','#DEDEDE','#BDBDBD'],
 		getRandomColor:function()
 		{
@@ -429,7 +430,7 @@
 				var startTime = cell.r1*30+480;
 				var endTime = cell.r2*30+480;
 
-				alert(startDay+' '+endDay+' '+startTime+' '+endTime);
+				$('dump').set('html',(startDay+' '+endDay+' '+startTime+' '+endTime));
 				this.dragging=false;
 			}
 	  	},
@@ -631,9 +632,8 @@
 					{
 						if(key=='examtime')
 						{
-							var days=['월','화','수','목','금'];
 							var time=Math.floor(item.start/60)+':'+(item.start%60)+'~'+Math.floor(item.end/60)+':'+(item.end%60);
-							$('DS_'+key).innerHTML=days[item.day]+time;
+							$('DS_'+key).innerHTML=UDF.days[item.day]+time;
 						}
 						if(key=='credit'||key=='au')
 						{
