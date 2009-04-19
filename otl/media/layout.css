@@ -63,6 +63,8 @@ body
 #header-content
 {
     padding-top:10px;
+    position: relative;
+	border-bottom:5px solid #292929;
 }
 
 #header-content h2
@@ -113,6 +115,10 @@ body
 {
 	margin:0;
 	padding:0;
+	position: absolute;
+	left: 200px;
+	bottom: 0;
+	width: 790px;
 	background:#EEEEEE url('images/corner_tl.gif') left top no-repeat;
 }
 
@@ -122,7 +128,6 @@ body
 	padding:10px 10px 0pt 5px;
 	background:transparent url('images/corner_tr.gif') right top no-repeat;
 	font-size:12px;
-	border-bottom:5px solid #292929;
 }
 
 #navigation a
