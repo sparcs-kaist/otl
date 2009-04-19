@@ -1,6 +1,10 @@
 # encoding: utf-8
 # This file includes commonly used constants and definitions.
 
+LANGUAGES = (
+	('ko-kr', '한국어 (Korean)'),
+	('en-us', '영어 (English)'),
+)
 CLASS_TYPES = (
 	('l', u'강의'),
 	('e', u'실험'),

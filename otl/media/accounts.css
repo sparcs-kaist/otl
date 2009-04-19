@@ -1,0 +1,61 @@
+@charset "utf-8";
+
+ul#myinfo {
+	padding-left: 3em;
+}
+
+ul.actions {
+	list-style: none;
+}
+
+/* TODO: 이것들을 common.css로 빼낼까? */
+.actions li {
+	margin: 0 5px;
+	float: left;
+}
+
+.actions a {
+	display: block;
+	padding: 3px 5px;
+	border: 1px solid #ccc;
+	background: #eee;
+	color: #333;
+}
+
+form .help {
+	font-size: 0.9em;
+	color: #555;
+}
+
+form label {
+	display: inline-block;
+	color: #333;
+	margin: 0;
+	padding: 0;
+	font-weight: bold;
+}
+
+form .errorlist {
+}
+
+form .errorlist li {
+	margin: 0;
+	padding: 0;
+	color: red;
+}
+
+.msg {
+	border: 1px solid #fc6;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+	background: #fff4cc;
+	padding: 1px 5px;
+	margin: 5px 20px;
+	color: #222;
+}
+
+.msg.error {
+	border-color: #c00;
+	background: #ffcccc;
+	color: #600;
+}

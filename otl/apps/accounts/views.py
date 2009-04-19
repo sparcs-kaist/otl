@@ -4,8 +4,9 @@ from django.http import *
 from django.contrib import auth
 from django.shortcuts import render_to_response
 from django.contrib.admin.models import User
+from django.contrib.auth.decorators import login_required
 from otl.apps.accounts.models import UserProfile, Department
-from otl.apps.accounts.forms import LoginForm
+from otl.apps.accounts.forms import LoginForm, ProfileForm
 import base64, hashlib, time, random, urllib, re
 
 def login(request):
@@ -57,6 +58,7 @@ def login(request):
 				profile.department = Department.objects.get(name__exact=request.POST['department'])
 				profile.student_id = request.POST['student_id']
 				profile.save()
+				profile.favorite_departments.add(Department.objects.get(code='HS')) # 인문사회과학부는 기본으로 추가
 
 				auth.login(request, user)
 				return HttpResponseRedirect(next_url)
@@ -72,3 +74,33 @@ def login(request):
 def logout(request):
 	auth.logout(request)
 	return HttpResponseRedirect('/')
+
+@login_required
+def myinfo(request):
+	profile = UserProfile.objects.get(user=request.user)
+	error = False
+	if request.method == 'POST':
+		# Modify my account information
+		f = ProfileForm(request.POST)
+		if f.is_valid():
+			profile.language = f.cleaned_data['language']
+			profile.favorite_departments = f.cleaned_data['favorite_departments']
+			profile.save()
+			msg = u'사용자 정보가 변경되었습니다.'
+		else:
+			msg = u'올바르지 않은 입력입니다.'
+			error = True
+	else:
+		# View my account information
+		f = ProfileForm({
+			'language': profile.language,
+			'favorite_departments': [item.id for item in profile.favorite_departments.all()],
+		})
+		msg = u''
+	return render_to_response('accounts/myinfo.html', {
+		'form_profile': f,
+		'user_profile': profile,
+		'error': error,
+		'msg': msg,
+	}, context_instance=RequestContext(request))
+

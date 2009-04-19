@@ -23,9 +23,8 @@ class KAISTSSOBackend:
 			('b003', 'ku_where'),
 			('b003', 'ku_departmentname'),
 			('b003', 'ku_socialName'),
-			('b003', 'ku_where'),
 			('b003', 'ku_regno1'),
-			#('b003', 'ku_regno2'), # 주민등록번호 뒷자리는 생략하고 받지 않음
+			#('b003', 'ku_regno2'), # We don't need the civil registration number.
 			('b003', 'ku_dutyName'),
 			('b003', 'ku_dutyCode'),
 			('b003', 'ku_socialName'),
@@ -71,6 +70,13 @@ class KAISTSSOBackend:
 				profile.save()
 			return user
 
+		except UserProfile.DoesNotExist:
+
+			# This may occur when a user stopped at the privacy agreement step and retry afterwards.
+			user.kuser_info = kuser_info
+			user.first_login = True
+			return user
+
 		except User.DoesNotExist:
 
 			# If this user doesn't exist yet, make records for him.
@@ -78,7 +84,7 @@ class KAISTSSOBackend:
 			user.first_name = kuser_info['givenname']
 			user.last_name = kuser_info['sn']
 			user.email = kuser_info['mail']
-			user.set_unusable_password()
+			user.set_unusable_password() # We don't save the password.
 			user.save()
 
 			# These two fields are for passing privacy info temporarily.
