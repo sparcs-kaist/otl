@@ -30,6 +30,10 @@ def login(request):
 					'msg': u'로그인에 실패하였습니다.',
 				}, context_instance=RequestContext(request))
 			else: # Login OK
+				try:
+					temp = user.first_login
+				except AttributeError:
+					user.first_login = False
 				if user.first_login:
 					# First Login
 					return render_to_response('login_agreement.html', {
