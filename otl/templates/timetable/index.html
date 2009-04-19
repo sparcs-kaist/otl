@@ -505,10 +505,24 @@
 						{
 							Timetable.update(resObj);
 						}
-						else 
+						else
 						{
+							var msg;
+							switch(resObj.result)
+							{
+								case 'NOT_EXIST':
+									msg='강의가 존재하지 않습니다.' ;
+								break;
+								case 'OVERLAPPED':
+								case 'DUPLICATED':
+									msg ='강의 시간이 겹칩니다.';
+								break;
+								case 'ERROR':
+									msg = '에러';
+								break;
+							}
 							//'NOT_EXIST','OVERLAPPED', 'DUPLICATED', 'ERROR'
-							alert(resObj.result);
+							alert(msg);
 						}
 					}
 					catch(e)
@@ -526,23 +540,20 @@
 		deleteLecture:function(e,obj)
 	  	{
 			e.stop();
-			var confirmMsg,sendMsg;
-
+			var confirmMsg,sendMsg,table_id = Timetable.tabs.getTableId();
 			if (obj==null) 
 			{
 				confirmMsg='현재 예비 시간표를 초기화 하겠습니까?';
-				sendMsg='table_id='+table_id+';
+				sendMsg='table_id='+table_id;
 			}
 			else
 			{
 				confirmMsg=obj.title+' 을(를) 예비 시간표에서 삭제 하시겠습니까?';
-				sendMsg='table_id='+table_id+'&lecture_id='+lecture_id;
+				sendMsg='table_id='+table_id+'&lecture_id='+obj.id;
 			}
 
-			if(confirm(msg))
+			if(confirm(confirmMsg))
 			{
-				var lecture_id=obj.id;
-				var table_id = Timetable.tabs.getTableId();
 				var myRequest = new Request({
 					method: 'get', 
 					url: '/timetable/delete/',
@@ -556,7 +567,7 @@
 							}
 							else 
 							{
-								//'NOT_EXIST','OVERLAPPED', 'DUPLICATED', 'ERROR'
+								//'NOT_EXIST', 'ERROR'
 								alert(resObj.result);
 							}
 						}
