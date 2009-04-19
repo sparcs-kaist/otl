@@ -23,11 +23,13 @@
 <div id="publicGroups">
 	<h3>다른 조모임</h3>
 	<a href="/groups/morelist">더보기</a>
-	<form id="create-form" method="get" action="/groups/create/">
+	<form id="create-form" method="post" action="/groups/create/">
 		<div id="create-group">
-			조모임 생성 : code <input type="text" id="code" name="code" value"" size="5"/>
+			조모임 생성 : code  : <input type="text" id="code" name="code" value"" size="5"/>
 			course name : <input type="text" id="coursename" name="cname" value"" size="5"/>
 			group name : <input type="text" id="groupname" name="gname" value"" size="5"/>
+			password : <input type="text" id="passwd" name="passwd" value"" size="5"/>
+			comment : <input type="text" id="comment" name="comment" value"" size="5"/>
 			year : <input type="text" id="year" name="year" value"" size="5"/>
 			semester : <input type="text" id="semester" name="semester" value"" size="5"/>
 			<input id="create-form" type="submit" value="생성" />
@@ -43,8 +45,6 @@
 		{% endfor %}
 	</ul>
 </div>
-<a id="create-group" href="#">조모임 보드 만들기</a>
-<a id="join-group" href="#">조모임 보드 가입하기</a>
 <h3>조모임 보드 찾아보기</h3>
 <form id="search-form" method="get" action="/groups/search/">
 	<p><label for="search-query">검색 : </label><input type="text" id="search-query" name="query" /><input type="submit" value="Find" /></p>

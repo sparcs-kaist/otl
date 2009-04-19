@@ -31,14 +31,16 @@ def index(request):
 
 def create(request):
 	if request.user.is_authenticated():
-		new_code = request.GET.get('code')
-		new_course_name = request.GET.get('cname')
-		new_group_name = request.GET.get('gname')
-		new_year = request.GET.get('year')
-		new_semester = request.GET.get('semester')
+		new_code = request.POST.get('code')
+		new_course_name = request.POST.get('cname')
+		new_group_name = request.POST.get('gname')
+		new_pw = request.POST.get('passwd')
+		new_comment = request.POST.get('comment')
+		new_year = request.POST.get('year')
+		new_semester = request.POST.get('semester')
 		new_maker = request.user
 		new_made = time.strftime('%Y-%m-%d %H:%M:%S')
-		new_group = GroupBoard.objects.create(course_code = new_code, course_name = new_course_name, group_name = new_group_name, year = new_year, semester = new_semester, maker = new_maker, made = new_made)
+		new_group = GroupBoard.objects.create(course_code = new_code, course_name = new_course_name, group_name = new_group_name, password = new_pw, comment = new_comment, year = new_year, semester = new_semester, maker = new_maker, made = new_made)
 		new_group.group_in.add(new_maker);
 	else:
 		group_list=None
