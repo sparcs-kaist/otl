@@ -604,7 +604,7 @@
 				else
 					textbody.set('html','<strong>'+obj.title+'</strong><br />'+obj.prof+'<br />'+obj.classroom+'<br />');
 
-				var left = (time.day-1)*100+3;
+				var left = time.day*100+3;
 				var top = Math.floor((time.start-480)/30)*21;
 				var height =Math.floor((time.end-time.start)/30)*21 -2;
 
