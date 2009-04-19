@@ -447,9 +447,6 @@
 		{
 			var bgcolor = UDF.modulecolors[Math.floor(Math.random()*10)];
 			this.buildlmodules(this.tabs.getActiveTab(),obj,bgcolor);
-			var myRequest = new Request({method: 'get', url: 'requestHandler.php'});
-			myRequest.send('name=john&lastname=dorian');
-			
 		},
 		deleteLecture:function()
 	  	{

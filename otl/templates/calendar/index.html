@@ -4,79 +4,22 @@
 	<title>OTL - Calendar</title>
 	<link rel="stylesheet" type="text/css" href="/media/default.css" />
 	<link rel="stylesheet" type="text/css" href="/media/calendar.css"/>
-	<link rel="stylesheet" type="text/css" href="/media/calendar-table.css"/>
 	<link rel="stylesheet" type="text/css" href="/media/js/calendarview/calendarview.css"/>
 
 	<script type="text/javascript" src="/media/js/prototype/prototype-1.6.0.3.js"></script>
 	<script type="text/javascript" src="/media/js/layoutmanager/src/layout_manager.js"></script>
 	<script type="text/javascript" src="/media/js/calendarview/calendarview.js"></script>
+	<script type="text/javascript">
 
-<script type="text/javascript">
-ModuleDraggable = Class.create();	
-ModuleDraggable.prototype=
-{
-	initialize:function()
-	{
-	}
-};
-
-ModuleResizable = Class.create();
-ModuleResizable.prototype=
-{
-	initialize:function()
-   	{
-   	}
-};
-
-ModuleBuilder = {
-	initialize:function()
-	{
-		this.dragging=false;
-		this.onLoad();
-	},
-	onLoad:function()
-	{
-		this.registHandlers();
-	},
-	registHandlers:function()
-   	{
-		//Event.observe(this.grid,'mousedown',this.onEnd.bind(this));
-		Event.observe(document,'mousemove',this.onMove.bindAsEventListener(this));
-		Event.observe(document,'mouseup',this.onEnd.bindAsEventListener(this));
-   	},
-	onStart:function(e)
-	{
-		this.dragging=true;
-		Event.stop(e);
-	},
-	onMove:function(e)
-	{
-		if(this.dragging)
+	var layoutManager = null;
+	Event.observe(window, "load", function() { 
+		var resizeHandler = function()
 		{
-
-		}
-	},
-	onEnd:function(e)
-	{
-		if(this.dragging)
-		{
-			this.dragging=false;
-		}
-	}
-}
-
-
-
-var layoutManager = null;
-Event.observe(window, "load", function() { 
-	var resizeHandler = function()
-	{
-		$('grid-wrap').style.width=($('grid-wrap').parentNode.offsetWidth-$('rowheaders').offsetWidth)+'px';
-	};
-	layoutManager = new LayoutManager(null,{resizeHandler:resizeHandler}); 
-});
-</script>
-
+			$('grid-wrap').style.width=($('grid-wrap').parentNode.offsetWidth-$('rowheaders').offsetWidth)+'px';
+		};
+		layoutManager = new LayoutManager(null,{resizeHandler:resizeHandler}); 
+	});
+	</script>
 </head>
 <body>
 	<div id="wrap" class="lm_container">
@@ -92,28 +35,6 @@ Event.observe(window, "load", function() {
 				</div>
 				<div id="calendar-wrap" class="lm_top">
 					<div id="calendar">
-						<div class="calendar-header"></div>
-						<table class="calendar-table">
-							<thead>
-								<tr>
-									<th>Mo</th>
-									<th>Tu</th>
-									<th>We</th>
-									<th>Th</th>
-									<th>Fr</th>
-									<th>Sa</th>
-									<th>Su</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr><td></td><td></td><td></td><td>1</td><td>2</td><td>3</td><td>4</td></tr>
-								<tr><td class="hover">11</td><td>12</td><td>13</td><td>14</td><td>15</td><td>16</td><td>17</td></tr>
-								<tr><td>11</td><td>12</td><td>13</td><td>14</td><td>15</td><td>16</td><td>17</td></tr>
-								<tr><td>11</td><td>12</td><td>13</td><td>14</td><td>15</td><td>16</td><td>17</td></tr>
-								<tr><td>11</td><td>12</td><td>13</td><td>14</td><td>15</td><td>16</td><td>17</td></tr>
-								<tr><td>11</td><td>12</td><td>13</td><td>14</td><td></td><td></td><td></td></tr>
-							</tbody>
-						</table>
 					</div>
 				</div>
 				<div class="lm_center">
@@ -144,7 +65,7 @@ Event.observe(window, "load", function() {
 					내 캘린더 검색
 				</div>
 				<div id="message-bar" class="lm_top">
-					<span id="message" style="background:#FAD163">일정이 삭제 되었습니다. 실행취소</span>
+					<span style="background:#FAD163">일정이 삭제 되었습니다. 실행취소</span>
 				</div>
 				<div id="navigation" class="lm_top">
 					오늘 2009년 4월 13일 – 19일  새로고침
@@ -210,7 +131,7 @@ Event.observe(window, "load", function() {
 									<div id="grid">
 										<div class="block-day"></div>
 										<div class="block-day"></div>
-										<div class="block-day block-today"></div>
+										<div class="block-day"></div>
 										<div class="block-day"></div>
 										<div class="block-day"></div>
 										<div class="block-day"></div>
