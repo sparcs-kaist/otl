@@ -62,19 +62,19 @@ class ExamTime(models.Model):
 	"""Lecture에 배정된 시험 시간."""
 	lecture = models.ForeignKey(Lecture)
 	day = models.SmallIntegerField(choices=WEEKDAYS)	# 시험 요일
-	begin = models.CharField(max_length=5)				# hh:mm 형태의 시험 시작 시간 (24시간제)
-	end = models.CharField(max_length=5)				# hh:mm 형태의 시험 종료 시간 (24시간제)
+	begin = models.TimeField()				# hh:mm 형태의 시험 시작 시간 (24시간제)
+	end = models.TimeField()				# hh:mm 형태의 시험 종료 시간 (24시간제)
 
 	def get_begin_numeric(self):
 		"""0시 0분을 기준으로 분 단위로 계산된 시작 시간을 반환한다."""
-		return int(self.begin[0:2]) * 60 + int(self.begin[4:6])
+		return self.begin.hour * 60 + self.begin.minute
 
 	def get_end_numeric(self):
 		"""0시 0분을 기준으로 분 단위로 계산된 종료 시간을 반환한다."""
-		return int(self.end[0:2]) * 60 + int(self.end[4:6])
+		return self.end.hour * 60 + self.end.minute
 
 	def __unicode__(self):
-		return u'[%s] %s, %s-%s' % (self.lecture.code, self.get_day_display(), self.begin, self.end)
+		return u'[%s] %s, %s-%s' % (self.lecture.code, self.get_day_display(), self.begin.strftime('%H:%M'), self.end.strftime('%H:%M'))
 
 class ExamTimeAdmin(admin.ModelAdmin):
 	list_display = ('lecture', 'day', 'begin', 'end')
@@ -84,8 +84,8 @@ class ClassTime(models.Model):
 	"""Lecture에 배정된 강의 시간. 보통 하나의 Lecture가 여러 개의 강의 시간을 가진다."""
 	lecture = models.ForeignKey(Lecture)			
 	day = models.SmallIntegerField(choices=WEEKDAYS)
-	begin = models.CharField(max_length=5)
-	end = models.CharField(max_length=5)
+	begin = models.TimeField()
+	end = models.TimeField()
 	type = models.CharField(max_length=1, choices=CLASS_TYPES)
 	building = models.CharField(max_length=10, blank=True, null=True)	# 건물 고유ID (잘 사용되지 않음)
 	room = models.CharField(max_length=60, blank=True, null=True)		# 호실 (잘 사용되지 않음)
@@ -95,11 +95,11 @@ class ClassTime(models.Model):
 
 	def get_begin_numeric(self):
 		"""0시 0분을 기준으로 분 단위로 계산된 시작 시간을 반환한다."""
-		return int(self.begin[0:2]) * 60 + int(self.begin[4:6])
+		return self.begin.hour * 60 + self.begin.minute
 
 	def get_end_numeric(self):
 		"""0시 0분을 기준으로 분 단위로 계산된 종료 시간을 반환한다."""
-		return int(self.end[0:2]) * 60 + int(self.end[4:6])
+		return self.end.hour * 60 + self.end.minute
 	
 	@staticmethod
 	def numeric_time_to_str(numeric_time):
