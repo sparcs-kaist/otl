@@ -2,7 +2,7 @@
 
 body
 {
-    background:#fff url('images/bg_black.jpg') repeat-x 0 -50px;
+    background:#fff url('images/bg_black.jpg') repeat-x 0 -56px;
 }
 
 
@@ -23,6 +23,11 @@ body
 {
     color:#eee;
     height:20px;
+}
+
+#gbar-content
+{
+	height: 20px;
 }
 
 
@@ -58,25 +63,29 @@ body
 
 #header
 {
-    background:url('images/bg_top.png') top center no-repeat;
+    background: url('images/bg_top.png') top center no-repeat;
 }
 #header-content
 {
-    padding-top:10px;
     position: relative;
 	border-bottom:5px solid #292929;
+	height: 70px;
 }
 
 #header-content h2
 {
+	position: absolute;
+	left: 10px;
+	top: 27px;
 	color:#000;
+	margin: 0;
 }
 
 #header-content h2 span.logo
 {
 	display:inline-block;
-    height:75px;
-	width:170px;
+    height:58px;
+	width:103px;
     background:url('images/otl.png') left top no-repeat;
 }
 
