@@ -19,25 +19,31 @@ def index(request):
 		'lectures_json': lectures_output,
 	}, context_instance=RequestContext(request))
 
-def lecture_filter(request):
+def search(request):
 	department = request.GET.get('dept', None)
 	type = request.GET.get('type', None)
-	day = request.GET.get('day', None)
-	begin = request.GET.get('start', None)
-	end = request.GET.get('end', None)
+	day_begin = request.GET.get('start_day', None)
+	day_end = request.GET.get('end_day', None)
+	time_begin = request.GET.get('start_time', None)
+	time_end = request.GET.get('end_time', None)
 
-	lectures = Lectures.objects.filter(year=settings.CURRENT_YEAR, semester=settings.CURRENT_SEMESTER)
+	lectures = Lecture.objects.filter(year=settings.CURRENT_YEAR, semester=settings.CURRENT_SEMESTER)
 	
+	#try:
 	if department != None:
 		lectures = lectures.filter(department__name__exact=department)
 	if type != None:
 		lectures = lectures.filter(type__exact=type)
-	if day != None:
-		lectures = lectures.filter(classtime__day__exact=day)
-	if begin != None:
-		lectures = lectures.filter(classtime__begin__exact=ClassTime.numeric_time_to_str(begin))
-	if end != None:
-		lectures = lectures.filter(classtime__end__exact=ClassTime.numeric_time_to_str(end))
+	if day_begin != None:
+		lectures = lectures.filter(classtime__day__gte=int(day_begin))
+	if day_end != None:
+		lectures = lectures.filter(classtime__day__lte=int(day_end))
+	if time_begin != None:
+		lectures = lectures.filter(classtime__begin__gte=ClassTime.numeric_time_to_obj(int(time_begin)))
+	if time_end != None:
+		lectures = lectures.filter(classtime__end__lte=ClassTime.numeric_time_to_obj(int(time_end)))
+	#except (TypeError, ValueError):
+	#	return HttpResponse(u'[]')
 
 	output = _lectures_to_output(lectures)
 	return HttpResponse(output)
@@ -65,8 +71,10 @@ def add_to_timetable(request):
 		result = 'NOT_EXIST'
 	except OverlappingTimeError:
 		result = 'OVERLAPPED'
-	except:
-		result = 'ERROR'
+	except IntegrityError:
+		result = 'DUPLICATED'
+	#except:
+		#result = 'ERROR'
 
 	return HttpResponse(json.dumps({
 		'result': result,

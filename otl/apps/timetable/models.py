@@ -4,6 +4,7 @@ from django.contrib import admin
 from django.contrib.auth.models import User
 from otl.apps.accounts.models import Department
 from otl.apps.common import *
+from datetime import date, time
 import re
 
 class Lecture(models.Model):
@@ -104,6 +105,10 @@ class ClassTime(models.Model):
 	@staticmethod
 	def numeric_time_to_str(numeric_time):
 		return u'%s:%s' % (numeric_time // 60, numeric_time % 60)
+	
+	@staticmethod
+	def numeric_time_to_obj(numeric_time):
+		return time(hour = numeric_time // 60, minute = numeric_time % 60)
 
 	def __unicode__(self):
 		return u'[%s] %s, %s-%s @%s' % (self.lecture.code, self.get_day_display(), self.begin, self.end, self.room_ko)
