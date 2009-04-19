@@ -76,8 +76,8 @@ def add_to_timetable(request):
 		result = 'OVERLAPPED'
 	except IntegrityError:
 		result = 'DUPLICATED'
-	#except:
-		#return HttpResponseServerError()
+	except:
+		return HttpResponseServerError()
 
 	return HttpResponse(json.dumps({
 		'result': result,
