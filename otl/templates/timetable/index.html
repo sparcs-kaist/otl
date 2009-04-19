@@ -337,7 +337,7 @@
 				var el = new Element('a',{'html':item.title}).inject(content);
 				UDF.clickable(el);
 				
-				el.addEvent('mousedown',Timetable.addLecture.bind(Timetable,item));
+				el.addEvent('mousedown',Timetable.addLecture.bindWithEvent(Timetable,item));
 				el.addEvent('mouseover',Timetable.onMouseover.bind(Timetable,item));
 				el.addEvent('mouseout',Timetable.onMouseout.bind(Timetable,item));
 			}.bind(this));
@@ -480,24 +480,17 @@
 	   	},
 		registHandlers:function()
 	   	{
-			$('clean_table').addEvent('click',this.cleanTable.bind(this));
+			$('clean_table').addEvent('click',this.deleteLecture.bindWithEvent(this,null));
 	   	},
-		cleanTable:function()
-		{
-			if(confirm('현재 시간표를 초기화 하시겠습니까?'))
-			{
-				this.tabs.getActiveTab().empty();
-			}
-		},
 		onMouseout:function()
 		{
 			$('add_credit').empty();
 			$('add_au').empty();
 			this.overlap.setStyle('display','none');
 		},
-		addLecture:function(obj)
+		addLecture:function(e,obj)
 		{
-
+			e.stop();
 			var table_id = Timetable.tabs.getTableId();
 			var lecture_id = obj.id;
 
@@ -510,12 +503,7 @@
 						var resObj = JSON.decode(responseText);
 						if (resObj.result=='OK')
 						{
-							Timetable.tabs.cleanActiveTab();
-							resObj.data.each(function(obj,index)
-							{
-								var bgcolor = UDF.getColorByIndex(index);
-								Timetable.buildlmodules(Timetable.tabs.getActiveTab(),obj,bgcolor,true);
-							});
+							Timetable.update(resObj);
 						}
 						else 
 						{
@@ -537,14 +525,63 @@
 		},
 		deleteLecture:function(e,obj)
 	  	{
-			if(confirm(obj.title+' 을(를) 예비 시간표에서 삭제 하시겠습니까?'))
+			e.stop();
+			var confirmMsg,sendMsg;
+
+			if (obj==null) 
+			{
+				confirmMsg='현재 예비 시간표를 초기화 하겠습니까?';
+				sendMsg='table_id='+table_id+';
+			}
+			else
+			{
+				confirmMsg=obj.title+' 을(를) 예비 시간표에서 삭제 하시겠습니까?';
+				sendMsg='table_id='+table_id+'&lecture_id='+lecture_id;
+			}
+
+			if(confirm(msg))
 			{
 				var lecture_id=obj.id;
 				var table_id = Timetable.tabs.getTableId();
-				alert(table_id+' '+lecture_id+' ');
+				var myRequest = new Request({
+					method: 'get', 
+					url: '/timetable/delete/',
+					onSuccess:function(responseText)
+					{
+						try{
+							var resObj = JSON.decode(responseText);
+							if (resObj.result=='OK')
+							{
+								Timetable.update(resObj);
+							}
+							else 
+							{
+								//'NOT_EXIST','OVERLAPPED', 'DUPLICATED', 'ERROR'
+								alert(resObj.result);
+							}
+						}
+						catch(e)
+						{
+							alert('ERROR');
+						}
+					},
+					onFailure:function(xhr) {
+							alert('ERROR');
+					},
+					onComplete:function() {}
+				});
+				myRequest.send(sendMsg);
 			}
-			e.stop();
 	  	},
+		update:function(resObj)
+	   	{
+			Timetable.tabs.cleanActiveTab();
+			resObj.data.each(function(obj,index)
+			{
+				var bgcolor = UDF.getColorByIndex(index);
+				Timetable.buildlmodules(Timetable.tabs.getActiveTab(),obj,bgcolor,true);
+			});
+	   	},
 		onMouseover: function(obj)
 		{
 
@@ -671,7 +708,7 @@
 		</div>
 	</div>
 	<div id="center">
-		<textarea id="timetable_init_json" class="">
+		<textarea id="timetable_init_json" class="none">
 {{my_lectures|safe}}
 		</textarea>
 		<div id="center-top">
