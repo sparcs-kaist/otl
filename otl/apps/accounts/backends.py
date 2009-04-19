@@ -55,6 +55,7 @@ class KAISTSSOBackend:
 
 		try:
 			user = User.objects.get(username__exact=kuser_info['uid'])
+			user.first_login = False
 
 			# If this user already exists in our database, just pass or update his info.
 			profile = UserProfile.objects.get(user=user)
@@ -79,12 +80,10 @@ class KAISTSSOBackend:
 			user.email = kuser_info['mail']
 			user.set_unusable_password()
 			user.save()
-			profile = UserProfile()
-			profile.user = user
-			profile.language = u'ko-kr'
-			profile.department = Department.objects.get(name__exact=kuser_info['department'])
-			profile.student_id = kuser_info['student_id']
-			profile.save()
+
+			# These two fields are for passing privacy info temporarily.
+			user.kuser_info = kuser_info
+			user.first_login = True
 			return user
 	
 	def get_user(self, user_id):
