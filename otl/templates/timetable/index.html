@@ -98,7 +98,7 @@
 		},
 		getTabByKey:function(key)
 		{
-			return this.contetns[key];
+			return this.contents[key];
 		},
 		getTableId:function()
 	   	{
@@ -115,6 +115,7 @@
 		},
 		getColorByIndex:function(index)
 		{
+			index =index*3;
 			index = UDF.modulecolors.length % index;
 			return UDF.modulecolors[index];
 		},
@@ -470,7 +471,7 @@
 			initData.each(function(arr,key)
 			{
 				var wrap = Timetable.tabs.getTabByKey(key);
-				arr.each(function(item,index)
+				arr.each(function(obj,index)
 				{
 					var bgcolor = UDF.getColorByIndex(index);
 					Timetable.buildlmodules(wrap,obj,bgcolor,true);
@@ -670,7 +671,7 @@
 		</div>
 	</div>
 	<div id="center">
-		<textarea id="timetable_init_json" class="none">
+		<textarea id="timetable_init_json" class="">
 {{my_lectures|safe}}
 		</textarea>
 		<div id="center-top">
