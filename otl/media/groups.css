@@ -1,12 +1,82 @@
 @charset "utf-8";
 
-a#create-group, a#join-group {
-	padding: 10px 15px;
-	background: #f8f8f8;
-	color: #333;
-	border: 1px solid #d2d2d2;
-	display: inline-block;
-	text-decoration: none;
-	-moz-border-radius: 3px;
-	-webkit-border-radius: 3px;
+h3 {
+	margin-top: 15px;
 }
+#publicGroups {
+	position: relative;
+}
+
+#myGroups ul,
+#publicGroups ul {
+	list-style: none;
+	position: relative;
+}
+
+#myGroups li,
+#publicGroups li {
+	position: relative;
+	border-bottom: 1px solid #ccc;
+	padding: 5px 8px;
+}
+
+#myGroups li:first-child,
+#publicGroups li:first-child {
+	border-top: 1px solid #ccc;
+}
+
+#myGroups li:hover,
+#publicGroups li:hover {
+	background-color: #f2f2f2;
+}
+
+#myGroups h4,
+#publicGroups h4 {
+	margin-bottom: 4px;
+	font-size: 10pt;
+}
+
+#publicGroups .submitter {
+	display: block;
+	position: absolute;
+	top: 4px;
+	right: 8px;
+}
+
+#create-group {
+	position: absolute;
+	top: 2px;
+	right: 5px;
+}
+#create-group a {
+	color: #56c;
+}
+
+a.control-withdraw, a.control-join {
+	display: block;
+	position: absolute;
+	top: 20px;
+	right: 8px;
+}
+#myGroups a.control-withdraw {
+	color: #c00;
+	padding: 2px 2px 2px 20px;
+	background: url(./images/icon_delete.png) no-repeat left center;
+}
+#publicGroups a.control-join {
+	color: #0a0;
+	padding: 2px 2px 2px 20px;
+	background: url(./images/icon_add.png) no-repeat left center;
+}
+
+#search-form {
+	margin: 10px;
+}
+#search-query {
+	width: 500px;
+	margin: 0 8px;
+}
+#search-form input[type=submit] {
+	padding: 2px 4px;
+}
+

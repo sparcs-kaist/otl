@@ -8,6 +8,7 @@ urlpatterns = patterns('',
 	(ur'^search/$', views.search),
 	(ur'^join/(\d+)$', views.join),
 	(ur'^withdraw/(\d+)$', views.withdraw),
-#	(ur'^list/(\d+)$', views.list),
+	(ur'^list/(\d+)$', views.list),
+	(ur'^list/write/(\d+)$', views.write),
 )
 

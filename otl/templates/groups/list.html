@@ -1,0 +1,22 @@
+{% extends 'layout.html' %}
+{% block headers %}
+<link rel="stylesheet" type="text/css" href="/media/groups.css" />
+{% endblock %}
+{% block content %}
+<h2>조모임 - {{current_group.course_code}} : {{current_group.course_name}} - {{current_group.group_name}}</h2>
+<div id="articleList">
+	{% if user.is_authenticated %}
+	<ul>
+		{% for item in article_list %}
+		<li>
+		<h4>{{item.id}} : {{item.tag}}</h4>
+		</li>
+		{% endfor %}
+	</ul>
+	{% else %}
+	<p>로그인하지 않았습니다. :)</p>
+	{% endif %}
+</div>
+<form id="write" method="post" action="/groups/list/write/{{current_group.id}}">
+	<p><label for="write-article">글쓰기 : </label><input type="text" id="write-article" name="article" /><input type="submit" value="Find" /></p>
+{% endblock %}
