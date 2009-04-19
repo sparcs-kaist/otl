@@ -11,23 +11,27 @@ from otl.apps.timetable.models import Lecture, ExamTime, ClassTime, Syllabus, Ti
 from StringIO import StringIO
 
 def index(request):
-	lectures = Lecture.objects.filter(year=settings.CURRENT_YEAR, semester=settings.CURRENT_SEMESTER)
-	lectures_output = _lectures_to_output(lectures)
+	lectures = Lecture.objects.filter(year=settings.NEXT_YEAR, semester=settings.NEXT_SEMESTER)
+	lectures_output = _lectures_to_output(lectures) # TODO: 기본값으로 한 학과의 과목 정보만 보여주도록 한다.
+	my_lectures = [_lectures_to_output(Lecture.objects.filter(year=settings.NEXT_YEAR, semester=settings.NEXT_SEMESTER, timetable__table_id=id), False) for id in xrange(0,3)]
 	return render_to_response('timetable/index.html', {
 		'section': 'timetable',
 		'departments': Department.objects.all(),
+		'my_lectures': json.dumps(my_lectures, indent=4, ensure_ascii=False),
 		'lectures_json': lectures_output,
 	}, context_instance=RequestContext(request))
 
 def search(request):
 	department = request.GET.get('dept', None)
+	year = request.GET.get('year', settings.NEXT_YEAR)
+	semester = request.GET.get('semester', settings.NEXT_SEMESTER)
 	type = request.GET.get('type', None)
 	day_begin = request.GET.get('start_day', None)
 	day_end = request.GET.get('end_day', None)
 	time_begin = request.GET.get('start_time', None)
 	time_end = request.GET.get('end_time', None)
 
-	lectures = Lecture.objects.filter(year=settings.CURRENT_YEAR, semester=settings.CURRENT_SEMESTER)
+	lectures = Lecture.objects.filter(year=year, semester=semester)
 	
 	try:
 		if department != None:
