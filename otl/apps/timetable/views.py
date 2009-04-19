@@ -1,6 +1,6 @@
 # encoding: utf-8
 from django.shortcuts import render_to_response
-from django.http import HttpResponse
+from django.http import *
 from django.template import RequestContext
 from django.utils import simplejson as json
 from django.conf import settings
@@ -29,21 +29,23 @@ def search(request):
 
 	lectures = Lecture.objects.filter(year=settings.CURRENT_YEAR, semester=settings.CURRENT_SEMESTER)
 	
-	#try:
-	if department != None:
-		lectures = lectures.filter(department__name__exact=department)
-	if type != None:
-		lectures = lectures.filter(type__exact=type)
-	if day_begin != None:
-		lectures = lectures.filter(classtime__day__gte=int(day_begin))
-	if day_end != None:
-		lectures = lectures.filter(classtime__day__lte=int(day_end))
-	if time_begin != None:
-		lectures = lectures.filter(classtime__begin__gte=ClassTime.numeric_time_to_obj(int(time_begin)))
-	if time_end != None:
-		lectures = lectures.filter(classtime__end__lte=ClassTime.numeric_time_to_obj(int(time_end)))
-	#except (TypeError, ValueError):
-	#	return HttpResponse(u'[]')
+	try:
+		if department != None:
+			lectures = lectures.filter(department__name__exact=department)
+		if type != None:
+			lectures = lectures.filter(type__exact=type)
+		if day_begin != None:
+			lectures = lectures.filter(classtime__day__gte=int(day_begin))
+		if day_end != None:
+			lectures = lectures.filter(classtime__day__lte=int(day_end))
+		if time_begin != None:
+			lectures = lectures.filter(classtime__begin__gte=ClassTime.numeric_time_to_obj(int(time_begin)))
+		if time_end != None:
+			lectures = lectures.filter(classtime__end__lte=ClassTime.numeric_time_to_obj(int(time_end)))
+	except (TypeError, ValueError):
+		return HttpResponseBadRequest()
+
+	lectures = lectures.distinct()
 
 	output = _lectures_to_output(lectures)
 	return HttpResponse(output)
@@ -51,6 +53,7 @@ def search(request):
 @login_required
 def add_to_timetable(request):
 	user = request.user
+	assert user.is_authenticated()
 	table_id = request.GET.get('table_id', None)
 	lecture_id = request.GET.get('lecture_id', None)
 	
@@ -74,7 +77,7 @@ def add_to_timetable(request):
 	except IntegrityError:
 		result = 'DUPLICATED'
 	#except:
-		#result = 'ERROR'
+		#return HttpResponseServerError()
 
 	return HttpResponse(json.dumps({
 		'result': result,
@@ -84,6 +87,7 @@ def add_to_timetable(request):
 @login_required
 def delete_from_timetable(request):
 	user = request.user
+	assert user.is_authenticated()
 	table_id = request.GET.get('table_id', None)
 	lecture_id = request.GET.get('lecture_id', None)
 
@@ -96,7 +100,7 @@ def delete_from_timetable(request):
 	except ObjectDoesNotExist:
 		result = 'NOT_EXIST'
 	except:
-		result = 'ERROR'
+		return HttpResponseServerError()
 
 	return HttpResponse(json.dumps({
 		'result': result,
@@ -106,6 +110,7 @@ def delete_from_timetable(request):
 @login_required
 def view_timetable(request):
 	user = request.user
+	assert user.is_authenticated()
 	table_id = request.GET.get('table_id', None)
 
 	lectures = []
@@ -115,7 +120,7 @@ def view_timetable(request):
 	except ObjectDoesNotExist:
 		result = 'OK'
 	except:
-		result = 'ERROR'
+		return HttpResponseServerError()
 
 	return HttpResponse(json.dumps({
 		'result': result,
