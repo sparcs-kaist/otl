@@ -172,12 +172,17 @@ body, html {
 	float:left;
 	width:14.2857%;
 	height:100%;
-	background:transparent url('images/timetable/cell_100.gif') repeat-y;
+	background:transparent url('images/cell_800.gif') repeat-y;
+}
+
+#grid .block-today
+{
+	background-color:#FFFFCC;
 }
 
 #grid .block-day .schedule
 {
-
+	
 }
 
 .side-box .top
