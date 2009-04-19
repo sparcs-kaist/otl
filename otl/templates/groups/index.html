@@ -3,7 +3,7 @@
 <link rel="stylesheet" type="text/css" href="/media/groups.css" />
 {% endblock %}
 {% block content %}
-<h2>조모임 ({{current_year}}년 {{current_semester}}학기</h2>
+<h2>조모임 ({{current_year}}년 {{current_semester}}학기)</h2>
 <div id="myGroups">
 	<h3>내가 가입한 조모임</h3>
 	{% if user.is_authenticated %}
@@ -11,7 +11,7 @@
 		{% for item in group_list %}
 		<li>
 		<h4>{{item.course_code}}: {{item.course_name}}</h4>
-		<a class="group_link" href="/groups?id={{item.id}}">{{item.group_name}}</a>
+		<a class="group_link" href="/groups/list/{{item.id}}">{{item.group_name}}</a>
 		<a class="control-withdraw" href="/groups/withdraw/{{item.id}}">탈퇴</a>
 		</li>
 		{% endfor %}
@@ -37,8 +37,8 @@
 		{% for item in recently_added_list %}
 		<li>
 			<h4>{{item.course_code}}: {{item.course_name}}</h4>
-			<a class="group-link" href="/groups?id={{item.id}}">{{item.group_name}}</a>
-			<a class="control-join" href="groups/join/{{item.id}}">join</a>
+			<a class="group-link" href="/groups/list/{{item.id}}">{{item.group_name}}</a>
+			<a class="control-join" href="/groups/join/{{item.id}}">join</a>
 		</li>
 		{% endfor %}
 	</ul>
@@ -47,5 +47,31 @@
 <a id="join-group" href="#">조모임 보드 가입하기</a>
 <h3>조모임 보드 찾아보기</h3>
 <form id="search-form" method="get" action="/groups/search/">
+	<p><label for="search-query">검색 : </label><input type="text" id="search-query" name="query" /><input type="submit" value="Find" /></p>
+		<ul>
+			{% if search_list %}
+				{% for item in search_list %}
+				<li>
+					<h4>{{item.year}} {{item.semester}} {{item.course_code}}: {{item.course_name}}</h4>
+					<a class="search-link" href="/group/list/{{item.id}}">{{item.group_name}}</a>
+					<span class="submitter">올린이 : <a href="/accounts/view/{{item.maker.username}}">{{item.maker.username}}</a></span>
+					<a class="control-join" href="/group/join/{{item.id}}">Join</a>
+				</li>
+				{% endfor%}
+			{% else %}
+				<p>검색 결과가 없습니다.</p>
+			{% endif %}
+		</ul>
+			<div class="search-pages">
+			{% if search_page.has_previous %}
+			<a class="search-prev-page" href="?query={{search_code}}&search-page={{search_page.previous_page_number}}">Prev</a>
+			{% endif %}
+			{% for page in search_page.paginator.page_range %}
+			<a class="search-page{% ifequal page.number search_page.number %} selected{% endifequal %}" href="?query={{search_code}}&search-page={{page.number}}">{{page.number}}</a>
+			{% endfor %}
+			{% if search_page.has_next %}
+			<a class="search-next-page" href="?query={{search_code}}&search-page={{search_page.next_page_number}}">Next</a>
+			{% endif %}
+		</div>
 </form>
 {% endblock %}

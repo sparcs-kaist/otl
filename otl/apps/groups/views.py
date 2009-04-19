@@ -5,6 +5,7 @@ from django.core.paginator import Paginator
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
+from django.db.models import Q
 
 from otl.apps.groups.models import GroupBoard
 from otl.apps.common import *
@@ -40,7 +41,62 @@ def create(request):
 		new_group = GroupBoard.objects.create(course_code = new_code, course_name = new_course_name, group_name = new_group_name, year = new_year, semester = new_semester, maker = new_maker, made = new_made)
 		new_group.group_in.add(new_maker);
 	else:
-		favorite_list=None
+		group_list=None
 
 	return HttpResponseRedirect('/groups/');
+
+def join(request, group_id):
+	if request.user.is_authenticated():
+		user = request.user
+		group_selected = GroupBoard.objects.get( id__exact = group_id ).group_in.add( user )
+	else:
+		group_list=None
+
+	return HttpResponseRedirect('/groups/');
+
+def withdraw(request, group_id):
+	if request.user.is_authenticated():
+		user = request.user
+		GroupBoard.objects.get(id__exact = group_id).group_in.remove(user)
+	else:
+		group_list = None
+	return HttpResponseRedirect('/groups/');
+
+def search(request):
+	if request.user.is_authenticated():
+		group_list = GroupBoard.objects.filter(year=settings.CURRENT_YEAR, semester=settings.CURRENT_SEMESTER, group_in__exact=request.user)
+	else:
+		favorite_list = None
+	
+	group_pages = GroupBoard.objects.filter(year=settings.CURRENT_YEAR, semester=settings.CURRENT_SEMESTER).order_by('-made')[0:RECENTLY_PER_PAGE]
+	search_code = request.GET.get('query')
+	search_list = Paginator(GroupBoard.objects.filter(Q(year=settings.CURRENT_YEAR),Q(semester=settings.CURRENT_SEMESTER), Q(course_code__icontains = search_code)|Q(course_name__icontains = search_code)|Q(group_name__icontains = search_code)).order_by('-made'),NUM_PER_PAGE)
+	search_page = request.GET.get('search-page',1)
+	current_search_page = search_list.page(search_page)
+	return render_to_response('groups/index.html', {
+		'section': 'groups',
+		'search_code': search_code,
+		'search_page': current_search_page,
+		'search_list': current_search_page.object_list,
+		'group_list': group_list,
+		'recently_added_list': group_pages,
+	}, context_instance=RequestContext(request))
+		
+def morelist(request):
+	if request.user.is_authenticated():
+		group_list = GroupBoard.objects.filter(year=settings.CURRENT_YEAR, semester=settings.CURRENT_SEMESTER, group_in__exact=request.user)
+	else:
+		group_list = None
+	page = request.GET.get('page',1)
+	groupboard_pages = Paginator(GroupBoard.objects.filter(year=settings.CURRENT_YEAR, semester=settings.CURRENT_SEMESTER).order_by('-made'), NUM_PER_PAGE)
+	current_page = groupboard_pages.page(page)
+
+	return render_to_response('groups/index.html', {
+		'section': 'groups',
+		'group_list': group_list,
+		'recently_added_list': current_page.object_list,
+		'current_page': current_page,
+	}, context_instance=RequestContext(request))
+
+#def list(request, group_id):
 
