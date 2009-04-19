@@ -75,7 +75,7 @@ def login():
 
 	#try:
 	server = get_server()
-	session_key = server.login_manager.login(settings.ARARA_USER, settings.ARARA_PASSWORD, '143.248.234.157')
+	session_key = server.login_manager.login(settings.ARARA_USER, settings.ARARA_PASSWORD, '143.248.234.159:8000')
 	cache.set(SESSION_KEY, session_key, settings.ARARA_SESSION_TIMEOUT)
 	#except:
 	#	return False

@@ -3,5 +3,6 @@ from otl.apps.groups import views
 
 urlpatterns = patterns('',
 	(ur'^$', views.index),
+	(ur'^create/$', views.create),
 )
 
