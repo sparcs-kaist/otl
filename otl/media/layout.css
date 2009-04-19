@@ -2,27 +2,27 @@
 
 body
 {
-    background:#fff url('images/bg_black.jpg') repeat-x 0 -56px;
+	background:#fff url('images/bg_black.jpg') repeat-x 0 -56px;
 }
 
 
 #gbar, #header, #container, #footer
 {
-    text-align:center;
+	text-align:center;
 }
 
 #gbar-content, #header-content, #content-wrap, #footer-content
 {
-    width:1000px;
-    margin:0 auto;
-    text-align:left;
+	width:1000px;
+	margin:0 auto;
+	text-align:left;
 }
 
 
 #gbar
 {
-    color:#eee;
-    height:20px;
+	color:#eee;
+	height:20px;
 }
 
 #gbar-content
@@ -33,41 +33,41 @@ body
 
 #global-logo
 {
-    font-family:Arial;
-    font-size:14px;
-    color:#F3F3F3;
-    float:left;
+	font-family:Arial;
+	font-size:14px;
+	color:#F3F3F3;
+	float:left;
 }
 
 #global-services
 {
-    margin-left:70px;
-    float:left;
+	margin-left:70px;
+	float:left;
 }
 
 #global-services a
 {
-    color:#DDD;
-    margin-right:10px;
+	color:#DDD;
+	margin-right:10px;
 }
 
 #global-info
 {
-    float:right;
+	float:right;
 }
 
 #global-info a
 {
-    color:#DDD;
+	color:#DDD;
 }
 
 #header
 {
-    background: url('images/bg_top.png') top center no-repeat;
+	background: url('images/bg_top.png') top center no-repeat;
 }
 #header-content
 {
-    position: relative;
+	position: relative;
 	border-bottom:5px solid #292929;
 	height: 70px;
 }
@@ -84,9 +84,9 @@ body
 #header-content h2 span.logo
 {
 	display:inline-block;
-    height:58px;
+	height:58px;
 	width:103px;
-    background:url('images/otl.png') left top no-repeat;
+	background:url('images/otl.png') left top no-repeat;
 }
 
 #content
@@ -96,11 +96,11 @@ body
 
 #footer
 {
-    border-top:1px solid #E7E7E7;
-    background-color:#F3F3F3;
-    background-color:#000;
-    text-align:center;
-    color:#eee;
+	border-top:1px solid #E7E7E7;
+	background-color:#F3F3F3;
+	background-color:#000;
+	text-align:center;
+	color:#eee;
 
 	padding-top:20px;
 	height:100px;
@@ -114,9 +114,9 @@ body
 
 .ft-box
 {
-    float:left;
-    width:300px;
-    margin-right:10px;
+	float:left;
+	width:300px;
+	margin-right:10px;
 }
 
 
@@ -125,9 +125,9 @@ body
 	margin:0;
 	padding:0;
 	position: absolute;
-	left: 200px;
+	left: 120px;
 	bottom: 0;
-	width: 790px;
+	width: 870px;
 	background:#EEEEEE url('images/corner_tl.gif') left top no-repeat;
 }
 
@@ -164,6 +164,7 @@ body
 
 .clear
 {
-    clear:both;
+	clear:both;
 }
 
+/* vim: set ts=4 sts=4 sw=4 noet: */
