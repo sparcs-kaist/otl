@@ -96,18 +96,27 @@
 		{
 			return this.contents[this.activeKey];
 		},
+		getTabByKey:function(key)
+		{
+			return this.contetns[key];
+		},
 		getTableId:function()
-	   {
-		   return this.activeKey;
-	   }
+	   	{
+			return this.activeKey;
+	   	}
 	});
 
 	UDF=
 	{
+		modulecolors : ['#FFC7FE','#FFCECE','#DFE8F3','#D1E9FF','#D2F1EE','#FFEAD1','#E1D1FF','#FAFFC1','#D4FFC1','#DEDEDE','#BDBDBD'],
 		getRandomColor:function()
 		{
-			var modulecolors = ['#FFC7FE','#FFCECE','#DFE8F3','#D1E9FF','#D2F1EE','#FFEAD1','#E1D1FF','#FAFFC1','#D4FFC1','#DEDEDE','#BDBDBD'];
-			return modulecolors[Math.floor(Math.random()*10)];
+			return UDF.modulecolors[Math.floor(Math.random()*10)];
+		},
+		getColorByIndex:function(index)
+		{
+			index = UDF.modulecolors.length % index;
+			return UDF.modulecolors[index];
 		},
 		cumulativeOffset : function(el)
 		{
@@ -452,8 +461,22 @@
 			this.overlap = $('overlap_modules');
 			this.overlap.setStyle('display','none');
 			this.tabs = new Mootabs('timetable_tabs','timetable_contents','mousedown');
+			this.onLoad();
 			this.registHandlers();
 		},
+		onLoad:function()
+	   	{
+			var initData = JSON.decode($('timetable_init_json').get('value'));
+			initData.each(function(arr,key)
+			{
+				var wrap = Timetable.tabs.getTabByKey(key);
+				arr.each(function(item,index)
+				{
+					var bgcolor = UDF.getColorByIndex(index);
+					Timetable.buildlmodules(wrap,obj,bgcolor,true);
+				});
+			});
+	   	},
 		registHandlers:function()
 	   	{
 			$('clean_table').addEvent('click',this.cleanTable.bind(this));
@@ -487,9 +510,9 @@
 						if (resObj.result=='OK')
 						{
 							Timetable.tabs.cleanActiveTab();
-							resObj.data.each(function(obj)
+							resObj.data.each(function(obj,index)
 							{
-								var bgcolor = UDF.getRandomColor();
+								var bgcolor = UDF.getColorByIndex(index);
 								Timetable.buildlmodules(Timetable.tabs.getActiveTab(),obj,bgcolor,true);
 							});
 						}
