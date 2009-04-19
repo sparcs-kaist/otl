@@ -54,11 +54,13 @@
 		initialize: function(tabs, contents, trigerEvent) 
 		{
 			if (trigerEvent==null) trigerEvent = 'mouseover';
+			this.data = [];
 
 			this.tabs = $(tabs).getChildren();
 			this.contents = $(contents).getChildren();
 			this.tabs.each(function(item,key) 
 			{
+				this.data[key] = {credit:0,au:0};
 				item.addEvent(trigerEvent, function()
 					{
 						this.activate(key);
@@ -72,6 +74,15 @@
 
 			this.activate(0);
 		},
+		setData:function(index,data)
+		{
+			this.data[index] = data;
+		},
+		updateData:function()
+	   	{
+			$('total_credit').set('html',this.data[this.activeKey].credit);
+			$('total_au').set('html',this.data[this.activeKey].au);
+	   	},
 		activate: function(key)
 		{
 			this.tabs.each(function(item,index)
@@ -87,6 +98,8 @@
 				else item.addClass('none');
 			});
 			this.activeKey = key;
+
+			this.updateData();
 		},
 		cleanActiveTab:function()
 	   	{
@@ -470,13 +483,18 @@
 			var initData = JSON.decode($('timetable_init_json').get('value'));
 			initData.each(function(arr,key)
 			{
+				var credit=0,au=0;
 				var wrap = Timetable.tabs.getTabByKey(key);
 				arr.each(function(obj,index)
 				{
+					credit+=obj.credit;
+					au+=obj.au;
 					var bgcolor = UDF.getColorByIndex(index);
 					Timetable.buildlmodules(wrap,obj,bgcolor,true);
 				});
+				Timetable.tabs.setData(key,{credit:credit,au:au});
 			});
+			Timetable.tabs.updateData();
 	   	},
 		registHandlers:function()
 	   	{
@@ -527,7 +545,7 @@
 					}
 					catch(e)
 					{
-						alert('ERROR');
+						alert('ERROR!'+e.message);
 					}
 				},
 				onFailure:function(xhr) {
@@ -586,12 +604,18 @@
 	  	},
 		update:function(resObj)
 	   	{
+			var credit=0,au=0;
 			Timetable.tabs.cleanActiveTab();
 			resObj.data.each(function(obj,index)
 			{
+				credit+=obj.credit;
+				au+=obj.au;
 				var bgcolor = UDF.getColorByIndex(index);
 				Timetable.buildlmodules(Timetable.tabs.getActiveTab(),obj,bgcolor,true);
 			});
+			
+			Timetable.tabs.setData(Timetable.tabs.getTableId(),{credit:credit,au:au});
+			Timetable.tabs.updateData();
 	   	},
 		onMouseover: function(obj)
 		{
@@ -778,7 +802,6 @@
 				</div>
 			</div>
 			<div class="right">
-				<a href="#">내 일정에 추가</a> |
 				<a id="clean_table" style="cursor:pointer">초기화</a> |
 				<a href="#">인쇄</a>
 			</div>
@@ -852,12 +875,12 @@
 				<tr>
 					<td style="text-align:left";>
 						&nbsp;&nbsp;&nbsp;&nbsp;
-						<span id="total_credit">21</span>&nbsp;
+						<span id="total_credit">0</span>&nbsp;
 						<span id="add_credit" class="green"></span>
 					</td>
 					<td style="text-align:left"; class="end">
 						&nbsp;&nbsp;&nbsp;&nbsp;
-						<span id="total_au">3</span>&nbsp;
+						<span id="total_au">0</span>&nbsp;
 						<span id="add_au" class="blue"></span>
 					</td>
 				</tr>
