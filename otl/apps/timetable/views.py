@@ -98,8 +98,12 @@ def delete_from_timetable(request):
 
 	lectures = []
 	try:
-		lecture = Lecture.objects.get(pk=lecture_id)
-		Timetable.objects.get(user=user, lecture=lecture, year=lecture.year, semester=lecture.semester, table_id=table_id).delete()
+		if lecture_id is None:
+			Timetable.objects.filter(user=user, year=settings.NEXT_YEAR, semester=settings.NEXT_SEMESTER, table_id=table_id).delete()
+		else:
+			lecture = Lecture.objects.get(pk=lecture_id)
+			Timetable.objects.get(user=user, lecture=lecture, year=lecture.year, semester=lecture.semester, table_id=table_id).delete()
+
 		lectures = Lecture.objects.filter(timetable__table_id=table_id, timetable__user=user, year=settings.NEXT_YEAR, semester=settings.NEXT_SEMESTER)
 		result = 'OK'
 	except ObjectDoesNotExist:
