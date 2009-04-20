@@ -516,6 +516,10 @@
 			var myRequest = new Request({
 				method: 'get', 
 				url: '/timetable/add/',
+				onRequest:function()
+				{
+					$('indicator').addClass('waiting');
+				},
 				onSuccess:function(responseText)
 				{
 					try{
@@ -552,7 +556,9 @@
 				onFailure:function(xhr) {
 						alert('ERROR');
 		  		},
-				onComplete:function() {}
+				onComplete:function() {
+					$('indicator').removeClass('waiting');
+		   		}
 			});
 			myRequest.send('table_id='+table_id+'&lecture_id='+lecture_id);
 		},
@@ -576,6 +582,9 @@
 				var myRequest = new Request({
 					method: 'get', 
 					url: '/timetable/delete/',
+					onRequest:function() {
+						$('indicator').addClass('waiting');
+					},
 					onSuccess:function(responseText)
 					{
 						try{
@@ -598,7 +607,9 @@
 					onFailure:function(xhr) {
 							alert('ERROR');
 					},
-					onComplete:function() {}
+					onComplete:function() {
+						$('indicator').removeClass('waiting');
+					}
 				});
 				myRequest.send(sendMsg);
 			}
@@ -790,11 +801,7 @@
 		</div>
 		<div id="timetable_menu">
 			<div class="left">
-				<select class="left">
-					<option>2008년 가을학기</option>
-					<option>2008년 여름학기</option>
-					<option>2009년 봄학기</option>
-				</select>
+				<div id="indicator"></div>
 				<div id="timetable_tabs">
 					<div class="timetable_tab active"><a>시간표 1</a></div>
 					<div class="timetable_tab"><a>시간표 2</a></div>

@@ -350,3 +350,20 @@
     filter:alpha(opacity=30);
 }
 
+
+#indicator
+{
+	float:left;
+	width:16px;
+	height:16px;
+	margin-right:5px;
+}
+
+.waiting
+{
+    background:transparent url('images/loading.gif') 0 0 no-repeat;
+}
+
+
+
+
