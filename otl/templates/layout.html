@@ -19,22 +19,13 @@
                     <small><span style="color:#FF3399">S</span><span style="color:#33CC66">P</span><span style="color:#00CCFF">A</span><span style="color:#FF9900">R</span><span style="color:#33CCCC">C</span><span style="color:#9966FF">S</span></small>
                     </div>
                 </h1> 
-                <p id="global-services" class="none">
-                    <a href="#">Talk</a>
-                    <a href="#">Lecture</a>
-                    <a href="#">Movie</a>
-                    <a href="#">Food</a>
-                    <a href="#">Road</a>
-                    <a href="#">Chat</a>
-                    <a href="#">Buy&amp;Sell</a>
-                </p>
-                <p id="global-info">
+                <div id="global-info">
 					{% if user.is_authenticated %}
 					{{ user }}{% if user.is_superuser %} (관리자){% endif %} | <a href="/accounts/myinfo">내 계정</a> | <a href="/logout/">로그아웃</a>
 					{% else %}
 					<a href="/login/">로그인</a>
 					{% endif %}
-                </p>
+                </div>
                 <div class="clear"></div>
             </div>
         </div>

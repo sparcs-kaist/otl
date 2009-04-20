@@ -41,21 +41,11 @@ body
 	float:left;
 }
 
-#global-services
-{
-	margin-left:70px;
-	float:left;
-}
-
-#global-services a
-{
-	color:#DDD;
-	margin-right:10px;
-}
 
 #global-info
 {
 	float:right;
+	padding:8px;
 }
 
 #global-info a
