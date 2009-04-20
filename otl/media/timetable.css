@@ -353,10 +353,9 @@
 
 #indicator
 {
-	float:left;
 	width:16px;
 	height:16px;
-	margin-right:5px;
+	margin-right:10px;
 }
 
 .waiting
@@ -365,5 +364,24 @@
 }
 
 
+#message-wrap
+{
+    background:#C3D9FF url('images/corner_tl.gif') left top no-repeat;
+}
 
+#message-wrap div.bl
+{
+    background:transparent url('images/corner_bl.gif') bottom left no-repeat;
+}
+
+#message-wrap div.br
+{
+    background:transparent url('images/corner_br.gif') bottom right no-repeat;
+}
+
+#message 
+{
+    padding:3px 20px 1px;
+    background:transparent url('images/corner_tr.gif') right top no-repeat;
+}
 

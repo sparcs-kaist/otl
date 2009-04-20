@@ -82,6 +82,8 @@
 	   	{
 			$('total_credit').set('html',this.data[this.activeKey].credit);
 			$('total_au').set('html',this.data[this.activeKey].au);
+			$('total_credit').highlight('#FFFF00');
+			$('total_au').highlight('#FFFF00');
 	   	},
 		activate: function(key)
 		{
@@ -526,6 +528,8 @@
 						var resObj = JSON.decode(responseText);
 						if (resObj.result=='OK')
 						{
+						$('message').set('html','<strong>'+obj.title+'</strong> 추가 되었습니다');
+							$('message-wrap').highlight('#FAD163');
 							Timetable.update(resObj);
 						}
 						else
@@ -538,14 +542,17 @@
 								break;
 								case 'OVERLAPPED':
 								case 'DUPLICATED':
-									msg ='강의 시간이 겹칩니다.';
+									msg='강의 시간이 겹칩니다.';
 								break;
 								case 'ERROR':
 									msg = '에러';
 								break;
 							}
+							$('message').set('html',msg);
+							$('message-wrap').highlight('#f00');
+
 							//'NOT_EXIST','OVERLAPPED', 'DUPLICATED', 'ERROR'
-							alert(msg);
+							//alert(msg);
 						}
 					}
 					catch(e)
@@ -565,16 +572,18 @@
 		deleteLecture:function(e,obj)
 	  	{
 			e.stop();
-			var confirmMsg,sendMsg,table_id = Timetable.tabs.getTableId();
+			var confirmMsg,sendMsg,successMsg, table_id = Timetable.tabs.getTableId();
 			if (obj==null) 
 			{
 				confirmMsg='현재 예비 시간표를 초기화 하겠습니까?';
 				sendMsg='table_id='+table_id;
+				successMsg = '예비 시간표가 <strong>초기화</strong> 되었습니다';
 			}
 			else
 			{
-				confirmMsg=obj.title+' 을(를) 예비 시간표에서 삭제 하시겠습니까?';
+				confirmMsg='"'+obj.title+'" 예비 시간표에서 삭제 하시겠습니까?';
 				sendMsg='table_id='+table_id+'&lecture_id='+obj.id;
+				successMsg='<strong>'+obj.title+'</strong> 삭제 되었습니다';
 			}
 
 			if(confirm(confirmMsg))
@@ -591,6 +600,8 @@
 							var resObj = JSON.decode(responseText);
 							if (resObj.result=='OK')
 							{
+								$('message').set('html',successMsg);
+								$('message-wrap').highlight('#FAD163');
 								Timetable.update(resObj);
 							}
 							else 
@@ -799,9 +810,20 @@
 				</tbody>
 			</table>
 		</div>
+		<div style="margin-bottom:10px">
+			<div class="left" id="indicator"></div>
+			<div class="left" id="message-wrap">
+				<div class="br"><div class="bl">
+						<div id="message">안녕하세요. 이 서비스는 <strong>SPARCS</strong>에서 제공하고 있습니다.</div>
+				</div></div>
+			</div>
+			<div class="clear"></div>
+		</div>
 		<div id="timetable_menu">
 			<div class="left">
-				<div id="indicator"></div>
+				<div class="left">
+					2009년 가을학기
+				</div>
 				<div id="timetable_tabs">
 					<div class="timetable_tab active"><a>시간표 1</a></div>
 					<div class="timetable_tab"><a>시간표 2</a></div>
@@ -861,7 +883,7 @@
 		<div id="timetable-footer"><div></div></div>
 	</div><!--center-->
 	<div id="right-side">
-		<div id="map">
+		<div id="map" style="margin-bottom:10px"> 
 			<h4>강의실 장소</h4>
 			<div id="map-wrap">
 				<div id="map-drag-container">
@@ -870,9 +892,7 @@
 					</div>
 				</div>
 			</div>
-			<span>지도 출처 : 카이스트 홈페이지</span>
 		</div>
-		<br />
 		<div id="info">
 			<table cellspacing="0" cellpadding="0" border="0">
 				<tr>
@@ -880,7 +900,7 @@
 					<th>AU</th>
 				</tr>
 				<tr>
-					<td style="text-align:left";>
+					<td style="text-align:left;">
 						&nbsp;&nbsp;&nbsp;&nbsp;
 						<span id="total_credit">0</span>&nbsp;
 						<span id="add_credit" class="green"></span>
