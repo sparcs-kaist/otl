@@ -350,6 +350,29 @@
     filter:alpha(opacity=30);
 }
 
+#lecturelist-filter label
+{
+	font-weight: bold;
+}
+
+#lecturelist-range h4
+{
+	margin: 5px 0;
+	padding: 0;
+}
+
+#lecturelist p
+{
+	margin: 2px;
+	padding: 0;
+}
+
+#lecturelist-notice
+{
+	font-size: 8pt;
+	line-height: 1.4;
+	margin-top: 5px;
+}
 
 #indicator
 {

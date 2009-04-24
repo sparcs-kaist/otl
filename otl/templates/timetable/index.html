@@ -315,6 +315,7 @@
 				onRequest:function()
 				{
 					$('indicator').addClass('waiting');
+					$('message').set('html', '검색 중입니다...');
 				},
 				onComplete:function()
 				{
@@ -595,6 +596,7 @@
 				onRequest:function()
 				{
 					$('indicator').addClass('waiting');
+					$('message').set('html', '추가 중입니다...');
 				},
 				onSuccess:function(responseText)
 				{
@@ -667,6 +669,7 @@
 					url: '/timetable/delete/',
 					onRequest:function() {
 						$('indicator').addClass('waiting');
+						$('message').set('html', '삭제 중입니다...');
 					},
 					onSuccess:function(responseText)
 					{
@@ -797,7 +800,7 @@
 	<div id="left-side">
 		<div style="margin-bottom:10px">
 			<a id="test" >테스트</a>
-			<div id="lecturelist-range">a</div>
+			<div id="lecturelist-range">&nbsp;</div>
 			<div id="lecturelist-filter">
 				<label>학과&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-size:11px">(<a href="/accounts/myinfo/">관심학과 설정</a>)</span></label>
 				<select id="department" style="width:100%">
@@ -835,6 +838,7 @@
 					<option>현장실습및연구</option>
 				</select>
 			</div>
+			<div id="lecturelist-notice">※ 강의시간이 없는 과목들은 제외됩니다. (예: 졸업연구, 논문연구)</div>
 		</div>
 		<div id="lecture_container">
 			<div class="left" style="width:15%;padding:0;margin:0;">

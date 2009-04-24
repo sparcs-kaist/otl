@@ -1,5 +1,6 @@
 # encoding: utf-8
 from django.shortcuts import render_to_response
+from django.db.models import Count
 from django.http import *
 from django.template import RequestContext
 from django.utils import simplejson as json
@@ -31,7 +32,8 @@ def search(request):
 	time_begin = request.GET.get('start_time', None)
 	time_end = request.GET.get('end_time', None)
 
-	lectures = Lecture.objects.filter(year=year, semester=semester)
+	# This query requires Django 1.1 or newer.
+	lectures = Lecture.objects.annotate(num_classtimes=Count('classtime')).filter(year=year, semester=semester, num_classtimes__gt=0)
 	
 	try:
 		if department != None:
