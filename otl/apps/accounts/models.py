@@ -4,13 +4,10 @@ from django.contrib import admin
 from django.contrib.auth.models import User
 
 class Department(models.Model):
-	num_id = models.IntegerField()
+	num_id = models.IntegerField(primary_key = True)
 	code = models.CharField(max_length=5)
 	name = models.CharField(max_length=60)
 	name_en = models.CharField(max_length=60, null=True)
-
-	class Meta:
-		unique_together = (('num_id'),)
 
 	def __unicode__(self):
 		return u'%s(%d) "%s"' % (self.code, self.num_id, self.name)

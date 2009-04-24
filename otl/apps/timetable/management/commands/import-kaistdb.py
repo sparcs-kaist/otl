@@ -2,6 +2,7 @@
 from django.core.management.base import BaseCommand
 from django.conf import settings
 from otl.apps.accounts.models import Department
+from otl.apps.timetable.models import Lecture, ClassTime, ExamTime
 from optparse import make_option
 import sys, getpass, re
 import Sybase
@@ -22,7 +23,7 @@ class Command(BaseCommand):
 		encoding = options.get('encoding', 'cp949')
 		try:
 			password = getpass.getpass()
-		except KeyboardInterrupt:
+		except (KeyboardInterrupt, EOFError):
 			print
 			return
 
@@ -36,6 +37,7 @@ class Command(BaseCommand):
 		c.execute('SELECT * FROM view_OTL_lecture WHERE lecture_year = %d AND lecture_term = %d' % (settings.NEXT_YEAR, settings.NEXT_SEMESTER))
 		rows = c.fetchall()
 		departments = {}
+		lectures = {}
 
 		for row in rows:
 			myrow = []
@@ -47,29 +49,36 @@ class Command(BaseCommand):
 			# Extract department info.
 			lecture_no = myrow[2]
 			lecture_code = myrow[20]
+			lecture_class_no = myrow[3].strip()
 			department_no = int(lecture_no[0:2])
 			department_code = rx_dept_code.match(lecture_code).group(1)
 
-			if not departments.has_key(department_no):
-				departments[department_no] = (department_code, myrow[5], myrow[6])
-				print u'Added department: %s(%d): %s' % (department_code, department_no, myrow[5])
+			# Update department info.
+			try:
+				department = Department.objects.get(num_id = department_no)
+			except:
+				print u'Adding department: %d...' % department_no
+				department = Department(num_id = department_no)
+			finally:
+				department.code = department_code
+				department.name = myrow[5]
+				department.name_en = myrow[6]
+				print u'Updating department: %s' % department
+				department.save()
+
+			lecture_key = {
+				'code': lecture_no,
+				'year': myrow[0],
+				'semester': myrow[1],
+				'department': department_no,
+				'class_no': lecture_class_no,
+			}
 
 			# Extract lecture info.
-			print u'Importing %s: %s [%s]...' % (lecture_code, myrow[7], myrow[3].strip())
+			print u'Retreiving %s: %s [%s]...' % (lecture_code, myrow[7], lecture_class_no)
+
+		c.close()
+		db.close()
 
 		print u'\nTotal number of departments : %d' % len(departments)
 		print u'Total number of lectures : %d' % len(rows)
-		print u'\nSaving...'
-
-		# Saving department info.
-		for key, value in departments.iteritems():
-			item = Department()
-			item.num_id = key 
-			item.code = value[0]
-			item.name = value[1]
-			item.name_en = value[2]
-			item.save()
-
-		print u'Saving complete.'
-		c.close()
-		db.close()

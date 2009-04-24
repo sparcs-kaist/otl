@@ -9,7 +9,8 @@ import re
 
 class Lecture(models.Model):
 	"""특정 년도·학기에 개설된 과목 instance를 가리키는 모델"""
-	code = models.CharField(max_length=10)					# 과목코드
+	code = models.CharField(max_length=10)					# 과목코드 (12.123 형식)
+	old_code = models.CharField(max_length=10)				# 과목코드 (ABC123 형식)
 	year = models.IntegerField()							# 개설년도 (4자리 숫자)
 	semester = models.SmallIntegerField(choices=SEMESTER_TYPES)	# 개설학기 (1=봄, 2=여름, 3=가을, 4=겨울)
 	department = models.ForeignKey(Department)	   			# 학과
@@ -33,13 +34,6 @@ class Lecture(models.Model):
 
 	def __unicode__(self):
 		return u'%s (%d:%s) %s' % (self.code, self.year, self.get_semester_display(), self.title)
-	
-	def get_code_numeric(self):
-		"""숫자로 된 'XX.YYY' 형태의 과목 코드를 돌려준다."""
-		matches = re.search(ur'^([a-zA-Z]+)(\d+)$', self.code)
-		department_code = matches.group(1)
-		lecture_code = matches.group(2)
-		return u'%d.%s' % (Department.objects.get(code=department_code).num_id, lecture_code)
 	
 	def check_classtime_overlapped(self, another_lecture):
 		"""이 과목과 주어진 다른 과목의 강의 시간 중 겹치는 것이 있는지 검사한다."""
