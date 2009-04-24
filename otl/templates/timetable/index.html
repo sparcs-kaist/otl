@@ -186,13 +186,13 @@
 				window.clearTimeout(this.timeout);
 			$('indicator').addClass('waiting');
 			$('message').set('html', msg);
-			$('message-wrap').set('opacity', 1.0);
+			$('message-wrap').fade('show');
 		},
 		setMsg: function(msg)
 		{
 			this.clearIndicator();
 			$('message').set('html', msg);
-			$('message-wrap').set('opacity', 1.0);
+			$('message-wrap').fade('show');
 			$('message-wrap').highlight('#FAD163');
 			if (this.timeout)
 				window.clearTimeout(this.timeout);
@@ -204,7 +204,7 @@
 		{
 			this.clearIndicator();
 			$('message').set('html', msg);
-			$('message-wrap').set('opacity', 1.0);
+			$('message-wrap').fade('show');
 			$('message-wrap').highlight('#F00');
 			if (this.timeout)
 				window.clearTimeout(this.timeout);
