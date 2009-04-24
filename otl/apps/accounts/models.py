@@ -9,6 +9,9 @@ class Department(models.Model):
 	name = models.CharField(max_length=60)
 	name_en = models.CharField(max_length=60, null=True)
 
+	class Meta:
+		unique_together = (('num_id'),)
+
 	def __unicode__(self):
 		return u'%s(%d) "%s"' % (self.code, self.num_id, self.name)
 
