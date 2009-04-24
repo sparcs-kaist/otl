@@ -26,9 +26,10 @@ class Lecture(models.Model):
 	credit_au = models.IntegerField(default=0)	   			# AU
 	limit = models.IntegerField(default=0)		   			# 인원제한
 	professor = models.CharField(max_length=100)   			# 교수님 이름 (한글)
-	professor_en = models.CharField(max_length=100)			# 교수님 이름 (영문)
-	notice = models.CharField(max_length=200, blank=True)	# 비고
+	professor_en = models.CharField(max_length=100, blank=True, null=True)	# 교수님 이름 (영문)
+	notice = models.CharField(max_length=200, blank=True, null=True)		# 비고
 	is_english = models.BooleanField()						# 영어강의 여부
+	deleted = models.BooleanField(default=False)			# 과목이 닫혔는지 여부
 
 	timetable_relation = models.ManyToManyField(User, through='Timetable', null=True, blank=True)
 

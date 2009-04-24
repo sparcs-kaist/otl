@@ -11,12 +11,13 @@ from otl.apps.timetable.models import Lecture, ExamTime, ClassTime, Syllabus, Ti
 from StringIO import StringIO
 
 def index(request):
-	lectures = Lecture.objects.filter(year=settings.NEXT_YEAR, semester=settings.NEXT_SEMESTER)
-	lectures_output = _lectures_to_output(lectures) # TODO: 기본값으로 한 학과의 과목 정보만 보여주도록 한다.
 	if request.user.is_authenticated():
 		my_lectures = [_lectures_to_output(Lecture.objects.filter(year=settings.NEXT_YEAR, semester=settings.NEXT_SEMESTER, timetable__user=request.user, timetable__table_id=id), False) for id in xrange(0,3)]
+		lectures = Lecture.objects.filter(year=settings.NEXT_YEAR, semester=settings.NEXT_SEMESTER, department=request.user.userprofile.department)
 	else:
 		my_lectures = [[], [], []]
+		lectures = Lecture.objects.filter(year=settings.NEXT_YEAR, semester=settings.NEXT_SEMESTER, department=Department.objects.get(num_id=10))
+	lectures_output = _lectures_to_output(lectures)
 	return render_to_response('timetable/index.html', {
 		'section': 'timetable',
 		'departments': Department.objects.all(),
@@ -145,6 +146,11 @@ def _lectures_to_output(lectures, conv_to_json=True):
 			exam = lecture.examtime_set.get() # 첫번째 항목만 가져옴
 		except:
 			exam = None
+		room = lecture.classtime_set.filter(lecture=lecture, type__exact='l')
+		if room.count() > 0:
+			room = room[0].room_ko
+		else:
+			room = ''
 		item = {
 			'id': lecture.id,
 			'year': lecture.year,
@@ -160,7 +166,7 @@ def _lectures_to_output(lectures, conv_to_json=True):
 			'credit': lecture.credit,
 			'au': lecture.credit_au,
 			'fixed_num': lecture.limit,
-			'classroom': lecture.classtime_set.filter(lecture=lecture, type__exact='l')[0].room_ko,
+			'classroom': room,
 			'prof': lecture.professor,
 			'times': [{'day': schedule.day, 'start': schedule.get_begin_numeric(), 'end': schedule.get_end_numeric(), 'classroom': schedule.room_ko, 'type': schedule.get_type_display()} for schedule in lecture.classtime_set.all()],
 			'remarks': u'영어강의' if lecture.is_english else u'',
