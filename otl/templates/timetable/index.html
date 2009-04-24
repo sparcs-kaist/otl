@@ -174,7 +174,51 @@
 		}
 	}
 
-	Map = {
+	// TODO: Refactor this: move into a common js library.
+	var Notifier = {
+		initialize: function()
+		{
+			// Nothing to do.
+		},
+		setLoadingMsg: function(msg)
+		{
+			if (this.timeout)
+				window.clearTimeout(this.timeout);
+			$('indicator').addClass('waiting');
+			$('message').set('html', msg);
+			$('message-wrap').set('opacity', 1.0);
+		},
+		setMsg: function(msg)
+		{
+			this.clearIndicator();
+			$('message').set('html', msg);
+			$('message-wrap').set('opacity', 1.0);
+			$('message-wrap').highlight('#FAD163');
+			if (this.timeout)
+				window.clearTimeout(this.timeout);
+			this.timeout = window.setTimeout(function() {
+				$('message-wrap').fade('out');
+			}, 2000);
+		},
+		setErrorMsg: function(msg)
+		{
+			this.clearIndicator();
+			$('message').set('html', msg);
+			$('message-wrap').set('opacity', 1.0);
+			$('message-wrap').highlight('#F00');
+			if (this.timeout)
+				window.clearTimeout(this.timeout);
+			this.timeout = window.setTimeout(function() {
+				$('message-wrap').fade('out');
+			}, 2000);
+		},
+		clearIndicator: function()
+		{
+			$('indicator').removeClass('waiting');
+		}
+	}
+
+	var Map = {
 		initialize:function()
 		{
 			this.container = $('map-drag-container');
@@ -277,7 +321,7 @@
 		}
 	};
 
-	LectureList = {
+	var LectureList = {
 		initialize:function(tabs,contents)
 		{
 			this.tabs = $('lecture_tabs');
@@ -314,12 +358,7 @@
 				url:'/timetable/search/',
 				onRequest:function()
 				{
-					$('indicator').addClass('waiting');
-					$('message').set('html', '검색 중입니다...');
-				},
-				onComplete:function()
-				{
-					$('indicator').removeClass('waiting');
+					Notifier.setLoadingMsg('검색 중입니다...');
 				},
 				onSuccess:function(responseText)
 				{
@@ -330,8 +369,7 @@
 							LectureList.contents.empty(); 
 							LectureList.buildTabs(LectureList.contents.getChildren().length);
 
-							$('message').set('html', '과목 정보를 찾지 못했습니다.');
-							$('message-wrap').highlight('#f00');
+							Notifier.setErrorMsg('과목 정보를 찾지 못했습니다.');
 
 						} else {
 
@@ -366,8 +404,7 @@
 							LectureList.buildTabs(LectureList.contents.getChildren().length);
 							new Mootabs('lecture_tabs','lecture_contents');
 
-							$('message').set('html','검색 결과를 확인하세요.');
-							$('message-wrap').highlight('#FAD163');
+							Notifier.setMsg('검색 결과를 확인하세요.');
 						}
 					} catch(e) {
 						alert('Unexpected Error: '+e.message);
@@ -419,7 +456,7 @@
 		}
 	};
 
-	RangeSearch = {
+	var RangeSearch = {
 		initialize:function()
 	   	{
 			this.grid = $('grid');
@@ -544,9 +581,7 @@
 		
 	};
 
-	
-
-	Timetable ={
+	var Timetable = {
 		initialize:function()
 		{
 			this.grid = $('grid');
@@ -595,8 +630,7 @@
 				url: '/timetable/add/',
 				onRequest:function()
 				{
-					$('indicator').addClass('waiting');
-					$('message').set('html', '추가 중입니다...');
+					Notifier.setLoadingMsg('추가하는 중입니다...');
 				},
 				onSuccess:function(responseText)
 				{
@@ -604,9 +638,8 @@
 						var resObj = JSON.decode(responseText);
 						if (resObj.result=='OK')
 						{
-						$('message').set('html','<strong>'+obj.title+'</strong> 추가 되었습니다');
-							$('message-wrap').highlight('#FAD163');
 							Timetable.update(resObj);
+							Notifier.setMsg('<strong>'+obj.title+'</strong> 추가 되었습니다');
 						}
 						else
 						{
@@ -624,11 +657,7 @@
 									msg = '에러';
 								break;
 							}
-							$('message').set('html',msg);
-							$('message-wrap').highlight('#f00');
-
-							//'NOT_EXIST','OVERLAPPED', 'DUPLICATED', 'ERROR'
-							//alert(msg);
+							Notifier.setErrorMsg(msg);
 						}
 					}
 					catch(e)
@@ -638,10 +667,7 @@
 				},
 				onFailure:function(xhr) {
 						alert('ERROR');
-		  		},
-				onComplete:function() {
-					$('indicator').removeClass('waiting');
-		   		}
+		  		}
 			});
 			myRequest.send('table_id='+table_id+'&lecture_id='+lecture_id);
 		},
@@ -668,8 +694,7 @@
 					method: 'get', 
 					url: '/timetable/delete/',
 					onRequest:function() {
-						$('indicator').addClass('waiting');
-						$('message').set('html', '삭제 중입니다...');
+						Notifier.setLoadingMsg('삭제하는 중입니다...');
 					},
 					onSuccess:function(responseText)
 					{
@@ -677,9 +702,8 @@
 							var resObj = JSON.decode(responseText);
 							if (resObj.result=='OK')
 							{
-								$('message').set('html',successMsg);
-								$('message-wrap').highlight('#FAD163');
 								Timetable.update(resObj);
+								Notifier.setMsg(successMsg);
 							}
 							else 
 							{
@@ -694,9 +718,6 @@
 					},
 					onFailure:function(xhr) {
 							alert('ERROR');
-					},
-					onComplete:function() {
-						$('indicator').removeClass('waiting');
 					}
 				});
 				myRequest.send(sendMsg);
@@ -790,6 +811,7 @@
 	{
 		LectureList.initialize();
 		Map.initialize();
+		Notifier.initialize();
 		Timetable.initialize();
 		RangeSearch.initialize();
 	});
