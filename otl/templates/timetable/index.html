@@ -165,6 +165,12 @@
 		{
 			o.addEvent('mousedown',function(){ o.addClass('clicked') });
 			document.addEvent('mouseup',function(){ o.removeClass('clicked') });
+		},
+		NumericTimeToReadable: function(t)
+		{
+			var hour = Math.floor(t / 60);
+			var minute = t % 60;
+			return (hour < 10 ? '0':'') + hour + ':' + (minute < 10 ? '0':'') + minute;
 		}
 	}
 
@@ -280,6 +286,11 @@
 			this.dept = $('department');
 			this.classf= $('classification');
 
+			for (var i = 0; i < this.dept.options.length; i++)
+				if (this.dept[i].text == '{{user.userprofile.department.name}}') {
+					this.dept.selectedIndex = i;
+					break;
+				}
 			this.registHandles();
 			this.onChange();
 		},
@@ -471,10 +482,27 @@
 				var startDay = cell.c1;
 				var endDay = cell.c2;
 				var startTime = cell.r1*30+480;
-				var endTime = cell.r2*30+480;
+				var endTime = cell.r2*30+510;
 
-				//$('dump').set('html',(startDay+' '+endDay+' '+startTime+' '+endTime));
 				this.dragging=false;
+				$('lecturelist-filter').setStyle('display','none');
+				var dayRange = '';
+				if (startDay == endDay)
+					dayRange = UDF.days[startDay]+'요일';
+				else
+					dayRange = UDF.days[startDay]+'요일부터 '+UDF.days[endDay]+'요일까지';
+				$('lecturelist-range').set('html', '<h4>범위 검색</h4><p>'+dayRange+'<br/>' + 
+					UDF.NumericTimeToReadable(startTime)+'부터 '+UDF.NumericTimeToReadable(endTime)+'까지</p>');
+
+				var return_button = new Element('button', {'text':'학과/구분 검색으로 돌아가기'});
+				return_button.addEvent('click', function() {
+					$('lecturelist-filter').setStyle('display','block');
+					$('lecturelist-range').set('html', '');
+					var dept = LectureList.dept.options[LectureList.dept.selectedIndex].text;
+					var classification = LectureList.classf.options[LectureList.classf.selectedIndex].text;
+					LectureList.filter({dept:dept, type:classification});
+				});
+				$('lecturelist-range').appendChild(return_button);
 				LectureList.filter({start_day:startDay, end_day:endDay, start_time:startTime, end_time:endTime});
 			}
 	  	},
@@ -764,36 +792,37 @@
 {% block content %}
 	<div id="left-side">
 		<div style="margin-bottom:10px">
-			<div id="dump"></div>
 			<a id="test" >테스트</a>
-			<label>학과&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-size:11px">(<a href="/accounts/myinfo/">관심학과 설정</a>)</span></label>
-			<select id="department" style="width:100%">
-				<!-- option value=".">전체보기</option -->
-				{% for item in departments %}
-				<option value="{{ item.code }}">{{ item.name }}</option>
-				{% endfor %}
-			</select>
-			<br />
-			<label>과목구분</label>
-			<select id="classification" style="width:100%">
-				<option>전체보기</option>
-				<option>기초필수</option>
-				<option>기초선택</option>
-				<option>전공필수</option>
-				<option>전공선택</option>
-				<option>교양필수</option>
-				<option>교양필수(체육)</option>
-				<option>교양선택</option>
-				<option>자유선택</option>
-				<option>공통필수</option>
-				<option>인문사회선택</option>
-				<option>선택(석/박사)</option>
-				<option>개별연구</option>
-				<option>졸업연구</option>
-				<option>세미나</option>
-				<option>논문세미나</option>
-				<option>현장실습및연구</option>
-			</select>
+			<div id="lecturelist-range">a</div>
+			<div id="lecturelist-filter">
+				<label>학과&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-size:11px">(<a href="/accounts/myinfo/">관심학과 설정</a>)</span></label>
+				<select id="department" style="width:100%">
+					{% for item in departments %}
+					<option value="{{ item.code }}">{{ item.name }}</option>
+					{% endfor %}
+				</select>
+				<br />
+				<label>과목구분</label>
+				<select id="classification" style="width:100%">
+					<option>전체보기</option>
+					<option>기초필수</option>
+					<option>기초선택</option>
+					<option>전공필수</option>
+					<option>전공선택</option>
+					<option>교양필수</option>
+					<option>교양필수(체육)</option>
+					<option>교양선택</option>
+					<option>자유선택</option>
+					<option>공통필수</option>
+					<option>인문사회선택</option>
+					<option>선택(석/박사)</option>
+					<option>개별연구</option>
+					<option>졸업연구</option>
+					<option>세미나</option>
+					<option>논문세미나</option>
+					<option>현장실습및연구</option>
+				</select>
+			</div>
 		</div>
 		<div id="lecture_container">
 			<div class="left" style="width:15%;padding:0;margin:0;">
