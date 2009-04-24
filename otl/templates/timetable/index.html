@@ -325,13 +325,14 @@
 					try {
 						var resObj = JSON.decode(responseText);
 						if (resObj.length == 0) {
-							$('message').set('html', '과목 정보를 찾지 못했습니다.');
-							$('message-wrap').highlight('#f00');
+
 							LectureList.contents.empty(); 
 							LectureList.buildTabs(LectureList.contents.getChildren().length);
+
+							$('message').set('html', '과목 정보를 찾지 못했습니다.');
+							$('message-wrap').highlight('#f00');
+
 						} else {
-							$('message').set('html','검색 결과를 확인하세요.');
-							$('message-wrap').highlight('#FAD163');
 
 							LectureList.contents.empty(); 
 							var max = NUM_ITEMS_PER_LIST;
@@ -363,6 +364,9 @@
 							}.bind(LectureList));
 							LectureList.buildTabs(LectureList.contents.getChildren().length);
 							new Mootabs('lecture_tabs','lecture_contents');
+
+							$('message').set('html','검색 결과를 확인하세요.');
+							$('message-wrap').highlight('#FAD163');
 						}
 					} catch(e) {
 						alert('Unexpected Error: '+e.message);
