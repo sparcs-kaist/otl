@@ -670,6 +670,7 @@
 					catch(e)
 					{
 						alert('ERROR! '+e.message);
+						Notifier.clear();
 					}
 				},
 				onFailure:function(xhr) {
@@ -717,11 +718,13 @@
 							{
 								//'NOT_EXIST', 'ERROR'
 								alert(resObj.result);
+								Notifier.clear();
 							}
 						}
 						catch(e)
 						{
 							alert('ERROR');
+							Notifier.clear();
 						}
 					},
 					onFailure:function(xhr) {
