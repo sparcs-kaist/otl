@@ -161,7 +161,7 @@ class Command(BaseCommand):
 				exam_time = ExamTime(lecture=lecture)
 				exam_time.day = int(myrow[5]) - 1
 				exam_time.begin = time(hour=myrow[6].hour, minute=myrow[6].minute)
-				exam_time.end = time(hour=myrow[7].hour, minute=myrow[6].minute)
+				exam_time.end = time(hour=myrow[7].hour, minute=myrow[7].minute)
 				print u'Updating exam time for %s' % lecture
 				exam_time.save()
 			except Lecture.DoesNotExist:
@@ -191,7 +191,7 @@ class Command(BaseCommand):
 				class_time = ClassTime(lecture=lecture)
 				class_time.day = int(myrow[5]) - 1
 				class_time.begin = time(hour=myrow[6].hour, minute=myrow[6].minute)
-				class_time.end = time(hour=myrow[7].hour, minute=myrow[6].minute)
+				class_time.end = time(hour=myrow[7].hour, minute=myrow[7].minute)
 				class_time.type = myrow[8]
 				class_time.building = myrow[9]
 				class_time.room = myrow[10]
