@@ -14,7 +14,7 @@ class Command(BaseCommand):
 		make_option('--host', dest='host', help=u'Specifies server address.'),
 		make_option('--user', dest='user', help=u'Specifies user name to log in.'),
 		make_option('--encoding', dest='encoding', help=u'Sepcifies character encoding to decode strings from database. (default is cp949)', default='cp949'),
-		make_option('--exclude-lecture', action='store_true', dest='exclude_lecture', help=u'Don\'t update lecture information when you want to update time information only.', default=True),
+		make_option('--exclude-lecture', action='store_true', dest='exclude_lecture', help=u'Don\'t update lecture information when you want to update time information only.', default=False),
 	)
 	help = u'Imports KAIST scholar database.'
 	args = u'--host=143.248.X.Y:PORT --user=USERNAME'

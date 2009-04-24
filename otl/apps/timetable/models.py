@@ -16,7 +16,7 @@ class Lecture(models.Model):
 	department = models.ForeignKey(Department)	   			# 학과
 	class_no = models.CharField(max_length=4, blank=True)	# 분반
 	title = models.CharField(max_length=100)	   			# 과목이름 (한글)
-	title_en = models.CharField(max_length=100)	   			# 과목이름 (영문)
+	title_en = models.CharField(max_length=200)	   			# 과목이름 (영문)
 	type = models.CharField(max_length=12)		   			# 과목구분 (한글; '전필', '전선', '기필', ...)
 	type_en = models.CharField(max_length=36)	   			# 과목구분 (영문; 'Major Required', 'Major Elective', ...)
 	audience = models.IntegerField(choices=AUDIENCE_TYPES)	# 학년구분
