@@ -22,6 +22,7 @@
 		{code:'E3',name:'정보전자동', x:494,y:446},
 		{code:'',name:'궁리실험관', x:422,y:373}
 	];
+	var NUM_ITEMS_PER_LIST = 20;
 
 	Data.CurrentYear = {{current_year}};
 	Data.CurrentTerm = {{current_semester}};
@@ -29,7 +30,6 @@
 	Data.NextTerm = {{next_semester}};
 	Data.Lectures = []; // Initialized via ajax calls after page loading.
 
-	const NUM_ITEMS_PER_LIST = 20;
 
 	/* Example of a lecture item.
 	Data.Lectures = 
@@ -428,7 +428,7 @@
 			if (conditions.term == undefined)
 				conditions.term = Data.NextTerm;
 			for (key in conditions) {
-				query += key + '=' + conditions[key] + '&'
+				query += key + '=' + encodeURIComponent(conditions[key]) + '&'
 			}
 			request.send(query);
 		},
