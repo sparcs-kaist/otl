@@ -97,7 +97,7 @@ def myinfo(request):
 		# View my account information
 		f = ProfileForm({
 			'language': profile.language,
-			'favorite_departments': [item.id for item in profile.favorite_departments.all()],
+			'favorite_departments': [item.pk for item in profile.favorite_departments.all()],
 		})
 		msg = u''
 	return render_to_response('accounts/myinfo.html', {

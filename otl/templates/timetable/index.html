@@ -22,9 +22,15 @@
 		{code:'',name:'궁리실험관', x:422,y:373}
 	];
 
+	Data.CurrentYear = {{current_year}};
+	Data.CurrentTerm = {{current_semester}};
+	Data.NextYear = {{next_year}};
+	Data.NextTerm = {{next_semester}};
+	Data.Lectures = []; // Initialized via ajax calls after page loading.
 
-	Data.Lectures = {{lectures_json|safe}};
-	/*
+	const NUM_ITEMS_PER_LIST = 20;
+
+	/* Example of lecture item.
 	Data.Lectures = 
 	[
 		{
@@ -33,8 +39,8 @@
 			term:'3',
 			dept:'전산학전공',
 			classification:'기초필수',
-			course_no:'CE202',
-			'class':'A',
+			course_no:'CS202',
+			class:'A',
 			code:'37.231',
 			title:'데이타구조',
 			lec_time:'2',
@@ -131,8 +137,8 @@
 		},
 		getColorByIndex:function(index)
 		{
-			index =index*3;
-			index = UDF.modulecolors.length % index;
+			//index =index*3;
+			//index = UDF.modulecolors.length % index;
 			return UDF.modulecolors[index];
 		},
 		cumulativeOffset : function(el)
@@ -289,13 +295,71 @@
 		},
 		filter:function(dept,classification)
 		{
-			var filtered = (dept=='전체보기') ? this.data : this.data.filter(function(item) {return item.dept==dept});
-			var filtered = (classification=="전체보기") ? filtered : filtered.filter(function(item) {return item.classification==classification});
-			
-			var category = (classification=="전체보기") ? 'classification' : 'dept';
+			var request = new Request({
+				method:'get',
+				url:'/timetable/search/',
+				onRequest:function()
+				{
+					$('indicator').addClass('waiting');
+				},
+				onComplete:function()
+				{
+					$('indicator').removeClass('waiting');
+				},
+				onSuccess:function(responseText)
+				{
+					try {
+						var resObj = JSON.decode(responseText);
+						if (resObj.length == 0) {
+							$('message').set('html', '과목 정보를 찾지 못했습니다.');
+							$('message-wrap').highlight('#f00');
+							LectureList.contents.empty(); 
+							LectureList.buildTabs(LectureList.contents.getChildren().length);
+						} else {
+							$('message').set('html','검색 결과를 확인하세요.');
+							$('message-wrap').highlight('#FAD163');
 
-			var cluster = this.clustering(filtered, category)
-			this.build(cluster, category);
+							LectureList.contents.empty(); 
+							var max = NUM_ITEMS_PER_LIST;
+							var count=0;
+							var content = new Element('div',{'class':'lecture_content'}).inject(LectureList.contents);
+							var currCategory;
+							var category = (classification=="전체보기") ? 'classification' : 'dept';
+							resObj.each(function(item)
+							{
+								var key = $H(item).get(category);
+								if (currCategory != key) {
+									currCategory = key;
+									if(count<max) new Element('h4',{'html':currCategory}).inject(content);
+								}
+
+								if (count>=max) {
+									content = new Element('div',{'class':'lecture_content'}).inject(this.contents);
+									new Element('h4',{'html':currCategory}).inject(content);
+									count=0;
+								} else
+									count++;
+
+								var el = new Element('a',{'html':item.title}).inject(content);
+								UDF.clickable(el);
+								
+								el.addEvent('mousedown',Timetable.addLecture.bindWithEvent(Timetable,item));
+								el.addEvent('mouseover',Timetable.onMouseover.bind(Timetable,item));
+								el.addEvent('mouseout',Timetable.onMouseout.bind(Timetable,item));
+							}.bind(LectureList));
+							LectureList.buildTabs(LectureList.contents.getChildren().length);
+							new Mootabs('lecture_tabs','lecture_contents');
+						}
+					} catch(e) {
+						alert('Unexpected Error: '+e.message);
+					}
+				},
+				onFailure:function(xhr)
+				{
+					alert('ERROR');
+				}
+			});
+			request.send('year='+Data.NextYear+'&term='+Data.NextTerm+'&dept='+dept+'&type='+classification);
 		},
 		buildTabs:function(n)
 		{
@@ -303,7 +367,7 @@
 			for (var i=1;i<=n;i++)
 				new Element('div',{'html':i}).inject(new Element('div',{'class':'lecture_tab'}).inject(this.tabs));
 		},
-		getCategories:function(arr,category)
+		getCategories:function(arr,category) // currently unused
 		{
 			var categories = [];
 			arr.each(function(item)
@@ -314,7 +378,7 @@
 			});
 			return categories;
 		},
-		clustering:function(arr,category)
+		clustering:function(arr,category) // currently unused
 		{
 			var categories = this.getCategories(arr,category);
 			var ret = [];
@@ -325,40 +389,6 @@
 				});
 			});
 			return ret;
-		},
-		build:function(cluster,category)
-		{
-			this.contents.empty(); 
-			var max = 8;
-			var count=0;
-			var content = new Element('div',{'class':'lecture_content'}).inject(this.contents);
-			var currCategory;
-			cluster.each(function(item)
-			{
-				var key = $H(item).get(category);
-				if (currCategory!=key)
-				{
-					currCategory = key;
-					if(count<max) new Element('h4',{'html':currCategory}).inject(content);
-				}
-
-				if (count>=max)
-				{
-					content = new Element('div',{'class':'lecture_content'}).inject(this.contents);
-					new Element('h4',{'html':currCategory}).inject(content);
-					count=0;
-				}
-				else count++;
-
-				var el = new Element('a',{'html':item.title}).inject(content);
-				UDF.clickable(el);
-				
-				el.addEvent('mousedown',Timetable.addLecture.bindWithEvent(Timetable,item));
-				el.addEvent('mouseover',Timetable.onMouseover.bind(Timetable,item));
-				el.addEvent('mouseout',Timetable.onMouseout.bind(Timetable,item));
-			}.bind(this));
-			this.buildTabs(this.contents.getChildren().length);
-			new Mootabs('lecture_tabs','lecture_contents');
 		}
 	};
 
@@ -557,7 +587,7 @@
 					}
 					catch(e)
 					{
-						alert('ERROR!'+e.message);
+						alert('ERROR! '+e.message);
 					}
 				},
 				onFailure:function(xhr) {
@@ -723,9 +753,9 @@
 		<div style="margin-bottom:10px">
 			<div id="dump"></div>
 			<a id="test" >테스트</a>
-			<label>학과&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-size:11px">(<a href="#">관심학과 설정</a>)</span></label>
+			<label>학과&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-size:11px">(<a href="/accounts/myinfo/">관심학과 설정</a>)</span></label>
 			<select id="department" style="width:100%">
-				<option value=".">전체보기</option>
+				<!-- option value=".">전체보기</option -->
 				{% for item in departments %}
 				<option value="{{ item.code }}">{{ item.name }}</option>
 				{% endfor %}

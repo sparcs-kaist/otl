@@ -13,22 +13,18 @@ from StringIO import StringIO
 def index(request):
 	if request.user.is_authenticated():
 		my_lectures = [_lectures_to_output(Lecture.objects.filter(year=settings.NEXT_YEAR, semester=settings.NEXT_SEMESTER, timetable__user=request.user, timetable__table_id=id), False) for id in xrange(0,3)]
-		lectures = Lecture.objects.filter(year=settings.NEXT_YEAR, semester=settings.NEXT_SEMESTER, department=request.user.userprofile.department)
 	else:
 		my_lectures = [[], [], []]
-		lectures = Lecture.objects.filter(year=settings.NEXT_YEAR, semester=settings.NEXT_SEMESTER, department=Department.objects.get(num_id=10))
-	lectures_output = _lectures_to_output(lectures)
 	return render_to_response('timetable/index.html', {
 		'section': 'timetable',
 		'departments': Department.objects.all(),
 		'my_lectures': json.dumps(my_lectures, indent=4, ensure_ascii=False),
-		'lectures_json': lectures_output,
 	}, context_instance=RequestContext(request))
 
 def search(request):
 	department = request.GET.get('dept', None)
 	year = request.GET.get('year', settings.NEXT_YEAR)
-	semester = request.GET.get('semester', settings.NEXT_SEMESTER)
+	semester = request.GET.get('term', settings.NEXT_SEMESTER)
 	type = request.GET.get('type', None)
 	day_begin = request.GET.get('start_day', None)
 	day_end = request.GET.get('end_day', None)
@@ -40,7 +36,7 @@ def search(request):
 	try:
 		if department != None:
 			lectures = lectures.filter(department__name__exact=department)
-		if type != None:
+		if type != None and type != u'전체보기':
 			lectures = lectures.filter(type__exact=type)
 		if day_begin != None:
 			lectures = lectures.filter(classtime__day__gte=int(day_begin))
@@ -53,7 +49,7 @@ def search(request):
 	except (TypeError, ValueError):
 		return HttpResponseBadRequest()
 
-	lectures = lectures.distinct()
+	lectures = lectures.order_by('type').distinct()
 
 	output = _lectures_to_output(lectures)
 	return HttpResponse(output)
