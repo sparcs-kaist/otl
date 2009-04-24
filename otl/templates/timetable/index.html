@@ -128,8 +128,7 @@
 	   	}
 	});
 
-	UDF=
-	{
+	var UDF = {
 		days : ['월','화','수','목','금'],
 		modulecolors : ['#FFC7FE','#FFCECE','#DFE8F3','#D1E9FF','#D2F1EE','#FFEAD1','#E1D1FF','#FAFFC1','#D4FFC1','#DEDEDE','#BDBDBD'],
 		getRandomColor:function()
@@ -215,6 +214,13 @@
 		clearIndicator: function()
 		{
 			$('indicator').removeClass('waiting');
+		},
+		clear: function()
+		{
+			if (this.timeout)
+				window.clearTimeout(this.timeout);
+			this.clearIndicator();
+			$('message-wrap').fade('hide');
 		}
 	}
 
@@ -413,6 +419,7 @@
 				onFailure:function(xhr)
 				{
 					alert('ERROR');
+					Notifier.clear();
 				}
 			});
 			query = '';
@@ -666,7 +673,8 @@
 					}
 				},
 				onFailure:function(xhr) {
-						alert('ERROR');
+					alert('ERROR');
+					Notifier.clear();
 		  		}
 			});
 			myRequest.send('table_id='+table_id+'&lecture_id='+lecture_id);
@@ -717,7 +725,8 @@
 						}
 					},
 					onFailure:function(xhr) {
-							alert('ERROR');
+						alert('ERROR');
+						Notifier.clear();
 					}
 				});
 				myRequest.send(sendMsg);
