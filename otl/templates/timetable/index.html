@@ -801,9 +801,17 @@
 			<div id="lecturelist-filter">
 				<label>학과&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-size:11px">(<a href="/accounts/myinfo/">관심학과 설정</a>)</span></label>
 				<select id="department" style="width:100%">
-					{% for item in departments %}
-					<option value="{{ item.code }}">{{ item.name }}</option>
-					{% endfor %}
+					<optgroup label="소속학과/관심학과">
+						<option value="{{ user.userprofile.department.code }}">{{ user.userprofile.department.name }}</option>
+						{% for item in user.userprofile.favorite_departments.all %}
+						<option value="{{ item.code }}">{{ item.name }}</option>
+						{% endfor %}
+					</optgroup>
+					<optgroup label="전체 목록">
+						{% for item in departments %}
+						<option value="{{ item.code }}">{{ item.name }}</option>
+						{% endfor %}
+					</optgroup>
 				</select>
 				<br />
 				<label>과목구분</label>
