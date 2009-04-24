@@ -5,6 +5,7 @@
 	<script type="text/javascript" src="/media/js/mootools/mootools-1.2.1-core-yc.js"></script>
 	<script type="text/javascript" src="/media/js/mootools/mootools-1.2-more-yc.js"></script>
 	<script type="text/javascript">
+	//<![CDATA[
 	var Data = {};
 	Data.Map = 
 	[
@@ -30,7 +31,7 @@
 
 	const NUM_ITEMS_PER_LIST = 20;
 
-	/* Example of lecture item.
+	/* Example of a lecture item.
 	Data.Lectures = 
 	[
 		{
@@ -270,7 +271,7 @@
 		}
 	};
 
-	LectureList ={
+	LectureList = {
 		initialize:function(tabs,contents)
 		{
 			this.tabs = $('lecture_tabs');
@@ -291,10 +292,12 @@
 		{
 			var dept = this.dept.options[this.dept.selectedIndex].text;
 			var classification = this.classf.options[this.classf.selectedIndex].text;
-			this.filter(dept,classification);
+			this.filter({'dept':dept,'type':classification});
 		},
-		filter:function(dept,classification)
+		filter:function(conditions)
 		{
+			if (conditions.type == undefined)
+				conditions.type = '전체보기';
 			var request = new Request({
 				method:'get',
 				url:'/timetable/search/',
@@ -324,7 +327,7 @@
 							var count=0;
 							var content = new Element('div',{'class':'lecture_content'}).inject(LectureList.contents);
 							var currCategory;
-							var category = (classification=="전체보기") ? 'classification' : 'dept';
+							var category = (conditions.type=="전체보기") ? 'classification' : 'dept';
 							resObj.each(function(item)
 							{
 								var key = $H(item).get(category);
@@ -359,7 +362,15 @@
 					alert('ERROR');
 				}
 			});
-			request.send('year='+Data.NextYear+'&term='+Data.NextTerm+'&dept='+dept+'&type='+classification);
+			query = '';
+			if (conditions.year == undefined)
+				conditions.year = Data.NextYear;
+			if (conditions.term == undefined)
+				conditions.term = Data.NextTerm;
+			for (key in conditions) {
+				query += key + '=' + conditions[key] + '&'
+			}
+			request.send(query);
 		},
 		buildTabs:function(n)
 		{
@@ -462,8 +473,9 @@
 				var startTime = cell.r1*30+480;
 				var endTime = cell.r2*30+480;
 
-				$('dump').set('html',(startDay+' '+endDay+' '+startTime+' '+endTime));
+				//$('dump').set('html',(startDay+' '+endDay+' '+startTime+' '+endTime));
 				this.dragging=false;
+				LectureList.filter({start_day:startDay, end_day:endDay, start_time:startTime, end_time:endTime});
 			}
 	  	},
 		modCell:function(cell1,cell2)
@@ -746,6 +758,7 @@
 		Timetable.initialize();
 		RangeSearch.initialize();
 	});
+	//]]>
 	</script>
 {% endblock %}
 {% block content %}
