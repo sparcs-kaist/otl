@@ -1,0 +1,172 @@
+[
+	{
+		"pk": "8",
+		"model": "accounts.department",
+		"fields": {"dept_id": "4", "code": "URP", "name": "URP(학부생연구참여)"}
+	},
+	{
+		"pk": "10",
+		"model": "accounts.department",
+		"fields": {"dept_id": "2044", "code": "HS", "name": "인문사회과학부"}
+	},
+	{
+		"pk": "14",
+		"model": "accounts.department",
+		"fields": {"dept_id": "8", "code": "ED", "name": "Freshman Design"}
+	},
+	{
+		"pk": "20",
+		"model": "accounts.department",
+		"fields": {"dept_id": "110", "code": "PH", "name": "물리학과"}
+	},
+	{
+		"pk": "21",
+		"model": "accounts.department",
+		"fields": {"dept_id": "132", "code": "BS", "name": "생명과학과"}
+	},
+	{
+		"pk": "23",
+		"model": "accounts.department",
+		"fields": {"dept_id": "150", "code": "CH", "name": "화학과"}
+	},
+	{
+		"pk": "25",
+		"model": "accounts.department",
+		"fields": {"dept_id": "151", "code": "MAS", "name": "수리과학과"}
+	},
+	{
+		"pk": "31",
+		"model": "accounts.department",
+		"fields": {"dept_id": "331", "code": "IE", "name": "산업및시스템공학과"}
+	},
+	{
+		"pk": "32",
+		"model": "accounts.department",
+		"fields": {"dept_id": "340", "code": "ID", "name": "산업디자인학과"}
+	},
+	{
+		"pk": "33",
+		"model": "accounts.department",
+		"fields": {"dept_id": "221", "code": "NQE", "name": "원자력및양자공학과"}
+	},
+	{
+		"pk": "34",
+		"model": "accounts.department",
+		"fields": {"dept_id": "421", "code": "MS", "name": "신소재공학과"}
+	},
+	{
+		"pk": "35",
+		"model": "accounts.department",
+		"fields": {"dept_id": "531", "code": "EE", "name": "전기및전자공학전공"}
+	},
+	{
+		"pk": "36",
+		"model": "accounts.department",
+		"fields": {"dept_id": "532", "code": "CS", "name": "전산학전공"}
+	},
+	{
+		"pk": "37",
+		"model": "accounts.department",
+		"fields": {"dept_id": "441", "code": "CE", "name": "건설및환경공학과"}
+	},
+	{
+		"pk": "39",
+		"model": "accounts.department",
+		"fields": {"dept_id": "451", "code": "CBE", "name": "생명화학공학과"}
+	},
+	{
+		"pk": "40",
+		"model": "accounts.department",
+		"fields": {"dept_id": "210", "code": "ME", "name": "기계공학과"}
+	},
+	{
+		"pk": "41",
+		"model": "accounts.department",
+		"fields": {"dept_id": "3648", "code": "BiS", "name": "바이오및뇌공학과"}
+	},
+	{
+		"pk": "42",
+		"model": "accounts.department",
+		"fields": {"dept_id": "3540", "code": "BEP", "name": "Business Economics 프로그램"}
+	},
+	{
+		"pk": "43",
+		"model": "accounts.department",
+		"fields": {"dept_id": "3539", "code": "GCT", "name": "문화기술대학원"}
+	},
+	{
+		"pk": "46",
+		"model": "accounts.department",
+		"fields": {"dept_id": "3605", "code": "MSE", "name": "의과학대학원"}
+	},
+	{
+		"pk": "47",
+		"model": "accounts.department",
+		"fields": {"dept_id": "3520", "code": "RE", "name": "로봇공학학제전공"}
+	},
+	{
+		"pk": "53",
+		"model": "accounts.department",
+		"fields": {"dept_id": "2710", "code": "MGT", "name": "테크노경영대학원"}
+	},
+	{
+		"pk": "59",
+		"model": "accounts.department",
+		"fields": {"dept_id": "3617", "code": "IMB", "name": "아이엠비에이전공"}
+	},
+	{
+		"pk": "66",
+		"model": "accounts.department",
+		"fields": {"dept_id": "3689", "code": "STP", "name": "과학기술정책대학원프로그램"}
+	},
+	{
+		"pk": "67",
+		"model": "accounts.department",
+		"fields": {"dept_id": "3693", "code": "OSE", "name": "해양시스템공학과"}
+	},
+	{
+		"pk": "68",
+		"model": "accounts.department",
+		"fields": {"dept_id": "3694", "code": "ISE", "name": "지적서비스공학과"}
+	},
+	{
+		"pk": "69",
+		"model": "accounts.department",
+		"fields": {"dept_id": "3692", "code": "NST", "name": "나노과학기술학과"}
+	},
+	{
+		"pk": "70",
+		"model": "accounts.department",
+		"fields": {"dept_id": "2222", "code": "BM", "name": "의과학학제전공"}
+	},
+	{
+		"pk": "71",
+		"model": "accounts.department",
+		"fields": {"dept_id": "2410", "code": "PSE", "name": "고분자학학제전공"}
+	},
+	{
+		"pk": "73",
+		"model": "accounts.department",
+		"fields": {"dept_id": "3406", "code": "TE", "name": "정보통신공학학제전공"}
+	},
+	{
+		"pk": "79",
+		"model": "accounts.department",
+		"fields": {"dept_id": "3499", "code": "SEP", "name": "소프트웨어전문가과정학제전공"}
+	},
+	{
+		"pk": "22",
+		"model": "accounts.department",
+		"fields": {"dept_id": "10022", "code": "MA", "name": "수학전공"}
+	},
+	{
+		"pk": "24",
+		"model": "accounts.department",
+		"fields": {"dept_id": "10024", "code": "MA", "name": "응용수학전공"}
+	},
+	{
+		"pk": "0",
+		"model": "accounts.department",
+		"fields": {"dept_id": "10000", "code": "NONE", "name": "무학과"}
+	}
+]
