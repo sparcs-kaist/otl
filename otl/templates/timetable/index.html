@@ -253,9 +253,9 @@
 				transition: Fx.Transitions.Quad.easeInOut
 				});
 
+			this.dragHandler = this.onDrag.bindWithEvent(this);
+			this.dragEndHandler = this.onEnd.bindWithEvent(this);
 			this.dragmap.addEvent('mousedown',this.onMousedown.bindWithEvent(this));
-			document.addEvent('mousemove', this.onDrag.bindWithEvent(this));
-			document.addEvent('mouseup', this.onEnd.bindWithEvent(this));
 
 			$('test').addEvent('click',
 				function()
@@ -267,6 +267,8 @@
 		onMousedown:function(e)
 		{
 			this.dragging=true;
+			document.addEvent('mousemove', this.dragHandler);
+			document.addEvent('mouseup', this.dragEndHandler);
 			this.clickPos = UDF.mousePos(e,this.dragmap);
 			e.stop();
 		},
@@ -289,6 +291,8 @@
 		},
 		onEnd:function(e)
 		{
+			document.removeEvent('mousemove', this.dragHandler);
+			document.removeEvent('mouseup', this.dragEndHandler);
 			if (this.dragging)
 			{
 				this.dragging=false;
@@ -387,7 +391,7 @@
 							var category = (conditions.type=="전체보기") ? 'classification' : 'dept';
 							resObj.each(function(item)
 							{
-								var key = $H(item).get(category);
+								var key = item.category;
 								if (currCategory != key) {
 									currCategory = key;
 									if(count<max) new Element('h4',{'html':currCategory}).inject(content);
@@ -485,13 +489,15 @@
 		},
 		registHandlers:function()
 		{
+			this.dragHandler = this.onDrag.bindWithEvent(this);
+			this.dragEndHandler = this.onEnd.bindWithEvent(this);
 			this.grid.addEvent('mousedown',this.onMousedown.bindWithEvent(this));
-			document.addEvent('mouseup',this.onEnd.bindWithEvent(this));
-			document.addEvent('mousemove',this.onDrag.bindWithEvent(this));
 		},
 		onMousedown:function(e)
 		{
 			this.dragging=true;
+			document.addEvent('mousemove', this.dragHandler);
+			document.addEvent('mouseup', this.dragEndHandler);
 			var pos = UDF.mousePos(e,this.grid);
 			this.startCell = this.getCell(pos);
 
@@ -521,6 +527,8 @@
 		},
 		onEnd:function(e)
 	  	{
+			document.removeEvent('mousemove',this.dragHandler);
+			document.removeEvent('mouseup',this.dragEndHandler);
 			if(this.dragging)
 			{
 				var pos = UDF.mousePos(e,this.grid);
