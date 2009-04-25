@@ -98,7 +98,11 @@ class ClassTime(models.Model):
 		return self.end.hour * 60 + self.end.minute
 	
 	def get_location(self):
-		return u'%s %s호' % (self.room_ko, self.room)
+		try:
+			int(self.room)
+			return u'%s %s호' % (self.room_ko, self.room)
+		except ValueError:
+			return u'%s %s' % (self.room_ko, self.room)
 	
 	@staticmethod
 	def numeric_time_to_str(numeric_time):

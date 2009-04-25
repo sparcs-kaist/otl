@@ -1,5 +1,6 @@
 table 
-{ 
+{
+	border-collapse: collapse;
     font-size: 12px; 
     width: 100%; 
     cursor: default; 
@@ -10,13 +11,9 @@ table
 table th 
 { 
     text-align:center; 
-    padding: 4px 0 4px 9px; 
-    background: #666; 
+    padding: 3px 4px; 
     background-color: #C3D9FF;
-
-    border-bottom: 1px solid #D9D9D9; 
-    border-top: 1px solid #D9D9D9; 
-    border-left: 1px solid #A2BBDD;
+	border: 1px solid #bbb;
     color: #555; 
 }
 
@@ -26,22 +23,11 @@ table tr td
     text-align:center; 
     padding: 4px 0 4px 9px; 
     padding: 3px 8px; 
-    border-left: 1px solid #D9D9D9;
-    border-top: 1px solid #FFF;
-    border-bottom: 1px solid #FFF; 
-    background: #FFF; 
-    border-right: 1px solid #FFF; 
+    border: 1px solid #bbb;
 }
 
 table tr.even td 
 { 
     background: #edf3fe; 
-    border-bottom: 1px solid #E8F0FF; 
-    border-top: 1px solid #E8F0FF; 
-}
-
-td.end, th.end
-{
-    border-right: 1px solid #D9D9D9; 
 }
 

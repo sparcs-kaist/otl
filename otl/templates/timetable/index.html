@@ -770,15 +770,19 @@
 					var item = h.get(key);
 					if (item!=null)
 					{
-						if(key=='examtime')
+						if (key=='examtime')
 						{
-							var time=Math.floor(item.start/60)+':'+(item.start%60)+'~'+Math.floor(item.end/60)+':'+(item.end%60);
-							$('DS_'+key).innerHTML=UDF.days[item.day]+time;
+							var time = UDF.NumericTimeToReadable(item.start) + '~' + UDF.NumericTimeToReadable(item.end);
+							$('DS_'+key).set('html', UDF.days[item.day]+time);
 						}
-						if(key=='credit'||key=='au')
+						else if (key=='credit'||key=='au')
 						{
 							$('add_'+key).set('text','(+'+item+')');
 							$('DS_'+key).set('text',item);
+						}
+						else if (key == 'title' || key == 'prof')
+						{
+							$('DS_'+key).set('html','<p>'+item+'</p>');
 						}
 						else
 						{
@@ -900,7 +904,7 @@
 {{my_lectures|safe}}
 		</textarea>
 		<div id="center-top">
-			<table cellspacing="0" cellpadding="0" border="0">
+			<table class="lecture-info">
 				<thead>
 					<tr>
 						<th>강의장소</th>
@@ -912,19 +916,19 @@
 					<tr>
 						<td id="DS_classroom">공동실험실</td>
 						<td id="DS_examtime">12:00~13:00</td>
-						<td id="DS_remarks"class="end">영어강의</td>
+						<td id="DS_remarks" class="end">영어강의</td>
 					</tr>
 				</tbody>
 			</table>
-			<table cellspacing="0" cellpadding="0" border="0">
+			<table class="lecture-info">
 				<thead>
 					<tr>
 						<th>과목코드</th>
 						<th>분반</th>
 						<th>과목명</th>
 						<th>교수님</th>
-						<th>강의시간</th>
-						<th>실험시간</th>
+						<th>강의</th>
+						<th>실험</th>
 						<th class="end">학점</th>
 					</tr>
 				</thead>
@@ -932,8 +936,8 @@
 					<tr>
 						<td id="DS_course_no">MS213</td>
 						<td id="DS_class">A</td>
-						<td id="DS_title">결정구조 및 회절</td>
-						<td id="DS_prof">김민우</td>
+						<td id="DS_title"><p>결정구조 및 회절</p></td>
+						<td id="DS_prof"><p>김민우</p></td>
 						<td id="DS_lec_time">2</td>
 						<td id="DS_lab_time">3</td>
 						<td id="DS_credit" class="end">3</td>

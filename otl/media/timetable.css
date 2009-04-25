@@ -381,6 +381,54 @@
 	margin-right:10px;
 }
 
+#DS_classroom
+{
+	width: 40%;
+}
+
+#DS_examtime
+{
+	width: 40%;
+}
+
+#DS_remarks
+{
+	width: 20%;
+}
+
+#DS_course_no
+{
+	width: 10%;
+}
+
+#DS_class
+{
+	width: 6%;
+}
+
+#DS_title
+{
+	width: 40%;
+}
+
+#DS_prof
+{
+	width: 20%;
+}
+
+#DS_title p, #DS_prof p
+{
+	overflow: hidden;
+	margin: 0;
+	padding: 0;
+	height: 20px;
+}
+
+#DS_lec_time, #DS_lab_time, #DS_credit
+{
+	width: 7%;
+}
+
 .waiting
 {
     background:transparent url('images/loading.gif') 0 0 no-repeat;
