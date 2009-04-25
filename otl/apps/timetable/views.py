@@ -144,9 +144,9 @@ def _lectures_to_output(lectures, conv_to_json=True):
 			exam = lecture.examtime_set.get() # 첫번째 항목만 가져옴
 		except:
 			exam = None
-		room = lecture.classtime_set.filter(lecture=lecture, type__exact='l')
+		room = ClassTime.objects.filter(lecture=lecture, type__exact='l')
 		if room.count() > 0:
-			room = room[0].room_ko
+			room = room[0].get_location()
 		else:
 			room = ''
 		item = {

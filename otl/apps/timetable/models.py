@@ -97,6 +97,9 @@ class ClassTime(models.Model):
 		"""0시 0분을 기준으로 분 단위로 계산된 종료 시간을 반환한다."""
 		return self.end.hour * 60 + self.end.minute
 	
+	def get_location(self):
+		return u'%s %s호' % (self.room_ko, self.room)
+	
 	@staticmethod
 	def numeric_time_to_str(numeric_time):
 		return u'%s:%s' % (numeric_time // 60, numeric_time % 60)
