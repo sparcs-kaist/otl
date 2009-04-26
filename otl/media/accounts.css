@@ -19,6 +19,11 @@ ul.actions {
 	list-style: none;
 }
 
+#id_favorite_departments {
+	width: 50%;
+	height: 12em;
+}
+
 /* TODO: 이것들을 default.css로 빼낼까? */
 .actions li {
 	margin: 0 5px;
