@@ -324,7 +324,9 @@
 			this.maptext.style.left=(x-6)+'px';
 			this.maptext.style.top=(y-60)+'px';
 			$('map-name').innerHTML=item.code+' '+item.name;
-			this.move(x,y);
+			if (this.previous_target != item.name)
+				this.move(x,y);
+			this.previous_target = item.name;
 		}
 	};
 
