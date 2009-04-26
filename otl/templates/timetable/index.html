@@ -197,7 +197,7 @@
 				window.clearTimeout(this.timeout);
 			this.timeout = window.setTimeout(function() {
 				$('message-wrap').fade('out');
-			}, 2000);
+			}, 4000);
 		},
 		setErrorMsg: function(msg)
 		{
@@ -209,7 +209,7 @@
 				window.clearTimeout(this.timeout);
 			this.timeout = window.setTimeout(function() {
 				$('message-wrap').fade('out');
-			}, 2000);
+			}, 4000);
 		},
 		clearIndicator: function()
 		{
@@ -354,7 +354,7 @@
 			var dept = this.dept.options[this.dept.selectedIndex].text;
 			var classification = this.classf.options[this.classf.selectedIndex].text;
 			if (dept == '전체보기' && classification == '전체보기')
-				alert('학과 전체보기는 과목 구분을 선택한 상태에서만 가능합니다.');
+				Notifier.setErrorMsg('학과 전체보기는 과목 구분을 선택한 상태에서만 가능합니다.');
 			else
 				this.filter({'dept':dept,'type':classification});
 		},

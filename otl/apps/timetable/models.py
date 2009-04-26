@@ -63,11 +63,17 @@ class ExamTime(models.Model):
 
 	def get_begin_numeric(self):
 		"""0시 0분을 기준으로 분 단위로 계산된 시작 시간을 반환한다."""
-		return self.begin.hour * 60 + self.begin.minute
+		t = self.begin.hour * 60 + self.begin.minute
+		if t % 30 != 0:
+			t = t + (30 - (t % 30))
+		return t
 
 	def get_end_numeric(self):
 		"""0시 0분을 기준으로 분 단위로 계산된 종료 시간을 반환한다."""
-		return self.end.hour * 60 + self.end.minute
+		t = self.end.hour * 60 + self.end.minute
+		if t % 30 != 0:
+			t = t + (30 - (t % 30))
+		return t
 
 	def __unicode__(self):
 		return u'[%s] %s, %s-%s' % (self.lecture.code, self.get_day_display(), self.begin.strftime('%H:%M'), self.end.strftime('%H:%M'))
@@ -91,11 +97,17 @@ class ClassTime(models.Model):
 
 	def get_begin_numeric(self):
 		"""0시 0분을 기준으로 분 단위로 계산된 시작 시간을 반환한다."""
-		return self.begin.hour * 60 + self.begin.minute
+		t = self.begin.hour * 60 + self.begin.minute
+		if t % 30 != 0:
+			t = t + (30 - (t % 30))
+		return t
 
 	def get_end_numeric(self):
 		"""0시 0분을 기준으로 분 단위로 계산된 종료 시간을 반환한다."""
-		return self.end.hour * 60 + self.end.minute
+		t = self.end.hour * 60 + self.end.minute
+		if t % 30 != 0:
+			t = t + (30 - (t % 30))
+		return t
 	
 	def get_location(self):
 		try:
