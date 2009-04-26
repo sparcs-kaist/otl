@@ -161,7 +161,7 @@ def article_search(request, group_id):
 			article_pages = Paginator(GroupArticle.objects.filter(group__id__exact = group_id).order_by('-written'), NUM_PER_PAGE)
 			current_page = article_pages.page(page)
 			search_code = request.POST.get('query')
-			search_list = Paginator(GroupArticle.objects.filter(Q(id__exact = group_id),Q(writer__username__icontains = search_code)|Q(tag__icontains = search_code)).order_by('-written'),NUM_PER_PAGE)
+			search_list = Paginator(GroupArticle.objects.filter(Q(group__id__exact = group_id), (Q(writer__username__icontains = search_code)|Q(tag__icontains = search_code))).order_by('-written'),NUM_PER_PAGE)
 			search_page = request.GET.get('search-page',1)
 			current_search_page = search_list.page(search_page)
 			return render_to_response('groups/list.html', {

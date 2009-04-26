@@ -8,8 +8,9 @@
 <div id="myFavorites">
 	<h3>내 즐겨찾기</h3>
 {% if user.is_authenticated %}
-	<ul>
-	{% for item in favorite_list %}
+<ul>
+	{% if favorite_list %}
+		{% for item in favorite_list %}
 		<li>
 			<img class="favorite-link-img" src="http://open.thumbshots.org/image.aspx?url={{item.url}}" />	
 			<a class="favorite-link" href=# onclick="window.open('{{item.url}}');return false">	
@@ -18,8 +19,11 @@
 			</a>
 			<a class="control-delete" href="/favorites/delete/{{item.id}}">Delete</a>:
 		</li>
-	{% endfor %}
-	</ul>
+		{% endfor %}
+	{% else %}
+		<p>등록한 즐겨찾기가 없습니다. </p>
+	{% endif %}
+</ul>
 {% else %}
 	<p>로그인하지 않았습니다. :)</p>
 {% endif %}
