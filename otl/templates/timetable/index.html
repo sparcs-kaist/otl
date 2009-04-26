@@ -340,11 +340,7 @@
 			this.dept = $('department');
 			this.classf= $('classification');
 
-			for (var i = 0; i < this.dept.options.length; i++)
-				if (this.dept[i].text == '{{user.userprofile.department.name}}') {
-					this.dept.selectedIndex = i;
-					break;
-				}
+			this.dept.selectedIndex = 0;
 			this.registHandles();
 			this.onChange();
 		},
@@ -852,7 +848,9 @@
 				<label>학과&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-size:11px">(<a href="/accounts/myinfo/">관심학과 설정</a>)</span></label>
 				<select id="department" style="width:100%">
 					<optgroup label="소속학과/관심학과">
+						{% ifnotequal user.userprofile.department.name "무학과" %}
 						<option value="{{ user.userprofile.department.code }}">{{ user.userprofile.department.name }}</option>
+						{% endifnotequal %}
 						{% for item in user.userprofile.favorite_departments.all %}
 						<option value="{{ item.code }}">{{ item.name }}</option>
 						{% endfor %}
