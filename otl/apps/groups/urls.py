@@ -10,5 +10,9 @@ urlpatterns = patterns('',
 	(ur'^withdraw/(\d+)$', views.withdraw),
 	(ur'^list/(\d+)$', views.list),
 	(ur'^list/write/(\d+)$', views.write),
+	(ur'^list/delete/$', views.delete),
+	(ur'^list/modify/$', views.modify),
+	(ur'^list/search/(\d+)$', views.article_search),
+
 )
 
