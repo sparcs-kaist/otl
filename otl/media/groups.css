@@ -121,7 +121,7 @@ a.control-withdraw, a.control-join {
 }
 
 .article-list .author { width: 10%; }
-.article-list .title { width: 70%; }
+.article-list .tag { width: 70%; }
 
 .article-container
 {
@@ -145,3 +145,35 @@ a.control-withdraw, a.control-join {
 	margin: 8px;
 	padding: 4px 6px;
 }
+
+.search-list
+{
+	border-collapse: collapse;
+	width: 100%;
+	border-bottom: 1px solid #ccc;
+}
+
+.search-list th, .search-list td
+{
+	padding: 1px 5px;
+}
+
+.search-list th
+{
+	border-top: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+	text-align: center;
+	background: #f2f2f2;
+}
+
+.search-list td
+{
+}
+
+.search-list tr.even td
+{
+	background: #f8f8f8;
+}
+
+.search-list .author { width: 10%; }
+.search-list .tag { width: 70%; }
