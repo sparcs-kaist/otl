@@ -1,6 +1,7 @@
 {% extends 'layout.html' %}
 {% block headers %}
 <link rel="stylesheet" type="text/css" href="/media/favorites.css" />
+
 {% endblock %}
 {% block content %}
 <h2>과목 즐겨찾기 ({{current_year}}년 {{current_semester}}학기)</h2>
@@ -11,7 +12,7 @@
 	{% for item in favorite_list %}
 		<li>
 			<img class="favorite-link-img" src="http://open.thumbshots.org/image.aspx?url={{item.url}}" />	
-			<a class="favorite-link" href="{{item.url}}">	
+			<a class="favorite-link" href=# onclick="window.open('{{item.url}}');return false">	
 				<h4>{{item.course_code}}: {{item.course_name}} (등록수 : {{item.favored_count}})</h4>
 				{{item.url}}
 			</a>
@@ -38,7 +39,7 @@
 	{% for item in recently_added_list %}
 		<li>
 			<a class="favorite-link-img" href="{{item.url}}"><img src="http://open.thumbshots.org/image.aspx?url={{item.url}}" /></a>
-			<a class="favorite-link" href="{{item.url}}">
+			<a class="favorite-link" href=# onclick="window.open('{{item.url}}');return false">
 				<h4>{{item.course_code}}: {{item.course_name}} (등록수 : {{item.favored_count}})</h4>
 				{{item.url}}
 			</a>
@@ -65,7 +66,7 @@
 				{% for item in search_list %}
 				<li>
 					<a class="search-link-img" href="{{item.url}}"><img src="http://open.thumbshots.org/image.aspx?url={{item.url}}"/></a>
-					<a class="search-link" href="{{item.url}}">
+					<a class="search-link" href=# onclick="window.open('{{item.url}}');return false">
 						<h4>{{item.year}} {{item.semester}} {{item.course_code}}: {{item.course_name}} ( 등록수 : {{item.favored_count}} )</h4>
 						{{item.url}}
 					</a>

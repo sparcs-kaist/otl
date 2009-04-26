@@ -4,7 +4,7 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
-    # ('Your Name', 'your_email@domain.com'),
+    ('OTL-Project Team', 'otl@server.daybreaker.info'),
 )
 
 MANAGERS = ADMINS

@@ -5,6 +5,7 @@ h3 {
 }
 #publicFavorites {
 	position: relative;
+	padding-top: 20px;
 }
 
 #myFavorites ul,
