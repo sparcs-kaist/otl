@@ -74,6 +74,7 @@ def login(request):
 	else:
 		# Show login form
 		return render_to_response('login.html', {
+			'title': u'로그인',
 			'form_login': LoginForm(),
 		}, context_instance=RequestContext(request))
 
