@@ -7,7 +7,7 @@ from django.http import HttpResponseRedirect
 # admin.autodiscover()
 
 urlpatterns = patterns('',
-    (ur'^$', lambda request: HttpResponseRedirect('/favorites/')),
+    (ur'^$', lambda request: HttpResponseRedirect('/timetable/')),
     (ur'^login/', 'otl.apps.accounts.views.login'),
     (ur'^logout/', 'otl.apps.accounts.views.logout'),
 

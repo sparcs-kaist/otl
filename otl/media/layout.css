@@ -3,10 +3,8 @@
 body
 {
 	background:#fff url('images/bg_black.jpg') repeat-x 0 -56px;
-	font-size: 9pt;
-	font-family: sans-serif;
+    color:#555;
 }
-
 
 #gbar, #header, #container, #footer
 {
