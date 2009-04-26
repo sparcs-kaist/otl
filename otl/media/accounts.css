@@ -19,6 +19,18 @@ ul.actions {
 	list-style: none;
 }
 
+#login-form p {
+	margin: 0.4em; 
+}
+
+#login-form table {
+	margin: 4px;
+}
+
+#login-form input[type=submit] {
+	padding: 2px 4px;
+}
+
 #id_favorite_departments {
 	width: 50%;
 	height: 12em;

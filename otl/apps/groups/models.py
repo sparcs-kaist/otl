@@ -9,7 +9,7 @@ class GroupBoard(models.Model):
 	course_name = models.CharField(max_length=60)
 	group_name = models.CharField(max_length=60)
 	comment = models.CharField(max_length=100)
-	passwd = models.CharField(max_length=16)
+	passwd = models.CharField(max_length=32)
 	year = models.IntegerField()
 	semester = models.SmallIntegerField(choices=SEMESTER_TYPES)
 	maker = models.ForeignKey(User, related_name='groupboard_set')
