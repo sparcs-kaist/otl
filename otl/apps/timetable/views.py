@@ -16,53 +16,28 @@ def index(request):
 		my_lectures = [_lectures_to_output(Lecture.objects.filter(year=settings.NEXT_YEAR, semester=settings.NEXT_SEMESTER, timetable__user=request.user, timetable__table_id=id), False) for id in xrange(0,3)]
 	else:
 		my_lectures = [[], [], []]
+	if settings.DEBUG:
+		my_lectures_output = json.dumps(my_lectures, indent=4, ensure_ascii=False)
+	else:
+		my_lectures_output = json.dumps(my_lectures, ensure_ascii=False, sort_keys=False, separators=(',',':'))
 	return render_to_response('timetable/index.html', {
 		'section': 'timetable',
 		'title': u'모의시간표',
 		'departments': Department.objects.all(),
-		'my_lectures': json.dumps(my_lectures, indent=4, ensure_ascii=False),
+		'my_lectures': my_lectures_output,
+		'lecture_list': _lectures_to_output(_search(dept=u'2044', type=u'전체보기'))
 	}, context_instance=RequestContext(request))
 
 def search(request):
-	department = request.GET.get('dept', None)
-	year = request.GET.get('year', settings.NEXT_YEAR)
-	semester = request.GET.get('term', settings.NEXT_SEMESTER)
-	type = request.GET.get('type', None)
-	day_begin = request.GET.get('start_day', None)
-	day_end = request.GET.get('end_day', None)
-	time_begin = request.GET.get('start_time', None)
-	time_end = request.GET.get('end_time', None)
-
-	# This query requires Django 1.1 or newer.
-	lectures = Lecture.objects.annotate(num_classtimes=Count('classtime')).filter(year=year, semester=semester, num_classtimes__gt=0)
-	
 	try:
-		if department == u'전체보기' and type == u'전체보기':
-			return HttpResponseBadRequest()
-		if department != None and department != u'전체보기':
-			lectures = lectures.filter(department__name__exact=department)
-		if type != None and type != u'전체보기':
-			lectures = lectures.filter(type__exact=type)
-		if day_begin != None and day_end != None and time_begin != None and time_end != None:
-			if day_begin == day_end:
-				lectures = lectures.filter(classtime__day__exact=int(day_begin),
-				                           classtime__begin__gte=ClassTime.numeric_time_to_obj(int(time_begin)),
-				                           classtime__end__lte=ClassTime.numeric_time_to_obj(int(time_end)))
-			else:
-				lectures = lectures.filter(classtime__day__gte=int(day_begin), classtime__day__lte=int(day_end),
-				                           classtime__begin__gte=ClassTime.numeric_time_to_obj(int(time_begin)),
-				                           classtime__end__lte=ClassTime.numeric_time_to_obj(int(time_end)))
-	except (TypeError, ValueError):
+		# Convert QueryDict to a normal python dict.
+		q = {}
+		for key, value in request.GET.iteritems():
+			q[str(key)] = value
+		output = _lectures_to_output(_search(**q))
+		return HttpResponse(output)
+	except ValidationError:
 		return HttpResponseBadRequest()
-
-	lectures = lectures.order_by('type', 'code').distinct()
-
-	output = _lectures_to_output(lectures)
-	if settings.DEBUG:
-		query = lectures.query.as_nested_sql()
-		print 'Search Query :', query[0]
-		print 'Parameters :', query[1]
-	return HttpResponse(output)
 
 @login_required
 def add_to_timetable(request):
@@ -145,6 +120,40 @@ def view_timetable(request):
 
 # -- Private functions --
 
+def _search(**conditions):
+	department = conditions.get('dept', None)
+	year = conditions.get('year', settings.NEXT_YEAR)
+	semester = conditions.get('term', settings.NEXT_SEMESTER)
+	type = conditions.get('type', None)
+	day_begin = conditions.get('start_day', None)
+	day_end = conditions.get('end_day', None)
+	time_begin = conditions.get('start_time', None)
+	time_end = conditions.get('end_time', None)
+
+	# This query requires Django 1.1 or newer.
+	lectures = Lecture.objects.annotate(num_classtimes=Count('classtime')).filter(year=year, semester=semester, num_classtimes__gt=0)
+	
+	try:
+		if department == u'-1' and type == u'전체보기':
+			raise ValidationError()
+		if department != None and department != u'-1':
+			lectures = lectures.filter(department__id__exact=int(department))
+		if type != None and type != u'전체보기':
+			lectures = lectures.filter(type__exact=type)
+		if day_begin != None and day_end != None and time_begin != None and time_end != None:
+			if day_begin == day_end:
+				lectures = lectures.filter(classtime__day__exact=int(day_begin),
+				                           classtime__begin__gte=ClassTime.numeric_time_to_obj(int(time_begin)),
+				                           classtime__end__lte=ClassTime.numeric_time_to_obj(int(time_end)))
+			else:
+				lectures = lectures.filter(classtime__day__gte=int(day_begin), classtime__day__lte=int(day_end),
+				                           classtime__begin__gte=ClassTime.numeric_time_to_obj(int(time_begin)),
+				                           classtime__end__lte=ClassTime.numeric_time_to_obj(int(time_end)))
+	except (TypeError, ValueError):
+		raise ValidationError()
+
+	return lectures.order_by('type', 'code').distinct()
+
 def _lectures_to_output(lectures, conv_to_json=True):
 	all = []
 	for lecture in lectures:
@@ -181,7 +190,10 @@ def _lectures_to_output(lectures, conv_to_json=True):
 		all.append(item)
 	if conv_to_json:
 		io = StringIO()
-		json.dump(all, io, ensure_ascii=False, indent=4, sort_keys=False)
+		if settings.DEBUG:
+			json.dump(all, io, ensure_ascii=False, indent=4)
+		else:
+			json.dump(all, io, ensure_ascii=False, sort_keys=False, separators=(',',':'))
 		return io.getvalue()
 	else:
 		return all

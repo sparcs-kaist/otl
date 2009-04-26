@@ -24,10 +24,6 @@
 	];
 	var NUM_ITEMS_PER_LIST = 20;
 
-	Data.CurrentYear = {{current_year}};
-	Data.CurrentTerm = {{current_semester}};
-	Data.NextYear = {{next_year}};
-	Data.NextTerm = {{next_semester}};
 	Data.Lectures = []; // Initialized via ajax calls after page loading.
 	Data.Timetables = [];
 
@@ -342,9 +338,8 @@
 			this.dept = $('department');
 			this.classf= $('classification');
 
-			this.dept.selectedIndex = 0;
 			this.registHandles();
-			this.onChange();
+			this.addToListMultiple(Data.initialLectureList);
 		},
 		registHandles:function()
 		{
@@ -353,12 +348,49 @@
 		},
 		onChange:function()
 		{
-			var dept = this.dept.options[this.dept.selectedIndex].text;
+			var dept = this.dept.options[this.dept.selectedIndex].value;
 			var classification = this.classf.options[this.classf.selectedIndex].text;
-			if (dept == '전체보기' && classification == '전체보기')
+			if (dept == '-1' && classification == '전체보기')
 				Notifier.setErrorMsg('학과 전체보기는 과목 구분을 선택한 상태에서만 가능합니다.');
 			else
 				this.filter({'dept':dept,'type':classification});
+		},
+		clearList:function()
+		{
+			LectureList.contents.empty(); 
+			LectureList.buildTabs(LectureList.contents.getChildren().length);
+		},
+		addToListMultiple:function(obj)
+		{
+			LectureList.contents.empty(); 
+			var max = NUM_ITEMS_PER_LIST;
+			var count=0;
+			var content = new Element('div',{'class':'lecture_content'}).inject(LectureList.contents);
+			var currCategory;
+			obj.each(function(item)
+			{
+				var key = item.classification;
+				if (currCategory != key) {
+					currCategory = key;
+					if(count<max) new Element('h4',{'html':currCategory}).inject(content);
+				}
+
+				if (count>=max) {
+					content = new Element('div',{'class':'lecture_content'}).inject(this.contents);
+					new Element('h4',{'html':currCategory}).inject(content);
+					count=0;
+				} else
+					count++;
+
+				var el = new Element('a',{'html':item.title}).inject(content);
+				UDF.clickable(el);
+				
+				el.addEvent('mousedown',Timetable.addLecture.bindWithEvent(Timetable,item));
+				el.addEvent('mouseover',Timetable.onMouseoverTemp.bind(Timetable,item));
+				el.addEvent('mouseout',Timetable.onMouseout.bind(Timetable,item));
+			}.bind(LectureList));
+			LectureList.buildTabs(LectureList.contents.getChildren().length);
+			new Mootabs('lecture_tabs','lecture_contents');
 		},
 		filter:function(conditions)
 		{
@@ -377,44 +409,12 @@
 						var resObj = JSON.decode(responseText);
 						if (resObj.length == 0) {
 
-							LectureList.contents.empty(); 
-							LectureList.buildTabs(LectureList.contents.getChildren().length);
-
+							LectureList.clearList();
 							Notifier.setErrorMsg('과목 정보를 찾지 못했습니다.');
 
 						} else {
 
-							LectureList.contents.empty(); 
-							var max = NUM_ITEMS_PER_LIST;
-							var count=0;
-							var content = new Element('div',{'class':'lecture_content'}).inject(LectureList.contents);
-							var currCategory;
-							var category = (conditions.type=="전체보기") ? 'classification' : 'dept';
-							resObj.each(function(item)
-							{
-								var key = item.classification;
-								if (currCategory != key) {
-									currCategory = key;
-									if(count<max) new Element('h4',{'html':currCategory}).inject(content);
-								}
-
-								if (count>=max) {
-									content = new Element('div',{'class':'lecture_content'}).inject(this.contents);
-									new Element('h4',{'html':currCategory}).inject(content);
-									count=0;
-								} else
-									count++;
-
-								var el = new Element('a',{'html':item.title}).inject(content);
-								UDF.clickable(el);
-								
-								el.addEvent('mousedown',Timetable.addLecture.bindWithEvent(Timetable,item));
-								el.addEvent('mouseover',Timetable.onMouseoverTemp.bind(Timetable,item));
-								el.addEvent('mouseout',Timetable.onMouseout.bind(Timetable,item));
-							}.bind(LectureList));
-							LectureList.buildTabs(LectureList.contents.getChildren().length);
-							new Mootabs('lecture_tabs','lecture_contents');
-
+							LectureList.addToListMultiple(resObj);
 							Notifier.setMsg('검색 결과를 확인하세요.');
 						}
 					} catch(e) {
@@ -556,7 +556,7 @@
 				return_button.addEvent('click', function() {
 					$('lecturelist-filter').setStyle('display','block');
 					$('lecturelist-range').set('html', '');
-					var dept = LectureList.dept.options[LectureList.dept.selectedIndex].text;
+					var dept = LectureList.dept.options[LectureList.dept.selectedIndex].value;
 					var classification = LectureList.classf.options[LectureList.classf.selectedIndex].text;
 					LectureList.filter({dept:dept, type:classification});
 				});
@@ -609,7 +609,7 @@
 		},
 		onLoad:function()
 	   	{
-			var initData = JSON.decode($('timetable_init_json').get('value'));
+			var initData = Data.MyLectures;
 			initData.each(function(arr,key)
 			{
 				var credit=0,au=0;
@@ -627,8 +627,13 @@
 	   	},
 		registHandlers:function()
 	   	{
-			$('clean_table').addEvent('click',this.deleteLecture.bindWithEvent(this,null));
+			$('action-cleanTable').addEvent('click',this.deleteLecture.bindWithEvent(this,null));
+			$('action-print').addEvent('click',this.print.bindWithEvent(this));
 	   	},
+	   	print:function()
+	   	{
+	   		Notifier.setErrorMsg('아직 구현되지 않았습니다. =3');
+		},
 		onMouseout:function()
 		{
 			$('add_credit').empty();
@@ -655,6 +660,8 @@
 						if (resObj.result=='OK')
 						{
 							Timetable.update(resObj);
+							Timetable.overlap.fade('out');
+							
 							Notifier.setMsg('<strong>'+obj.title+'</strong> 추가 되었습니다');
 						}
 						else
@@ -800,6 +807,7 @@
 			Map.find(classroom);
 
 
+			this.overlap.fade('show');
 			this.overlap.setStyle('display','block');
 			this.overlap.empty();
 
@@ -811,6 +819,7 @@
 		},
 		buildlmodules:function(wrap,obj,bgcolor_index,enableDelete)
 		{
+			var is_first = true;
 			obj.times.each(function(time)
 			{
 				var lmodule=new Element('div',{'class':'lmodule', 'id':obj.code});
@@ -822,32 +831,56 @@
 					bgcolor_highlighted = '#f48c39';
 				} else {
 					bgcolor = UDF.modulecolors[bgcolor_index];
-					bgcolor_highlighted = UDF.modulecolors_highlighted[bgcolor_index];
+					bgcolor_highlighted = '#ffd02b';
 				}
 				bg.inject(lmodule);
 				textbody.inject(lmodule);
 				var html;
-				textbody.set('html','<strong>'+obj.title+'</strong><br />'+obj.prof+'<br />'+obj.classroom+'<br />');
-				if (enableDelete) 
-					lmodule.addEvent('click',Timetable.deleteLecture.bindWithEvent(Timetable,obj));
+				if (enableDelete) {
+					textbody.set('html','<a class="cursor"><strong>'+obj.title+'</strong></a><br />'+obj.prof+'<br />'+obj.classroom+'<br />');
+					var deletelink = textbody.getElements('a');
+					deletelink.addEvent('mousedown', function(ev) { ev.stopPropagation(); });
+					deletelink.addEvent('click',Timetable.deleteLecture.bindWithEvent(Timetable,obj)); 
+				} else
+					textbody.set('html','<strong>'+obj.title+'</strong><br />'+obj.prof+'<br />'+obj.classroom+'<br />');
 
 				var left = time.day*100+3;
 				var top = Math.floor((time.start-480)/30)*21;
 				var height =Math.floor((time.end-time.start)/30)*21 -2;
 
 				bg.set({'styles':{'background':bgcolor}});
-				lmodule.addEvent('mousedown', function(ev) {
-					ev.stopPropagation();
-				});
-				lmodule.addEvent('mouseover', Timetable.onMouseover.bind(Timetable,obj));
-				lmodule.addEvent('mouseover', function(ev) {
-					bg.set({'styles':{'background':bgcolor_highlighted}});
-				});
-				lmodule.addEvent('mouseout', function(ev) {
-					bg.set({'styles':{'background':bgcolor}});
-				});
+
+				if (enableDelete) {
+					lmodule.addEvent('mouseover', Timetable.onMouseover.bind(Timetable,obj));
+
+					// 같은 과목의 여러 lmodule 중 하나에만 마우스를 올려도 다함께 highlight되도록 하는 처리
+					lmodule.addEvent('mouseover', function(ev) {
+						$('timetable-item-'+obj.course_no+obj['class']).retrieve('mymodules').each(function(item, index) {
+							item.getChildren('.bg').setStyle('background',bgcolor_highlighted);
+						});
+					});
+					lmodule.addEvent('mouseout', function(ev) {
+						$('timetable-item-'+obj.course_no+obj['class']).retrieve('mymodules').each(function(item, index) {
+							item.getChildren('.bg').setStyle('background',bgcolor);
+						});
+					});
+					// 처음 추가되는 lmodule 항목은 고유 ID를 가지며, 여기서 element storage를 이용해 자신과 다른 lmodule들의 reference를 저장한다.
+					if (is_first) {
+						lmodule.set('id', 'timetable-item-'+obj.course_no+obj['class']);
+						is_first = false;
+					}
+				}
+
+				// DOM에 lmodule 삽입
 				lmodule.set({'styles':{'left':left,'top':top,'height':height}});
 				lmodule.inject(wrap);
+
+				// 고유 ID를 가진 lmodule 항목에 reference 추가
+				if (enableDelete) {
+					var modules = $('timetable-item-'+obj.course_no+obj['class']).retrieve('mymodules', []);
+					modules.push(lmodule);
+					$('timetable-item-'+obj.course_no+obj['class']).store('mymodules', modules);
+				}
 			}.bind(this));
 		}
 	};
@@ -862,6 +895,17 @@
 	});
 	//]]>
 	</script>
+	<!-- TODO: script type="text/javascript" src="/media/js/timetable.js"></script -->
+	<script type="text/javascript">
+	//<![CDATA[
+		Data.MyLectures = {{my_lectures|safe}};
+		Data.CurrentYear = {{current_year}};
+		Data.CurrentTerm = {{current_semester}};
+		Data.NextYear = {{next_year}};
+		Data.NextTerm = {{next_semester}};
+		Data.initialLectureList = {{lecture_list|safe}};
+	///]]>
+	</script>
 {% endblock %}
 {% block content %}
 	<div id="left-side">
@@ -872,20 +916,20 @@
 				<select id="department" style="width:100%">
 					<optgroup label="소속학과/관심학과">
 						{% if user.is_authenticated and not user.is_superuser %}
-						{% ifnotequal user.userprofile.department.name "무학과" %}
-						<option value="{{ user.userprofile.department.code }}">{{ user.userprofile.department.name }}</option>
+						{% ifnotequal user.userprofile.department.id 10000 %}
+						<option value="{{ user.userprofile.department.id }}">{{ user.userprofile.department.name }}</option>
 						{% endifnotequal %}
 						{% for item in user.userprofile.favorite_departments.all %}
-						<option value="{{ item.code }}">{{ item.name }}</option>
+						<option value="{{ item.id }}">{{ item.name }}</option>
 						{% endfor %}
 						{% else %}
-						<option value="HSS">인문사회과학부</option>
+						<option value="2044">인문사회과학부</option>
 						{% endif %}
 					</optgroup>
 					<optgroup label="전체 목록">
-						<option value="0">전체보기</option>
-						{% for item in departments %}
-						<option value="{{ item.code }}">{{ item.name }}</option>
+						<option value="-1">전체보기</option>
+						{% for item in departments %}{# Firefox에서는 사용자가 선택한 form 값을 자동 저장하여 새로고침했을 때 아래의 selected 속성이 무시되는 문제가 있음. #}
+						<option value="{{ item.id }}"{% ifequal item.id 2044 %} selected="selected"{% endifequal %}>{{ item.name }}</option>
 						{% endfor %}
 					</optgroup>
 				</select>
@@ -926,9 +970,6 @@
 		</div>
 	</div>
 	<div id="center">
-		<textarea id="timetable_init_json" class="none">
-{{my_lectures|safe}}
-		</textarea>
 		<div id="center-top">
 			<table class="lecture-info">
 				<thead>
@@ -992,8 +1033,8 @@
 				</div>
 			</div>
 			<div class="right">
-				<a id="clean_table" style="cursor:pointer">초기화</a> |
-				<a href="#">인쇄</a>
+				<a id="action-cleanTable" style="cursor:pointer">초기화</a> |
+				<a id="action-print" href="#">인쇄</a>
 			</div>
 			&nbsp;
 		</div>
