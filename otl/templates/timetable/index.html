@@ -133,8 +133,11 @@
 	});
 
 	var UDF = {
-		days : ['월','화','수','목','금'],
-		modulecolors : ['#FFC7FE','#FFCECE','#DFE8F3','#D1E9FF','#D2F1EE','#FFEAD1','#E1D1FF','#FAFFC1','#D4FFC1','#DEDEDE','#BDBDBD'],
+		days: ['월','화','수','목','금'],
+		modulecolors:
+			['#FFC7FE','#FFCECE','#DFE8F3','#D1E9FF','#D2F1EE','#FFEAD1','#E1D1FF','#FAFFC1','#D4FFC1','#DEDEDE','#BDBDBD'],
+		modulecolors_highlighted:
+			['#feb1fd','#ffb5b5','#c9dcf2','#b7dbfd','#b5f1eb','#fbd8ae','#d4bdfd','#f1f89f','#b9f2a0','#cbc7c7','#aca6a6'],
 		getRandomColor:function()
 		{
 			return UDF.modulecolors[Math.floor(Math.random()*10)];
@@ -143,7 +146,7 @@
 		{
 			//index =index*3;
 			//index = UDF.modulecolors.length % index;
-			return UDF.modulecolors[index];
+			return index % UDF.modulecolors.length;
 		},
 		cumulativeOffset : function(el)
 		{
@@ -406,7 +409,7 @@
 								UDF.clickable(el);
 								
 								el.addEvent('mousedown',Timetable.addLecture.bindWithEvent(Timetable,item));
-								el.addEvent('mouseover',Timetable.onMouseover.bind(Timetable,item));
+								el.addEvent('mouseover',Timetable.onMouseoverTemp.bind(Timetable,item));
 								el.addEvent('mouseout',Timetable.onMouseout.bind(Timetable,item));
 							}.bind(LectureList));
 							LectureList.buildTabs(LectureList.contents.getChildren().length);
@@ -756,9 +759,8 @@
 			Data.Timetables[Timetable.tabs.getTableId()] = {credit:credit,au:au};
 			Timetable.tabs.updateData();
 	   	},
-		onMouseover: function(obj)
-		{
-
+	   	updateInfoPanel: function(obj)
+	   	{
 			for (key in obj) {
 				if ($('DS_'+key)!=null || key=='au') {
 					var item = obj[key];
@@ -766,7 +768,9 @@
 						switch (key) {
 						case 'examtime':
 							var time = UDF.NumericTimeToReadable(item.start) + ' ~ ' + UDF.NumericTimeToReadable(item.end);
+							var name_and_time = obj.title+' '+time;
 							$('DS_'+key).set('text', UDF.days[item.day]+time);
+							$('add_examtime'+item.day).set('text', name_and_time);
 							break;
 						case 'credit':
 							if (item > 0)
@@ -787,7 +791,10 @@
 					}
 				}
 			}
-
+		},
+		onMouseoverTemp: function(obj)
+		{
+			this.updateInfoPanel(obj);
 			var tokens = obj.classroom.split(' ');
 			var classroom = tokens.slice(0, tokens.length-1).join(' ');
 			Map.find(classroom);
@@ -796,32 +803,49 @@
 			this.overlap.setStyle('display','block');
 			this.overlap.empty();
 
-			var bgcolor = '#FF9933';
-			this.buildlmodules(this.overlap,obj,bgcolor,false);
+			this.buildlmodules(this.overlap,obj,-1,false);
 		},
-		buildlmodules:function(wrap,obj,bgcolor,enableDelete)
+		onMouseover: function(obj)
+		{
+			this.updateInfoPanel(obj);
+		},
+		buildlmodules:function(wrap,obj,bgcolor_index,enableDelete)
 		{
 			obj.times.each(function(time)
 			{
-				var lmodule=new Element('div',{'class':'lmodule'});
+				var lmodule=new Element('div',{'class':'lmodule', 'id':obj.code});
 				var bg=new Element('div',{'class':'bg'});
 				var textbody=new Element('div',{'class':'textbody'});
+				var bgcolor, bgcolor_highlighted;
+				if (bgcolor_index == -1) {
+					bgcolor = '#f93';
+					bgcolor_highlighted = '#f48c39';
+				} else {
+					bgcolor = UDF.modulecolors[bgcolor_index];
+					bgcolor_highlighted = UDF.modulecolors_highlighted[bgcolor_index];
+				}
 				bg.inject(lmodule);
 				textbody.inject(lmodule);
 				var html;
+				textbody.set('html','<strong>'+obj.title+'</strong><br />'+obj.prof+'<br />'+obj.classroom+'<br />');
 				if (enableDelete) 
-				{
-					textbody.set('html','<a class="cursor"><strong>'+obj.title+'</strong></a><br />'+obj.prof+'<br />'+obj.classroom+'<br />');
-					textbody.getElements('a').addEvent('mousedown',Timetable.deleteLecture.bindWithEvent(Timetable,obj));
-				}
-				else
-					textbody.set('html','<strong>'+obj.title+'</strong><br />'+obj.prof+'<br />'+obj.classroom+'<br />');
+					lmodule.addEvent('click',Timetable.deleteLecture.bindWithEvent(Timetable,obj));
 
 				var left = time.day*100+3;
 				var top = Math.floor((time.start-480)/30)*21;
 				var height =Math.floor((time.end-time.start)/30)*21 -2;
 
 				bg.set({'styles':{'background':bgcolor}});
+				lmodule.addEvent('mousedown', function(ev) {
+					ev.stopPropagation();
+				});
+				lmodule.addEvent('mouseover', Timetable.onMouseover.bind(Timetable,obj));
+				lmodule.addEvent('mouseover', function(ev) {
+					bg.set({'styles':{'background':bgcolor_highlighted}});
+				});
+				lmodule.addEvent('mouseout', function(ev) {
+					bg.set({'styles':{'background':bgcolor}});
+				});
 				lmodule.set({'styles':{'left':left,'top':top,'height':height}});
 				lmodule.inject(wrap);
 			}.bind(this));
@@ -916,9 +940,9 @@
 				</thead>
 				<tbody>
 					<tr>
-						<td id="DS_classroom"></td>
-						<td id="DS_examtime"></td>
-						<td id="DS_remarks" class="end">영어강의</td>
+						<td id="DS_classroom">&nbsp;</td>
+						<td id="DS_examtime">&nbsp;</td>
+						<td id="DS_remarks" class="end">&nbsp;</td>
 					</tr>
 				</tbody>
 			</table>
@@ -936,10 +960,10 @@
 				</thead>
 				<tbody>
 					<tr>
-						<td id="DS_course_no"></td>
-						<td id="DS_class"></td>
-						<td id="DS_title"><p></p></td>
-						<td id="DS_prof"><p></p></td>
+						<td id="DS_course_no">&nbsp;</td>
+						<td id="DS_class">&nbsp;</td>
+						<td id="DS_title"><p>&nbsp;</p></td>
+						<td id="DS_prof"><p>&nbsp;</p></td>
 						<td id="DS_lec_time">0</td>
 						<td id="DS_lab_time">0</td>
 						<td id="DS_credit" class="end">0</td>
@@ -1053,13 +1077,11 @@
 		<div id="examtable">
 			<table cellspacing="0" cellpadding="0" border="0">
 				<tr>
-					<th colspan="2">
-				시험시간표
-					</th>
+					<th colspan="2">시험시간표</th>
 				</tr>
 				<tr>
 					<td style="width:16px">월</td>
-					<td class="end"><span id="examtime1">자연어 처리 14:00~15:00</span><span id="add_examtime1" class="blue"></span></td>
+					<td class="end"><span id="examtime1"></span><span id="add_examtime1" class="blue"></span></td>
 				</tr>
 				<tr class="even">
 					<td>화</td>
