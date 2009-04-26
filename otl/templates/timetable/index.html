@@ -353,7 +353,10 @@
 		{
 			var dept = this.dept.options[this.dept.selectedIndex].text;
 			var classification = this.classf.options[this.classf.selectedIndex].text;
-			this.filter({'dept':dept,'type':classification});
+			if (dept == '전체보기' && classification == '전체보기')
+				alert('학과 전체보기는 과목 구분을 선택한 상태에서만 가능합니다.');
+			else
+				this.filter({'dept':dept,'type':classification});
 		},
 		filter:function(conditions)
 		{
@@ -856,6 +859,7 @@
 						{% endfor %}
 					</optgroup>
 					<optgroup label="전체 목록">
+						<option value="0">전체보기</option>
 						{% for item in departments %}
 						<option value="{{ item.code }}">{{ item.name }}</option>
 						{% endfor %}

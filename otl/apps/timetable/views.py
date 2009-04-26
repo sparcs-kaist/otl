@@ -36,7 +36,9 @@ def search(request):
 	lectures = Lecture.objects.annotate(num_classtimes=Count('classtime')).filter(year=year, semester=semester, num_classtimes__gt=0)
 	
 	try:
-		if department != None:
+		if department == u'전체보기' and type == u'전체보기':
+			return HttpResponseBadRequest()
+		if department != None and department != u'전체보기':
 			lectures = lectures.filter(department__name__exact=department)
 		if type != None and type != u'전체보기':
 			lectures = lectures.filter(type__exact=type)
