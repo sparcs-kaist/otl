@@ -45,14 +45,16 @@ def search(request):
 		if day_begin != None and day_end != None and time_begin != None and time_end != None:
 			if day_begin == day_end:
 				lectures = lectures.filter(classtime__day__exact=int(day_begin),
-				                           classtime__begin__gte=ClassTime.numeric_time_to_obj(int(time_begin)), classtime__end__lte=ClassTime.numeric_time_to_obj(int(time_end)))
+				                           classtime__begin__gte=ClassTime.numeric_time_to_obj(int(time_begin)),
+				                           classtime__end__lte=ClassTime.numeric_time_to_obj(int(time_end)))
 			else:
 				lectures = lectures.filter(classtime__day__gte=int(day_begin), classtime__day__lte=int(day_end),
-				                           classtime__begin__gte=ClassTime.numeric_time_to_obj(int(time_begin)), classtime__end__lte=ClassTime.numeric_time_to_obj(int(time_end)))
+				                           classtime__begin__gte=ClassTime.numeric_time_to_obj(int(time_begin)),
+				                           classtime__end__lte=ClassTime.numeric_time_to_obj(int(time_end)))
 	except (TypeError, ValueError):
 		return HttpResponseBadRequest()
 
-	lectures = lectures.order_by('type').distinct()
+	lectures = lectures.order_by('type', 'code').distinct()
 
 	output = _lectures_to_output(lectures)
 	if settings.DEBUG:
@@ -178,7 +180,7 @@ def _lectures_to_output(lectures, conv_to_json=True):
 		all.append(item)
 	if conv_to_json:
 		io = StringIO()
-		json.dump(all, io, ensure_ascii=False, indent=4)
+		json.dump(all, io, ensure_ascii=False, indent=4, sort_keys=False)
 		return io.getvalue()
 	else:
 		return all

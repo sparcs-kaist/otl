@@ -390,7 +390,7 @@
 							var category = (conditions.type=="전체보기") ? 'classification' : 'dept';
 							resObj.each(function(item)
 							{
-								var key = item.category;
+								var key = item.classification;
 								if (currCategory != key) {
 									currCategory = key;
 									if(count<max) new Element('h4',{'html':currCategory}).inject(content);
