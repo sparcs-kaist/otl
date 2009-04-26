@@ -1,6 +1,6 @@
 from django.conf.urls.defaults import *
 from django.contrib import admin
-from django.http import HttpResponseRedirect
+from django.http import *
 
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
@@ -19,6 +19,7 @@ urlpatterns = patterns('',
     (ur'^board/', include('otl.apps.board.urls')),
     (ur'^accounts/', include('otl.apps.accounts.urls')),
     (ur'^about/', 'otl.apps.main.views.about'),
+    (ur'^favicon.ico$', lambda request: HttpResponseNotFound()),
 
     (ur'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': './media'}),
     (ur'^admin/(.*)', admin.site.root),
