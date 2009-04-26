@@ -50,7 +50,7 @@ class Command(BaseCommand):
 					lecture.code,
 					lecture.year,
 					lecture.semester,
-					lecture.department.num_id,
+					lecture.department.id,
 					lecture.class_no,
 				))
 
@@ -67,23 +67,24 @@ class Command(BaseCommand):
 				lecture_code = myrow[20]
 				lecture_class_no = myrow[3].strip()
 				department_no = int(lecture_no[0:2])
+				department_id = int(myrow[4])
 				department_code = rx_dept_code.match(lecture_code).group(1)
 
 				# Update department info.
-				if prev_department != department_no:
+				if prev_department != department_id:
 					try:
-						department = Department.objects.get(num_id = department_no)
+						department = Department.objects.get(id = department_id)
 						print u'Updating department: %s' % department
 					except Department.DoesNotExist:
-						department = Department(num_id = department_no)
-						print u'Adding department: %d...' % department_no
-					department.dept_id = int(myrow[4])
+						department = Department(id = department_id)
+						print u'Adding department: %s(%d)...' % (department_code, department_id)
+					department.num_id = department_no
 					department.code = department_code
 					department.name = myrow[5]
 					department.name_en = myrow[6]
 					department.save()
 
-				prev_department = department_no
+				prev_department = department_id
 
 				# Extract lecture info.
 				print u'Retreiving %s: %s [%s]...' % (lecture_code, myrow[7], lecture_class_no)
@@ -91,7 +92,7 @@ class Command(BaseCommand):
 					'code': lecture_no,
 					'year': int(myrow[0]),
 					'semester': int(myrow[1]),
-					'department': Department.objects.get(pk=department_no),
+					'department': Department.objects.get(id = department_id),
 					'class_no': lecture_class_no,
 				}
 				# Convert the key to a hashable object (tuple).
@@ -153,7 +154,7 @@ class Command(BaseCommand):
 				'code': myrow[2],
 				'year': int(myrow[0]),
 				'semester': int(myrow[1]),
-				'department': Department.objects.filter(dept_id=int(myrow[4]))[0],
+				'department': Department.objects.filter(id = int(myrow[4]))[0],
 				'class_no': myrow[3].strip(),
 			}
 			try:
@@ -183,7 +184,7 @@ class Command(BaseCommand):
 				'code': myrow[2],
 				'year': int(myrow[0]),
 				'semester': int(myrow[1]),
-				'department': Department.objects.filter(dept_id=int(myrow[4]))[0],
+				'department': Department.objects.filter(id = int(myrow[4]))[0],
 				'class_no': myrow[3].strip(),
 			}
 			try:
@@ -210,7 +211,7 @@ class Command(BaseCommand):
 			# Mark deleted lectures to notify users.
 			print u'Marking deleted lectures...'
 			for key in lectures_not_updated:
-				lecture = Lecture.objects.get(**key)
+				lecture = Lecture.objects.get(*key)
 				lecture.deleted = True
 				print u'%s is marked as deleted...' % lecture
 				lecture.save()
@@ -218,4 +219,4 @@ class Command(BaseCommand):
 		db.close()
 
 		print u'\nTotal number of departments : %d' % Department.objects.count()
-		print u'Total number of lectures : %d' % lecture_count
+		print u'Total number of lectures newly added : %d' % lecture_count

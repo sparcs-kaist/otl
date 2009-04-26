@@ -61,7 +61,7 @@ def login(request):
 				profile.department = Department.objects.get(name__exact=request.POST['department'])
 				profile.student_id = request.POST['student_id']
 				profile.save()
-				profile.favorite_departments.add(Department.objects.get(code='HS')) # 인문사회과학부는 기본으로 추가
+				profile.favorite_departments.add(Department.objects.get(id=2044)) # 인문사회과학부는 기본으로 추가
 
 				auth.login(request, user)
 				return HttpResponseRedirect(next_url)

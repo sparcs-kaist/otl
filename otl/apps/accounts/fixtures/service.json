@@ -1,172 +1,172 @@
 [
 	{
+		"pk": "4",
+		"model": "accounts.department",
+		"fields": {"num_id": "8", "code": "URP", "name": "URP(학부생연구참여)"}
+	},
+	{
+		"pk": "2044",
+		"model": "accounts.department",
+		"fields": {"num_id": "10", "code": "HS", "name": "인문사회과학부"}
+	},
+	{
 		"pk": "8",
 		"model": "accounts.department",
-		"fields": {"dept_id": "4", "code": "URP", "name": "URP(학부생연구참여)"}
+		"fields": {"num_id": "14", "code": "ED", "name": "Freshman Design"}
 	},
 	{
-		"pk": "10",
+		"pk": "110",
 		"model": "accounts.department",
-		"fields": {"dept_id": "2044", "code": "HS", "name": "인문사회과학부"}
+		"fields": {"num_id": "20", "code": "PH", "name": "물리학과"}
 	},
 	{
-		"pk": "14",
+		"pk": "132",
 		"model": "accounts.department",
-		"fields": {"dept_id": "8", "code": "ED", "name": "Freshman Design"}
+		"fields": {"num_id": "21", "code": "BS", "name": "생명과학과"}
 	},
 	{
-		"pk": "20",
+		"pk": "150",
 		"model": "accounts.department",
-		"fields": {"dept_id": "110", "code": "PH", "name": "물리학과"}
+		"fields": {"num_id": "23", "code": "CH", "name": "화학과"}
 	},
 	{
-		"pk": "21",
+		"pk": "151",
 		"model": "accounts.department",
-		"fields": {"dept_id": "132", "code": "BS", "name": "생명과학과"}
+		"fields": {"num_id": "25", "code": "MAS", "name": "수리과학과"}
 	},
 	{
-		"pk": "23",
+		"pk": "331",
 		"model": "accounts.department",
-		"fields": {"dept_id": "150", "code": "CH", "name": "화학과"}
+		"fields": {"num_id": "31", "code": "IE", "name": "산업및시스템공학과"}
 	},
 	{
-		"pk": "25",
+		"pk": "340",
 		"model": "accounts.department",
-		"fields": {"dept_id": "151", "code": "MAS", "name": "수리과학과"}
+		"fields": {"num_id": "32", "code": "ID", "name": "산업디자인학과"}
 	},
 	{
-		"pk": "31",
+		"pk": "221",
 		"model": "accounts.department",
-		"fields": {"dept_id": "331", "code": "IE", "name": "산업및시스템공학과"}
+		"fields": {"num_id": "33", "code": "NQE", "name": "원자력및양자공학과"}
 	},
 	{
-		"pk": "32",
+		"pk": "421",
 		"model": "accounts.department",
-		"fields": {"dept_id": "340", "code": "ID", "name": "산업디자인학과"}
+		"fields": {"num_id": "34", "code": "MS", "name": "신소재공학과"}
 	},
 	{
-		"pk": "33",
+		"pk": "531",
 		"model": "accounts.department",
-		"fields": {"dept_id": "221", "code": "NQE", "name": "원자력및양자공학과"}
+		"fields": {"num_id": "35", "code": "EE", "name": "전기및전자공학전공"}
 	},
 	{
-		"pk": "34",
+		"pk": "532",
 		"model": "accounts.department",
-		"fields": {"dept_id": "421", "code": "MS", "name": "신소재공학과"}
+		"fields": {"num_id": "36", "code": "CS", "name": "전산학전공"}
 	},
 	{
-		"pk": "35",
+		"pk": "441",
 		"model": "accounts.department",
-		"fields": {"dept_id": "531", "code": "EE", "name": "전기및전자공학전공"}
+		"fields": {"num_id": "37", "code": "CE", "name": "건설및환경공학과"}
 	},
 	{
-		"pk": "36",
+		"pk": "451",
 		"model": "accounts.department",
-		"fields": {"dept_id": "532", "code": "CS", "name": "전산학전공"}
+		"fields": {"num_id": "39", "code": "CBE", "name": "생명화학공학과"}
 	},
 	{
-		"pk": "37",
+		"pk": "210",
 		"model": "accounts.department",
-		"fields": {"dept_id": "441", "code": "CE", "name": "건설및환경공학과"}
+		"fields": {"num_id": "40", "code": "ME", "name": "기계공학과"}
 	},
 	{
-		"pk": "39",
+		"pk": "3648",
 		"model": "accounts.department",
-		"fields": {"dept_id": "451", "code": "CBE", "name": "생명화학공학과"}
+		"fields": {"num_id": "41", "code": "BiS", "name": "바이오및뇌공학과"}
 	},
 	{
-		"pk": "40",
+		"pk": "3540",
 		"model": "accounts.department",
-		"fields": {"dept_id": "210", "code": "ME", "name": "기계공학과"}
+		"fields": {"num_id": "42", "code": "BEP", "name": "Business Economics 프로그램"}
 	},
 	{
-		"pk": "41",
+		"pk": "3539",
 		"model": "accounts.department",
-		"fields": {"dept_id": "3648", "code": "BiS", "name": "바이오및뇌공학과"}
+		"fields": {"num_id": "43", "code": "GCT", "name": "문화기술대학원"}
 	},
 	{
-		"pk": "42",
+		"pk": "3605",
 		"model": "accounts.department",
-		"fields": {"dept_id": "3540", "code": "BEP", "name": "Business Economics 프로그램"}
+		"fields": {"num_id": "46", "code": "MSE", "name": "의과학대학원"}
 	},
 	{
-		"pk": "43",
+		"pk": "3520",
 		"model": "accounts.department",
-		"fields": {"dept_id": "3539", "code": "GCT", "name": "문화기술대학원"}
+		"fields": {"num_id": "47", "code": "RE", "name": "로봇공학학제전공"}
 	},
 	{
-		"pk": "46",
+		"pk": "2710",
 		"model": "accounts.department",
-		"fields": {"dept_id": "3605", "code": "MSE", "name": "의과학대학원"}
+		"fields": {"num_id": "53", "code": "MGT", "name": "테크노경영대학원"}
 	},
 	{
-		"pk": "47",
+		"pk": "3617",
 		"model": "accounts.department",
-		"fields": {"dept_id": "3520", "code": "RE", "name": "로봇공학학제전공"}
+		"fields": {"num_id": "59", "code": "IMB", "name": "아이엠비에이전공"}
 	},
 	{
-		"pk": "53",
+		"pk": "3689",
 		"model": "accounts.department",
-		"fields": {"dept_id": "2710", "code": "MGT", "name": "테크노경영대학원"}
+		"fields": {"num_id": "66", "code": "STP", "name": "과학기술정책대학원프로그램"}
 	},
 	{
-		"pk": "59",
+		"pk": "3693",
 		"model": "accounts.department",
-		"fields": {"dept_id": "3617", "code": "IMB", "name": "아이엠비에이전공"}
+		"fields": {"num_id": "67", "code": "OSE", "name": "해양시스템공학과"}
 	},
 	{
-		"pk": "66",
+		"pk": "3694",
 		"model": "accounts.department",
-		"fields": {"dept_id": "3689", "code": "STP", "name": "과학기술정책대학원프로그램"}
+		"fields": {"num_id": "68", "code": "ISE", "name": "지적서비스공학과"}
 	},
 	{
-		"pk": "67",
+		"pk": "3692",
 		"model": "accounts.department",
-		"fields": {"dept_id": "3693", "code": "OSE", "name": "해양시스템공학과"}
+		"fields": {"num_id": "69", "code": "NST", "name": "나노과학기술학과"}
 	},
 	{
-		"pk": "68",
+		"pk": "2222",
 		"model": "accounts.department",
-		"fields": {"dept_id": "3694", "code": "ISE", "name": "지적서비스공학과"}
+		"fields": {"num_id": "70", "code": "BM", "name": "의과학학제전공"}
 	},
 	{
-		"pk": "69",
+		"pk": "2410",
 		"model": "accounts.department",
-		"fields": {"dept_id": "3692", "code": "NST", "name": "나노과학기술학과"}
+		"fields": {"num_id": "71", "code": "PSE", "name": "고분자학학제전공"}
 	},
 	{
-		"pk": "70",
+		"pk": "3406",
 		"model": "accounts.department",
-		"fields": {"dept_id": "2222", "code": "BM", "name": "의과학학제전공"}
+		"fields": {"num_id": "73", "code": "TE", "name": "정보통신공학학제전공"}
 	},
 	{
-		"pk": "71",
+		"pk": "3499",
 		"model": "accounts.department",
-		"fields": {"dept_id": "2410", "code": "PSE", "name": "고분자학학제전공"}
+		"fields": {"num_id": "79", "code": "SEP", "name": "소프트웨어전문가과정학제전공"}
 	},
 	{
-		"pk": "73",
+		"pk": "10022",
 		"model": "accounts.department",
-		"fields": {"dept_id": "3406", "code": "TE", "name": "정보통신공학학제전공"}
+		"fields": {"num_id": "22", "code": "MA", "name": "수학전공"}
 	},
 	{
-		"pk": "79",
+		"pk": "10024",
 		"model": "accounts.department",
-		"fields": {"dept_id": "3499", "code": "SEP", "name": "소프트웨어전문가과정학제전공"}
+		"fields": {"num_id": "24", "code": "MA", "name": "응용수학전공"}
 	},
 	{
-		"pk": "22",
+		"pk": "10000",
 		"model": "accounts.department",
-		"fields": {"dept_id": "10022", "code": "MA", "name": "수학전공"}
-	},
-	{
-		"pk": "24",
-		"model": "accounts.department",
-		"fields": {"dept_id": "10024", "code": "MA", "name": "응용수학전공"}
-	},
-	{
-		"pk": "0",
-		"model": "accounts.department",
-		"fields": {"dept_id": "10000", "code": "NONE", "name": "무학과"}
+		"fields": {"num_id": "0", "code": "NONE", "name": "무학과"}
 	}
 ]
