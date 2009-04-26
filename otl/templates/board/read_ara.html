@@ -5,7 +5,7 @@
 {% block content %}
 <h2>아라 Lecture 게시판</h2>
 {% for article in article_list %}
-<div class="article-container article-depth-{{article.depth}}">
+<div class="article-container{% ifnotequal article.depth 1 %} article-child{% endifnotequal %} article-depth-{{article.depth}}">
 	<h3>{{article.title}}</h3>
 	<div class="article-info">
 		<span class="nickname">nickname: {{article.author_nickname}}</span>

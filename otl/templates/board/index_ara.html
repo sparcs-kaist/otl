@@ -4,7 +4,7 @@
 {% endblock %}
 {% block content %}
 <h2>아라 Lecture 게시판</h2>
-<table id="board-arara" class="board-article-list">
+<table id="arara" class="article-list">
 	<thead>
 		<tr>
 			<th class="author">작성자</th>
@@ -16,7 +16,7 @@
 	</thead>
 	<tbody>
 	{% for article in article_list %}
-		<tr{% if forloop.counter|divisibleby:"2" %} class="even"{% endif %}{% if article.deleted %} class="deleted"{% endif %}>
+		<tr class="{% if forloop.counter|divisibleby:"2" %}even {% endif %}{% if article.deleted %}deleted{% endif %}">
 			<td class="author">{{article.author_nickname}}</td>
 			<td class="title"><a href="/board/lecture/{{article.id}}/?page={{page_no}}">{{article.title}}</a>{% if article.reply_count %} <span class="replies">[{{article.reply_count}}]</span>{% endif %}</td>
 			<td class="date">{{article.date|date:"Y/m/d"}}</td>
