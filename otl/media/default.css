@@ -144,6 +144,34 @@ label
     display:block;
 }
 
+.pages
+{
+	text-align: center;
+	font-size: 1.2em;
+	margin: 5px 0;
+}
+
+.pages a
+{
+	padding: 0 4px;
+	color: #444;
+	background: white;
+	text-decoration: none;
+}
+
+.pages a:hover
+{
+	color: #349;
+	background: #fcda64;
+	text-decoration: none;
+}
+
+.pages a.selected
+{
+	font-weight: bold;
+	background: #f4f4f4;
+}
+
 .left 
 {
     float:left;
