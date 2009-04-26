@@ -1,0 +1,15 @@
+@charset "utf-8";
+
+#notice-beta {
+	margin: 200px;
+}
+
+#notice-beta h2 {
+	font-size: 18pt;
+}
+
+#notice-beta p {
+	font-family: Trebuchet MS, Verdana, sans-serif;
+	font-size: 14pt;
+	line-height: 1.6;
+}

@@ -361,6 +361,12 @@
 	padding: 0;
 }
 
+#lecturelist-range button
+{
+	width: 100%;
+	padding: 2px;
+}
+
 #lecturelist p
 {
 	margin: 2px;

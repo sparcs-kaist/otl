@@ -256,13 +256,6 @@
 			this.dragHandler = this.onDrag.bindWithEvent(this);
 			this.dragEndHandler = this.onEnd.bindWithEvent(this);
 			this.dragmap.addEvent('mousedown',this.onMousedown.bindWithEvent(this));
-
-			$('test').addEvent('click',
-				function()
-				{
-					this.find(Data.Map.getRandom().name);
-				}.bind(this)
-			);
 		},
 		onMousedown:function(e)
 		{
@@ -845,8 +838,7 @@
 {% block content %}
 	<div id="left-side">
 		<div style="margin-bottom:10px">
-			<a id="test" >테스트</a>
-			<div id="lecturelist-range">&nbsp;</div>
+			<div id="lecturelist-range"></div>
 			<div id="lecturelist-filter">
 				<label>학과&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-size:11px">(<a href="/accounts/myinfo/">관심학과 설정</a>)</span></label>
 				<select id="department" style="width:100%">
