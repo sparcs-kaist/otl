@@ -801,11 +801,7 @@
 		},
 		onMouseoverTemp: function(obj)
 		{
-			this.updateInfoPanel(obj);
-			var tokens = obj.classroom.split(' ');
-			var classroom = tokens.slice(0, tokens.length-1).join(' ');
-			Map.find(classroom);
-
+			this.onMouseover(obj);
 
 			this.overlap.fade('show');
 			this.overlap.setStyle('display','block');
@@ -816,6 +812,9 @@
 		onMouseover: function(obj)
 		{
 			this.updateInfoPanel(obj);
+			var tokens = obj.classroom.split(' ');
+			var classroom = tokens.slice(0, tokens.length-1).join(' ');
+			Map.find(classroom);
 		},
 		buildlmodules:function(wrap,obj,bgcolor_index,enableDelete)
 		{
