@@ -33,6 +33,17 @@
 	{% else %}
 		<p>글이 없습니다. </p>
 	{% endif %}
+	<div class="list-pages">
+		{% if current_page.has_previous %}
+		<a class="prev-page" href="/groups/list/?id={{current_group.id}}&page={{current_page.previous_page_number}}">prev</a>
+		{% endif %}
+		{% for page in current_page.paginator.page_range %}
+		<a class="page{% ifequal page.number current_page.number %} selected{% endifequal %}" href="/groups/list/?id={{current_group.id}}&page={{page.number}}">{{page.number}}</a>
+		{% endfor %}
+		{% if current_page.has_next %}
+		<a class="next-page" href="/groups/list/?id={{current_group.id}}&page={{current_page.next_page_number}}">next</a>
+		{% endif %}
+	</div>
 {% else %}
 	<p>로그인하지 않았습니다. :)</p>
 {% endif %}
@@ -43,7 +54,7 @@
 	</form>
 </div>
 <div id ="search-form">
-	<form id="search-form" method="post" action="/groups/list/search/{{current_group.id}}">
+	<form id="search-form" method="get" action="/groups/list/search/?id={{current_group.id}}">
 		<p><label for="search-query">검색 : </label><input type="text" id="search-query" name="query" />
 		<input type="submit" value="검색"/></p>
 	</form>
@@ -76,13 +87,13 @@
 	{% endif %}
 			<div class="search-pages">
 			{% if search_page.has_previous %}
-			<a class="search-prev-page" href="?query={{search_code}}&search-page={{search_page.previous_page_number}}">Prev</a>
+			<a class="search-prev-page" href="/groups/list/search/?id={{current_group.id}}&query={{search_code}}&search-page={{search_page.previous_page_number}}">Prev</a>
 			{% endif %}
 			{% for page in search_page.paginator.page_range %}
-			<a class="search-page{% ifequal page.number search_page.number %} selected{% endifequal %}" href="?query={{search_code}}&search-page={{page.number}}">{{page.number}}</a>
+			<a class="search-page{% ifequal page.number search_page.number %} selected{% endifequal %}" href="/groups/list/search/?id={{current_group.id}}&query={{search_code}}&search-page={{page.number}}">{{page.number}}</a>
 			{% endfor %}
 			{% if search_page.has_next %}
-			<a class="search-next-page" href="?query={{search_code}}&search-page={{search_page.next_page_number}}">Next</a>
+			<a class="search-next-page" href="/groups/list/search/?id={{current_group.id}}&query={{search_code}}&search-page={{search_page.next_page_number}}">Next</a>
 			{% endif %}
 			</div>
 {% endblock %}

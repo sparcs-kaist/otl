@@ -11,7 +11,7 @@
 		{% for item in group_list %}
 		<li>
 		<h4>{{item.course_code}}: {{item.course_name}}</h4>
-		<a class="group_link" href="/groups/list/{{item.id}}">{{item.group_name}}</a>
+		<a class="group_link" href="/groups/list/?id={{item.id}}">{{item.group_name}}</a>
 		<a class="control-withdraw" href="/groups/withdraw/{{item.id}}">탈퇴</a>
 		</li>
 		{% endfor %}
@@ -37,7 +37,7 @@
 		{% for item in recently_added_list %}
 		<li>
 		<h4>{{item.course_code}}: {{item.course_name}} - {{item.comment}}</h4>
-			<a class="group-link" href="/groups/list/{{item.id}}">{{item.group_name}}</a>
+			<a class="group-link" href="/groups/list/?id={{item.id}}">{{item.group_name}}</a>
 			<a class="control-join" href="/groups/join/{{item.id}}">join</a>
 			<form id="join-form" method="post" action="/groups/join/{{item.id}}">
 				<div id="join-group">
@@ -48,6 +48,17 @@
 		</li>
 		{% endfor %}
 	</ul>
+	<div class="pages">
+		{% if current_page.has_previous %}
+		<a class="prev-page" href="/groups/morelist/?page={{current_page.previous_page_number}}">Prev</a>
+		{% endif %}
+		{% for page in current_page.paginator.page_range %}
+		<a class="page{% ifequal page.number current_page.number %} selected{% endifequal %}" href="/groups/morelist/?page={{page.number}}">{{page.number}}</a>
+		{% endfor %}
+		{% if current_page.has_next %}
+		<a class="next-page" href="/groups/morelist/?page={{current_page.next_page_number}}">Next</a>
+		{% endif %}
+	</div>
 </div>
 <h3>조모임 보드 찾아보기</h3>
 <form id="search-form" method="get" action="/groups/search/">
@@ -57,7 +68,7 @@
 				{% for item in search_list %}
 				<li>
 				<h4>{{item.year}} {{item.semester}} {{item.course_code}}: {{item.course_name}} - {{item.comment}}</h4>
-					<a class="search-link" href="/group/list/{{item.id}}">{{item.group_name}}</a>
+					<a class="search-link" href="/group/list/?id={{item.id}}">{{item.group_name}}</a>
 					<span class="submitter">올린이 : <a href="/accounts/view/{{item.maker.username}}">{{item.maker.username}}</a></span>
 					<a class="control-join" href="/group/join/{{item.id}}">Join</a>
 				</li>
@@ -68,13 +79,13 @@
 		</ul>
 			<div class="search-pages">
 			{% if search_page.has_previous %}
-			<a class="search-prev-page" href="?query={{search_code}}&search-page={{search_page.previous_page_number}}">Prev</a>
+			<a class="search-prev-page" href="/groups/search/?query={{search_code}}&search-page={{search_page.previous_page_number}}">Prev</a>
 			{% endif %}
 			{% for page in search_page.paginator.page_range %}
-			<a class="search-page{% ifequal page.number search_page.number %} selected{% endifequal %}" href="?query={{search_code}}&search-page={{page.number}}">{{page.number}}</a>
+			<a class="search-page{% ifequal page.number search_page.number %} selected{% endifequal %}" href="/groups/?query={{search_code}}&search-page={{page.number}}">{{page.number}}</a>
 			{% endfor %}
 			{% if search_page.has_next %}
-			<a class="search-next-page" href="?query={{search_code}}&search-page={{search_page.next_page_number}}">Next</a>
+			<a class="search-next-page" href="/groups/search/?query={{search_code}}&search-page={{search_page.next_page_number}}">Next</a>
 			{% endif %}
 		</div>
 </form>
