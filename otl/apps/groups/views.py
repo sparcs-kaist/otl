@@ -26,6 +26,7 @@ def index(request):
 
 	return render_to_response('groups/index.html', {
 		'section': 'groups',
+		'title': u'조모임',
 		'group_list': group_list,
 		'recently_added_list': group_pages,
 	}, context_instance=RequestContext(request))
@@ -95,6 +96,7 @@ def morelist(request):
 
 	return render_to_response('groups/index.html', {
 		'section': 'groups',
+		'title': u'조모임',
 		'group_list': group_list,
 		'recently_added_list': current_page.object_list,
 		'current_page': current_page,
@@ -110,6 +112,7 @@ def list(request, group_id):
 			current_page = article_pages.page(page)
 			return render_to_response('groups/list.html', {
 				'section': 'groups',
+				'title': u'조모임',
 				'current_group': group[0],
 				'article_list': current_page.object_list,
 				'article_page': current_page,
@@ -163,6 +166,7 @@ def article_search(request, group_id):
 			current_search_page = search_list.page(search_page)
 			return render_to_response('groups/list.html', {
 				'section': 'groups',
+				'title': u'조모임',
 				'current_group': group[0],
 				'article_list': current_page.object_list,
 				'article_page': current_page,

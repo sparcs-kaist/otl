@@ -18,6 +18,7 @@ def index(request):
 		my_lectures = [[], [], []]
 	return render_to_response('timetable/index.html', {
 		'section': 'timetable',
+		'title': u'모의시간표',
 		'departments': Department.objects.all(),
 		'my_lectures': json.dumps(my_lectures, indent=4, ensure_ascii=False),
 	}, context_instance=RequestContext(request))
