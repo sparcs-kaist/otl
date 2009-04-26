@@ -765,8 +765,8 @@
 					if (item!=null) {
 						switch (key) {
 						case 'examtime':
-							var time = UDF.NumericTimeToReadable(item.start) + '~' + UDF.NumericTimeToReadable(item.end);
-							$('DS_'+key).set('html', UDF.days[item.day]+time);
+							var time = UDF.NumericTimeToReadable(item.start) + ' ~ ' + UDF.NumericTimeToReadable(item.end);
+							$('DS_'+key).set('text', UDF.days[item.day]+time);
 							break;
 						case 'credit':
 							if (item > 0)

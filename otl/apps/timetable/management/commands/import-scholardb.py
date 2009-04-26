@@ -138,7 +138,7 @@ class Command(BaseCommand):
 			c.close()
 		
 		# Extract exam-time, class-time info.
-		print u'Extracting exam/class time information...'
+		print u'Extracting exam time information...'
 		c = db.cursor()
 		c.execute('SELECT * FROM view_OTL_exam_time WHERE lecture_year = %d AND lecture_term = %d' % (settings.NEXT_YEAR, settings.NEXT_SEMESTER))
 		exam_times = c.fetchall()
@@ -168,11 +168,11 @@ class Command(BaseCommand):
 			except Lecture.DoesNotExist:
 				print u'Exam-time for non-existing lecture %s; skip it...' % myrow[2]
 
+		print u'Extracting class time information...'
 		c = db.cursor()
 		c.execute('SELECT * FROM view_OTL_time WHERE lecture_year = %d AND lecture_term = %d' % (settings.NEXT_YEAR, settings.NEXT_SEMESTER))
 		class_times = c.fetchall()
 		c.close()
-
 		ClassTime.objects.filter(lecture__year__exact=settings.NEXT_YEAR, lecture__semester=settings.NEXT_SEMESTER).delete()
 		for row in class_times:
 			myrow = []
