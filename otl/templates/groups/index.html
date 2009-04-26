@@ -25,11 +25,11 @@
 	<a href="/groups/morelist">더보기</a>
 	<form id="create-form" method="post" action="/groups/create/">
 		<div id="create-group">
-			조모임 생성 : code  : <input type="text" id="code" name="code" value"" size="5"/>
-			course name : <input type="text" id="coursename" name="cname" value"" size="5"/>
-			group name : <input type="text" id="groupname" name="gname" value"" size="5"/>
-			password : <input type="text" id="passwd" name="passwd" value"" size="5"/>
-			comment : <input type="text" id="comment" name="comment" value"" size="5"/>
+			조모임 생성 : code  : <input type="text" id="code" name="code" value="" size="5"/>
+			course name : <input type="text" id="coursename" name="cname" value="" size="5"/>
+			group name : <input type="text" id="groupname" name="gname" value="" size="5"/>
+			password : <input type="password" id="passwd" name="passwd" value="" size="5"/>
+			comment : <input type="text" id="comment" name="comment" value="" size="5"/>
 			<input id="create-form" type="submit" value="생성" />
 		</div>
 	</form>
@@ -39,6 +39,12 @@
 			<h4>{{item.course_code}}: {{item.course_name}}</h4>
 			<a class="group-link" href="/groups/list/{{item.id}}">{{item.group_name}}</a>
 			<a class="control-join" href="/groups/join/{{item.id}}">join</a>
+			<form id="join-form" method="post" action="/groups/join/{{item.id}}">
+				<div id="join-group">
+					password : <input type="password" id="passwd" name="passwd" value="" size="5" />
+					<input id="join-form" type="submit" value="가입" />
+				</div>
+			</form>
 		</li>
 		{% endfor %}
 	</ul>
