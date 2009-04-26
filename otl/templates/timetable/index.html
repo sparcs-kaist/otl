@@ -29,7 +29,7 @@
 	Data.NextYear = {{next_year}};
 	Data.NextTerm = {{next_semester}};
 	Data.Lectures = []; // Initialized via ajax calls after page loading.
-
+	Data.Timetables = [];
 
 	/* Example of a lecture item.
 	Data.Lectures = 
@@ -58,16 +58,18 @@
 	*/
 
 	var Mootabs = new Class({
-		initialize: function(tabs, contents, trigerEvent) 
+		initialize: function(tabs, contents, trigerEvent, useAsTimetable)
 		{
-			if (trigerEvent==null) trigerEvent = 'mouseover';
+			if (trigerEvent==undefined) trigerEvent = 'mouseover';
 			this.data = [];
+			this.is_timetable = useAsTimetable ? true : false;
 
 			this.tabs = $(tabs).getChildren();
 			this.contents = $(contents).getChildren();
 			this.tabs.each(function(item,key) 
 			{
-				this.data[key] = {credit:0,au:0};
+				if (this.is_timetable)
+					Data.Timetables[key] = {credit:0, au:0};
 				item.addEvent(trigerEvent, function()
 					{
 						this.activate(key);
@@ -87,10 +89,12 @@
 		},
 		updateData:function()
 	   	{
-			$('total_credit').set('html',this.data[this.activeKey].credit);
-			$('total_au').set('html',this.data[this.activeKey].au);
-			$('total_credit').highlight('#FFFF00');
-			$('total_au').highlight('#FFFF00');
+	   		if (this.is_timetable) {
+				$('total_credit').set('html', Data.Timetables[this.activeKey].credit);
+				$('total_au').set('html', Data.Timetables[this.activeKey].au);
+				$('total_credit').highlight('#FFFF00');
+				$('total_au').highlight('#FFFF00');
+			}
 	   	},
 		activate: function(key)
 		{
@@ -594,7 +598,7 @@
 			this.grid = $('grid');
 			this.overlap = $('overlap_modules');
 			this.overlap.setStyle('display','none');
-			this.tabs = new Mootabs('timetable_tabs','timetable_contents','mousedown');
+			this.tabs = new Mootabs('timetable_tabs','timetable_contents','mousedown', true);
 			this.onLoad();
 			this.registHandlers();
 		},
@@ -612,7 +616,7 @@
 					var bgcolor = UDF.getColorByIndex(index);
 					Timetable.buildlmodules(wrap,obj,bgcolor,true);
 				});
-				Timetable.tabs.setData(key,{credit:credit,au:au});
+				Data.Timetables[key] = {credit:credit,au:au};
 			});
 			Timetable.tabs.updateData();
 	   	},
@@ -747,42 +751,40 @@
 				Timetable.buildlmodules(Timetable.tabs.getActiveTab(),obj,bgcolor,true);
 			});
 			
-			Timetable.tabs.setData(Timetable.tabs.getTableId(),{credit:credit,au:au});
+			Data.Timetables[Timetable.tabs.getTableId()] = {credit:credit,au:au};
 			Timetable.tabs.updateData();
 	   	},
 		onMouseover: function(obj)
 		{
 
-			var h = $H(obj);
-			var keys= h.getKeys();
-			keys.each(function(key)
-			{
-				if ($('DS_'+key)!=null)
-				{
-					var item = h.get(key);
-					if (item!=null)
-					{
-						if (key=='examtime')
-						{
+			for (key in obj) {
+				if ($('DS_'+key)!=null || key=='au') {
+					var item = obj[key];
+					if (item!=null) {
+						switch (key) {
+						case 'examtime':
 							var time = UDF.NumericTimeToReadable(item.start) + '~' + UDF.NumericTimeToReadable(item.end);
 							$('DS_'+key).set('html', UDF.days[item.day]+time);
-						}
-						else if (key=='credit'||key=='au')
-						{
-							$('add_'+key).set('text','(+'+item+')');
+							break;
+						case 'credit':
+							if (item > 0)
+								$('add_credit').set('text','(+'+item+')');
 							$('DS_'+key).set('text',item);
-						}
-						else if (key == 'title' || key == 'prof')
-						{
+							break;
+						case 'au':
+							if (item > 0)
+								$('add_au').set('text','(+'+item+')');
+							break;
+						case 'title':
+						case 'prof':
 							$('DS_'+key).set('html','<p>'+item+'</p>');
-						}
-						else
-						{
+							break;
+						default:
 							$('DS_'+key).set('text',item);
 						}
 					}
 				}
-			});
+			}
 
 			var tokens = obj.classroom.split(' ');
 			var classroom = tokens.slice(0, tokens.length-1).join(' ');
@@ -912,8 +914,8 @@
 				</thead>
 				<tbody>
 					<tr>
-						<td id="DS_classroom">공동실험실</td>
-						<td id="DS_examtime">12:00~13:00</td>
+						<td id="DS_classroom"></td>
+						<td id="DS_examtime"></td>
 						<td id="DS_remarks" class="end">영어강의</td>
 					</tr>
 				</tbody>
@@ -932,13 +934,13 @@
 				</thead>
 				<tbody>
 					<tr>
-						<td id="DS_course_no">MS213</td>
-						<td id="DS_class">A</td>
-						<td id="DS_title"><p>결정구조 및 회절</p></td>
-						<td id="DS_prof"><p>김민우</p></td>
-						<td id="DS_lec_time">2</td>
-						<td id="DS_lab_time">3</td>
-						<td id="DS_credit" class="end">3</td>
+						<td id="DS_course_no"></td>
+						<td id="DS_class"></td>
+						<td id="DS_title"><p></p></td>
+						<td id="DS_prof"><p></p></td>
+						<td id="DS_lec_time">0</td>
+						<td id="DS_lab_time">0</td>
+						<td id="DS_credit" class="end">0</td>
 					</tr>
 				</tbody>
 			</table>
