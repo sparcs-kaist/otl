@@ -201,7 +201,7 @@
 				window.clearTimeout(this.timeout);
 			this.timeout = window.setTimeout(function() {
 				$('message-wrap').fade('out');
-			}, 4000);
+			}, 10000);
 		},
 		setErrorMsg: function(msg)
 		{
@@ -213,7 +213,7 @@
 				window.clearTimeout(this.timeout);
 			this.timeout = window.setTimeout(function() {
 				$('message-wrap').fade('out');
-			}, 4000);
+			}, 10000);
 		},
 		clearIndicator: function()
 		{
@@ -611,20 +611,29 @@
 		onLoad:function()
 	   	{
 			var initData = Data.MyLectures;
-			initData.each(function(arr,key)
+			var have_deleted = false;
+			var deleted_list = '';
+			initData.each(function(arr, key)
 			{
 				var credit=0,au=0;
 				var wrap = Timetable.tabs.getTabByKey(key);
-				arr.each(function(obj,index)
+				arr.each(function(obj, index)
 				{
-					credit+=obj.credit;
-					au+=obj.au;
+					credit += obj.credit;
+					au += obj.au;
 					var bgcolor = UDF.getColorByIndex(index);
-					Timetable.buildlmodules(wrap,obj,bgcolor,true);
+					if (obj.deleted) {
+						deleted_list += (index==0 ? '' : ', ')+obj.course_no+' '+obj.title;
+						have_deleted = true;
+					} else
+						Timetable.buildlmodules(wrap,obj,bgcolor,true);
 				});
 				Data.Timetables[key] = {credit:credit,au:au};
 			});
 			Timetable.tabs.updateData();
+			if (have_deleted) {
+				Notifier.setErrorMsg('추가하신 과목 중 <strong>'+deleted_list+'</strong>이(가) 폐강되었습니다.');
+			}
 	   	},
 		registHandlers:function()
 	   	{

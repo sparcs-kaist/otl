@@ -152,7 +152,7 @@ def _search(**conditions):
 	except (TypeError, ValueError):
 		raise ValidationError()
 
-	return lectures.order_by('type', 'code').distinct()
+	return lectures.filter(deleted=False).order_by('type', 'code').distinct()
 
 def _lectures_to_output(lectures, conv_to_json=True):
 	all = []
@@ -182,6 +182,7 @@ def _lectures_to_output(lectures, conv_to_json=True):
 			'au': lecture.credit_au,
 			'fixed_num': lecture.limit,
 			'classroom': room,
+			'deleted': lecture.deleted,
 			'prof': lecture.professor,
 			'times': [{'day': schedule.day, 'start': schedule.get_begin_numeric(), 'end': schedule.get_end_numeric(), 'classroom': schedule.room_ko, 'type': schedule.get_type_display()} for schedule in lecture.classtime_set.all()],
 			'remarks': u'영어강의' if lecture.is_english else u'',
