@@ -6,7 +6,7 @@ from django.template import RequestContext
 from django.utils import simplejson as json
 from django.conf import settings
 from django.core.exceptions import *
-from django.contrib.auth.decorators import login_required
+from otl.utils.decorators import login_required_ajax
 from otl.apps.accounts.models import Department
 from otl.apps.timetable.models import Lecture, ExamTime, ClassTime, Syllabus, Timetable, OverlappingTimeError
 from StringIO import StringIO
@@ -25,8 +25,9 @@ def index(request):
 	
 	# Delete the timetable item if the corresponding lecture is marked as deleted.
 	# However, we already added this item to my_lectures to notify the user at least once.
-	for lecture in Lecture.objects.filter(deleted=True, year=settings.NEXT_YEAR, semester=settings.NEXT_SEMESTER):
-		Timetable.objects.filter(user=request.user, lecture=lecture).delete()
+	if request.user.is_authenticated():
+		for lecture in Lecture.objects.filter(deleted=True, year=settings.NEXT_YEAR, semester=settings.NEXT_SEMESTER):
+			Timetable.objects.filter(user=request.user, lecture=lecture).delete()
 
 	return render_to_response('timetable/index.html', {
 		'section': 'timetable',
@@ -47,7 +48,7 @@ def search(request):
 	except ValidationError:
 		return HttpResponseBadRequest()
 
-@login_required
+@login_required_ajax
 def add_to_timetable(request):
 	user = request.user
 	table_id = request.GET.get('table_id', None)
@@ -80,7 +81,7 @@ def add_to_timetable(request):
 		'data': _lectures_to_output(lectures, False),
 	}, ensure_ascii=False, indent=4))
 
-@login_required
+@login_required_ajax
 def delete_from_timetable(request):
 	user = request.user
 	table_id = request.GET.get('table_id', None)
@@ -106,7 +107,7 @@ def delete_from_timetable(request):
 		'data': _lectures_to_output(lectures, False),
 	}, ensure_ascii=False, indent=4))
 
-@login_required
+@login_required_ajax
 def view_timetable(request):
 	user = request.user
 	table_id = request.GET.get('table_id', None)

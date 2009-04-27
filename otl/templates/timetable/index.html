@@ -208,7 +208,7 @@
 			this.clearIndicator();
 			$('message').set('html', msg);
 			$('message-wrap').fade('show');
-			$('message-wrap').highlight('#F00');
+			$('message-wrap').highlight('#E55');
 			if (this.timeout)
 				window.clearTimeout(this.timeout);
 			this.timeout = window.setTimeout(function() {
@@ -419,13 +419,12 @@
 							Notifier.setMsg('검색 결과를 확인하세요.');
 						}
 					} catch(e) {
-						alert('Unexpected Error: '+e.message);
+						Notifier.setErrorMsg('오류가 발생하였습니다. ('+e.message+')');
 					}
 				},
 				onFailure:function(xhr)
 				{
-					alert('ERROR');
-					Notifier.clear();
+					Notifier.setErrorMsg('오류가 발생하였습니다. (요청 실패:'+xhr.status+')');
 				}
 			});
 			query = '';
@@ -683,27 +682,29 @@
 							{
 								case 'NOT_EXIST':
 									msg='강의가 존재하지 않습니다.' ;
-								break;
+									break;
 								case 'OVERLAPPED':
 								case 'DUPLICATED':
 									msg='강의 시간이 겹칩니다.';
-								break;
+									break;
 								case 'ERROR':
-									msg = '에러';
-								break;
+								default:
+									msg = '기타 오류입니다.';
+									break;
 							}
 							Notifier.setErrorMsg(msg);
 						}
 					}
 					catch(e)
 					{
-						alert('ERROR! '+e.message);
-						Notifier.clear();
+						Notifier.setErrorMsg('오류가 발생하였습니다. ('+e.message+')');
 					}
 				},
 				onFailure:function(xhr) {
-					alert('ERROR');
-					Notifier.clear();
+					if (xhr.status == 403)
+						Notifier.setErrorMsg('로그인해야 합니다.');
+					else
+						Notifier.setErrorMsg('오류가 발생하였습니다. (요청 실패:'+xhr.status+')');
 		  		}
 			});
 			myRequest.send('table_id='+table_id+'&lecture_id='+lecture_id);
@@ -737,27 +738,25 @@
 					{
 						try{
 							var resObj = JSON.decode(responseText);
-							if (resObj.result=='OK')
-							{
+							switch (resObj.result) {
+							case 'OK':
 								Timetable.update(resObj);
 								Notifier.setMsg(successMsg);
-							}
-							else 
-							{
-								//'NOT_EXIST', 'ERROR'
-								alert(resObj.result);
-								Notifier.clear();
+								break;
+							case 'NOT_EXIST':
+								Notifier.setErrorMsg('해당 강의가 추가되어 있지 않습니다.');
+								break;
+							default:
+								Notifier.setErrorMsg('기타 오류입니다.');
 							}
 						}
 						catch(e)
 						{
-							alert('ERROR');
-							Notifier.clear();
+							Notifier.setErrorMsg('오류가 발생하였습니다. ('+e.message+')');
 						}
 					},
 					onFailure:function(xhr) {
-						alert('ERROR');
-						Notifier.clear();
+						Notifier.setErrorMsg('오류가 발생하였습니다. (요청 실패:'+xhr.status+')');
 					}
 				});
 				myRequest.send(sendMsg);
