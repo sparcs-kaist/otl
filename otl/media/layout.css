@@ -22,12 +22,12 @@ body
 #gbar
 {
 	color:#eee;
-	height:20px;
+	height:33px;
 }
 
 #gbar-content
 {
-	height: 20px;
+	height: 33px;
 }
 
 
@@ -53,20 +53,20 @@ body
 
 #header
 {
-	background: url('images/bg_top.png') top center no-repeat;
+	background: url('images/bg_top.png') center top no-repeat;
 }
 #header-content
 {
 	position: relative;
 	border-bottom:5px solid #292929;
-	height: 70px;
+	height: 57px;
 }
 
 #header-content h2
 {
 	position: absolute;
 	left: 10px;
-	top: 27px;
+	top: 13px;
 	color:#000;
 	margin: 0;
 }

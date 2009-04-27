@@ -211,6 +211,9 @@
     background:transparent url('images/corner_br.gif') right bottom no-repeat;
 }
 
+#lecture_contents h4 {
+	font-size: 9pt;
+}
 
 #timetable_tabs
 {
@@ -386,6 +389,11 @@
 	width:16px;
 	height:16px;
 	margin-right:10px;
+}
+
+#examtable .day
+{
+	width: 15%;
 }
 
 #DS_classroom

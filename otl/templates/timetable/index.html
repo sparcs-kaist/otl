@@ -2,6 +2,7 @@
 {% block headers %}
 	<link rel="stylesheet" type="text/css" href="/media/table.css" />
 	<link rel="stylesheet" type="text/css" href="/media/timetable.css" />
+	<!--[if lte IE 6]><link rel="stylesheet" type="text/css" href="/media/timetable.ie6.css" /><![endif]-->
 	<script type="text/javascript" src="/media/js/mootools/mootools-1.2.1-core-yc.js"></script>
 	<script type="text/javascript" src="/media/js/mootools/mootools-1.2-more-yc.js"></script>
 	<script type="text/javascript">
@@ -1116,11 +1117,15 @@
 		</div>
 		<div id="examtable">
 			<table cellspacing="0" cellpadding="0" border="0">
+				<colgroup>
+					<col class="day" />
+					<col class="examtime" />
+				</colgroup>
 				<tr>
 					<th colspan="2">시험시간표</th>
 				</tr>
 				<tr>
-					<td style="width:16px">월</td>
+					<td>월</td>
 					<td class="end"><span id="examtime1"></span><span id="add_examtime1" class="blue"></span></td>
 				</tr>
 				<tr class="even">
