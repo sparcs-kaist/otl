@@ -100,7 +100,7 @@ class Command(BaseCommand):
 					lecture_no,
 					int(myrow[0]),
 					int(myrow[1]),
-					department_no,
+					department_id,
 					lecture_class_no,
 				)
 				try:
@@ -211,7 +211,14 @@ class Command(BaseCommand):
 			# Mark deleted lectures to notify users.
 			print u'Marking deleted lectures...'
 			for key in lectures_not_updated:
-				lecture = Lecture.objects.get(*key)
+				lecture_key = {
+					'code': key[0],
+					'year': key[1],
+					'semester': key[2],
+					'department': Department.objects.get(id = key[3]),
+					'class_no': key[4],
+				}
+				lecture = Lecture.objects.get(**lecture_key)
 				lecture.deleted = True
 				print u'%s is marked as deleted...' % lecture
 				lecture.save()
