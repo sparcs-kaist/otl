@@ -3,6 +3,7 @@ from django.shortcuts import render_to_response
 from django.db.models import Count
 from django.http import *
 from django.template import RequestContext
+from django.views.decorators.cache import cache_page
 from django.utils import simplejson as json
 from django.conf import settings
 from django.core.exceptions import *
@@ -37,6 +38,7 @@ def index(request):
 		'lecture_list': _lectures_to_output(_search(dept=u'2044', type=u'전체보기'))
 	}, context_instance=RequestContext(request))
 
+@cache_page(1800)
 def search(request):
 	try:
 		# Convert QueryDict to a normal python dict.

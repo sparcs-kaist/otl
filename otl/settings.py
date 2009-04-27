@@ -126,6 +126,8 @@ ARARA_USER = ''
 ARARA_PASSWORD = ''
 ARARA_SESSION_TIMEOUT = 3600
 
+CACHE_BACKEND = 'dummy:///'
+
 try:
 	from otl.settings_local import *
 except ImportError:
