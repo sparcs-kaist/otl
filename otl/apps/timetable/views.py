@@ -12,6 +12,8 @@ from otl.apps.timetable.models import Lecture, ExamTime, ClassTime, Syllabus, Ti
 from StringIO import StringIO
 
 def index(request):
+
+	# Read the current user's timetable.
 	if request.user.is_authenticated():
 		my_lectures = [_lectures_to_output(Lecture.objects.filter(year=settings.NEXT_YEAR, semester=settings.NEXT_SEMESTER, timetable__user=request.user, timetable__table_id=id), False) for id in xrange(0,3)]
 	else:
@@ -20,6 +22,12 @@ def index(request):
 		my_lectures_output = json.dumps(my_lectures, indent=4, ensure_ascii=False)
 	else:
 		my_lectures_output = json.dumps(my_lectures, ensure_ascii=False, sort_keys=False, separators=(',',':'))
+	
+	# Delete the timetable item if the corresponding lecture is marked as deleted.
+	# However, we already added this item to my_lectures to notify the user at least once.
+	for lecture in Lecture.objects.filter(deleted=True, year=settings.NEXT_YEAR, semester=settings.NEXT_SEMESTER):
+		Timetable.objects.filter(user=request.user, lecture=lecture).delete()
+
 	return render_to_response('timetable/index.html', {
 		'section': 'timetable',
 		'title': u'모의시간표',

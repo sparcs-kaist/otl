@@ -617,14 +617,16 @@
 			{
 				var credit=0,au=0;
 				var wrap = Timetable.tabs.getTabByKey(key);
+				var deleted_count = 0;
 				arr.each(function(obj, index)
 				{
 					credit += obj.credit;
 					au += obj.au;
 					var bgcolor = UDF.getColorByIndex(index);
 					if (obj.deleted) {
-						deleted_list += (index==0 ? '' : ', ')+obj.course_no+' '+obj.title;
+						deleted_list += (deleted_count==0 ? '' : ', ')+obj.course_no+' '+obj.title;
 						have_deleted = true;
+						deleted_count++;
 					} else
 						Timetable.buildlmodules(wrap,obj,bgcolor,true);
 				});
