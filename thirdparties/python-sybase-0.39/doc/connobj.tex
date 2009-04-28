@@ -1,0 +1,405 @@
+\subsection{CS_CONNECTION Objects}
+
+Calling the \method{ct_con_alloc()} method of a \class{CS_CONTEXT}
+object will create a \class{CS_CONNECTION} object.  When the
+\class{CS_CONNECTION} object is deallocated the Sybase
+\function{ct_con_drop()} function will be called for the connection.
+
+\class{CS_CONNECTION} objects have the following interface:
+
+\begin{memberdesc}[CS_CONNECTION]{ctx}
+This is a read only reference to the parent \class{CS_CONTEXT} object.
+This prevents the context from being dropped while the connection
+still exists.
+\end{memberdesc}
+
+\begin{memberdesc}[CS_CONNECTION]{strip}
+An integer which controls right whitespace stripping of \code{char}
+columns.  The default value is zero.
+\end{memberdesc}
+
+\begin{memberdesc}[CS_CONNECTION]{debug}
+An integer which controls printing of debug messages to the debug file
+established by the \function{set_debug()} function.  The default value
+is inherited from the \code{CS_CONTEXT} object.
+\end{memberdesc}
+
+\begin{methoddesc}[CS_CONNECTION]{ct_diag}{operation \optional{, \ldots}}
+Manage Sybase error messages for the connection.
+
+When \var{operation} is \code{CS_INIT} a single argument is accepted
+and the Sybase result code is returned.  The Sybase
+\function{ct_diag()} function is called like this:
+
+\begin{verbatim}
+status = ct_diag(conn, CS_INIT, CS_UNUSED, CS_UNUSED, NULL);
+\end{verbatim}
+
+When \var{operation} is \code{CS_MSGLIMIT} two additional arguments
+are expected; \var{type} and \var{num}.  The Sybase result code is
+returned.  The Sybase \function{ct_diag()} function is called like this:
+
+\begin{verbatim}
+status = ct_diag(conn, CS_MSGLIMIT, type, CS_UNUSED, &num);
+\end{verbatim}
+
+When \var{operation} is \code{CS_CLEAR} an additional \var{type}
+argument is accepted and the Sybase result code is returned.  The
+Sybase \function{ct_diag()} function is called like this:
+
+\begin{verbatim}
+status = ct_diag(conn, CS_CLEAR, type, CS_UNUSED, NULL);
+\end{verbatim}
+
+When \var{operation} is \code{CS_GET} two additional arguments are
+expected; \var{type} and \var{index}.  A tuple is returned which
+contains the Sybase result code and the requested \class{CS_SERVERMSG}
+or \class{CS_CLIENTMSG} message.  \code{None} is returned as the
+message object when the result code is not \code{CS_SUCCEED}.  The
+Sybase \function{ct_diag()} function is called like this:
+
+\begin{verbatim}
+status = ct_diag(conn, CS_GET, type, index, &msg);
+\end{verbatim}
+
+When \var{operation} is \code{CS_STATUS} an additional \var{type}
+argument is accepted.  A tuple is returned which contains the Sybase
+result code and the number of messages available for retrieval.  The
+Sybase \function{ct_diag()} function is called like this:
+
+\begin{verbatim}
+status = ct_diag(conn, CS_STATUS, type, CS_UNUSED, &num);
+\end{verbatim}
+
+When \var{operation} is \code{CS_EED_CMD} two additional arguments are
+expected; \var{type} and \var{index}.  A tuple is returned which
+contains the Sybase result code and a \class{CS_COMMAND} object which
+is used to retrieve extended error data.  The Sybase
+\function{ct_diag()} function is called like this:
+
+\begin{verbatim}
+status = ct_diag(conn, CS_EED_CMD, type, index, &eed);
+\end{verbatim}
+
+The following will retrieve and print all messages from a connection.
+
+\begin{verbatim}
+def print_msgs(conn, type):
+    status, num_msgs = conn.ct_diag(CS_STATUS, type)
+    if status != CS_SUCCEED:
+        return
+    for i in range(num_msgs):
+        status, msg = conn.ct_diag(CS_GET, type, i + 1)
+        if status != CS_SUCCEED:
+            continue
+        for attr in dir(msg):
+            print '%s: %s' % (attr, getattr(msg, attr))
+
+def print_all_msgs(conn):
+    print_msgs(conn, CS_SERVERMSG_TYPE)
+    print_msgs(conn, CS_CLIENTMSG_TYPE)
+    conn.ct_diag(CS_CLEAR, CS_ALLMSG_TYPE)
+\end{verbatim}
+\end{methoddesc}
+
+\begin{methoddesc}[CS_CONNECTION]{ct_cancel}{type}
+Calls the Sybase \function{ct_cancel()} function and returns the
+Sybase result code.  The Sybase \function{ct_cancel()} function is
+called like this:
+
+\begin{verbatim}
+status = ct_cancel(conn, NULL, type);
+\end{verbatim}
+\end{methoddesc}
+
+\begin{methoddesc}[CS_CONNECTION]{ct_connect}{\optional{server \code{= None}}}
+Calls the Sybase \function{ct_connect()} function and returns the
+Sybase result code.  The Sybase \function{ct_connect()} function is
+called like this:
+
+\begin{verbatim}
+status = ct_connect(conn, server, CS_NULLTERM);
+\end{verbatim}
+
+When no \var{server} argument is supplied the Sybase
+\function{ct_connect()} function is called like this:
+
+\begin{verbatim}
+status = ct_connect(conn, NULL, 0);
+\end{verbatim}
+\end{methoddesc}
+
+\begin{methoddesc}[CS_CONNECTION]{ct_cmd_alloc}{}
+Allocates and returns a new \class{CS_COMMAND} object which is used to
+send commands over the connection.  Calls the Sybase-CT
+\function{ct_callback()} function like this:
+
+\begin{verbatim}
+status = ct_cmd_alloc(conn, &cmd);
+\end{verbatim}
+
+The result is a tuple containing the Sybase result code and a new
+instance of the \class{CS_COMMAND} class. \code{None} is returned as
+the \class{CS_COMMAND} object when the result code is not
+\code{CS_SUCCEED}.
+\end{methoddesc}
+
+\begin{methoddesc}[CS_CONNECTION]{blk_alloc}{\optional{version \code{= BLK_VERSION_100}}}
+Allocates and returns a new \class{CS_BLKDESC} object which is used to
+perform bulkcopy over the connection.  Calls the Sybase
+\function{blk_alloc()} function like this:
+
+\begin{verbatim}
+status = blk_alloc(conn, version, &blk);
+\end{verbatim}
+
+The result is a tuple containing the Sybase result code and a new
+instance of the \class{CS_BLKDESC} class. \code{None} is returned as
+the \class{CS_BLKDESC} object when the result code is not
+\code{CS_SUCCEED}.
+\end{methoddesc}
+
+\begin{methoddesc}[CS_CONNECTION]{ct_close}{\optional{option \code{ = CS_UNUSED}}}
+Calls the Sybase \function{ct_close()} function like this:
+
+\begin{verbatim}
+status = ct_close(conn, option);
+\end{verbatim}
+
+Returns the Sybase result code.
+\end{methoddesc}
+
+\begin{methoddesc}[CS_CONNECTION]{ct_con_drop}{}
+Calls the Sybase \function{ct_con_drop()} function like this:
+
+\begin{verbatim}
+status = ct_con_drop(conn);
+\end{verbatim}
+
+Returns the Sybase result code.
+
+This method will be automatically called when the \class{CS_CONNECTION}
+object is deleted.  Applications do not need to call the method.
+\end{methoddesc}
+
+\begin{methoddesc}[CS_CONNECTION]{ct_con_props}{action, property \optional{, value}}
+Sets, retrieves and clears properties of the connection object.
+
+When \var{action} is \code{CS_SET} a compatible \var{value} argument
+must be supplied and the method returns the Sybase result code.  The
+Sybase-CT \function{ct_con_props()} function is called like this:
+
+\begin{verbatim}
+/* boolean property value */
+status = ct_con_props(conn, CS_SET, property, &bool_value, CS_UNUSED, NULL);
+
+/* int property value */
+status = ct_con_props(conn, CS_SET, property, &int_value, CS_UNUSED, NULL);
+
+/* string property value */
+status = ct_con_props(conn, CS_SET, property, str_value, CS_NULLTERM, NULL);
+\end{verbatim}
+
+When \var{action} is \code{CS_GET} the method returns a tuple
+containing the Sybase result code and the property value.  The
+Sybase-CT \function{ct_con_props()} function is called like this:
+
+\begin{verbatim}
+/* boolean property value */
+status = ct_con_props(conn, CS_GET, property, &bool_value, CS_UNUSED, NULL);
+
+/* int property value */
+status = ct_con_props(conn, CS_GET, property, &int_value, CS_UNUSED, NULL);
+
+/* string property value */
+status = ct_con_props(conn, CS_GET, property, str_buff, sizeof(str_buff), &buff_len);
+\end{verbatim}
+
+When \var{action} is \code{CS_CLEAR} the method returns the Sybase
+result code.  The Sybase-CT \function{ct_con_props()} function is
+called like this:
+
+\begin{verbatim}
+status = ct_con_props(conn, CS_CLEAR, property, NULL, CS_UNUSED, NULL);
+\end{verbatim}
+
+The recognised properties are:
+
+\begin{longtable}{l|l}
+\var{property} & type \\
+\hline
+\code{CS_ANSI_BINDS}           & \code{bool} \\
+\code{CS_ASYNC_NOTIFS}         & \code{bool} \\
+\code{CS_BULK_LOGIN}           & \code{bool} \\
+\code{CS_CHARSETCNV}           & \code{bool} \\
+\code{CS_CONFIG_BY_SERVERNAME} & \code{bool} \\
+\code{CS_DIAG_TIMEOUT}         & \code{bool} \\
+\code{CS_DISABLE_POLL}         & \code{bool} \\
+\code{CS_DS_COPY}              & \code{bool} \\
+\code{CS_DS_EXPANDALIAS}       & \code{bool} \\
+\code{CS_DS_FAILOVER}          & \code{bool} \\
+\code{CS_EXPOSE_FMTS}          & \code{bool} \\
+\code{CS_EXTERNAL_CONFIG}      & \code{bool} \\
+\code{CS_EXTRA_INF}            & \code{bool} \\
+\code{CS_HIDDEN_KEYS}          & \code{bool} \\
+\code{CS_LOGIN_STATUS}         & \code{bool} \\
+\code{CS_NOCHARSETCNV_REQD}    & \code{bool} \\
+\code{CS_SEC_APPDEFINED}       & \code{bool} \\
+\code{CS_SEC_CHALLENGE}        & \code{bool} \\
+\code{CS_SEC_CHANBIND}         & \code{bool} \\
+\code{CS_SEC_CONFIDENTIALITY}  & \code{bool} \\
+\code{CS_SEC_DATAORIGIN}       & \code{bool} \\
+\code{CS_SEC_DELEGATION}       & \code{bool} \\
+\code{CS_SEC_DETECTREPLAY}     & \code{bool} \\
+\code{CS_SEC_DETECTSEQ}        & \code{bool} \\
+\code{CS_SEC_ENCRYPTION}       & \code{bool} \\
+\code{CS_SEC_INTEGRITY}        & \code{bool} \\
+\code{CS_SEC_MUTUALAUTH}       & \code{bool} \\
+\code{CS_SEC_NEGOTIATE}        & \code{bool} \\
+\code{CS_SEC_NETWORKAUTH}      & \code{bool} \\
+
+\code{CS_CON_STATUS}           & \code{int} \\
+\code{CS_LOOP_DELAY}           & \code{int} \\
+\code{CS_RETRY_COUNT}          & \code{int} \\
+\code{CS_NETIO}                & \code{int} \\
+\code{CS_TEXTLIMIT}            & \code{int} \\
+\code{CS_DS_SEARCH}            & \code{int} \\
+\code{CS_DS_SIZELIMIT}         & \code{int} \\
+\code{CS_DS_TIMELIMIT}         & \code{int} \\
+\code{CS_ENDPOINT}             & \code{int} \\
+\code{CS_PACKETSIZE}           & \code{int} \\
+\code{CS_SEC_CREDTIMEOUT}      & \code{int} \\
+\code{CS_SEC_SESSTIMEOUT}      & \code{int} \\
+
+\code{CS_APPNAME}              & \code{string} \\
+\code{CS_HOSTNAME}             & \code{string} \\
+\code{CS_PASSWORD}             & \code{string} \\
+\code{CS_SERVERNAME}           & \code{string} \\
+\code{CS_USERNAME}             & \code{string} \\
+\code{CS_TDS_VERSION}          & \code{string} \\
+\code{CS_DS_DITBASE}           & \code{string} \\
+\code{CS_DS_PASSWORD}          & \code{string} \\
+\code{CS_DS_PRINCIPAL}         & \code{string} \\
+\code{CS_DS_PROVIDER}          & \code{string} \\
+\code{CS_SEC_KEYTAB}           & \code{string} \\
+\code{CS_SEC_MECHANISM}        & \code{string} \\
+\code{CS_SEC_SERVERPRINCIPAL}  & \code{string} \\
+\code{CS_TRANSACTION_NAME}     & \code{string} \\
+
+\code{CS_LOC_PROP}             & \code{CS_LOCALE} \\
+
+\code{CS_EED_CMD}              & \code{CS_COMMAND} \\
+\end{longtable}
+
+For an explanation of the property values and get/set/clear semantics
+please refer to the Sybase documentation.
+
+The following will allocate a connection from a library context,
+initialise the connection for in-line message handling, and connect to
+the named server using the specified username and password.
+
+\begin{verbatim}
+def connect_db(ctx, server, user, passwd):
+    status, conn = ctx.ct_con_alloc()
+    if status != CS_SUCCEED:
+        raise CSError(ctx, 'ct_con_alloc')
+    if conn.ct_diag(CS_INIT) != CS_SUCCEED:
+        raise CTError(conn, 'ct_diag')
+    if conn.ct_con_props(CS_SET, CS_USERNAME, user) != CS_SUCCEED:
+        raise CTError(conn, 'ct_con_props CS_USERNAME')
+    if conn.ct_con_props(CS_SET, CS_PASSWORD, passwd) != CS_SUCCEED:
+        raise CTError(conn, 'ct_con_props CS_PASSWORD')
+    if conn.ct_connect(server) != CS_SUCCEED:
+        raise CTError(conn, 'ct_connect')
+    return conn
+\end{verbatim}
+\end{methoddesc}
+
+\begin{methoddesc}[CS_CONNECTION]{ct_options}{action, option \optional{, value}}
+Sets, retrieves and clears server query processing options for
+connection.
+
+When \var{action} is \code{CS_SET} a compatible \var{value} argument
+must be supplied and the method returns the Sybase result code.  The
+Sybase-CT \function{ct_options()} function is called like this:
+
+\begin{verbatim}
+/* bool option value */
+status = ct_options(conn, CS_SET, option, &bool_value, CS_UNUSED, NULL);
+
+/* int option value */
+status = ct_options(conn, CS_SET, option, &int_value, CS_UNUSED, NULL);
+
+/* string option value */
+status = ct_options(conn, CS_SET, option, str_value, CS_NULLTERM, NULL);
+
+/* locale option value */
+status = ct_options(conn, CS_SET, option, locale, CS_UNUSED, NULL);
+\end{verbatim}
+
+When \var{action} is \code{CS_GET} the method returns a tuple
+containing the Sybase result code and the option value.  The
+Sybase-CT \function{ct_options()} function is called like this:
+
+\begin{verbatim}
+/* bool option value */
+status = ct_options(conn, CS_GET, option, &bool_value, CS_UNUSED, NULL);
+
+/* int option value */
+status = ct_options(conn, CS_GET, option, &int_value, CS_UNUSED, NULL);
+
+/* string option value */
+status = ct_options(conn, CS_GET, option, str_buff, sizeof(str_buff), &buff_len);
+\end{verbatim}
+
+When \var{action} is \code{CS_CLEAR} the method returns the Sybase
+result code.  The Sybase-CT \function{ct_options()} function is called
+like this:
+
+\begin{verbatim}
+status = ct_options(conn, CS_CLEAR, option, NULL, CS_UNUSED, NULL);
+\end{verbatim}
+
+The recognised options are:
+
+\begin{longtable}{l|l}
+\var{option} & type \\
+\hline
+\code{CS_OPT_ANSINULL}       & \code{bool} \\
+\code{CS_OPT_ANSIPERM}       & \code{bool} \\
+\code{CS_OPT_ARITHABORT}     & \code{bool} \\
+\code{CS_OPT_ARITHIGNORE}    & \code{bool} \\
+\code{CS_OPT_CHAINXACTS}     & \code{bool} \\
+\code{CS_OPT_CURCLOSEONXACT} & \code{bool} \\
+\code{CS_OPT_FIPSFLAG}       & \code{bool} \\
+\code{CS_OPT_FORCEPLAN}      & \code{bool} \\
+\code{CS_OPT_FORMATONLY}     & \code{bool} \\
+\code{CS_OPT_GETDATA}        & \code{bool} \\
+\code{CS_OPT_NOCOUNT}        & \code{bool} \\
+\code{CS_OPT_NOEXEC}         & \code{bool} \\
+\code{CS_OPT_PARSEONLY}      & \code{bool} \\
+\code{CS_OPT_QUOTED_IDENT}   & \code{bool} \\
+\code{CS_OPT_RESTREES}       & \code{bool} \\
+\code{CS_OPT_SHOWPLAN}       & \code{bool} \\
+\code{CS_OPT_STATS_IO}       & \code{bool} \\
+\code{CS_OPT_STATS_TIME}     & \code{bool} \\
+\code{CS_OPT_STR_RTRUNC}     & \code{bool} \\
+\code{CS_OPT_TRUNCIGNORE}    & \code{bool} \\
+
+\code{CS_OPT_DATEFIRST}      & \code{int} \\
+\code{CS_OPT_DATEFORMAT}     & \code{int} \\
+\code{CS_OPT_ISOLATION}      & \code{int} \\
+\code{CS_OPT_ROWCOUNT}       & \code{int} \\
+\code{CS_OPT_TEXTSIZE}       & \code{int} \\
+
+\code{CS_OPT_AUTHOFF}        & \code{string} \\
+\code{CS_OPT_AUTHON}         & \code{string} \\
+\code{CS_OPT_CURREAD}        & \code{string} \\
+\code{CS_OPT_CURWRITE}       & \code{string} \\
+\code{CS_OPT_IDENTITYOFF}    & \code{string} \\
+\code{CS_OPT_IDENTITYON}     & \code{string} \\
+\end{longtable}
+
+For an explanation of the option values and get/set/clear semantics
+please refer to the Sybase documentation.
+\end{methoddesc}

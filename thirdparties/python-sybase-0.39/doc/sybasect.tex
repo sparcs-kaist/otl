@@ -1,0 +1,252 @@
+\section{\module{sybasect} --- Interface to Sybase-CT library}
+
+\declaremodule[sybasect]{extension}{sybasect}
+
+\modulesynopsis{Interface to Sybase-CT library.}
+
+This is not a complete reference to the Sybase CT library.  Sybase
+produce excellent documentation which fully describes the use of the
+CT library.
+
+This section describes how to access the Sybase CT library while
+using this wrapper module.
+
+The \module{sybasect} extension contains the following:
+
+\subsection{Types}
+
+\begin{datadesc}{ContextType}
+The type of \code{CS_CONTEXT} objects which wrap the Sybase
+\code{CS_CONTEXT} structure pointer.
+\end{datadesc}
+
+\begin{datadesc}{ConnectionType}
+The type of \code{CS_CONNECTION} objects which wrap the Sybase
+\code{CS_CONNECTION} structure pointer.
+\end{datadesc}
+
+\begin{datadesc}{CommandType}
+The type of \code{CS_COMMAND} objects which wrap the Sybase
+\code{CS_COMMAND} structure pointer.
+\end{datadesc}
+
+\begin{datadesc}{BlkDescType}
+The type of \code{CS_BLKDESC} objects which wrap the Sybase
+\code{CS_BLKDESC} structure pointer.
+\end{datadesc}
+
+\begin{datadesc}{DataFmtType}
+The type of \code{CS_DATAFMT} objects which wrap the Sybase
+\code{CS_DATAFMT} structure.
+\end{datadesc}
+
+\begin{datadesc}{IODescType}
+The type of \code{CS_IODESC} objects which wrap the Sybase
+\code{CS_IODESC} structure.
+\end{datadesc}
+
+\begin{datadesc}{ClientMsgType}
+The type of \code{CS_CLIENTMSG} objects which wrap the Sybase
+\code{CS_CLIENTMSG} structure.
+\end{datadesc}
+
+\begin{datadesc}{ServerMsgType}
+The type of \code{CS_SERVERMSG} objects which wrap the Sybase
+\code{CS_SERVERMSG} structure.
+\end{datadesc}
+
+\begin{datadesc}{DataBufType}
+The type of data buffers for sending and receiving data to and from
+Sybase.  The type of object returned by \code{DataBuf('hello')}.
+\end{datadesc}
+
+\begin{datadesc}{NumericType}
+The type used to store Sybase \code{CS_NUMERIC} and \code{CS_DECIMAL}
+data values.
+\end{datadesc}
+
+\begin{datadesc}{DateTimeType}
+The type used to store Sybase \code{CS_DATETIME} and
+\code{CS_DATETIME4} data values.
+\end{datadesc}
+
+\begin{datadesc}{MoneyType}
+The type used to store Sybase \code{CS_MONEY} and \code{CS_MONEY4}
+data values.
+\end{datadesc}
+
+\subsection{Functions}
+
+\begin{funcdesc}{set_global_ctx}{ctx}
+The \module{sybasect} module uses a \code{CS_CONTEXT} structure
+internally for conversions and calculations.  You must allocate a
+context via \function{cs_ctx_alloc()} and establish the internal
+context using this function.
+\end{funcdesc}
+
+\begin{funcdesc}{set_debug}{file}
+Directs all debug text to the object passed in the \var{file}
+argument.  The \var{file} argument must be either \code{None} or an
+object which has \method{write(data)} and \method{flush()} methods.
+
+The function returns the previous debug file.  The default file is
+\code{None}.
+
+Setting a debug file does not enable debug messages.  To produce debug
+messages you need to set the \var{debug} member of a context,
+connection, command, etc.
+\end{funcdesc}
+
+\begin{funcdesc}{cs_ctx_alloc}{\optional{version \code{= CS_VERSION_100}}}
+Calls the Sybase-CT \function{cs_ctx_alloc()} function:
+
+\begin{verbatim}
+result = cs_ctx_alloc(version, &ctx);
+\end{verbatim}
+
+Returns a tuple containing the Sybase result code and a new instance
+of the \class{CS_CONTEXT} class constructed from the \var{ctx} value
+returned by \function{cs_ctx_alloc()}.  \code{None} is returned as the
+\class{CS_CONTEXT} object if the result code is not \code{CS_SUCCEED}.
+\end{funcdesc}
+
+\begin{funcdesc}{cs_ctx_global}{\optional{version \code{= CS_VERSION_100}}}
+Calls the Sybase-CT \function{cs_ctx_global()} function:
+
+\begin{verbatim}
+result = cs_ctx_global(version, &ctx);
+\end{verbatim}
+
+Returns a tuple containing the Sybase result code and a new instance
+of the \class{CS_CONTEXT} class constructed from the \var{ctx} value
+returned by \function{cs_ctx_global()}.  \code{None} is returned as the
+\class{CS_CONTEXT} object if the result code is not \code{CS_SUCCEED}.
+\end{funcdesc}
+
+\begin{funcdesc}{DataBuf}{obj}
+Return a new instance of the \class{DataBuf} class.  The \var{obj}
+argument is used to initialise the \class{DataBuf} object.
+
+For all types of \var{obj} other than \class{CS_DATAFMT} a buffer will
+be initialised which contains a single value.
+
+When \var{obj} is a \class{CS_DATAFMT} object an empty buffer will be
+created according to the attributes of the \class{CS_DATAFMT} object.
+It is most common to create and bind a buffer in a single operation
+via the \method{ct_bind()} method of the \class{CS_COMMAND} class.
+
+For example, the following code creates a set of buffers for
+retrieving 16 rows at a time.  Note that it is your responsibility to
+ensure that the buffers are not released until they are no longer
+required.
+
+\begin{verbatim}
+status, num_cols = cmd.ct_res_info(CS_NUMDATA)
+if status != CS_SUCCEED:
+    raise 'ct_res_info'
+bufs = []
+for i in range(num_cols):
+    status, fmt = cmd.ct_describe(i + 1)
+    if status != CS_SUCCEED:
+        raise 'ct_describe'
+    fmt.count = 16
+    status, buf = cmd.ct_bind(i + 1, fmt)
+    if status != CS_SUCCEED:
+        raise 'ct_bind'
+    bufs.append(buf)
+\end{verbatim}
+\end{funcdesc}
+
+\begin{funcdesc}{numeric}{obj \optional{, precision \code{= -1}} \optional{, scale \code{= -1}}}
+Return a new instance of the \class{Numeric} class.
+
+The \var{obj} argument can accept any of the following types;
+\code{IntType}, \code{LongType}, \code{FloatType}, \code{StringType},
+or \code{NumericType}.
+
+If greater than or equal to zero the \var{precision} and \var{scale}
+arguments are used as the \member{precision} and \member{scale}
+attributes of the \code{CS_DATAFMT} which is used in the Sybase
+\function{cs_convert()} function to create the new \class{NumericType}
+object.  The default values for these arguments depends upon the type
+being converted to \class{NumericType}.
+
+\begin{longtable}{l|l|l}
+Type & \var{precision} & \var{scale} \\
+\hline
+\code{IntType}     & \code{16} & \code{0} \\
+\code{LongType}    & \# of digits in \code{str()} conversion & \code{0} \\
+\code{FloatType}   & \code{CS_MAX_PREC} & \code{12} \\
+\code{StringType}  & \# digits before decimal point & \# digits after decimal point \\
+\code{NumericType} & input precision & input scale \\
+\end{longtable}
+\end{funcdesc}
+
+\begin{funcdesc}{money}{obj \optional{, type \code{= CS_MONEY_TYPE}}}
+Return a new instance of the \class{Money} class.
+
+The \var{obj} argument can accept any of the following types;
+\code{IntType}, \code{LongType}, \code{FloatType}, \code{StringType},
+or \code{MoneyType}.
+
+Passing \code{CS_MONEY4_TYPE} in the \var{type} argument will create a
+\code{smallmoney} value instead of the default \code{money}.
+\end{funcdesc}
+
+\begin{funcdesc}{datetime}{str \optional{, type \code{= CS_DATETIME_TYPE}}}
+Return a new instance of the \class{DateTime} class.
+
+The \var{str} argument must be a string.
+
+Passing \code{CS_DATETIME4_TYPE} in the \var{type} argument will
+create a \code{smalldatetime} value instead of the default
+\code{datetime}.
+\end{funcdesc}
+
+\begin{funcdesc}{sizeof_type}{type_code}
+Returns the size of the type identified by the Sybase type code
+specified in the \var{type_code} argument.
+
+The values expected for the \var{type_code} argument things like;
+\code{CS_CHAR_TYPE}, \code{CS_TINYINT_TYPE}, etc.
+\end{funcdesc}
+
+\begin{funcdesc}{CS_DATAFMT}{}
+Return a new instance of the \class{CS_DATAFMT} class.  This is used
+to wrap the Sybase \code{CS_DATAFMT} structure.
+\end{funcdesc}
+
+\begin{funcdesc}{CS_IODESC}{}
+Return a new instance of the \class{CS_IODESC} class.  This is used
+to wrap the Sybase \code{CS_IODESC} structure.
+\end{funcdesc}
+
+\begin{funcdesc}{CS_LAYER}{msgnumber}
+Return the result of applying the Sybase \code{CS_LAYER} macro to the
+\var{msgnumber} argument.
+\end{funcdesc}
+
+\begin{funcdesc}{CS_ORIGIN}{msgnumber}
+Return the result of applying the Sybase \code{CS_ORIGIN} macro to the
+\var{msgnumber} argument.
+\end{funcdesc}
+
+\begin{funcdesc}{CS_SEVERITY}{msgnumber}
+Return the result of applying the Sybase \code{CS_SEVERITY} macro to the
+\var{msgnumber} argument.
+\end{funcdesc}
+
+\begin{funcdesc}{CS_NUMBER}{msgnumber}
+Return the result of applying the Sybase \code{CS_NUMBER} macro to the
+\var{msgnumber} argument.
+\end{funcdesc}
+
+\input{ctxobj}
+\input{localeobj}
+\input{connobj}
+\input{cmdobj}
+\input{msgsobj}
+\input{datafmtobj}
+\input{databufobj}
+\input{iodescobj}
+\input{blkdescobj}

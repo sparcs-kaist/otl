@@ -1,0 +1,92 @@
+\subsection{DataBuf Objects}
+
+\class{DataBuf} objects manage buffers which are used to hold data to
+be sent to and received from the server.
+
+\class{DataBuf} objects contain an embedded Sybase \code{CS_DATAFMT}
+structure and allocated buffers suitable for binding the contained
+data to Sybase-CT API functions.
+
+When constructed from native Python or Sybase data types a buffer is
+created for a single value.  When created using a \class{CS_DATAFMT}
+object the \code{count} attribute is used to allocate buffers suitable
+for array binding.  A \code{count} of zero is treated the same as
+\code{1}.
+
+The \class{DataBuf} objects have the same attributes as a
+\class{CS_DATAFMT} object but the attributes which describe the memory
+are read only and cannot be modified.
+
+\begin{tabular}{l|l|l}
+attribute & type & read only? \\
+\hline
+\code{name}      & \code{string} & no \\
+\code{datatype}  & \code{int}    & yes \\
+\code{format}    & \code{int}    & no \\
+\code{maxlength} & \code{int}    & yes \\
+\code{scale}     & \code{int}    & yes \\
+\code{precision} & \code{int}    & yes \\
+\code{status}    & \code{int}    & no \\
+\code{count}     & \code{int}    & yes \\
+\code{usertype}  & \code{int}    & yes \\
+\code{strip}     & \code{int}    & no \\
+\end{tabular}
+
+In addition the \class{DataBuf} object behaves like a fixed length
+mutable sequence.
+
+Adapted from \texttt{Sybase.py}, this is how you create a set of
+buffers suitable for retrieving a number of rows from the server:
+
+\begin{verbatim}
+def row_bind(cmd, count = 1):
+    status, num_cols = cmd.ct_res_info(CS_NUMDATA)
+    if status != CS_SUCCEED:
+        raise 'ct_res_info'
+    bufs = []
+    for i in range(num_cols):
+        status, fmt = cmd.ct_describe(i + 1)
+        if status != CS_SUCCEED:
+            raise 'ct_describe'
+        fmt.count = count
+        status, buf = cmd.ct_bind(i + 1, fmt)
+        if status != CS_SUCCEED:
+            raise 'ct_bind'
+        bufs.append(buf)
+    return bufs
+\end{verbatim}
+
+Then once the rows have been fetched, this is how you extract the data
+from the buffers:
+
+\begin{verbatim}
+def fetch_rows(cmd, bufs):
+    rows = []
+    status, rows_read = cmd.ct_fetch()
+    if status == CS_SUCCEED:
+        for i in range(rows_read):
+            row = []
+            for buf in bufs:
+                row.append(buf[i])
+            rows.append(tuple(row))
+    return rows
+\end{verbatim}
+
+To send a parameter to a dynamic SQL command or a stored procedure you
+are likely to create a \class{DataBuf} object directly from the value
+you wish to send.  For example:
+
+\begin{verbatim}
+if cmd.ct_command(CS_RPC_CMD, 'sp_help', CS_NO_RECOMPILE) != CS_SUCCEED:
+    raise 'ct_command'
+buf = DataBuf('sysobjects')
+buf.status = CS_INPUTVALUE
+if cmd.ct_param(buf)  != CS_SUCCEED:
+    raise 'ct_param'
+if cmd.ct_send() != CS_SUCCEED:
+    raise 'ct_send'
+\end{verbatim}
+
+Note that it is your responsibility to make sure that the buffers are
+not deallocated before you have finished using them.  If you are not
+careful you will get a segmentation fault.

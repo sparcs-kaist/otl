@@ -1,0 +1,127 @@
+\section{Installation}
+
+\subsection{Prerequisites}
+
+\begin{itemize}
+\item Python 1.5.2 or later.
+
+\item C compiler
+
+The \module{Sybase} package contains an extension module written in C.
+The extension module is used by the Python wrapper module
+\module{Sybase.py}.
+
+\item Sybase client libraries
+
+The \module{Sybase} package uses the Sybase client libraries which
+should have come as part of your Sybase installation.
+
+If you are using Linux, Sybase provide a free version of their
+database which can be downloaded from \url{http://linux.sybase.com/}.
+
+\item mxDateTime
+
+If the \module{mxDateTime} package is installed the \module{Sybase}
+module can return \code{datetime} values as \class{DateTime} objects.
+If \module{mxDateTime} is not present the module will use the
+\class{DateTime} object defined in the \module{sybasect} extension
+module.
+\end{itemize}
+\subsection{Installing}
+
+The \module{Sybase} package uses the \module{distutils} package so all
+you need to do is type the following command as root:
+
+\begin{verbatim}
+python setup.py install
+\end{verbatim}
+
+To disable bulkcopy support you should use the following commands:
+
+\begin{verbatim}
+python setup.py build_ext -U WANT_BULKCOPY
+python setup.py install
+\end{verbatim}
+
+The default build does not enable threading in the extension module so
+if you want threading enabled you will have to do this:
+
+\begin{verbatim}
+python setup.py build_ext -D WANT_THREADS
+python setup.py install
+\end{verbatim}
+
+This is the first release which supports FreeTDS.  To compile for
+FreeTDS you should use the following commands:
+
+\begin{verbatim}
+python setup.py build_ext -D HAVE_FREETDS -U WANT_BULKCOPY
+python setup.py install
+\end{verbatim}
+
+To build with FreeTDS and threads use the following commands:
+
+\begin{verbatim}
+python setup.py build_ext -D WANT_THREADS,HAVE_FREETDS -U WANT_BULKCOPY
+python setup.py install
+\end{verbatim}
+
+You will probably experience some segfaults with FreeTDS using the
+\class{Cursor} \method{callproc()} method and when using named
+arguments.
+
+If you have problems with the installation step, edit the
+\texttt{setup.py} file to specify where Sybase is installed and the
+name of the client libraries.  Make sure that you contact the package
+author so that the installation process can be made more robust for
+other people.
+
+\subsection{Testing}
+
+The most simple way to test the \module{Sybase} package is to run a
+test application.  The arguments to the \function{Sybase.connect()}
+function are \var{server} (from the interfaces file), \var{username},
+\var{password}, and \var{database}.  The \var{database} argument is
+optional.  Make sure you substitute values that will work in your
+environment.
+
+\begin{verbatim}
+>>> import Sybase
+>>> db = Sybase.connect('SYBASE', 'sa', '')
+>>> c = db.cursor()
+>>> c.callproc('sp_help')
+>>> for t in c.description:
+...     print t
+... 
+('Name', 0, 0, 30, 0, 0, 0)
+('Owner', 0, 0, 30, 0, 0, 32)
+('Object_type', 0, 0, 22, 0, 0, 32)
+>>> for r in c.fetchall():
+...     print r
+... 
+('spt_datatype_info', 'dbo', 'user table')
+('spt_datatype_info_ext', 'dbo', 'user table')
+('spt_limit_types', 'dbo', 'user table')
+  :
+  :
+('sp_prtsybsysmsgs', 'dbo', 'stored procedure')
+('sp_validlang', 'dbo', 'stored procedure')
+>>> c.nextset()
+1
+>>> for t in c.description:
+...     print t
+... 
+('User_type', 0, 0, 15, 0, 0, 0)
+('Storage_type', 0, 0, 15, 0, 0, 0)
+('Length', 6, 0, 1, 0, 0, 0)
+('Nulls', 11, 0, 1, 0, 0, 0)
+('Default_name', 0, 0, 15, 0, 0, 32)
+('Rule_name', 0, 0, 15, 0, 0, 32)
+\end{verbatim}
+
+\subsection{Installing Sybase on Linux}
+
+There is a very nice guide to installing Sybase on Linux at Linux
+Planet.  \url{http://www.linuxplanet.com/linuxplanet/tutorials/4323/1/}
+
+(Thanks to Tim Churches for pointing this out).

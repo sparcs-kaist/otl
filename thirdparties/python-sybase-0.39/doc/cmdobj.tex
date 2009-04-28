@@ -1,0 +1,573 @@
+\subsection{CS_COMMAND Objects}
+
+Calling the \method{ct_cmd_alloc()} method of a \class{CS_CONNECTION}
+object will create a \class{CS_COMMAND} object.  When the
+\class{CS_COMMAND} object is deallocated the Sybase
+\function{ct_cmd_drop()} function will be called for the command.
+
+\class{CS_COMMAND} objects have the following interface:
+
+\begin{memberdesc}[CS_COMMAND]{is_eed}
+A read only integer which indicates when the \class{CS_COMMAND} object
+is an extended error data command structure.
+\end{memberdesc}
+
+\begin{memberdesc}[CS_COMMAND]{conn}
+This is a read only reference to the parent \class{CS_CONNECTION}
+object.  This prevents the connection from being dropped while the
+command still exists.
+\end{memberdesc}
+
+\begin{memberdesc}[CS_COMMAND]{strip}
+An integer which controls right whitespace stripping of \code{char}
+columns.  The default value is inherited from the parent connection
+when the command is created.
+\end{memberdesc}
+
+\begin{memberdesc}[CS_COMMAND]{debug}
+An integer which controls printing of debug messages to the debug file
+established by the \function{set_debug()} function.  The default value
+is inherited from the parent connection when the command is created.
+\end{memberdesc}
+
+\begin{methoddesc}[CS_COMMAND]{ct_bind}{num, datafmt}
+Calls the Sybase-CT \function{ct_bind()} function and returns a tuple
+containing the Sybase result code and a \class{DataBuf} object which
+is used to retrieve data from the column identified by \var{num}.
+\code{None} is returned as the \class{DataBuf} object when the result
+code is not \code{CS_SUCCEED}.  The Sybase-CT \function{ct_bind()}
+function is called like this:
+
+\begin{verbatim}
+status = ct_bind(cmd, num, &datafmt, databuf->buff, databuf->copied, databuf->indicator);
+\end{verbatim}
+
+See the description of the \method{ct_describe()} method for an
+example of how to use this method in Python.
+\end{methoddesc}
+
+\begin{methoddesc}[CS_COMMAND]{ct_cancel}{type}
+Calls the Sybase \function{ct_cancel()} function like this:
+
+\begin{verbatim}
+status = ct_cancel(NULL, cmd, type);
+\end{verbatim}
+
+Returns the Sybase result code.
+\end{methoddesc}
+
+\begin{methoddesc}[CS_COMMAND]{ct_cmd_drop}{}
+Calls the Sybase-CT \function{ct_cmd_drop()} function like this:
+
+\begin{verbatim}
+status = ct_cmd_drop(cmd);
+\end{verbatim}
+
+Returns the Sybase result code.
+
+This method will be automatically called when the \class{CS_COMMAND}
+object is deleted.  Applications do not need to call the method.
+\end{methoddesc}
+
+\begin{methoddesc}[CS_COMMAND]{ct_command}{type \optional{, \ldots}}
+Calls the Sybase-CT \function{ct_command()} function and returns the
+result code.  The \var{type} argument determines the type and number
+of additional arguments.
+
+When \var{type} is \code{CS_LANG_CMD} the method must be called like
+this:
+
+\code{ct_command(CS_LANG_CMD, \var{sql_text} \optional{, \var{option \code{= CS_UNUSED}}})}
+
+Then the Sybase-CT \function{ct_command()} function is called like
+this:
+
+\begin{verbatim}
+status = ct_command(cmd, CS_LANG_CMD, sql_text, CS_NULLTERM, option);
+\end{verbatim}
+
+When \var{type} is \code{CS_RPC_CMD} the method must be called like
+this:
+
+\code{ct_command(CS_RPC_CMD, \var{proc_name} \optional{, \var{option \code{= CS_UNUSED}}})}
+
+Then the Sybase-CT \function{ct_command()} function is called like
+this:
+
+\begin{verbatim}
+status = ct_command(cmd, CS_RPC_CMD, proc_name, CS_NULLTERM, option);
+\end{verbatim}
+
+When \var{type} is \code{CS_MSG_CMD} the method must be called like
+this:
+
+\code{ct_command(CS_MSG_CMD, \var{msg_num})}
+
+Then the Sybase-CT \function{ct_command()} function is called like
+this:
+
+\begin{verbatim}
+status = ct_command(cmd, CS_MSG_CMD, &msg_num, CS_UNUSED, CS_UNUSED);
+\end{verbatim}
+
+When \var{type} is \code{CS_PACKAGE_CMD} the method must be called like
+this:
+
+\code{ct_command(CS_PACKAGE_CMD, \var{pkg_name})}
+
+Then the Sybase-CT \function{ct_command()} function is called like
+this:
+
+\begin{verbatim}
+status = ct_command(cmd, CS_PACKAGE_CMD, pkg_name, CS_NULLTERM, CS_UNUSED);
+\end{verbatim}
+
+When \var{type} is \code{CS_SEND_DATA_CMD} the method must be called like
+this:
+
+\code{ct_command(CS_SEND_DATA_CMD)}
+
+Then the Sybase-CT \function{ct_command()} function is called like
+this:
+
+\begin{verbatim}
+status = ct_command(cmd, CS_SEND_DATA_CMD, NULL, CS_UNUSED, CS_COLUMN_DATA);
+\end{verbatim}
+
+For an explanation of the argument semantics please refer to the
+Sybase documentation.
+\end{methoddesc}
+
+\begin{methoddesc}[CS_COMMAND]{ct_cursor}{type \optional{, \ldots}}
+Calls the Sybase \function{ct_cursor()} function and returns the
+result code.  The \var{type} argument determines the type and number
+of additional arguments.
+
+When \var{type} is \code{CS_CURSOR_DECLARE} the method must be called like
+this:
+
+\code{ct_cursor(CS_CURSOR_DECLARE, \var{cursor_id}, \var{sql_text} \optional{, \var{option \code{= CS_UNUSED}}})}
+
+Then the Sybase-CT \function{ct_cursor()} function is called like
+this:
+
+\begin{verbatim}
+status = ct_cursor(cmd, CS_CURSOR_DECLARE, cursor_id, CS_NULLTERM, sql_text, CS_NULLTERM, option);
+\end{verbatim}
+
+When \var{type} is \code{CS_CURSOR_UPDATE} the method must be called like
+this:
+
+\code{ct_cursor(CS_CURSOR_UPDATE, \var{table_name}, \var{sql_text} \optional{, \var{option \code{= CS_UNUSED}}})}
+
+Then the Sybase-CT \function{ct_cursor()} function is called like
+this:
+
+\begin{verbatim}
+status = ct_cursor(cmd, CS_CURSOR_UPDATE, table_name, CS_NULLTERM, sql_text, CS_NULLTERM, option);
+\end{verbatim}
+
+When \var{type} is \code{CS_CURSOR_OPTION} the method must be called like
+this:
+
+\code{ct_cursor(CS_CURSOR_OPTION \optional{, \var{option \code{= CS_UNUSED}}})}
+
+Then the Sybase-CT \function{ct_cursor()} function is called like
+this:
+
+\begin{verbatim}
+status = ct_cursor(cmd, CS_CURSOR_OPTION, NULL, CS_UNUSED, NULL, CS_UNUSED, option);
+\end{verbatim}
+
+When \var{type} is \code{CS_CURSOR_OPEN} the method must be called like
+this:
+
+\code{ct_cursor(CS_CURSOR_OPEN \optional{, \var{option \code{= CS_UNUSED}}})}
+
+Then the Sybase-CT \function{ct_cursor()} function is called like
+this:
+
+\begin{verbatim}
+status = ct_cursor(cmd, CS_CURSOR_OPEN, NULL, CS_UNUSED, NULL, CS_UNUSED, option);
+\end{verbatim}
+
+When \var{type} is \code{CS_CURSOR_CLOSE} the method must be called like
+this:
+
+\code{ct_cursor(CS_CURSOR_CLOSE \optional{, \var{option \code{= CS_UNUSED}}})}
+
+Then the Sybase-CT \function{ct_cursor()} function is called like
+this:
+
+\begin{verbatim}
+status = ct_cursor(cmd, CS_CURSOR_CLOSE, NULL, CS_UNUSED, NULL, CS_UNUSED, option);
+\end{verbatim}
+
+When \var{type} is \code{CS_CURSOR_ROWS} the method must be called like
+this:
+
+\code{ct_cursor(CS_CURSOR_ROWS, \var{num_rows})}
+
+Then the Sybase-CT \function{ct_cursor()} function is called like
+this:
+
+\begin{verbatim}
+status = ct_cursor(cmd, CS_CURSOR_ROWS, NULL, CS_UNUSED, NULL, CS_UNUSED, num_rows);
+\end{verbatim}
+
+When \var{type} is \code{CS_CURSOR_DELETE} the method must be called like
+this:
+
+\code{ct_cursor(CS_CURSOR_DELETE, \var{table_name})}
+
+Then the Sybase-CT \function{ct_cursor()} function is called like
+this:
+
+\begin{verbatim}
+status = ct_cursor(cmd, CS_CURSOR_DELETE, table_name, CS_NULLTERM, NULL, CS_UNUSED, CS_UNUSED);
+\end{verbatim}
+
+When \var{type} is \code{CS_CURSOR_DEALLOC} the method must be called like
+this:
+
+\code{ct_cursor(CS_CURSOR_DEALLOC)}
+
+Then the Sybase-CT \function{ct_cursor()} function is called like
+this:
+
+\begin{verbatim}
+status = ct_cursor(cmd, CS_CURSOR_DEALLOC, NULL, CS_UNUSED, NULL, CS_UNUSED, CS_UNUSED);
+\end{verbatim}
+
+For an explanation of the argument semantics please refer to the
+Sybase documentation.
+
+The \texttt{cursor_sel.py}, \texttt{cursor_upd.py}, and
+\texttt{dynamic_cur.py} example programs contain examples of this
+function.
+\end{methoddesc}
+
+\begin{methoddesc}[CS_COMMAND]{ct_data_info}{action, \ldots}
+Sets and retrieves column IO descriptors.
+
+When \var{action} is \code{CS_SET} the method must be called like
+this:
+
+\code{ct_data_info(CS_SET, \var{iodesc})}
+
+Returns the Sybase result code.  The Sybase-CT
+\function{ct_data_info()} function is called like this:
+
+\begin{verbatim}
+status = ct_data_info(cmd, CS_SET, CS_UNUSED, &iodesc);
+\end{verbatim}
+
+When \var{action} is \code{CS_GET} the method must be called like
+this:
+
+\code{ct_data_info(CS_SET, \var{num})}
+
+Returns a tuple containing the Sybase result code and an
+\code{CS_IODESC} object.  If the result code is not \code{CS_SUCCEED}
+then \code{None} is returned as the \code{CS_IODESC} object.  The
+Sybase-CT \function{ct_data_info()} function is called like this:
+
+\begin{verbatim}
+status = ct_data_info(cmd, CS_GET, num, &iodesc);
+\end{verbatim}
+
+For an explanation of the argument semantics please refer to the
+Sybase documentation.
+
+The \texttt{mult_text.py} example program contains examples of this
+function.
+\end{methoddesc}
+
+\begin{methoddesc}[CS_COMMAND]{ct_describe}{num}
+Calls the Sybase \function{ct_describe()} function and returns a tuple
+containing the Sybase result code and a \class{CS_DATAFMT} object
+which describes the column identified by \var{num}. \code{None} is
+returned as the \class{CS_DATAFMT} object when the result code is not
+\code{CS_SUCCEED}.
+
+The Sybase-CT \function{ct_describe()} function is called like this:
+
+\begin{verbatim}
+status = ct_describe(cmd, num, &datafmt);
+\end{verbatim}
+
+The following constructs a list of buffers for retrieving a number of
+rows from a command object.
+
+\begin{verbatim}
+def row_bind(cmd, count = 1):
+    status, num_cols = cmd.ct_res_info(CS_NUMDATA)
+    if status != CS_SUCCEED:
+        raise 'ct_res_info'
+    bufs = []
+    for i in range(num_cols):
+        status, fmt = cmd.ct_describe(i + 1)
+        if status != CS_SUCCEED:
+            raise 'ct_describe'
+        fmt.count = count
+        status, buf = cmd.ct_bind(i + 1, fmt)
+        if status != CS_SUCCEED:
+            raise 'ct_bind'
+        bufs.append(buf)
+    return bufs
+\end{verbatim}
+\end{methoddesc}
+
+\begin{methoddesc}[CS_COMMAND]{ct_dynamic}{type, \ldots}
+Calls the Sybase \function{ct_dynamic()} function and returns the
+result code.  The \var{type} argument determines the type and number
+of additional arguments.
+
+When \var{type} is \code{CS_CURSOR_DECLARE} the method must be called
+like this:
+
+\code{ct_dynamic(CS_CURSOR_DECLARE, \var{dyn_id}, \var{cursor_id})}
+
+Then the Sybase-CT \function{ct_dynamic()} function is called like
+this:
+
+\begin{verbatim}
+status = ct_dynamic(cmd, CS_CURSOR_DECLARE, dyn_id, CS_NULLTERM, cursor_id, CS_NULLTERM);
+\end{verbatim}
+
+When \var{type} is \code{CS_DEALLOC} the method must be called like
+this:
+
+\code{ct_dynamic(CS_DEALLOC, \var{dyn_id})}
+
+Then the Sybase-CT \function{ct_dynamic()} function is called like
+this:
+
+\begin{verbatim}
+status = ct_dynamic(cmd, CS_DEALLOC, dyn_id, CS_NULLTERM, NULL, CS_UNUSED);
+\end{verbatim}
+
+When \var{type} is \code{CS_DESCRIBE_INPUT} the method must be called
+like this:
+
+\code{ct_dynamic(CS_DESCRIBE_INPUT, \var{dyn_id})}
+
+Then the Sybase-CT \function{ct_dynamic()} function is called like
+this:
+
+\begin{verbatim}
+status = ct_dynamic(cmd, CS_DESCRIBE_INPUT, dyn_id, CS_NULLTERM, NULL, CS_UNUSED);
+\end{verbatim}
+
+When \var{type} is \code{CS_DESCRIBE_OUTPUT} the method must be called
+like this:
+
+\code{ct_dynamic(CS_DESCRIBE_OUTPUT, \var{dyn_id})}
+
+Then the Sybase-CT \function{ct_dynamic()} function is called like
+this:
+
+\begin{verbatim}
+status = ct_dynamic(cmd, CS_DESCRIBE_OUTPUT, dyn_id, CS_NULLTERM, NULL, CS_UNUSED);
+\end{verbatim}
+
+When \var{type} is \code{CS_EXECUTE} the method must be called like
+this:
+
+\code{ct_dynamic(CS_EXECUTE, \var{dyn_id})}
+
+Then the Sybase-CT \function{ct_dynamic()} function is called like
+this:
+
+\begin{verbatim}
+status = ct_dynamic(cmd, CS_EXECUTE, dyn_id, CS_NULLTERM, NULL, CS_UNUSED);
+\end{verbatim}
+
+When \var{type} is \code{CS_EXEC_IMMEDIATE} the method must be called
+like this:
+
+\code{ct_dynamic(CS_EXEC_IMMEDIATE, \var{sql_text})}
+
+Then the Sybase-CT \function{ct_dynamic()} function is called like
+this:
+
+\begin{verbatim}
+status = ct_dynamic(cmd, CS_EXEC_IMMEDIATE, NULL, CS_UNUSED, sql_text, CS_NULLTERM);
+\end{verbatim}
+
+When \var{type} is \code{CS_EXECUTE} the method must be called like
+this:
+
+\code{ct_dynamic(CS_PREPARE, \var{dyn_id}, \var{sql_text})}
+
+Then the Sybase-CT \function{ct_dynamic()} function is called like
+this:
+
+\begin{verbatim}
+status = ct_dynamic(cmd, CS_PREPARE, dyn_id, CS_NULLTERM, sql_text, CS_NULLTERM);
+\end{verbatim}
+
+For an explanation of the argument semantics please refer to the
+Sybase documentation.
+
+The \texttt{dynamic_cur.py}, and \texttt{dynamic_ins.py} example
+programs contain examples of this function.
+\end{methoddesc}
+
+\begin{methoddesc}[CS_COMMAND]{ct_fetch}{}
+Calls the Sybase \function{ct_fetch()} function and returns a tuple
+containing the Sybase result code and the number of rows read (for
+array binding).
+
+The Sybase-CT \function{ct_fetch()} function is called like this:
+
+\begin{verbatim}
+status = ct_fetch(cmd, CS_UNUSED, CS_UNUSED, CS_UNUSED, &rows_read);
+\end{verbatim}
+\end{methoddesc}
+
+\begin{methoddesc}[CS_COMMAND]{ct_get_data}{num, databuf}
+Calls the Sybase \function{ct_get_data()} function and returns a tuple
+containing the Sybase result code and the length of the data for item
+number \var{num} which was read into the \class{DataBuf} object in the
+\var{databuf} argument.
+
+The Sybase-CT \function{ct_get_data()} function is called like this:
+
+\begin{verbatim}
+status = ct_get_data(cmd, num, databuf->buff, databuf->fmt.maxlength, databuf->copied);
+\end{verbatim}
+
+The following will retrieve the contents of a BLOB column:
+
+\begin{verbatim}
+def get_blob_column(cmd, col):
+    fmt = CS_DATAFMT()
+    fmt.maxlength = 32768
+    buf = DataBuf(fmt)
+    parts = []
+    while 1:
+        status, count = cmd.ct_get_data(col, buf)
+        if count:
+            parts.append(buf[0])
+        if status != CS_SUCCEED:
+            break
+    return string.join(parts, '')
+\end{verbatim}
+\end{methoddesc}
+
+\begin{methoddesc}[CS_COMMAND]{ct_param}{param}
+Calls the Sybase \function{ct_param()} function and returns the Sybase
+result code.
+
+The \var{param} argument is usually an instance of the \class{DataBuf}
+class.  A \class{CS_DATAFMT} object can be used in a cursor declare
+context to define the format of the host variable.
+
+When \var{param} is a \class{DataBuf} the Sybase-CT
+\function{ct_param()} function is called like this:
+
+\begin{verbatim}
+status = ct_param(cmd, &databuf->fmt, databuf->buff, databuf->copied[0], databuf->indicator[0]);
+\end{verbatim}
+
+When \var{param} is a \class{CS_DATAFMT} the Sybase-CT
+\function{ct_param()} function is called like this:
+
+\begin{verbatim}
+status = ct_param(cmd, &datafmt, NULL, CS_UNUSED, CS_UNUSED);
+\end{verbatim}
+
+The semantics of the \class{CS_DATAFMT} attributes are quite complex.
+Please refer to the Sybase documentation.
+\end{methoddesc}
+
+\begin{methoddesc}[CS_COMMAND]{ct_res_info}{type}
+Calls the Sybase \function{ct_res_info()} function.  The return result
+depends upon the value of the \var{type} argument.
+
+\begin{longtable}{l|l}
+\var{type} & return values \\
+\hline
+\code{CS_BROWSE_INFO}   & \code{status, bool} \\
+\code{CS_CMD_NUMBER}    & \code{status, int} \\
+\code{CS_MSGTYPE}       & \code{status, int} \\
+\code{CS_NUM_COMPUTES}  & \code{status, int} \\
+\code{CS_NUMDATA}       & \code{status, int} \\
+\code{CS_NUMORDER_COLS} & \code{status, int} \\
+\code{CS_ORDERBY_COLS}  & \code{status, list of int} \\
+\code{CS_ROW_COUNT}     & \code{status, int} \\
+\code{CS_TRANS_STATE}   & \code{status, int} \\
+\end{longtable}
+
+Depending on type the Sybase-CT \function{ct_res_info()} function is
+called like this:
+
+\begin{verbatim}
+status = ct_res_info(cmd, CS_BROWSE_INFO, &bool_val, CS_UNUSED, NULL);
+
+status = ct_res_info(cmd, CS_MSGTYPE, &ushort_val, CS_UNUSED, NULL);
+
+status = ct_res_info(cmd, CS_CMD_NUMBER, &int_val, CS_UNUSED, NULL);
+
+status = ct_res_info(cmd, CS_NUM_COMPUTES, &int_val, CS_UNUSED, NULL);
+
+status = ct_res_info(cmd, CS_NUMDATA, &int_val, CS_UNUSED, NULL);
+
+status = ct_res_info(cmd, CS_NUMORDERCOLS, &int_val, CS_UNUSED, NULL);
+
+status = ct_res_info(cmd, CS_ROW_COUNT, &int_val, CS_UNUSED, NULL);
+
+status = ct_res_info(cmd, CS_TRANS_STATE, &int_val, CS_UNUSED, NULL);
+
+status = ct_res_info(cmd, CS_NUMORDERCOLS, &int_val, CS_UNUSED, NULL);
+status = ct_res_info(cmd, CS_ORDERBY_COLS, col_nums, sizeof(*col_nums) * int_val, NULL);
+\end{verbatim}
+\end{methoddesc}
+
+\begin{methoddesc}[CS_COMMAND]{ct_results}{}
+Calls the Sybase \function{ct_results()} function and returns a tuple
+containing the Sybase result code and the result type returned by the
+Sybase function.
+
+The Sybase-CT \function{ct_results()} function is called like this:
+
+\begin{verbatim}
+status = ct_results(cmd, &result);
+\end{verbatim}
+\end{methoddesc}
+
+\begin{methoddesc}[CS_COMMAND]{ct_send}{}
+Calls the Sybase \function{ct_send()} function and returns the Sybase
+result code.
+
+The Sybase-CT \function{ct_send()} function is called like this:
+
+\begin{verbatim}
+status = ct_send(cmd);
+\end{verbatim}
+\end{methoddesc}
+
+\begin{methoddesc}[CS_COMMAND]{ct_send_data}{databuf}
+Calls the Sybase \function{ct_send_data()} function and returns the
+Sybase result code.  The \var{databuf} argument must be a
+\class{DataBuf} object.
+
+The Sybase-CT \function{ct_send_data()} function is called like this:
+
+\begin{verbatim}
+status = ct_send_data(cmd, databuf->buff, databuf->copied[0]);
+\end{verbatim}
+\end{methoddesc}
+
+\begin{methoddesc}[CS_COMMAND]{ct_setparam}{databuf}
+Calls the Sybase \function{ct_setparam()} function and returns the
+Sybase result code.  The \var{databuf} argument must be a
+\class{DataBuf} object.
+
+The Sybase-CT \function{ct_setparam()} function is called like this:
+
+\begin{verbatim}
+status = ct_setparam(cmd, &databuf->fmt, databuf->buff, databuf->copied, databuf->indicator);
+\end{verbatim}
+\end{methoddesc}

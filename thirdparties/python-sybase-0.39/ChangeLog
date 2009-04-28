@@ -1,0 +1,1429 @@
+2008-04-14  Sébastien Sablé  <sable@users.sourceforge.net>
+
+	* Releasing version 0.39
+
+2008-02-14  Sébastien Sablé  <sable@users.sourceforge.net>
+
+	* Corrected "undefined symbol" date_datafmt for Sybase versions
+	where CS_DATE_TYPE is not defined (as reported by Alexey Morsov)
+
+2008-02-12  Sébastien Sablé  <sable@users.sourceforge.net>
+
+	* Releasing version 0.39pre1
+
+2008-01-18  Sébastien Sablé  <sable@users.sourceforge.net>
+
+	* setup.py: Better detection of Sybase libraries
+
+	* Sybase.py: Better thread safety
+
+2008-01-04  Sébastien Sablé  <sable@users.sourceforge.net>
+
+	* setup.py: the C API to datetime only exists since python 2.4 - disable datetime with previous versions
+
+2007-10-19  Sébastien Sablé  <sable@users.sourceforge.net>
+
+	* Corrected python long handling (using CS_NUMERIC instead of CS_LONG which is unspecified)
+
+2007-10-18  Sébastien Sablé  <sable@users.sourceforge.net>
+
+	* numeric.c: Handle engineer notation of numbers in numeric
+
+2007-10-15  Sébastien Sablé  <sable@users.sourceforge.net>
+
+	* Sybase.py: Added destructor to Cursor
+
+	* Sybase.py: backward compatibility - restored deprecated
+	use_datetime attribut
+
+	* setup.py: Sybase libraries do not have "_r64" at the end on OSF1
+
+	* Use setuptools and distribute ez_setup.py
+
+2007-10-08  Sébastien Sablé  <sable@users.sourceforge.net>
+
+	* Restored datetime kwarg for backward compatibility
+
+2007-09-28  Sébastien Sablé  <sable@users.sourceforge.net>
+
+	* Sybase.py: Corrected bug on ct_cursor with parameters
+
+2007-09-27  Sébastien Sablé  <sable@users.sourceforge.net>
+
+	* Sybase.py: Completed input type mapping
+
+2007-09-20  Sébastien Sablé  <sable@users.sourceforge.net>
+
+	* Corrected various compilation warnings (some linked to python
+	2.5)
+
+	* Sybase.py: Added a prepare method to Cursor
+
+2007-09-19  Sébastien Sablé  <sable@users.sourceforge.net>
+
+	* Sybase.py: Refactoring _cancel_cmd
+
+	* Sybase.py: Corrected nextset after refactoring
+
+2007-09-18  Sébastien Sablé  <sable@users.sourceforge.net>
+
+	* Sybase.py: Corrected callproc after refactoring
+
+2007-09-14  Sébastien Sablé  <sable@users.sourceforge.net>
+
+	* Sybase.py: Corrected CS_CURSOR_CLOSE acts as ct_cancel on a
+	ct_cursor
+	
+	* Sybase.py: Add type mapping as proposed in
+	http://www.uniqsys.com/~carsten/typemap.html by Carsten Haese
+
+	* sybasect.c: Expose sybase date type functions
+
+2007-08-28  Sébastien Sablé  <sable@users.sourceforge.net>
+
+	* Sybase.py: Refactoring - merged Fetchers, CTCursor and CmdCursor
+	in Cursor
+
+2007-08-08  Sébastien Sablé  <sable@users.sourceforge.net>
+
+	* Sybase.py, doc/dbapi.tex: Additional 'locale' argument to
+	connect and Connection to set the locale of the connection thanks
+	to patch by Harri Pasanen
+
+	* Sybase.py: Corrected syntax specific to python 2.5
+
+	* setup.py: Using setuptools
+
+2007-08-06  Sébastien Sablé  <sable@users.sourceforge.net>
+
+	* Added support for python Decimal objects in databuf
+
+	* Sybase.py: Using ct_cursor for select requests
+
+2007-07-30  Sébastien Sablé  <sable@users.sourceforge.net>
+
+	* doc/ctxobj.tex, doc/localeobj.tex: Corrected documentation about
+	CS_CONTEXT Objects thanks to bug report by Derek Harland (close
+	tracker 1748109)
+
+	* Sybase.py: Corrected bug in close() if connection killed from
+	outside thanks to patch by Derek Harland (close tracker 1746220)
+
+	* Sybase.py: Corrected bug if inherit from Sybase.Connection
+	thanks to patch by Derek Harland (close tracker 1719789)
+
+	* Sybase.py: Optimization in fetchall - using fetchmany instead of
+	fetchone to avoid locking time penalty, thanks to patch by Derek
+	Harland (close tracker 1746908)
+
+	* freetds.h, setup.py: Corrections to compile with bcp-support
+	against freetds thanks to patch by Klaus-Martin Hansche (close
+	tracker 1724088)
+
+	* MANIFEST.in: Added test suites to distribution
+
+2007-07-23  Sébastien Sablé  <sable@users.sourceforge.net>
+
+	* Better compliance with DBAPI: returns None in nextset when no
+	more set
+
+2007-05-22  Sébastien Sablé  <sable@users.sourceforge.net>
+
+	* Add metadata for pypi
+
+2007-05-15  Sébastien Sablé  <sable@users.sourceforge.net>
+
+	* doc/installation.tex: Corrected documentation to compile with
+	FreeTDS and Threads thanks to Derek Harland (close tracker
+	1709043)
+
+2007-02-28  Sébastien Sablé  <sable@users.sourceforge.net>
+
+	* Added conversion from string to int when assigning to a
+	CS_INT_TYPE DataBuf
+
+	* Simplified API for CS_DATE_TYPE related functions
+
+	* databuf.c: Corrected bug in databuf_alloc: Sybase reports the
+	wrong maxlength for numeric type - verified with Sybase 12.5 -
+	thanks to patch provided by Phil Porter
+
+2007-02-26  Sébastien Sablé  <sable@users.sourceforge.net>
+
+	* Added support for CS_DATE_TYPE
+
+2007-05-03  Sébastien Sablé  <sable@users.sourceforge.net>
+
+        * Releasing version 0.38
+
+2007-02-02  Sébastien Sablé  <sable@users.sourceforge.net>
+
+	* Releasing version 0.38pre2
+
+	* Sybase.py: Add structured error information to
+	Sybase.DatabaseError thanks to patch provided by Gregory Bond
+	(close tracker 1631902)
+
+	* Resurrected Sybase.Bulkcopy functionality thanks to patch
+	provided by Gregory Bond (close tracker 1632916)
+
+2007-01-29  Sébastien Sablé  <sable@users.sourceforge.net>
+
+	* Corrected AttributeError when locking is off (close tracker
+	1637942 reported by Jim Nusbaum)
+
+2007-01-15  Sébastien Sablé  <sable@users.sourceforge.net>
+
+	* Sybase.py: Corrected incorrect type mx.DateTime.DateTime
+	returned by Sybase.Date() in "mx" datetime mode. This type is not
+	supported by DataBuf.
+
+2007-01-11  Sébastien Sablé  <sable@users.sourceforge.net>
+
+	* blk.c: Corrected crash on a BLK object when debug is enabled
+	(close tracker 1630941 reported by Gregory Bond)
+
+2007-01-02  Sébastien Sablé  <sable@users.sourceforge.net>
+
+	* Sybase.py: rowcount is now propagated to Cursor (corrects
+	tracker 1621003)
+
+	* databuf.c, setup.py, sybasect.h, sybasect.c,
+	tests/sybase_dbapi20.py: Added support for python datetime type in
+	DataBuf and as parameter of Cursor.execute()
+
+2006-12-18  Sébastien Sablé  <sable@users.sourceforge.net>
+
+	* Sybase.py: Corrected Date, Time and Timestamp functions when
+	using mx.DateTime or native python datetime types
+
+	* Sybase.py: Corrected DATETIME as cursor.description still
+	returns native Sybase datetime types
+
+2006-12-14  Sébastien Sablé  <sable@users.sourceforge.net>
+
+	* blk.c: Corrected blk_describe always returns (status, None)
+	thanks to patch by Phil Porter
+
+2006-12-13  Sébastien Sablé  <sable@users.sourceforge.net>
+
+	* databuf.c, datafmt.c: Patch to handle CS_LONG type based on
+	patch by Paul Rensing
+
+2006-12-08  Sébastien Sablé  <sable@users.sourceforge.net>
+
+	* setup.py, Sybase.py: Changing to release 0.38pre1
+
+	* Sybase.py: Adding support for python native datetime type for
+	dates - there is a new "datetime" argument to connect in order to
+	choose the datetime type
+
+	* setup.py: Corrected compilation in 64 bits mode based on a patch
+	by Harri Pasanen
+
+	* setup.py: Corrected linking with Sybase 15.0
+
+2006-12-07  Sébastien Sablé  <sable@users.sourceforge.net>
+
+	* Sybase.py: Factored out Cursor._checkready() - patch provided by
+	Greg Ward
+
+	* Sybase.py: Corrected tests test_description and test_rowcount -
+	"This routine cannot be called because another command structure
+	has results pending." when manually commiting after a select
+	without fetching
+
+	* Sybase.py: Corrected test test_ExceptionsAsConnectionAttributes
+	- Added Exceptions as attributes of Connection based on patch by
+	Greg Ward
+
+	* Sybase.py: Corrected test test_non_existing_proc - Raising
+	StoredProcedureError when calling a non-existing stored procedure
+
+	* Sybase.py: Corrected test test_duplicate_error - Raising
+	IntegrityError exception when trying to insert a duplicate value
+
+	* Sybase.py: Corrected tests test_bug_result_pending3_fetchall,
+	test_fetchall and test_fetchmany - "This routine cannot be called
+	because another command structure has results pending." when
+	manually commiting after a fetchall()
+
+	* Sybase.py: Corrected tests test_bug_result_pending and
+	test_bug_result_pending2 - "This routine cannot be called because
+	another command structure has results pending." when calling
+	execute on a cursor after a request has failed
+
+	* cmd.c: Corrected core dump in ct_param when in debug mode
+
+	* blk.c, cmd.c, conn.c, ctx.c, databuf.c, datafmt.c, datetime.c,
+	iodesc.c, locale.c, money.c, msgs.c, numeric.c: Applied patch from
+	Gregory Bond so that python-sybase works with python 2.5
+
+	* setup.py, tests/sybase_dbapi20.py, tests/test_sybase_dbapi20.py:
+	Added python-sybase specific tests to dbapi20 and a test runner
+	for python-sybase with and without auto_commit
+
+	* tests/dbapi20.py: Extended dbapi20 driver compliance unit test
+	suite in order to permit testing drivers without auto-commit
+
+	* tests/dbapi20.py: Added Python DB API 2.0 Anal Compliance Unit
+	Test 1.10
+
+2005-04-07 08:46  djc
+
+	* Sybase.py, setup.py, sybasect.c, dist/release-0.37,
+	  doc/sybase.tex: Bump release to 0.37.
+
+2005-03-21 16:18  djc
+
+	* ChangeLog, Sybase.py, setup.py, sybasect.c,
+	  dist/release-0.37pre3, doc/sybase.tex: Yet another attempt to get
+	  a new release out.
+
+2005-03-21 16:13  djc
+
+	* cmd.c, freetds.h, sybasect.h: Fix compilation and remove warnings
+	  for FreeTDS.
+
+2005-03-21 10:17  djc
+
+	* .cvsignore: Ignore some files.
+
+2005-03-21 10:03  djc
+
+	* ChangeLog: Updated for new release.
+
+2005-03-21 10:02  djc
+
+	* doc/.cvsignore: Inore documentation temporary files.
+
+2005-03-21 10:02  djc
+
+	* dist/release-0.37pre2: New release.
+
+2005-03-21 09:54  djc
+
+	* Sybase.py, setup.py, sybasect.c, doc/sybase.tex: Bump release to
+	  0.37pre2
+
+2005-03-20 14:53  djc
+
+	* Sybase.py: Cursor state fix from Skip Montanaro.
+
+2005-03-20 14:52  djc
+
+	* ctx.c: Callback declaration fix on Windows from Vadim
+	  Beloborodov.
+
+2005-03-19 14:36  djc
+
+	* dist/release-0.37pre1: Added test program for memory leak.
+
+2005-03-19 14:29  djc
+
+	* ChangeLog, Sybase.py, setup.py, sybasect.c,
+	  dist/release-0.37pre1, doc/sybase.tex: Ready for 0.37pre1
+	  release.
+
+2005-03-19 12:48  djc
+
+	* Sybase.py: Consume the CS_STATUS_RESULT internally and set the
+	  stored procedure return value in the Cursor.return_status member.
+	  Small modification to work around different handling for FreeTDS
+	  output parameters.
+
+2005-03-18 16:14  djc
+
+	* Sybase.py: Fix sequence arguments to Cursor.callproc().
+
+2004-11-16 10:57  djc
+
+	* setup.py: Attempt to make setup detect OCS automagically.
+
+2004-11-16 10:56  djc
+
+	* Sybase.py: Apply output hook patch from Ty Sarna
+	  <tsarna@sarna.org>.
+
+2003-11-25 10:58  djc
+
+	* Sybase.py, setup.py: Applied patch from Andre Sedinin to improve
+	  error handling.
+
+2003-04-27 21:54  djc
+
+	* ChangeLog: Getting release ready.
+
+2003-04-27 21:52  djc
+
+	* dist/release-0.36, examples/rpc.sql: Getting ready for release
+	  0.36
+
+2003-04-27 21:28  djc
+
+	* freetds.h: Moving to FreeTDS 0.62 
+
+2003-04-27 20:54  djc
+
+	* Sybase.py, setup.py, sybasect.c, doc/sybase.tex: Use "fetcher"
+	classes to retrieve results form the server.  Changes from running
+	Anal Compliance Unit Test.  
+
+2003-04-27 11:10  djc
+
+	* sybasect.c: Renamed __with_freetds__ to __have_freetds__.  
+
+2003-02-24 15:30  djc
+
+	* dist/release-0.36pre6: Release announcement.  
+
+2003-02-24 15:28  djc
+
+	* ChangeLog, Sybase.py, setup.py, sybasect.c, doc/sybase.tex: Bump
+	release to 0.36pre6 
+
+2003-02-24 15:26  djc
+
+	* sybasect.c: Fix compilation for non-FreeTDS users.  
+
+2003-02-23 17:10  djc
+
+	* doc/: Makefile, sybase.tex: Fixing documentation build for
+	Python-2.2 
+
+2003-02-23 17:05  djc
+
+	* doc/Makefile: Documentation tools in Python-2.2 
+
+2003-02-23 17:01  djc
+
+	* dist/release-0.36pre5: Fixed wording.  
+
+2003-02-23 16:54  djc
+
+	* ChangeLog, dist/release-0.36pre5: Prepare for release.  
+
+2003-02-23 16:38  djc
+
+	* conn.c: Forgot to self self->conn to NULL during ct_con_drop().  
+
+2003-02-23 15:49  djc
+
+	* Sybase.py, setup.py, sybasect.c, doc/sybase.tex: Added
+	__have_freetds__ which indicates the FreeTDS version being used.  
+
+2003-02-18 22:29  djc
+
+	* ctx.c, setup.py: Speeling error.  
+
+2003-02-18 22:28  djc
+
+	* Sybase.py: Set global ctx as soon as it is created.  
+
+2003-02-18 22:23  djc
+
+	* setup.py: Try to handle all platforms where SYBASE_OCS might be
+	defined.  
+
+2003-02-18 16:55  djc
+
+	* ChangeLog, setup.py: Fix setup.py to allow 0.60 compiles.  
+
+2003-02-18 14:48  djc
+
+	* doc/: ctxobj.tex, sybase.tex: Added documentation for the
+	ctx.debug_msg() method.  
+
+2003-02-18 14:40  djc
+
+	* dist/release-0.36pre4: Added release notice.  
+
+2003-02-18 14:34  djc
+
+	* Sybase.py, setup.py, sybasect.c, doc/sybase.tex: Bump release to
+	0.36pre4 
+
+2003-02-17 12:15  djc
+
+	* Sybase.py, ctx.c, freetds.h: Compile with FreeTDS 0.61 as well as
+	0.60.  Added ctx.debug_msg().  Found and fixed locking bug.  
+
+2003-02-12 11:49  djc
+
+	* setup.py: AIX libraries from Dietmar Rothkamp.  
+
+2003-02-12 10:59  djc
+
+	* Sybase.py: Limit the size of text fields.  
+
+2003-01-23 21:18  djc
+
+	* dist/release-0.36pre3: Forgot one change.  
+
+2003-01-23 21:11  djc
+
+	* ChangeLog: Ready for release.  
+
+2003-01-23 21:11  djc
+
+	* Sybase.py, setup.py, sybasect.c, doc/sybase.tex: Bump release.  
+
+2003-01-23 21:08  djc
+
+	* dist/release-0.36pre3: Added announcement.  
+
+2002-12-24 14:23  djc
+
+	* databuf.c, datafmt.c: Yet another thing buggered up by FreeTDS. 
+	Force size of numeric columns to be sizeof(CS_NUMERIC) and ignore
+	what FreeTDS claims they should be.  
+
+2002-11-30 09:40  djc
+
+	* freetds.h: Getting ready for next release of FreeTDS.  
+
+2002-11-27 17:22  djc
+
+	* Sybase.py, databuf.c: Better way to handle CS_VARBINARY_TYPE.  
+
+2002-11-26 22:57  djc
+
+	* Sybase.py, setup.py, sybasect.c, doc/sybase.tex: Bump release to
+	0.36pre2 
+
+2002-11-26 22:53  djc
+
+	* Sybase.py, cmd.c, databuf.c: Bind VARBINARY columns to CHAR.  
+
+2002-11-23 00:06  djc
+
+	* Sybase.py, setup.py, sybasect.c, doc/sybase.tex: Bump release to
+	0.36pre1.  
+
+2002-11-23 00:02  djc
+
+	* setup.py: Reverse meaningless change.  
+
+2002-11-21 17:05  djc
+
+	* Sybase.py, databuf.c, datafmt.c, freetds.h, iodesc.c, msgs.c,
+	setup.py: Fixed string fields in Sybase CT library member
+	descriptions.  
+
+2002-11-20 12:13  djc
+
+	* Sybase.py, setup.py, sybasect.c, dist/release-0.35,
+	doc/sybase.tex: Renaming 0.35pre3 to 0.35.  
+
+2002-10-29 10:31  djc
+
+	* ChangeLog: Prepare for release.  
+
+2002-10-29 10:31  djc
+
+	* ChangeLog, MANIFEST.in, Sybase.py, setup.py,
+	dist/release-0.35pre3, doc/sybase.tex: Oops - forgot to distribute
+	freetds.h and sybasect.h 
+
+2002-10-28 22:35  djc
+
+	* dist/release-0.35pre2: More cleanup.  
+
+2002-10-28 22:34  djc
+
+	* dist/release-0.35pre2: Fix download URL.  
+
+2002-10-28 22:33  djc
+
+	* dist/release-0.35pre2: Removed warning about segfaults.  
+
+2002-10-28 22:25  djc
+
+	* dist/release-0.35pre2: Post to FreeTDS mailing list too.  
+
+2002-10-28 21:55  djc
+
+	* doc/dbapi.tex: Forgot to document locking argument to connect().  
+
+2002-10-28 21:47  djc
+
+	* setup.py: Package name should be sybase not Sybase.  
+
+2002-10-28 21:13  djc
+
+	* ChangeLog, dist/release-0.35pre2: Ready for 0.35pre2 release.  
+
+2002-10-28 20:56  djc
+
+	* ChangeLog, setup.py, doc/sybase.tex: Added ChangeLog and bumped
+	revisions.  
+
+2002-10-28 20:50  djc
+
+	* Sybase.py: Optimise fetchmany() - increases speed over fivefold
+	in some cases.  
+
+2002-10-28 16:04  djc
+
+	* LICENCE, MANIFEST.in, Sybase.py, blk.c, cmd.c, conn.c, ctx.c,
+	databuf.c, datafmt.c, datetime.c, freetds.h, iodesc.c, locale.c,
+	money.c, msgs.c, numeric.c, setup.py, sybasect.c, sybasect.h,
+	dist/dist-sybase.sh, dist/index.ahtml, dist/make_webpage.py,
+	doc/pstumble, doc/sybase.tex: Adjust setup.py to use sdist target.  
+	Copy distribution process from Albatross.  Copy LICENSE from
+	Albatross and adjust source code.  
+
+2002-09-18 12:15  djc
+
+	* datetime.c: Need to have separate str() and repr() else print
+	does "'11/01/63'" 
+
+2002-07-28 15:54  djc
+
+	* doc/: installation.tex, sybase.tex: Added link to installation
+	guide.  
+
+2002-04-22 00:28  djc
+
+	* doc/: ctxobj.tex, sybase.tex, sybasect.tex: Updated documention
+	for cs_config() and set_global_ctx().  
+
+2002-04-22 00:12  djc
+
+	* doc/: installation.tex, sybase.tex: Update FreeTDS documentation.  
+
+2002-04-21 16:19  djc
+
+	* blk.c: Fixed NULL pointer reference.  
+
+2002-04-21 16:05  djc
+
+	* examples/: array_bind.py, bulkcopy.py, cursor_sel.py,
+	cursor_upd.py, diag_example.py, dynamic_cur.py, dynamic_ins.py,
+	mult_text.py, params.py, rpc.py, timeout.py: Added call to
+	set_global_ctx() 
+
+2002-04-21 16:01  djc
+
+	* TODO: Removed item.  
+
+2002-04-21 16:00  djc
+
+	* Sybase.py: DatabaseError is a slightly more approriate exception.  
+
+2002-04-21 15:58  djc
+
+	* Sybase.py, blk.c, cmd.c, conn.c, ctx.c, datetime.c, locale.c,
+	money.c, numeric.c, setup.py, sybasect.c: Completed support for
+	callback error handling in extension module.  Changed Sybase.py to
+	use callback error handling.  Removed superfluous calls to
+	PyErr_Clear() which was stuffing up exceptions raised in Python
+	callback handling.  
+
+2002-04-18 23:55  djc
+
+	* ctx.c, datetime.c, money.c, numeric.c, setup.py, sybasect.c,
+	sybasect.h: Place construction of the internal context used for
+	cslib entirely under program control and removed cs_ctx_global().  
+	All internal global context use now checks that a global ctx has
+	been created and set via set_global_ctx().  More checks placed on
+	module initialisation.  Fixed locking and refcount issues for
+	cs_config() and cslib callbacks.  
+
+2002-04-18 00:15  djc
+
+	* TODO, ctx.c, sybasect.c, sybasect.h: Implemented cs_config()
+	method for ctx.  
+
+2002-04-16 23:39  djc
+
+	* blk.c, cmd.c, conn.c, ctx.c, locale.c, sybasect.c, sybasect.h: 
+	Change thread locking to allow Python callbacks from inside Sybase 
+	API.  This required a complete rethink of the global interpreter 
+	lock management.  
+
+2002-04-13 13:17  djc
+
+	* setup.py: Added OCS changes on NT from Shai Berger.  
+
+2002-04-13 12:58  djc
+
+	* setup.py: Fix API detection to match code.  
+
+2002-03-23 17:23  djc
+
+	* dist/: dist-sybase.sh, index.ahtml, make_webpage.py: Prepare for
+	automatic distribution.  
+
+2002-03-23 17:02  djc
+
+	* Sybase.py, setup.py, doc/ctxobj.tex, doc/sybase.tex: Bump release
+	to 0.34 and document new CS_IFILE.  
+
+2002-03-23 16:59  djc
+
+	* doc/localeobj.tex: Add documentation for local objects.  
+
+2002-03-23 16:55  djc
+
+	* ctx.c, sybasect.c: Added CS_IFILE option to ct_options() for Erik
+	A. Dahl.  
+
+2002-03-23 16:54  djc
+
+	* sybasect.h: Fix for MS compiler reported by Roberto M Esguerra.  
+
+2002-03-23 16:51  djc
+
+	* Sybase.py: State machine fix from Phillip J. Eby.  
+
+2002-03-10 16:52  djc
+
+	* locale.c: Oops - small error getting string settings.  
+
+2002-03-10 16:12  djc
+
+	* Sybase.py, setup.py, sybasect.c, doc/cmdobj.tex, doc/connobj.tex,
+	doc/ctxobj.tex, doc/dbapi.tex, doc/installation.tex,
+	doc/sybase.tex, doc/sybasect.tex: Finish documentation before you
+	release you twit! 
+
+2002-03-10 14:08  djc
+
+	* Sybase.py: Fix call to lock _acquire_restore().  
+
+2002-02-15 22:40  djc
+
+	* blk.c, cmd.c, conn.c, ctx.c, databuf.c, datafmt.c, datetime.c,
+	iodesc.c, locale.c, money.c, msgs.c, numeric.c, sybasect.c: Fixed
+	spelling error in legal text.  
+
+2002-02-15 21:13  djc
+
+	* setup.py: Fix Solaris build - thanks to Kent Polk 
+
+2002-02-15 20:58  djc
+
+	* Sybase.py, setup.py: Fix threading locking bug in Cursor.__del__.  
+	Bump release to 0.33pre4.  
+
+2002-02-14 22:46  djc
+
+	* blk.c, conn.c, setup.py, sybasect.c, sybasect.h: Added
+	WANT_BULKCOPY macro to allow users to compile without bulkcopy 
+	support.  
+
+2002-02-14 22:31  djc
+
+	* setup.py: More adjustments to library list on Linux.  
+
+2002-02-13 00:41  djc
+
+	* setup.py: Remove dodgey static link of libcomn.a on Solaris.  
+	Default threading mode is now off.  Use build_ext -D WANT_THREADS
+	target for setup.py.  Bump release to 0.33pre3.  
+
+2002-02-13 00:39  djc
+
+	* conn.c, ctx.c, freetds.h: Initial stubbing implementation of
+	cs_diag() and ct_diag() to simulate inline error handling for
+	FreeTDS.  
+
+2002-02-13 00:37  djc
+
+	* cmd.c, datafmt.c, sybasect.h, blk.c: Added datafmt_debug() which
+	displays the contents of a CS_DATAFMT in debug messages.  
+
+2002-02-13 00:35  djc
+
+	* Sybase.py: Change paramstyle to 'named'.  Bump version to
+	.033pre3.  Handle binary parameters in dictionaries for
+	Cursor.execute() and dictionay or sequence for Cursor.callproc().  
+
+2002-02-12 22:23  djc
+
+	* Sybase.py: Hide some private variables.  
+
+2002-02-10 00:28  djc
+
+	* Sybase.py, setup.py: Forgot to bump release.  
+
+2002-02-10 00:22  djc
+
+	* Sybase.py: Fix Cursor.__del__() to correctly unlock when
+	threading has gone away.  Fixed parameter passing in
+	Cursor.callproc().  Oops - no Cursor._cancel_current() exists.  
+
+2002-02-09 22:52  djc
+
+	* Sybase.py, setup.py: Enable multi-threaded programming at
+	threadsafety == 2.  Changed paramstyle to 'format'.  Back to drawing
+	board - throw away all dynamic SQL and use same API as original
+	module (ct_command()).  Re-implement exceptions to format string
+	messages somewhat like ISQL.  Threading is on by default in setup.py
+	--- see WANT_THREADS.  
+
+2002-02-09 22:48  djc
+
+	* blk.c, cmd.c, conn.c, ctx.c, databuf.c, datafmt.c, iodesc.c,
+	locale.c, msgs.c, sybasect.c, sybasect.h: All debug messages now
+	sent via debug_msg() which allows user to supply a Python file
+	object as the destination of messages.  Use set_debug() function in
+	sybasect module to set file.  All sybasect functions and methods
+	should be fully thread safe now.  The ctx.ct_con_alloc() method has
+	an optional integer argument which when set to 0 disables any
+	internal locking of connection.  Add debug messages now report full
+	CT lib API signature.  
+
+2002-02-09 22:37  djc
+
+	* TODO: Removed a few tasks.  
+
+2002-01-12 13:07  djc
+
+	* databuf.c, freetds.h: More work porting to FreeTDS 
+
+2002-01-07 21:04  djc
+
+	* blk.c, cmd.c, conn.c, ctx.c, databuf.c, datafmt.c, datetime.c,
+	iodesc.c, locale.c, money.c, msgs.c, numeric.c, setup.py,
+	sybasect.c, sybasect.h: Initial work porting to FreeTDS.  
+
+2001-11-06 17:56  djc
+
+	* Sybase.py, TODO, conn.c, ctx.c, locale.c, setup.py, sybasect.c,
+	sybasect.h: Added initial support for CS_LOCALE.  
+
+2001-10-22 20:49  djc
+
+	* sybasect.c: Andres Celerio changes for CS_VOID_TYPE.  
+
+2001-09-30 23:44  djc
+
+	* Sybase.py: Trap all exceptions in Cursor.__del__().  
+
+2001-09-15 16:33  djc
+
+	* Sybase.py, doc/sybase.tex: Bump release 
+
+2001-09-15 16:24  djc
+
+	* blk.c, setup.py: Added automatic detection of API functions.  
+
+2001-09-15 13:00  djc
+
+	* blk.c, conn.c, ctx.c, sybasect.c: Ensure module compiles with
+	older versions.  
+
+2001-09-04 20:49  djc
+
+	* TODO: Reminder 
+
+2001-08-03 11:27  djc
+
+	* doc/: Makefile, sybase.tex: Bump doc version.  
+
+2001-08-03 11:10  djc
+
+	* Sybase.py, setup.py: Bump version.  
+
+2001-08-03 11:10  djc
+
+	* Sybase.py, databuf.c, datetime.c: Tim Docker bug: databuf.c
+	datetime values in multi item buffers.  Tim Docker bug: Sybase.py
+	initialisation too early Derek Harland bug: datetime attributes are
+	now readonly.  Derek Harland feature: Sybase.py accept mxDateTime
+	parameters.  
+
+2001-07-20 11:32  djc
+
+	* TODO: Clarification.  
+
+2001-07-20 11:32  djc
+
+	* Sybase.py: Derek Harland mxDateTime to datetime conversion.  
+
+2001-07-18 16:19  djc
+
+	* Sybase.py, databuf.c: Minor bugfix.  
+
+2001-07-18 11:54  djc
+
+	* doc/sybase.tex: Bump date.  
+
+2001-07-18 11:54  djc
+
+	* Sybase.py: Small cleanup.  
+
+2001-07-18 11:44  djc
+
+	* TODO: TODO 
+
+2001-07-18 11:43  djc
+
+	* README, setup.py: Made setup a bit better.  
+
+2001-07-18 11:16  djc
+
+	* examples/: README, bulkcopy.py, diag_example.py, mult_text.py: 
+	All examples working.  
+
+2001-07-17 23:02  djc
+
+	* money.c: Transposed arguments - oops.  
+
+2001-07-17 16:43  djc
+
+	* databuf.c, numeric.c, sybasect.h: Make DataBuf accepting for
+	numeric values.  
+
+2001-07-17 16:16  djc
+
+	* databuf.c, money.c, sybasect.h: Make DataBuf much more flexible
+	in accepting money.  
+
+2001-07-17 15:05  djc
+
+	* TODO: Done one - add one.  
+
+2001-07-17 12:56  djc
+
+	* doc/: blkdescobj.tex, cmdobj.tex, connobj.tex, copyright.tex,
+	databufobj.tex, datafmtobj.tex, dbapi.tex, installation.tex,
+	iodescobj.tex, msgsobj.tex, sybasect.tex: Typos fixed.  
+
+2001-07-17 00:23  djc
+
+	* doc/: blkdescobj.tex, connobj.tex: First complete document.  
+
+2001-07-17 00:22  djc
+
+	* cmd.c: Slight code reformat.  
+
+2001-07-17 00:22  djc
+
+	* blk.c: Docstring fixes.  Added setattr/getattr and debug,
+	direction, conn attributes.  
+
+2001-07-17 00:21  djc
+
+	* Sybase.py: Consistently rename con to conn.  
+
+2001-07-16 17:01  djc
+
+	* doc/: blkdescobj.tex, cmdobj.tex, databufobj.tex, datafmtobj.tex,
+	iodescobj.tex, msgsobj.tex, sybase.tex: Documentation updates.  
+
+2001-07-16 17:01  djc
+
+	* cmd.c: Dcostrings fixup.  
+
+2001-07-16 01:30  djc
+
+	* doc/: cmdobj.tex, connobj.tex, ctxobj.tex, sybasect.tex: 
+	Documentation updates.  
+
+2001-07-16 01:29  djc
+
+	* conn.c, ctx.c: Added docstring.  
+
+2001-07-15 15:45  djc
+
+	* doc/sybasect.tex: Fixing documentation.  
+
+2001-07-15 15:44  djc
+
+	* numeric.c: Fixed object leak bug in NumericType_new().  
+
+2001-07-15 15:44  djc
+
+	* money.c: Fixed bug in MoneyType_new().  
+
+2001-07-15 15:12  djc
+
+	* doc/dbapi.tex: Document Date functions.  
+
+2001-07-15 15:11  djc
+
+	* Sybase.py: Fix Binary() 
+
+2001-07-15 14:55  djc
+
+	* doc/dbapi.tex: Document non-compliant callproc() 
+
+2001-07-15 14:54  djc
+
+	* databuf.c: Moved fmt setup to after int_datafmt, etc called.  
+
+2001-07-15 14:53  djc
+
+	* ctx.c: Fixed string option get, CS_VERSION is INT not STRING 
+
+2001-07-15 14:53  djc
+
+	* conn.c: Fixed string option get.  
+
+2001-07-15 14:53  djc
+
+	* TODO: Woohoo 
+
+2001-07-15 14:52  djc
+
+	* Sybase.py: Added Date, Timestamp, DateFromTicks,
+	TimestampFromTicks, Binary 
+
+2001-07-15 02:57  djc
+
+	* money.c: Lots of work implementing CS_MONEY4 
+
+2001-07-15 02:57  djc
+
+	* datetime.c: Fix up docstring.  
+
+2001-07-15 02:56  djc
+
+	* datafmt.c, databuf.c, sybasect.h: Implemented CS_MONEY4 
+
+2001-07-15 02:56  djc
+
+	* TODO: Did some money work.  
+
+2001-07-15 01:58  djc
+
+	* doc/: installation.tex, sybase.tex: Added installation guide.  
+
+2001-07-15 01:57  djc
+
+	* doc/dbapi.tex: More DB-API docs.  
+
+2001-07-15 01:57  djc
+
+	* setup.py: Small reformat.  
+
+2001-07-15 01:57  djc
+
+	* TODO: More jobs...  
+
+2001-07-15 01:56  djc
+
+	* Sybase.py: Implemented STRING, BINARY, ...  
+
+2001-07-15 00:36  djc
+
+	* doc/: dbapi.tex, sybasect.tex: Documentation.  
+
+2001-07-15 00:35  djc
+
+	* TODO: Did some work found some stuff.  
+
+2001-07-15 00:35  djc
+
+	* sybasect.c: Added pickle_datetime and pickle_money 
+
+2001-07-15 00:35  djc
+
+	* Sybase.py: Fix dodgey bulkcopy method.  
+
+2001-07-13 23:54  djc
+
+	* TODO, doc/dbapi.tex, doc/sybase.tex: More documentation - more
+	TODO.  
+
+2001-07-13 23:53  djc
+
+	* conn.c: Bugfix CS_TDS_VERSION is INT not STRING.  ct_con_props()
+	includes nul in returned string length - oops.  
+
+2001-07-13 23:51  djc
+
+	* Sybase.py: Call close() in Cursor.__del__ not _dealloc() Fixed
+	bug where Cursor.rowcount was not being handled properly.  
+
+2001-07-13 16:19  djc
+
+	* doc/: dbapi.tex, sybase.tex: More documentation.  
+
+2001-07-13 16:18  djc
+
+	* Sybase.py: Gratuitous moving around.  
+
+2001-07-12 22:47  djc
+
+	* Sybase.py: Remove debugging.  
+
+2001-07-12 22:45  djc
+
+	* datetime.c: Oops - bad pointer.  
+
+2001-07-12 22:44  djc
+
+	* databuf.c, datetime.c, sybasect.h: Fix assignment to DateTimeType
+	from CS_DATETIME and CS_DATETIME4.  
+
+2001-07-12 22:30  djc
+
+	* Sybase.py, databuf.c, datafmt.c, datetime.c, money.c, numeric.c,
+	setup.py, sybasect.c, sybasect.h: Remove binary dependency on
+	mxDateTime.  Control use of mxDateTime via Sybase.use_datetime.  
+	Include native datetime object.  Massive cleanup of Sybase native
+	type handling.  
+
+2001-07-12 17:04  djc
+
+	* Sybase.py, databuf.c, datafmt.c, datetime.c, setup.py,
+	sybasect.c, sybasect.h: Remove binary dependency on mxDateTime.  
+
+2001-07-08 14:57  djc
+
+	* Sybase.py: Another small bugfix.  
+
+2001-07-08 14:56  djc
+
+	* Sybase.py: Small bugfix.  
+
+2001-07-08 14:56  djc
+
+	* Sybase.py: Clean up cursor state machine - seems to work again.  
+
+2001-07-06 00:32  djc
+
+	* Sybase.py: Start work fixing dodgey cursor state machine.  
+
+2001-07-05 16:59  djc
+
+	* TODO, blk.c, cmd.c, conn.c, databuf.c, money.c, numeric.c,
+	setup.py: More exception handling.  
+
+2001-07-05 00:36  djc
+
+	* TODO, blk.c, cmd.c, conn.c, ctx.c, numeric.c: Started adding
+	exception in callback handler detection.  
+
+2001-07-04 16:25  djc
+
+	* Sybase.py: Bump revision.  
+
+2001-07-04 16:24  djc
+
+	* blk.c, cmd.c, conn.c, ctx.c, databuf.c, datafmt.c, iodesc.c,
+	money.c, msgs.c, numeric.c, sybasect.c, sybasect.h: Added object
+	leak detection.  
+
+2001-07-04 16:24  djc
+
+	* Sybase.py: Fixed CT library resource leak with
+	ct_dynamic(CS_DEALLOC) 
+
+2001-07-01 01:27  djc
+
+	* Sybase.py: Free ct_dynamic() procedures.  
+
+2001-07-01 01:26  djc
+
+	* sybasect.h: Added new money datatype.  Made all _Check()
+	functions macros.  
+
+2001-07-01 01:25  djc
+
+	* sybasect.c: Added new money datatype.  
+
+2001-07-01 01:25  djc
+
+	* setup.py: Added money.c 
+
+2001-07-01 01:25  djc
+
+	* numeric.c: Move global_ctx() to ctx.c Numeric_Check() is now a
+	macro.  Slight adjustment to refcounts in pickler setup.  
+
+2001-07-01 01:24  djc
+
+	* iodesc.c: CS_IODESC_Check is now a macro.  
+
+2001-07-01 01:23  djc
+
+	* databuf.c, datafmt.c: Begin support for money datatype.  
+
+2001-07-01 01:23  djc
+
+	* ctx.c: Moved global_ctx() here from numeric.c 
+
+2001-07-01 01:21  djc
+
+	* money.c: Added money object.  
+
+2001-06-27 12:52  djc
+
+	* README, Sybase.py, doc/dbapi.tex, doc/sybase.tex: Try not to be a
+	liar in making claims on 'net.  
+
+2001-06-26 20:07  djc
+
+	* numeric.c, sybasect.c, sybasect.h: Make sure that picling of
+	numeric() works.  
+
+2001-06-26 19:45  djc
+
+	* numeric.c, doc/sybase.tex: Removed warning.  
+
+2001-06-26 19:42  djc
+
+	* Sybase.py: Do not import exceptions Added auto_commit optional
+	arg to connect() Added delay_connect optional arg to connect() 
+
+2001-06-24 15:32  djc
+
+	* cmd.c, numeric.c, setup.py, sybasect.c, sybasect.h: Renamed
+	buffer to databuf.  Added pickle capability to numeric (copied from
+	Sybase module).  Re-arrange declarations in sybasect.h 
+
+2001-06-24 14:37  djc
+
+	* databuf.c: Rename Buffer to DataBuf 
+
+2001-06-19 23:20  djc
+
+	* doc/cmdobj.tex: Updated documentation.  
+
+2001-06-19 23:20  djc
+
+	* examples/mult_text.py: Removed redundant parameter to
+	ct_data_info().  
+
+2001-06-19 23:17  djc
+
+	* cmd.c: Remove redundant parameter to ct_data_info().  
+
+2001-06-19 12:47  djc
+
+	* README: Updated build instructions.  
+
+2001-06-19 12:46  djc
+
+	* Sybase.py: Bump revision.  
+
+2001-06-19 12:44  djc
+
+	* setup.py: Fixed error message.  
+
+2001-06-19 12:43  djc
+
+	* ntsetup.py: All intelligence moved to setup.py.  
+
+2001-06-19 12:42  djc
+
+	* doc/Makefile: Clean up some more files in HTML build dir.  
+
+2001-06-19 12:42  djc
+
+	* setup.py: Use same setup file for all platforms.  
+
+2001-06-19 12:31  djc
+
+	* examples/: array_bind.py, bulkcopy.py, cursor_sel.py,
+	cursor_upd.py, diag_example.py, dynamic_cur.py, dynamic_ins.py,
+	example.py, mult_text.py, params.py, rpc.py, timeout.py,
+	timeout.readme: Updated programs to include original header comment
+	from Sybase examples.  
+
+2001-06-19 00:39  djc
+
+	* Sybase.py, blk.c, cmd.c, ctx.c, databuf.c, datafmt.c, iodesc.c,
+	msgs.c, sybasect.h: Renamed data types.  
+
+2001-06-19 00:38  djc
+
+	* sybasect.c: Export all data types introduced by module.  
+
+2001-06-19 00:36  djc
+
+	* conn.c: Added ct_con_drop.  Rename type.  
+
+2001-06-19 00:35  djc
+
+	* numeric.c: Be a bit more defensive about long->string conversions
+	and trailing 'L' 
+
+2001-06-19 00:30  djc
+
+	* examples/: array_bind.py, bulkcopy.py, cursor_sel.py,
+	cursor_upd.py, dynamic_cur.py, dynamic_ins.py, mult_text.py,
+	params.py, rpc.py, timeout.py: Renamed Buffer to DataBuf.  
+
+2001-06-19 00:29  djc
+
+	* doc/: blkdescobj.tex, cmdobj.tex, connobj.tex, ctxobj.tex,
+	databufobj.tex, datafmtobj.tex, iodescobj.tex, msgsobj.tex,
+	sybase.tex, sybasect.tex: Started bringing documentation up to date
+	with code.  
+
+2001-06-14 00:51  djc
+
+	* conn.c, sybasect.h, examples/timeout.py: Timeout example works
+	now.  
+
+2001-06-13 13:42  djc
+
+	* examples/timeout.py: Added timeout.py - doesn't seem to work.  
+
+2001-06-13 13:07  djc
+
+	* examples/rpc.py: Cleanup.  
+
+2001-06-13 13:07  djc
+
+	* examples/rpc.py: Added rpc.py.  
+
+2001-06-13 12:50  djc
+
+	* examples/params.py: Added params.py example.  
+
+2001-06-13 11:45  djc
+
+	* ctx.c, locale.c, setup.py, sybasect.c, sybasect.h,
+	examples/locales.py: Removed all of the locale stuff - dates use
+	mxDateTime you dope.  
+
+2001-06-13 00:05  djc
+
+	* ctx.c, locale.c, setup.py, sybasect.c, sybasect.h,
+	examples/locales.py: Started adding all of the locale support.  
+
+2001-06-13 00:02  djc
+
+	* examples/dynamic_ins.py: Ooops.  
+
+2001-06-12 21:41  djc
+
+	* examples/dynamic_ins.py: Cleanup.  
+
+2001-06-12 21:38  djc
+
+	* examples/dynamic_ins.py: Another example added.  
+
+2001-06-12 21:37  djc
+
+	* sybasect.c, examples/dynamic_ins.sql: Forgot to define
+	CS_FORCE_EXIT.  
+
+2001-06-12 16:58  djc
+
+	* examples/dynamic_cur.py: Added another example.  
+
+2001-06-12 16:24  djc
+
+	* databuf.c: Some attributes do not need to be read only.  
+
+2001-06-12 16:23  djc
+
+	* examples/: cursor_upd.py, diag_example.py: Added new example.  
+
+2001-06-12 15:40  djc
+
+	* examples/: cursor_sel.py, cursor_upd.py: Added cursor_upd.py -
+	woohoo.  
+
+2001-06-12 12:54  djc
+
+	* examples/: bulkcopy.sql, cursor_upd.sql, dynamic_ins.sql,
+	mult_text.sql, rpc.sql: Get original Sybase programs into module.  
+
+2001-06-11 22:26  djc
+
+	* examples/: array_bind.py, bulkcopy.py, cursor_sel.py,
+	mult_text.py: Cleanup example code a little bit.  
+
+2001-06-11 21:54  djc
+
+	* examples/: array_bind.py, bulkcopy.py, cursor_sel.py, example.py,
+	mult_text.py: More example work - need to set up pubs2 database to
+	test cursor_sel.py 
+
+2001-06-11 21:53  djc
+
+	* Sybase.py: CS_COMMAND.con renamed to CS_COMMAND.conn 
+
+2001-06-11 21:52  djc
+
+	* blk.c, cmd.c, conn.c, ctx.c, databuf.c, numeric.c, sybasect.h: 
+	Add more debugging.  
+
+2001-06-11 18:53  djc
+
+	* blk.c, cmd.c, ctx.c: Added more functions.  
+
+2001-06-11 18:52  djc
+
+	* examples/: array_bind.py, array_bind.sql, bulkcopy.py,
+	bulkcopy.sql, example.py, mult_text.py: Added bulkcopy.py 
+
+2001-06-11 17:27  djc
+
+	* blk.c, conn.c, sybasect.c, sybasect.h, examples/array_bind.py,
+	examples/example.py, examples/mult_text.py: Added
+	examples/array_bind.py Fixed bugs found while adding
+	examples/array_bind.py 
+
+2001-06-10 17:41  djc
+
+	* blk.c, cmd.c, conn.c, ctx.c, iodesc.c, sybasect.h,
+	examples/mult_text.py, examples/mult_text.sql: Changes to allow
+	mult_text.py example.  Do not allow ct_callback() if threading
+	enabled.  
+
+2001-06-10 02:15  djc
+
+	* blk.c, cmd.c, conn.c, ctx.c, datafmt.c, iodesc.c, msgs.c,
+	numeric.c, setup.py, sybasect.c, sybasect.h: Added lots of code -
+	fleshing out API.  
+
+2001-05-17 09:59  djc
+
+	* blk.c, ctx.c, sybasect.c: More conditional 
+
+2001-05-07 14:37  djc
+
+	* README, ntsetup.py, setup.py: Fixed files and documentation.  
+
+2001-05-07 14:22  djc
+
+	* con.c: Renamed to conn.c for NT.  
+
+2001-05-07 14:19  djc
+
+	* README: Renamed con.c to conn.c 
+
+2001-05-07 14:17  djc
+
+	* Makefile.pre.in, Setup.in, ntsetup.py, setup.py: Timothy Docker
+	supplied distutils files.  
+
+2001-05-07 14:13  djc
+
+	* Sybase.py, blk.c, cmd.c, con.c, conn.c, ctx.c, databuf.c,
+	datafmt.c, msgs.c, numeric.c, sybasect.c, sybasect.h: Release 0.24
+	sortof.  
+
+2001-05-07 14:12  djc
+
+	* Setup.in, Sybase.py, _sybase.c, _sybase.h, blk.c, cmd.c, con.c,
+	conn.c, ctx.c, databuf.c, datafmt.c, msgs.c, numeric.c, sybasect.c,
+	sybasect.h, doc/Makefile, doc/copyright.tex, doc/dbapi.tex,
+	doc/sybase.tex, doc/sybasect.tex: Release 0.23 
+
+2001-05-07 14:10  djc
+
+	* Setup.in, _sybase.h, cmd.c, databuf.c, datafmt.c, numeric.c: 
+	Release 0.22 
+
+2001-05-07 14:09  djc
+
+	* Sybase.py, _sybase.c, _sybase.h, cmd.c, databuf.c, datafmt.c: 
+	Release 0.21 
+
+2001-05-07 14:07  djc
+
+	* Makefile.pre.in, Setup.in, Sybase.py, _sybase.c, _sybase.h,
+	cmd.c, con.c, conn.c, ctx.c, databuf.c, datafmt.c, msgs.c,
+	numeric.c: Version 0.20 
+

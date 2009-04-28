@@ -1,0 +1,317 @@
+\subsection{CS_BLKDESC Objects}
+
+Calling the \method{blk_alloc()} method of a \class{CS_CONNECTION}
+object will create a \class{CS_BLKDESC} object.  When the
+\class{CS_BLKDESC} object is deallocated the Sybase
+\function{blk_drop()} function will be called for the command.
+
+\class{CS_BLKDESC} objects have the following interface:
+
+\begin{methoddesc}[CS_BLKDESC]{blk_bind}{num, databuf}
+Calls the Sybase \function{blk_bind()} function and returns the Sybase
+result code.  The Sybase-CT \function{blk_bind()} function is called
+like this:
+
+\begin{verbatim}
+status = blk_bind(blk, num, &datafmt, buffer->buff, buffer->copied, buffer->indicator);
+\end{verbatim}
+\end{methoddesc}
+
+\begin{methoddesc}[CS_BLKDESC]{blk_describe}{num}
+Calls the Sybase \function{blk_describe()} function and returns a
+tuple containing the Sybase result code and a \class{CS_DATAFMT}
+object which describes the column identified by \var{num}. \code{None}
+is returned as the \class{CS_DATAFMT} object when the result code is
+not \code{CS_SUCCEED}.
+
+The Sybase \function{blk_describe()} function is called like this:
+
+\begin{verbatim}
+status = blk_describe(blk, num, &datafmt);
+\end{verbatim}
+\end{methoddesc}
+
+\begin{methoddesc}[CS_BLKDESC]{blk_done}{type}
+Calls the Sybase \function{blk_done()} function and returns a tuple
+containing the Sybase result code and the number of rows copied in the
+current batch.
+
+The Sybase \function{blk_done()} function is called like this:
+
+\begin{verbatim}
+status = blk_done(blk, type, &num_rows);
+\end{verbatim}
+\end{methoddesc}
+
+\begin{methoddesc}[CS_BLKDESC]{blk_drop}{}
+Calls the Sybase \function{blk_drop()} function and returns the Sybase
+result code.
+
+The Sybase \function{blk_drop()} function is called like this:
+
+\begin{verbatim}
+status = blk_drop(blk);
+\end{verbatim}
+
+This method will be automatically called when the \class{CS_BLKDESC}
+object is deleted.  Applications do not need to call the method.
+\end{methoddesc}
+
+\begin{methoddesc}[CS_BLKDESC]{blk_init}{direction, table}
+Calls the Sybase \function{blk_init()} function and returns the Sybase
+result code.
+
+The Sybase \function{blk_init()} function is called like this:
+
+\begin{verbatim}
+status = blk_init(blk, direction, table, CS_NULLTERM);
+\end{verbatim}
+\end{methoddesc}
+
+\begin{methoddesc}[CS_BLKDESC]{blk_props}{action, property \optional{, value}}
+Sets, retrieves and clears properties of the bulk descriptor object.
+
+When \var{action} is \code{CS_SET} a compatible \var{value} argument
+must be supplied and the method returns the Sybase result code.  The
+Sybase \function{blk_props()} function is called like this:
+
+\begin{verbatim}
+/* boolean property value */
+status = blk_props(blk, CS_SET, property, &bool_value, CS_UNUSED, NULL);
+
+/* int property value */
+status = blk_props(blk, CS_SET, property, &int_value, CS_UNUSED, NULL);
+
+/* numeric property value */
+status = blk_props(blk, CS_SET, property, &numeric_value, CS_UNUSED, NULL);
+\end{verbatim}
+
+When \var{action} is \code{CS_GET} the method returns a tuple
+containing the Sybase result code and the property value.  The Sybase
+\function{blk_props()} function is called like this:
+
+\begin{verbatim}
+/* boolean property value */
+status = blk_props(blk, CS_GET, property, &bool_value, CS_UNUSED, NULL);
+
+/* int property value */
+status = blk_props(blk, CS_GET, property, &int_value, CS_UNUSED, NULL);
+
+/* numeric property value */
+status = blk_props(blk, CS_GET, property, &numeric_value, CS_UNUSED, NULL);
+\end{verbatim}
+
+When \var{action} is \code{CS_CLEAR} the method returns the Sybase
+result code.  The Sybase \function{blk_props()} function is called
+like this:
+
+\begin{verbatim}
+status = blk_props(blk, CS_CLEAR, property, NULL, CS_UNUSED, NULL);
+\end{verbatim}
+
+The recognised properties are:
+
+\begin{longtable}{l|l}
+\var{property} & type \\
+\hline
+\code{BLK_IDENTITY}        & \code{bool} \\
+\code{BLK_NOAPI_CHK}       & \code{bool} \\
+\code{BLK_SENSITIVITY_LBL} & \code{bool} \\
+\code{ARRAY_INSERT}        & \code{bool} \\
+\code{BLK_SLICENUM}        & \code{int} \\
+\code{BLK_IDSTARTNUM}      & \code{numeric} \\
+\end{longtable}
+
+For an explanation of the property values and get/set/clear semantics
+please refer to the Sybase documentation.
+\end{methoddesc}
+
+\begin{methoddesc}[CS_BLKDESC]{blk_rowxfer}{}
+Calls the Sybase \function{blk_rowxfer()} function and returns the
+Sybase result code.
+
+The Sybase \function{blk_rowxfer()} function is called like this:
+
+\begin{verbatim}
+status = blk_rowxfer(blk);
+\end{verbatim}
+\end{methoddesc}
+
+\begin{methoddesc}[CS_BLKDESC]{blk_rowxfer_mult}{\optional{row_count}}
+Calls the Sybase \function{blk_rowxfer_mult()} function and returns a
+tuple containing the Sybase result code and the number of rows
+transferred.
+
+The Sybase \function{blk_rowxfer_mult()} function is called like this:
+
+\begin{verbatim}
+status = blk_rowxfer_mult(blk, &row_count);
+\end{verbatim}
+\end{methoddesc}
+
+\begin{methoddesc}[CS_BLKDESC]{blk_textxfer}{\optional{str}}
+Calls the Sybase \function{blk_textxfer()} function.  Depending on the
+direction of the bulkcopy (established via the \method{blk_init()}
+method) the method expects different arguments.
+
+When \code{direction} \code{CS_BLK_IN} the \var{str} argument must be
+supplied and method returns the Sybase result code.
+
+The Sybase \function{blk_textxfer()} function is called like this:
+
+\begin{verbatim}
+status = blk_textxfer(blk, str, str_len, NULL);
+\end{verbatim}
+
+When \code{direction} \code{CS_BLK_OUT} the \var{str} argument must
+not be present and method returns a tuple containing the Sybase result
+code and a string.
+
+The Sybase \function{blk_textxfer()} function is called like this:
+
+\begin{verbatim}
+status = blk_textxfer(blk, buff, sizeof(buff), &out_len);
+\end{verbatim}
+\end{methoddesc}
+
+A simplistic program to bulkcopy a table from one server to another
+server follows:
+
+The first section contains the code to display client and server
+messages in case of failure.
+
+\begin{verbatim}
+import sys
+from sybasect import *
+
+def print_msgs(conn, type):
+    status, num_msgs = conn.ct_diag(CS_STATUS, type)
+    if status != CS_SUCCEED:
+        return
+    for i in range(num_msgs):
+        status, msg = conn.ct_diag(CS_GET, type, i + 1)
+        if status != CS_SUCCEED:
+            continue
+        for attr in dir(msg):
+            sys.stderr.write('%s: %s\n' % (attr, getattr(msg, attr)))
+
+def die(conn, func):
+    sys.stderr.write('%s failed!\n' % func)
+    print_msgs(conn, CS_SERVERMSG_TYPE)
+    print_msgs(conn, CS_CLIENTMSG_TYPE)
+    sys.exit(1)
+\end{verbatim}
+
+The next section is fairly constant for all CT library programs.  A
+library context is allocated and connections established.  The only
+thing which is unique to bulk copy operations is setting the
+\code{CS_BULK_LOGIN} option on the connection.
+
+\begin{verbatim}
+def init_db():
+    status, ctx = cs_ctx_alloc()
+    if status != CS_SUCCEED:
+        raise 'cs_ctx_alloc'
+    if ctx.ct_init(CS_VERSION_100) != CS_SUCCEED:
+        raise 'ct_init'
+    return ctx
+
+def connect_db(ctx, server, user, passwd):
+    status, conn = ctx.ct_con_alloc()
+    if status != CS_SUCCEED:
+        raise 'ct_con_alloc'
+    if conn.ct_diag(CS_INIT) != CS_SUCCEED:
+        die(conn, 'ct_diag')
+    if conn.ct_con_props(CS_SET, CS_USERNAME, user) != CS_SUCCEED:
+        die(conn, 'ct_con_props CS_USERNAME')
+    if conn.ct_con_props(CS_SET, CS_PASSWORD, passwd) != CS_SUCCEED:
+        die(conn, 'ct_con_props CS_PASSWORD')
+    if conn.ct_con_props(CS_SET, CS_BULK_LOGIN, 1) != CS_SUCCEED:
+        die(conn, 'ct_con_props CS_BULK_LOGIN')
+    if conn.ct_connect(server) != CS_SUCCEED:
+        die(conn, 'ct_connect')
+    return conn
+\end{verbatim}
+
+The next segment allocates bulkcopy descriptors, data buffers, and
+binds the data buffers to the bulk copy descriptors.  The same buffers
+are used for copying out and copying in - not bad.  Note that for array
+binding we need to use loose packing for copy in; hence the line
+setting the \code{format} member of \code{Databuf} \code{CS_DATAFMT} to
+\code{CS_BLK_ARRAY_MAXLEN}.  Without this the bulkcopy operation
+assumes tight packing and the data is corrupted on input.
+
+\begin{verbatim}
+def alloc_bcp(conn, dirn, table):
+    status, blk = conn.blk_alloc()
+    if status != CS_SUCCEED:
+        die(conn, 'blk_alloc')
+    if blk.blk_init(dirn, table) != CS_SUCCEED:
+        die(conn, 'blk_init')
+    return blk
+
+def alloc_bufs(bcp, num):
+    bufs = []
+    while 1:
+        status, fmt = bcp.blk_describe(len(bufs) + 1)
+        if status != CS_SUCCEED:
+            break
+        fmt.count = num
+        bufs.append(DataBuf(fmt))
+    return bufs
+
+def bcp_bind(bcp, bufs):
+    for i in range(len(bufs)):
+        buf = bufs[i]
+        if bcp.direction == CS_BLK_OUT:
+            buf.format = 0
+        else:
+            buf.format = CS_BLK_ARRAY_MAXLEN
+        if bcp.blk_bind(i + 1, buf) != CS_SUCCEED:
+            die(bcp.conn, 'blk_bind')
+\end{verbatim}
+
+This next section actually performs the bulkcopy.  Note that there is
+no attempt to deal with BLOB columns.
+
+\begin{verbatim}
+def bcp_copy(src, dst, batch_size):
+    total = batch = 0
+    while 1:
+        status, num_rows = src.blk_rowxfer_mult()
+        if status == CS_END_DATA:
+            break
+        if status != CS_SUCCEED:
+            die(src, 'blk_rowxfer_mult out')
+        status, dummy = dst.blk_rowxfer_mult(num_rows)
+        if status != CS_SUCCEED:
+            die(src, 'blk_rowxfer_mult in')
+        batch = batch + num_rows
+        if batch >= batch_size:
+            total = total + batch
+            batch = 0
+            src.blk_done(CS_BLK_BATCH)
+            dst.blk_done(CS_BLK_BATCH)
+            print 'batch - %d rows transferred' % total
+
+    status, num_rows = src.blk_done(CS_BLK_ALL)
+    status, num_rows = dst.blk_done(CS_BLK_ALL)
+    return total + batch
+\end{verbatim}
+
+Finally the code which drives the whole process.
+
+\begin{verbatim}
+ctx = init_db()
+src_conn = connect_db(ctx, 'drama', 'sa', '')
+dst_conn = connect_db(ctx, 'SYBASE', 'sa', '')
+src = alloc_bcp(src_conn, CS_BLK_OUT, 'pubs2.dbo.authors')
+dst = alloc_bcp(dst_conn, CS_BLK_IN,  'test.dbo.authors')
+
+bufs = alloc_bufs(src, 5)
+bcp_bind(src, bufs)
+bcp_bind(dst, bufs)
+
+total = bcp_copy(src, dst, 10)
+print 'all done - %d rows transferred' % total
+\end{verbatim}

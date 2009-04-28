@@ -1,0 +1,23 @@
+Description: The following notes refer to the time_out.c program.
+
+Steps to run the program and generate a timeout error:
+
+     (1) Open up an isql session and begin a transaction, for example:
+		
+	 begin tran
+	 update pubs2..publishers set city = city
+	 go
+
+     (2) Run your program in another window. After 5 seconds, you will get a
+	 timeout error from your program. 
+
+	 You will be prompted to cancel the current command which has
+	 caused the timeout and contine processing other commands in
+	 the same connection as well as on other connections, or to
+	 continue to wait for another timeout period.
+
+	 Note: Rolling back the transactions is preferable in case your 
+	       update statement is different. you don't want to change the
+	       sample tables.
+
+	     

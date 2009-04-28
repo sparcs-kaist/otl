@@ -1,0 +1,726 @@
+\section{\module{Sybase} --- Provides interface to Sybase relational database}
+
+\declaremodule{standard}{Sybase}
+
+%\modulesynopsis{DB-API 2.0 interface to Sybase.}
+
+The \module{Sybase} module contains the following:
+
+\begin{datadesc}{__version__}
+A string which specifies the version of the Sybase module.
+\end{datadesc}
+
+\begin{datadesc}{use_datetime}
+When you import the \module{Sybase} module it will try to import the
+\module{mxDateTime} module.  If the \module{mxDateTime} module is
+successfully imported then this variable will be set to \code{1}.  All
+\code{datetime} columns will then be returned as
+\class{mxDateTime.DateTime} objects.
+
+If you do not wish to use \class{mxDateTime.DateTime} objects, set
+this to \code{0} immediately after importing the \module{Sybase}
+module.  All \code{datetime} columns will then be returned as
+\class{sybasect.DateTime} objects.
+\end{datadesc}
+
+\begin{datadesc}{apilevel}
+Specifies the level of DB-API compliance.  Currently set to
+\texttt{'2.0'}.
+\end{datadesc}
+
+\begin{datadesc}{threadsafety}
+Specifies the DB-API threadsafety.  The \module{Sybase} module allows
+threads to share the module, connections and cursors.
+\end{datadesc}
+
+\begin{datadesc}{paramstyle}
+Specifies the DB-API parameter style.  This variable is set to the
+value \code{'named'} which indicates that the \module{Sybase} module
+uses named parameters.  For example:
+
+\begin{verbatim}
+c.execute("select * from titles where title like @arg",
+          {'@arg': 'The %'})
+\end{verbatim}
+\end{datadesc}
+
+\begin{excdesc}{Warning}
+Exception raised for important warnings like data truncations while
+inserting, etc.  It is a subclass of the Python \class{StandardError}
+(defined in the module \module{exceptions}).
+\end{excdesc}
+
+\begin{excdesc}{Error}
+Exception that is the base class of all other error exceptions.  You
+can use this to catch all errors with one single \code{except}
+statement.  It is a subclass of the Python \class{StandardError}
+(defined in the module \module{exceptions}).
+\end{excdesc}
+
+\begin{excdesc}{InterfaceError}
+Exception raised for errors that are related to the database interface
+rather than the database itself.  It is a subclass of \class{Error}.
+\end{excdesc}
+
+\begin{excdesc}{DatabaseError}
+Exception raised for errors that are related to the database.  It is a
+subclass of \class{Error}.
+\end{excdesc}
+
+\begin{excdesc}{DataError}
+Exception raised for errors that are due to problems with the
+processed data like division by zero, numeric value out of range,
+etc.  It is a subclass of \class{DatabaseError}.
+\end{excdesc}
+
+\begin{excdesc}{OperationalError}
+Exception raised for errors that are related to the database's
+operation and not necessarily under the control of the programmer,
+e.g. an unexpected disconnect occurs, the data source name is not
+found, a transaction could not be processed, a memory allocation error
+occurred during processing, etc.  It is a subclass of
+\class{DatabaseError}.
+\end{excdesc}
+
+\begin{excdesc}{IntegrityError}
+Exception raised when the relational integrity of the database is
+affected, e.g. a foreign key check fails.  It is a subclass of
+\class{DatabaseError}.
+\end{excdesc}
+
+\begin{excdesc}{InternalError}
+Exception raised when the database encounters an internal error,
+e.g. the cursor is not valid anymore, the transaction is out of sync,
+etc.  It is a subclass of \class{DatabaseError}.
+\end{excdesc}
+
+\begin{excdesc}{ProgrammingError}
+Exception raised for programming errors, e.g. table not found or
+already exists, syntax error in the SQL statement, wrong number of
+parameters specified, etc.  It is a subclass of \class{DatabaseError}.
+\end{excdesc}
+
+\begin{excdesc}{NotSupportedError}
+Exception raised in case a method or database API was used which is
+not supported by the database, e.g. requesting a \method{rollback()}
+on a connection that does not support transaction or has transactions
+turned off.  It is a subclass of \class{DatabaseError}.
+\end{excdesc}
+
+This is the exception inheritance layout:
+
+\begin{verbatim}
+StandardError
+|__Warning
+|__Error
+   |__InterfaceError
+   |__DatabaseError
+      |__DataError
+      |__OperationalError
+      |__IntegrityError
+      |__InternalError
+      |__ProgrammingError
+      |__NotSupportedError
+\end{verbatim}
+
+\begin{datadesc}{STRING}
+An instance of the \class{DBAPITypeObject} class which compares equal
+to all Sybase type codes for string-based column types (\code{char},
+\code{varchar}, \code{text}).
+\end{datadesc}
+
+\begin{datadesc}{BINARY}
+An instance of the \class{DBAPITypeObject} class which compares equal
+to all Sybase type codes which describe binary columns (\code{image},
+\code{binary}, \code{varbinary}).
+\end{datadesc}
+
+\begin{datadesc}{NUMBER}
+An instance of the \class{DBAPITypeObject} class which compares equal
+to all Sybase type codes which describe numeric columns (\code{bit},
+\code{tinyint}, \code{smallint}, \code{int}, \code{decimal},
+\code{numeric}, \code{float}, \code{real}, \code{money},
+\code{smallmoney}).
+\end{datadesc}
+
+\begin{datadesc}{DATETIME}
+An instance of the \class{DBAPITypeObject} class which compares equal
+to all Sybase type codes which describe date/time columns
+(\code{datetime}, \code{smalldatetime}).
+\end{datadesc}
+
+\begin{datadesc}{ROWID}
+An instance of the \class{DBAPITypeObject} class which compares equal
+to all Sybase type codes which describe date/time columns
+(\code{decimal}, \code{numeric}).
+\end{datadesc}
+
+\begin{funcdesc}{Date}{year, month, day}
+DB-API 2.0 function which returns a Sybase \code{datetime} value for
+the supplied arguments.
+\end{funcdesc}
+
+\begin{funcdesc}{Time}{hour, minute, second}
+Sybase does not have a native type for representing times -- this
+DB-API 2.0 function is not implemented.
+\end{funcdesc}
+
+\begin{funcdesc}{Timestamp}{year, month, day, hour, minute, second}
+DB-API 2.0 function which returns a Sybase \code{datetime} value for
+the supplied arguments.
+\end{funcdesc}
+
+\begin{funcdesc}{DateFromTicks}{ticks}
+DB-API 2.0 function which returns a Sybase \code{datetime} value from
+the given ticks value (number of seconds since the epoch; see the
+documentation of the standard Python \module{time} module for
+details).
+\end{funcdesc}
+
+\begin{funcdesc}{TimeFromTicks}{ticks}
+Sybase does not have a native type for representing times -- this
+DB-API 2.0 function is not implemented.
+\end{funcdesc}
+
+\begin{funcdesc}{TimestampFromTicks}{ticks}
+DB-API 2.0 function which returns a Sybase \code{datetime} value from
+the given ticks value (number of seconds since the epoch; see the
+documentation of the standard Python \module{time} module for
+details).
+\end{funcdesc}
+
+\begin{funcdesc}{Binary}{str}
+DB-API 2.0 function which constructs an object capable of holding a
+binary (long) string value.
+\end{funcdesc}
+
+\begin{classdesc}{Cursor}{owner}
+Return a new instance of the \class{Cursor} class which implements the
+DB-API 2.0 cursor functionality.
+
+\class{Cursor} objects are usually created via the
+\method{cursor()} method of the \class{Connection} object.
+
+The \var{owner} argument must be an instance of the \class{Connection}
+class.
+\end{classdesc}
+
+\begin{classdesc}{Bulkcopy}{owner, table, direction = CS_BLK_IN, arraysize = 20}
+Return a new instance of the \class{Bulkcopy} class.
+
+The \var{owner} argument must be an instance of the \class{Connection}
+class.  A bulk copy context will be established for the table named in
+the \var{table} argument, the bulkcopy direction must be either
+\code{CS_BLK_IN} or \code{CS_BLK_OUT} as defined in the
+\module{Sybase} module.  \code{arraysize} specifies the number of
+in-memory rows that will be batched for each DB request.
+
+This functionality can only be called when the \class{Connection} is
+in \code{auto_commit} mode. Otherwise a \class{ProgrammingError}
+exception is raised.
+
+\class{Bulkcopy} objects are usually created via the
+\method{bulkcopy()} method of the \class{Connection} object.
+
+This is an extension of the DB-API 2.0 specification.
+\end{classdesc}
+
+\begin{classdesc}{Connection}{dsn, user, passwd \optional{, \ldots}}
+Return a new instance of the \class{Connection} class which implements
+the DB-API 2.0 connection functionality.
+
+The \var{dsn} argument identifies the Sybase server, \var{user} and
+\var{passwd} are the Sybase username and password respectively.
+
+The optional arguments are the same as those supported by the
+\function{connect()} function.
+\end{classdesc}
+
+\begin{funcdesc}{connect}{dsn, user, passwd \optional{, \ldots}}
+Implements the DB-API 2.0 \function{connect()} function.
+
+Creates a new \class{Connection} object passing the function arguments
+to the \class{Connection} constructor.  The
+optional arguments and their effect are:
+
+\begin{description}
+\item{\var{database \code{= None}}}
+
+Specifies the database to use - has the same effect as the following
+SQL.
+
+\begin{verbatim}
+use database
+\end{verbatim}
+
+\item{\var{strip \code{= 0}}}
+
+If non-zero then all \code{char} columns will be right stripped of
+whitespace.
+
+\item{\var{auto_commit \code{= 0}}}
+
+Controls Sybase chained transaction mode.  When non-zero, chained
+transaction mode is turned off.  From the Sybase SQL manual:
+
+\begin{quote}
+If you set chained transaction mode, Adaptive Server implicitly
+invokes a begin transaction before the following statements: delete,
+insert, open, fetch, select, and update. You must still explicitly
+close the transaction with a commit.
+\end{quote}
+
+\item{\var{bulkcopy \code{= 0}}}
+
+Must be non-zero if you are going to perform bulkcopy operations on
+the connection.  You will also need to turn off chained transactions
+in order to use bulkcopy (\code{auto_commit=1}).
+
+\item{\var{delay_connect \code{= 0}}}
+
+If non-zero the returned \class{Connection} object will be initialised
+but not connected.  This allows you to set additional options on the
+connection before completing the connection to the server.  Call the
+\method{connect()} method to complete the connection.
+
+\begin{verbatim}
+db = Sybase.connect('SYBASE', 'sa', '', delay_connect = 1)
+db.set_property(Sybase.CS_HOSTNAME, 'secret')
+db.connect()
+\end{verbatim}
+
+\item{\var{locale \code{= None}}}
+
+Controls the locale of the connection to match that of the server. 
+
+\begin{verbatim}
+db = Sybase.connect('SYBASE', 'sa', '', locale = 'utf8')
+\end{verbatim}
+
+\item{\var{locking \code{= 1}}}
+
+Controls whether or not thread locks will be used on the connection
+object.  When non-zero, the connection allows connections and cursors to be shared between threads.  If your program is not multi-threaded you can gain a slight performance improvement by passing zero in this argument.
+
+\item{\var{datetime \code{= ``auto''}}}
+
+Controls the type used when returning a date or time.
+
+\end{description}
+\end{funcdesc}
+
+The \module{Sybase} module imports the low level \module{sybasect}
+extension module via
+
+\begin{verbatim}
+from sybasect import *
+\end{verbatim}
+
+which means that the \module{Sybase} module inherits all of the
+objects defined in that module.
+
+Some of the functions will be useful in your programs.
+
+\begin{funcdesc}{datetime}{str \optional{, type \code{= CS_DATETIME_TYPE}}}
+Creates a new instance of the \class{DateTime} class.  This is used to
+construct native Sybase \code{datetime} and \code{smalldatetime} values.
+
+The string passed in the \var{str} argument is converted to a datetime
+value of the type specified in the optional \var{type} argument.
+
+\code{CS_DATETIME_TYPE} represents the \code{datetime} Sybase
+type and \code{CS_DATETIME4_TYPE} represents
+\code{smalldatetime}.
+
+The \class{DateTime} class is described in the \module{sybasect}
+module.
+\end{funcdesc}
+
+\begin{funcdesc}{money}{num}
+Creates a new instance of the \class{Money} class.  This is
+used to construct native Sybase \code{money} values.
+
+The value passed in the \var{num} argument is converted to a native
+Sybase money value.
+
+The \class{DateTime} class is described in the \module{sybasect}
+module.
+\end{funcdesc}
+
+\begin{funcdesc}{numeric}{num, \optional{precision \code{= -1} \optional{, scale \code{= -1}}}}
+Creates a new instance of the \class{Numeric} class.  This is used to
+construct native Sybase \code{numeric} and \code{decimal} values.
+
+Converts the value passed in the \var{num} argument to a native Sybase
+numeric value.  The \var{precision} and \var{scale} arguments control
+the precision and scale of the returned value.
+
+The \class{Numeric} class is described in the \module{sybasect}
+module.
+\end{funcdesc}
+
+\subsection{Connection Objects}
+
+Implements the DB-API 2.0 \class{Connection} class.
+
+\class{Connection} objects have the following interface:
+
+\begin{methoddesc}[Connection]{close}{}
+Implements the DB-API 2.0 connection \method{close()} method.
+
+Forces the database connection to be closed immediately.  Any
+operation on the connection (including cursors) after calling this
+method will raise an exception.
+
+This method is called by the \method{__del__()} method.
+\end{methoddesc}
+
+\begin{methoddesc}[Connection]{commit}{\optional{name \code{= None}}}
+Implements the DB-API 2.0 connection \method{commit()} method.
+
+Calling this method commits any pending transaction to the database.
+By default Sybase transaction chaining is enabled.  If you pass
+\code{auto_commit = 1} to the \function{connect()} function when
+creating this \class{Connection} object then chained transaction mode
+will be turned off.
+
+From the Sybase manual:
+\begin{quote}
+If you set chained transaction mode, Adaptive Server implicitly
+invokes a begin transaction before the following statements: delete,
+insert, open, fetch, select, and update. You must still explicitly
+close the transaction with a commit.
+\end{quote}
+
+The optional \var{name} argument is an extension of the DB-API 2.0
+specification.  It allows you to make use of the Sybase ability to
+nest and name transactions.
+\end{methoddesc}
+
+\begin{methoddesc}[Connection]{rollback}{\optional{name \code{= None}}}
+Implements the DB-API 2.0 connection \method{rollback()} method.
+
+Tells Sybase to roll back to the start of any pending transaction.
+Closing a connection without committing the changes first will cause
+an implicit rollback to be performed.
+
+The optional \var{name} argument is an extension of the DB-API 2.0
+specification.  It allows you to make use of the Sybase ability to
+nest and name transactions.
+\end{methoddesc}
+
+\begin{methoddesc}[Connection]{cursor}{}
+Implements the DB-API 2.0 connection \method{cursor()} method.
+
+Returns a new \class{Cursor} object using the connection.
+\end{methoddesc}
+
+\begin{methoddesc}[Connection]{begin}{\optional{name \code{= None}}}
+This is an extension of the DB-API 2.0 specification.
+
+If you have turned off chained transaction mode via the
+\var{auto_commit} argument to the connection constructor then you can
+use this method to begin a transaction.  It also allows you to use the
+nested transaction support in Sybase.
+\end{methoddesc}
+
+\begin{methoddesc}[Connection]{connect}{}
+This is an extension of the DB-API 2.0 specification.
+
+If you pass a TRUE value to the \var{delay_connect} argument to the
+\function{connect()} function then you must call this method to
+complete the server connection process.  This is useful if you wish to
+set connection properties which cannot be set after you have connected
+to the server.
+\end{methoddesc}
+
+\begin{methoddesc}[Connection]{get_property}{prop}
+This is an extension of the DB-API 2.0 specification.
+
+Use this function to retrieve properties of the connection to the
+server.
+
+\begin{verbatim}
+import Sybase
+db = Sybase.connect('SYBASE', 'sa', '', 'pubs2')
+print db.get_property(Sybase.CS_TDS_VERSION)
+\end{verbatim}
+\end{methoddesc}
+
+\begin{methoddesc}[Connection]{set_property}{prop, value}
+This is an extension of the DB-API 2.0 specification.
+
+Use this function to set properties of the connection to the server.
+\end{methoddesc}
+
+\begin{methoddesc}[Connection]{execute}{sql}
+This is an extension of the DB-API 2.0 specification.
+
+This method executes the SQL passed in the \var{sql} argument via the
+\function{ct_command(CS_LANG_CMD, ...)} Sybase function.  This is what
+programs such as \program{sqsh} use to send SQL to the server.  The
+return value is a list of logical results.  Each logical result is a
+list of row tuples.
+
+The disadvantage to using this method is that you are not able to bind
+binary parameters to the command, you must format the parameters as
+part of the SQL string in the \var{sql} argument.
+\end{methoddesc}
+
+\begin{methoddesc}[Connection]{bulkcopy}{table, direction = CS_BLK_IN,
+arraysize = 20}
+This is an extension of the DB-API 2.0 specification.
+
+Returns a new \class{Bulkcopy} object using the connection.  The
+\var{table} argument identifies the table which you wish to perform
+bulkcopy operations upon.  The \var{arraysize} argument specifies the
+number of rows stored in-memory for each DB request.
+
+The \var{direction} argument controls the direction of the bulkcopy
+operation.  Specify \code{Sybase.CS_BLK_IN} to copy data in, or
+\code{Sybase.CS_BLK_OUT} to copy data out.
+\end{methoddesc}
+
+\begin{methoddesc}[Connection]{bulkcopy}{table, out=1,arraysize = 20}
+A more convenient way of specifying BCP out.
+\end{methoddesc}
+
+\subsection{Cursor Objects}
+
+Implements the DB-API 2.0 \class{Cursor} class.
+
+\class{Cursor} objects have the following interface:
+
+\begin{memberdesc}[Cursor]{description}
+The DB-API 2.0 cursor \member{description} member.
+
+A list of 7-item tuples.  Each of the tuples describes one result
+column: \code{(name, type_code, display_size, internal_size,
+precision, scale, null_ok)}.  This attribute will be \code{None} for
+operations which do not return rows or if the cursor has not had an
+operation invoked via \method{execute()} or \method{executemany()}.
+
+The \code{type_code} can be interpreted by comparing it to the
+\class{DBAPITypeObject} objects \code{STRING}, \code{BINARY},
+\code{NUMBER}, \code{DATETIME}, or \code{ROWID}.
+\end{memberdesc}
+
+\begin{memberdesc}[Cursor]{rowcount}
+The DB-API 2.0 cursor \member{rowcount} member.
+
+This attribute reports the number of rows that the last
+\method{execute()} or \method{executemany()} method produced or
+affected.
+
+The attribute is \code{-1} if no \method{execute()} or
+\method{executemany()} has been performed on the cursor.
+\end{memberdesc}
+
+\begin{methoddesc}[Cursor]{callproc}{procname \optional{, parameters}}
+Implements the DB-API 2.0 cursor \method{callproc()} method.
+
+Calls the stored database procedure named in the \var{procname}
+argument. The optional \var{parameters} argument can be a sequence or
+dictionary which contains one entry for each argument that the
+procedure expects.  For example:
+
+\begin{verbatim}
+c.callproc('sp_help', ['titles'])
+c.callproc('sp_help', {'@objname': 'titles'})
+\end{verbatim}
+
+The DB-API 2.0 specification says:
+
+\begin{quote}
+The result of the call is returned as modified copy of the input
+sequence.  Input parameters are left untouched, output and
+input/output parameters replaced with possibly new values.
+\end{quote}
+
+This method is is not DB-API compliant in because there does not seem
+to be a way to query Sybase to determine which parameters are output
+parameters.  This method returns \code{None}.
+
+The procedure may also provide a result set as output. This can be
+retrieved via the \method{fetchone()}, \method{fetchmany()}, and
+\method{fetchall()} methods.
+\end{methoddesc}
+
+\begin{methoddesc}[Cursor]{close}{}
+Implements the DB-API 2.0 cursor \method{close()} method.
+
+Cancels any pending results immediately.  Any operation on the cursor
+after calling this method will raise an exception.
+
+This method is called by the \method{__del__()} method.
+\end{methoddesc}
+
+\begin{methoddesc}[Cursor]{execute}{sql \optional{, params}}
+Implements the DB-API 2.0 cursor \method{execute()} method.
+
+Prepares a dynamic SQL command on the Sybase server and executes it.
+The optional \var{params} argument is a dictionary of parameters which
+are bound as parameters to the dynamic SQL command.  Sybase uses name
+place holders to specify which the parameters will be used by the SQL
+command.
+
+\begin{verbatim}
+import Sybase
+db = Sybase.connect('SYBASE', 'sa', '', 'pubs2')
+c = db.cursor()
+c.execute("select * from titles where price > @price", {'@price': 15.00})
+c.fetchall()
+\end{verbatim}
+
+The prepared dynamic SQL will be reused by the cursor if the same SQL
+is passed in the \var{sql} argument.  This is most effective for
+algorithms where the same operation is used, but different parameters
+are bound to it (many times).
+
+The method returns \code{None}.
+\end{methoddesc}
+
+\begin{methoddesc}[Cursor]{executemany}{sql, params_seq}
+Implements the DB-API 2.0 cursor \method{executemany()} method.
+
+Calls the \method{execute()} method for every parameter sequence in
+the sequence passed as the \var{params_seq} argument.
+
+The method returns \code{None}.
+\end{methoddesc}
+
+\begin{methoddesc}[Cursor]{fetchone}{}
+Implements the DB-API 2.0 cursor \method{fetchone()} method.
+
+Fetches the next row of a logical result and returns it as a tuple.
+\code{None} is returned when no more rows are available in the logical
+result.
+\end{methoddesc}
+
+\begin{methoddesc}[Cursor]{fetchmany}{\optional{size \code{= cursor.arraysize}}}
+Implements the DB-API 2.0 cursor \method{fetchmany()} method.
+
+Fetches the next set of rows of a logical result, returning a list of
+tuples. An empty list is returned when no more rows are available.
+
+The number of rows to fetch per call is specified by the optional
+\var{size} argument.  If \var{size} is not supplied, the
+\member{arraysize} member determines the number of rows to be
+fetched.  The method will try to fetch the number of rows indicated by
+the size parameter.  If this is not possible due to the specified
+number of rows not being available, fewer rows will be returned.
+\end{methoddesc}
+
+\begin{methoddesc}[Cursor]{fetchall}{}
+Implements the DB-API 2.0 cursor \method{fetchall()} method.
+
+Fetches all remaining rows of a logical result returning them as a
+list of tuples.
+\end{methoddesc}
+
+\begin{methoddesc}[Cursor]{nextset}{}
+Implements the DB-API 2.0 cursor \method{nextset()} method.
+
+Makes the cursor skip to the next logical result, discarding any
+remaining rows from the current logical result.
+
+If there are no more logical results, the method returns \code{None}.
+Otherwise, it returns \code{1} and subsequent calls to the
+\method{fetchone()}, \method{fetchmany()}, and \method{fetchall()}
+methods will return rows from the next logical result.
+\end{methoddesc}
+
+\begin{memberdesc}[Cursor]{arraysize}
+The DB-API 2.0 cursor \member{arraysize} member.
+
+This read/write attribute specifies the number of rows to fetch at a
+time with \method{fetchmany()}.  It defaults to \code{1} meaning to
+fetch a single row at a time.
+\end{memberdesc}
+
+\begin{methoddesc}[Cursor]{setinputsizes}{size}
+Implements the DB-API 2.0 cursor \method{setinputsizes()} method.
+
+This method does nothing -- it is provided for DB-API compliance.
+\end{methoddesc}
+
+\begin{methoddesc}[Cursor]{setoutputsize}{size \optional{, column}}
+Implements the DB-API 2.0 cursor \method{setoutputsize()} method.
+
+This method does nothing -- it is provided for DB-API compliance.
+\end{methoddesc}
+
+\subsection{Bulkcopy Objects}
+
+his is an extension of the DB-API 2.0 specification.
+
+This object provides an interface to the Sybase bulkcopy
+functionality.
+
+\begin{methoddesc}[Bulkcopy]{rowxfer}{\optional{data}}
+If the \class{Bulkcopy} object direction is \code{CS_BLK_IN} then the
+sequence passed as the \var{data} argument is sent as one row to the
+server.  If the direction is \code{CS_BLK_OUT} then one row will be
+returned from the server. If there are no more rows, \code{None} is returned.
+\end{methoddesc}
+
+\begin{methoddesc}[Bulkcopy]{batch}{}
+Marks a complete bulkcopy batch.  The number of rows transferred in
+the batch is returned.
+\end{methoddesc}
+
+\begin{methoddesc}[Bulkcopy]{done}{}
+Marks a complete bulkcopy operation.  The number of rows transferred
+in the batch is returned.  \code{done()} must be called (or the
+\code{Bulkcopy} object destroyed) to flush any outstanding cached rows
+to the DB.  In addition, any other operation on the associated
+\code{Connection} object will fail until \member{done}{} is called.
+
+\end{methoddesc}
+
+\begin{methoddesc}[Bulkcopy]{__iter__}{} Returns an iterator that will
+iterate over all the rows in the table returned by the bulkcopy out
+operation.  The \code{Bulkcopy} object should be created with the
+\code{CS_BLK_OUT} direction argument.  Intermixed use of the iterator
+returned from \member{__iter__}{} and the \member{rowxfer}{} to
+retrieve rows is supported; both use the same underlying function and
+will return all rows without missing or duplicating any row.
+
+\end{methoddesc}
+
+\begin{methoddesc}[Bulkcopy]{rows}{}
+An alias for \member{__iter__}{}.
+\end{methoddesc}
+
+
+\begin{methoddesc}[Bulkcopy]{arraysize}
+The arraysize passed to the constructor.  Up to this many rows will be
+cached in memory and sent to the DB server in one request. Read only.
+\end{methoddesc}
+
+\begin{methoddesc}[Bulkcopy]{totalcount}
+A count of the total number of lines passed to/from the DB server.
+Read only.
+\end{methoddesc}
+
+An example of using the \code{Bulkcopy} class follows:
+
+\begin{verbatim}
+from Sybase import *
+
+c = connect('server', 'user', 'password', bulkcopy=1, auto_commit=1);
+
+c.execute("Create table #b(a int, b varchar(10), c float)")
+
+b = c.bulkcopy('#b') # CS_BLK_IN is default
+for r in range(32):
+    b.rowxfer([r, ("xxx%d" % r), r * 0.1])
+    if r % 5 == 4:
+        ret = b.batch()
+        print "post batch, batch was", ret, "count = ", b.totalcount
+ret = b.done()
+print "post done, last batch was", ret, "count = ", b.totalcount
+
+for r in c.bulkcopy('#b', out=1):
+    print r
+\end{verbatim}
