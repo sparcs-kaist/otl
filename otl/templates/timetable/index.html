@@ -777,7 +777,7 @@
 			Data.Timetables[Timetable.tabs.getTableId()] = {credit:credit,au:au};
 			Timetable.tabs.updateData();
 	   	},
-	   	updateInfoPanel: function(obj)
+	   	updateInfoPanel: function(obj, is_adding)
 	   	{
 			for (key in obj) {
 				if ($('DS_'+key)!=null || key=='au') {
@@ -788,15 +788,16 @@
 							var time = UDF.NumericTimeToReadable(item.start) + ' ~ ' + UDF.NumericTimeToReadable(item.end);
 							var name_and_time = obj.title+' '+time;
 							$('DS_'+key).set('text', UDF.days[item.day]+time);
-							$('add_examtime'+item.day).set('text', name_and_time);
+							if (is_adding)
+								$('add_examtime'+item.day).set('text', name_and_time);
 							break;
 						case 'credit':
-							if (item > 0)
+							if (item > 0 && is_adding)
 								$('add_credit').set('text','(+'+item+')');
 							$('DS_'+key).set('text',item);
 							break;
 						case 'au':
-							if (item > 0)
+							if (item > 0 && is_adding)
 								$('add_au').set('text','(+'+item+')');
 							break;
 						case 'title':
@@ -812,7 +813,7 @@
 		},
 		onMouseoverTemp: function(obj)
 		{
-			this.onMouseover(obj);
+			this.onMouseover(obj, true);
 
 			this.overlap.fade('show');
 			this.overlap.setStyle('display','block');
@@ -820,9 +821,9 @@
 
 			this.buildlmodules(this.overlap,obj,-1,false);
 		},
-		onMouseover: function(obj)
+		onMouseover: function(obj, is_adding)
 		{
-			this.updateInfoPanel(obj);
+			this.updateInfoPanel(obj, is_adding);
 			var tokens = obj.classroom.split(' ');
 			var classroom = tokens.slice(0, tokens.length-1).join(' ');
 			Map.find(classroom);
@@ -861,7 +862,7 @@
 				bg.set({'styles':{'background':bgcolor}});
 
 				if (enableDelete) {
-					lmodule.addEvent('mouseover', Timetable.onMouseover.bind(Timetable,obj));
+					lmodule.addEvent('mouseover', Timetable.onMouseover.bind(Timetable, obj, false));
 
 					// 같은 과목의 여러 lmodule 중 하나에만 마우스를 올려도 다함께 highlight되도록 하는 처리
 					lmodule.addEvent('mouseover', function(ev) {
