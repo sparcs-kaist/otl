@@ -13,15 +13,16 @@ window.addEvent('domready', function() {
 {% block content %}
 {% if msg %}<div class="msg{% if error %} error{% endif %}">{{ msg }}</div>{% endif %}
 <div id="login-form-container">
+<p><strong>OTL</strong>은 <a href="http://sparcs.kaist.ac.kr">SPARCS</a>에서 제공하는 수강 지원 서비스입니다.</p>
 <div style="float:right">
 	{% if error %}
-	<img src="/media/images/bg_login.jpg" width="300" height="400" alt="Welcome to SPARCS" />
+	<img src="/media/images/bg_login_failed.jpg" width="300" height="323" alt="Don't Panic!" />
 	{% else %}
 	<img src="/media/images/bg_login.jpg" width="300" height="400" alt="Welcome to SPARCS" />
 	{% endif %}
 </div>
 <form action="/login/{% if next %}?next={{next|iriencode}}{% endif %}" id="login-form" method="post">
-<p>Portal ID로 로그인하세요.</p>
+<p>KAIST Portal ID로 로그인하세요.</p>
 <table>
 {{ form_login.as_table }}
 <tr><td colspan="2"><input type="submit" value="Log In" /></td></tr>
