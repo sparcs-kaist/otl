@@ -50,7 +50,10 @@ class KAISTSSOBackend:
 		matches = _rx_name_val.findall(ret);
 		kuser_info = dict(map(lambda item: (item[0], item[1].decode('cp949')), matches))
 		kuser_info['student_id'] = kuser_info['ku_status'].split('=')[0]
-		kuser_info['department'] = kuser_info['ku_departmentname'].split('=')[1][:-1]
+		if ';:' in kuser_info['ku_departmentname']: # users merged from ICU
+			kuser_info['department'] = kuser_info['ku_departmentname'].split('=')[1].split(';')[0]
+		else: # original KAIST users
+			kuser_info['department'] = kuser_info['ku_departmentname'].split('=')[1][:-1]
 
 		try:
 			user = User.objects.get(username__exact=kuser_info['uid'])
