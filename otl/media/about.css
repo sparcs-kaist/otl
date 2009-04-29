@@ -4,7 +4,34 @@
 	margin-left: 2em;
 }
 
+h3, h4 {
+	clear: left;
+}
+h3 {
+	margin-top: 2em;
+	padding-bottom: 2px;
+	border-bottom: 1px solid #ccc;
+}
 h4 {
 	font-size: 1.1em;
 	margin: 0.3em 1em;
+}
+
+.contributor p,
+.developer p {
+	margin-left: 130px;
+}
+
+.contributor ul,
+.developer ul {
+	margin-top: 12px;
+	margin-left: 110px;
+}
+
+.member-photo {
+	float: left;
+	width: 100px;
+	height: 100px;
+	margin: 10px 10px 10px 20px;
+	background: #eee;
 }
