@@ -12,6 +12,14 @@ window.addEvent('domready', function() {
 {% endblock %}
 {% block content %}
 {% if msg %}<div class="msg{% if error %} error{% endif %}">{{ msg }}</div>{% endif %}
+<div id="login-form-container">
+<div style="float:right">
+	{% if error %}
+	<img src="/media/images/bg_login.jpg" width="300" height="400" alt="Welcome to SPARCS" />
+	{% else %}
+	<img src="/media/images/bg_login.jpg" width="300" height="400" alt="Welcome to SPARCS" />
+	{% endif %}
+</div>
 <form action="/login/{% if next %}?next={{next|iriencode}}{% endif %}" id="login-form" method="post">
 <p>Portal ID로 로그인하세요.</p>
 <table>
@@ -19,4 +27,16 @@ window.addEvent('domready', function() {
 <tr><td colspan="2"><input type="submit" value="Log In" /></td></tr>
 </table>
 </form>
+<div id="service-info">
+	<p>OTL 서비스는</p>
+	<ul>
+		<li>현재 <strong>{{num_users}}</strong>명의 사용자가 이용하고 있습니다.</li>
+		<li>총 <strong>{{num_lectures}}</strong>개의 과목 정보를 제공하고 있습니다.</li>
+		<li>현재 <strong>{{num_favorites}}</strong>개의 과목 즐겨찾기가 등록되어 있습니다.</li>
+		<li>현재 <strong>{{num_schedules}}</strong>개의 일정을 관리하고 있습니다.</li>
+		<li>현재 <strong>{{num_groups}}</strong>개의 조모임 보드가 활동 중입니다.</li>
+	</ul>
+</div>
+<div class="clear"></div>
+</div>
 {% endblock %}

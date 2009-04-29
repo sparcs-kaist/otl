@@ -19,6 +19,25 @@ ul.actions {
 	list-style: none;
 }
 
+#login-form-container {
+	padding: 30px;
+	width: 670px;
+	margin: 0 auto;
+	text-align: left;
+}
+
+#service-info {
+	padding: 5px 10px;
+}
+#service-info li {
+	margin-left: 2em;
+}
+
+#login-form {
+	width: 280px;
+	padding: 15px;
+}
+
 #login-form p {
 	margin: 0.4em; 
 }

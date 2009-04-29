@@ -1,15 +1,33 @@
 # encoding: utf-8
 from django.template import RequestContext
 from django.http import *
+from django.core.cache import cache
 from django.contrib import auth
 from django.shortcuts import render_to_response
 from django.contrib.admin.models import User
 from django.contrib.auth.decorators import login_required
+from otl.apps.timetable.models import Lecture
+from otl.apps.favorites.models import CourseLink
+from otl.apps.groups.models import GroupBoard
+from otl.apps.calendar.models import Schedule
 from otl.apps.accounts.models import UserProfile, Department
 from otl.apps.accounts.forms import LoginForm, ProfileForm
 import base64, hashlib, time, random, urllib, re
 
 def login(request):
+
+	# TODO: check if default value is evaluated before method calling.
+	num_users = cache.get('stat.num_users', User.objects.count() - 1)
+	num_lectures = cache.get('stat.num_lectures', Lecture.objects.filter(year=settings.NEXT_YEAR, semester=settings.NEXT_SEMESTER).count())
+	num_favorites = cache.get('stat.num_favorites', CourseLink.objects.filter(year=settings.NEXT_YEAR, semester=settings.NEXT_SEMESTER).count())
+	num_schedules = cache.get('stat.num_schedules', Schedule.objects.count())
+	num_groups = cache.get('stat.num_groups', GroupBoard.objects.count())
+
+	cache.set('stat.num_users', num_users, 60)
+	cache.set('stat.num_lectures', num_lectures, 600)
+	cache.set('stat.num_favorites', num_favorites, 60)
+	cache.set('stat.num_schedules', num_schedules, 20)
+	cache.set('stat.num_groups', num_groups, 60)
 
 	next_url = request.GET.get('next', '/')
 	if request.method == 'POST':
@@ -24,6 +42,11 @@ def login(request):
 					'error': True,
 					'msg': u'아이디/비밀번호를 모두 적어야 합니다.',
 					'next': next_url,
+					'num_users': num_users,
+					'num_lectures': num_lectures,
+					'num_favorites': num_favorites,
+					'num_schedules': num_schedules,
+					'num_groups': num_groups,
 				}, context_instance=RequestContext(request))
 
 			user = auth.authenticate(username=request.POST['username'], password=request.POST['password'])
@@ -35,6 +58,11 @@ def login(request):
 					'error': True,
 					'msg': u'로그인에 실패하였습니다.',
 					'next': next_url,
+					'num_users': num_users,
+					'num_lectures': num_lectures,
+					'num_favorites': num_favorites,
+					'num_schedules': num_schedules,
+					'num_groups': num_groups,
 				}, context_instance=RequestContext(request))
 			else: # Login OK
 				try:
@@ -80,6 +108,11 @@ def login(request):
 			'title': u'로그인',
 			'form_login': LoginForm(),
 			'next': next_url,
+			'num_users': num_users,
+			'num_lectures': num_lectures,
+			'num_favorites': num_favorites,
+			'num_schedules': num_schedules,
+			'num_groups': num_groups,
 		}, context_instance=RequestContext(request))
 
 def logout(request):
