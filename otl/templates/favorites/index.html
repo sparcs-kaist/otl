@@ -26,7 +26,7 @@ LinkThumb=
 
 			this.registerHandlers();
 	   },
-	registerhandlers:function()
+	registerHandlers:function()
 		 {
 			Event.observe(document,'mousemove',this.onMove.bindAsEventListener(this));
 			this.anchors.each(function(item)
@@ -54,7 +54,7 @@ LinkThumb=
 	onOut:function(e)
 	  {
 			this.thumb.hide();
-			this.img.src = '#';
+			this.img.src = null;
 			this.isOver=false;
 	  }
 };
@@ -74,9 +74,10 @@ LinkThumb=
 		position:absolute;
 		display:block;
 		background:black;
-		padding:5px;
+		padding:2px;
 		height:90px;
 		width:120px;
+		text-align:center;
 	}
 </style>
 
