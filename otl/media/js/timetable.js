@@ -166,6 +166,7 @@ var LectureList = {
 		this.dept = $('department');
 		this.classf= $('classification');
 
+		this.loading = true;
 		this.dept.selectedIndex = 0;
 		this.registHandles();
 		this.onChange();
@@ -230,8 +231,9 @@ var LectureList = {
 			url:'/timetable/search/',
 			onRequest:function()
 			{
-				Notifier.setLoadingMsg('검색 중입니다...');
-			},
+				if (!this.loading)
+					Notifier.setLoadingMsg('검색 중입니다...');
+			}.bind(this),
 			onSuccess:function(responseText)
 			{
 				try {
@@ -239,21 +241,25 @@ var LectureList = {
 					if (resObj.length == 0) {
 
 						LectureList.clearList();
-						Notifier.setErrorMsg('과목 정보를 찾지 못했습니다.');
+						if (!this.loading)
+							Notifier.setErrorMsg('과목 정보를 찾지 못했습니다.');
 
 					} else {
 
 						LectureList.addToListMultiple(resObj);
-						Notifier.setMsg('검색 결과를 확인하세요.');
+						if (!this.loading)
+							Notifier.setMsg('검색 결과를 확인하세요.');
 					}
 				} catch(e) {
 					Notifier.setErrorMsg('오류가 발생하였습니다. ('+e.message+')');
 				}
-			},
+				this.loading = false;
+			}.bind(this),
 			onFailure:function(xhr)
 			{
 				Notifier.setErrorMsg('오류가 발생하였습니다. (요청 실패:'+xhr.status+')');
-			}
+				this.loading = false;
+			}.bind(this)
 		});
 		query = '';
 		if (conditions.year == undefined)

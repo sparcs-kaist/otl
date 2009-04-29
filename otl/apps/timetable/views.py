@@ -38,7 +38,7 @@ def index(request):
 		'lecture_list': _lectures_to_output(_search(dept=u'2044', type=u'전체보기'))
 	}, context_instance=RequestContext(request))
 
-@cache_page(1800)
+#@cache_page(1800)
 def search(request):
 	try:
 		# Convert QueryDict to a normal python dict.
@@ -145,6 +145,12 @@ def _search(**conditions):
 	lectures = Lecture.objects.annotate(num_classtimes=Count('classtime')).filter(year=year, semester=semester, num_classtimes__gt=0)
 	
 	try:
+		if time_end != None and day_end != None and int(time_end) == 24*60:
+			# 24:00가 종료시간인 경우 처리
+			day_end = int(day_end)
+			if day_end < 6:
+				day_end += 1
+			time_end = 0
 		if department == u'-1' and type == u'전체보기':
 			raise ValidationError()
 		if department != None and department != u'-1':
@@ -154,12 +160,12 @@ def _search(**conditions):
 		if day_begin != None and day_end != None and time_begin != None and time_end != None:
 			if day_begin == day_end:
 				lectures = lectures.filter(classtime__day__exact=int(day_begin),
-				                           classtime__begin__gte=ClassTime.numeric_time_to_obj(int(time_begin)),
-				                           classtime__end__lte=ClassTime.numeric_time_to_obj(int(time_end)))
+										   classtime__begin__gte=ClassTime.numeric_time_to_obj(int(time_begin)),
+										   classtime__end__lte=ClassTime.numeric_time_to_obj(int(time_end)))
 			else:
 				lectures = lectures.filter(classtime__day__gte=int(day_begin), classtime__day__lte=int(day_end),
-				                           classtime__begin__gte=ClassTime.numeric_time_to_obj(int(time_begin)),
-				                           classtime__end__lte=ClassTime.numeric_time_to_obj(int(time_end)))
+										   classtime__begin__gte=ClassTime.numeric_time_to_obj(int(time_begin)),
+										   classtime__end__lte=ClassTime.numeric_time_to_obj(int(time_end)))
 	except (TypeError, ValueError):
 		raise ValidationError()
 
