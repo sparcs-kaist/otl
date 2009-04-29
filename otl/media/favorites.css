@@ -96,3 +96,17 @@ a.control-delete, a.control-add {
 #create-form-url {
 	width: 20em;
 }
+
+.linkthumb{
+	z-index:1000;
+	left:0;
+	top:0;
+	position:absolute;
+	display:block;
+	background:#F3F3F3 url("/media/images/loading_favorite_thumbnail.gif") no-repeat center center;
+	border:1px solid #bbb;
+	padding:2px;
+	height:90px;
+	width:120px;
+	text-align:center;
+}

@@ -19,7 +19,7 @@ def login(request):
 	# TODO: check if default value is evaluated before method calling.
 	num_users = cache.get('stat.num_users', User.objects.count() - 1)
 	num_lectures = cache.get('stat.num_lectures', Lecture.objects.filter(year=settings.NEXT_YEAR, semester=settings.NEXT_SEMESTER).count())
-	num_favorites = cache.get('stat.num_favorites', CourseLink.objects.filter(year=settings.NEXT_YEAR, semester=settings.NEXT_SEMESTER).count())
+	num_favorites = cache.get('stat.num_favorites', CourseLink.objects.count())
 	num_schedules = cache.get('stat.num_schedules', Schedule.objects.count())
 	num_groups = cache.get('stat.num_groups', GroupBoard.objects.count())
 

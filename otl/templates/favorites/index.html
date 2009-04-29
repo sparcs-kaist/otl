@@ -58,30 +58,12 @@ LinkThumb=
 			this.isOver=false;
 	  }
 };
-
-		
-	Event.observe(window,'load',function()
-	{
-		LinkThumb.initialize('publicFavorites','favorite-link');
-		LinkThumb.initialize('publicFavorites','search-link');
-	});
+Event.observe(window,'load',function()
+{
+	LinkThumb.initialize('publicFavorites','favorite-link');
+	LinkThumb.initialize('publicFavorites','search-link');
+});
 </script>
-<style type="text/css">
-	.linkthumb
-	{
-		z-index:1000;
-		left:0;
-		top:0;
-		position:absolute;
-		display:block;
-		background:#F3F3F3 url("/media/images/loading_favorite_thumbnail.gif") no-repeat center center;
-		border:1px solid #bbb;
-		padding:2px;
-		height:90px;
-		width:120px;
-		text-align:center;
-	}
-</style>
 
 {% endblock %}
 {% block content %}
