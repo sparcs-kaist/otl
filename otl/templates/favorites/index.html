@@ -14,7 +14,8 @@ LinkThumb=
 	   },
 	onLoad:function()
 	   {
-		   	this.thumb = document.createElement('div');
+			this.thumb = document.createElement('div');
+			Element.extend(this.thumb);
 			this.thumb.addClassName('linkthumb');
 
 			this.img = document.createElement('img');
@@ -25,7 +26,7 @@ LinkThumb=
 
 			this.registerHandlers();
 	   },
-	registerHandlers:function()
+	registerhandlers:function()
 		 {
 			Event.observe(document,'mousemove',this.onMove.bindAsEventListener(this));
 			this.anchors.each(function(item)
