@@ -130,7 +130,7 @@ def write(request, group_id):
 			new_tag = request.POST.get('article')
 			GroupArticle.objects.create(group = current_group, tag = new_tag, writer = user, written = new_written)
 
-	return HttpResponseRedirect('/groups/list/'+group_id);
+	return HttpResponseRedirect('/groups/list/?id='+group_id);
 
 def delete(request):
 	if request.user.is_authenticated():
@@ -141,7 +141,7 @@ def delete(request):
 		if delete_article != None :
 			delete_article.delete()
 
-	return HttpResponseRedirect('/groups/list/'+group_id);
+	return HttpResponseRedirect('/groups/list/?id='+group_id);
 
 def modify(request):
 	if request.user.is_authenticated():
@@ -151,7 +151,7 @@ def modify(request):
 		new_article = request.POST.get('modify')
 		GroupArticle.objects.filter(writer__exact = user, id__exact = article_id).update(tag = new_article)
 
-	return HttpResponseRedirect('/groups/list/'+group_id);
+	return HttpResponseRedirect('/groups/list/?id='+group_id);
 
 def article_search(request):
 	if request.user.is_authenticated():
