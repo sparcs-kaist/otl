@@ -1,6 +1,83 @@
 {% extends 'layout.html' %}
 {% block headers %}
-<link rel="stylesheet" type="text/css" href="/media/favorites.css" />
+<link rel="stylesheet" type="text/css" href="/media/favorites.css" ></link>
+<script type="text/javascript" src="/media/js/prototype/prototype-1.6.0.3.js" ></script>
+<script type="text/javascript" >
+LinkThumb=
+{
+	initialize:function(wrap,className)
+	   {
+		   	this.wrap=$(wrap);
+			this.anchors = $A(document.getElementsByClassName(className));
+			this.isOver=false;
+			this.onLoad();
+	   },
+	onLoad:function()
+	   {
+		   	this.thumb = document.createElement('div');
+			this.thumb.addClassName('linkthumb');
+
+			this.img = document.createElement('img');
+			this.thumb.appendChild(this.img);
+
+			this.thumb.hide();
+			document.body.appendChild(this.thumb);
+
+			this.registerHandlers();
+	   },
+	registerHandlers:function()
+		 {
+			Event.observe(document,'mousemove',this.onMove.bindAsEventListener(this));
+			this.anchors.each(function(item)
+					{
+						Event.observe(item,'mouseover',this.onOver.bindAsEventListener(this,item));
+						Event.observe(item,'mouseout',this.onOut.bindAsEventListener(this));
+					}.bind(this));
+		 },
+	onMove:function(e)
+		{
+			if(this.isOver)
+			{
+				var x=e.pointerX()+20,y=e.pointerY()+20;
+				this.thumb.style.left=x+'px';
+				this.thumb.style.top=y+'px';
+			}
+		},
+	onOver:function(e,item)
+		{
+			this.img.src= 'http://open.thumbshots.org/image.aspx?url='+item.href;
+			this.thumb.show();
+			this.isOver=true;
+			this.onMove(e);
+		},
+	onOut:function(e)
+	  {
+			this.thumb.hide();
+			this.img.src = '#';
+			this.isOver=false;
+	  }
+};
+
+		
+	Event.observe(window,'load',function()
+			{
+		LinkThumb.initialize('publicFavorites','favorite-link');
+	});
+</script>
+<style type="text/css">
+	.linkthumb
+	{
+		z-index:1000;
+		left:0;
+		top:0;
+		position:absolute;
+		display:block;
+		background:black;
+		padding:5px;
+		height:90px;
+		width:120px;
+	}
+</style>
 
 {% endblock %}
 {% block content %}
@@ -11,8 +88,7 @@
 	<ul>
 	{% for item in favorite_list %}
 		<li>
-			<img class="favorite-link-img" src="http://open.thumbshots.org/image.aspx?url={{item.url}}" />	
-			<a class="favorite-link" href=# onclick="window.open('{{item.url}}');return false">	
+			<a class="favorite-link" href="{{item.url}}" target="_blank" >	
 				<h4>{{item.course_code}}: {{item.course_name}} (등록수 : {{item.favored_count}})</h4>
 				{{item.url}}
 			</a>
@@ -38,8 +114,7 @@
 	<ul>
 	{% for item in recently_added_list %}
 		<li>
-			<a class="favorite-link-img" href="{{item.url}}"><img src="http://open.thumbshots.org/image.aspx?url={{item.url}}" /></a>
-			<a class="favorite-link" href=# onclick="window.open('{{item.url}}');return false">
+		<a class="favorite-link" href="{{item.url}}" target="_blank" >
 				<h4>{{item.course_code}}: {{item.course_name}} (등록수 : {{item.favored_count}})</h4>
 				{{item.url}}
 			</a>
@@ -65,8 +140,7 @@
 			{% if search_list %}
 				{% for item in search_list %}
 				<li>
-					<a class="search-link-img" href="{{item.url}}"><img src="http://open.thumbshots.org/image.aspx?url={{item.url}}"/></a>
-					<a class="search-link" href=# onclick="window.open('{{item.url}}');return false">
+					<a class="search-link" href="{{item.url}}" target="_blank">
 						<h4>{{item.year}} {{item.semester}} {{item.course_code}}: {{item.course_name}} ( 등록수 : {{item.favored_count}} )</h4>
 						{{item.url}}
 					</a>
