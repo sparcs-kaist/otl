@@ -137,6 +137,12 @@ form
     padding:5px;
 }
 
+input
+{
+	border:1px solid #ccc;
+	padding: 1px 2px;
+}
+
 label 
 {
     display:block;

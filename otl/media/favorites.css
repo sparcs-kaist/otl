@@ -87,3 +87,12 @@ a.control-delete, a.control-add {
 	text-decoration:none;
 }
 
+#create-form-code {
+	width: 4em;
+}
+#create-form-name {
+	width: 12em;
+}
+#create-form-url {
+	width: 20em;
+}
