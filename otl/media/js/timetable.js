@@ -369,6 +369,10 @@ var RangeSearch = {
 			var endDay = cell.c2;
 			var startTime = cell.r1*30+480;
 			var endTime = cell.r2*30+510;
+			if (endTime - startTime == 30) {
+				Notifier.setMsg('드래그해서 1시간 이상의 영역을 선택하시면 보다 정확한 범위 검색을 하실 수 있습니다.');
+				return;
+			}
 
 			this.dragging=false;
 			$('lecturelist-filter').setStyle('display','none');
