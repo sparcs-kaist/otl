@@ -11,8 +11,8 @@ import base64, hashlib, time, random, urllib, re
 
 def login(request):
 
+	next_url = request.GET.get('next', '/')
 	if request.method == 'POST':
-		next_url = request.GET.get('next', '/')
 
 		if not request.POST.has_key('agree'):
 			# Do login process
@@ -23,6 +23,7 @@ def login(request):
 					'title': u'로그인',
 					'error': True,
 					'msg': u'아이디/비밀번호를 모두 적어야 합니다.',
+					'next': next_url,
 				}, context_instance=RequestContext(request))
 
 			user = auth.authenticate(username=request.POST['username'], password=request.POST['password'])
@@ -33,6 +34,7 @@ def login(request):
 					'title': u'로그인',
 					'error': True,
 					'msg': u'로그인에 실패하였습니다.',
+					'next': next_url,
 				}, context_instance=RequestContext(request))
 			else: # Login OK
 				try:
@@ -46,6 +48,7 @@ def login(request):
 						'title': u'로그인',
 						'kuser_info': user.kuser_info,
 						'form_profile': ProfileForm(),
+						'next': next_url,
 					}, context_instance=RequestContext(request))
 				else:
 					# Already existing user
@@ -76,6 +79,7 @@ def login(request):
 		return render_to_response('login.html', {
 			'title': u'로그인',
 			'form_login': LoginForm(),
+			'next': next_url,
 		}, context_instance=RequestContext(request))
 
 def logout(request):

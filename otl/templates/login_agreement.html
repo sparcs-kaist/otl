@@ -17,7 +17,7 @@ document.addEvent('domready', function() {
 </script>
 {% endblock %}
 {% block content %}
-	<form id="login-privacy-agreement" method="post" action="/login/">
+	<form id="login-privacy-agreement" method="post" action="/login/{% if next %}?next={{next|iriencode}}{% endif %}">
 		<textarea id="privacy-policy" readonly="readonly">이 서비스는 KAIST 구성원을 대상으로 하는 일정관리+수강지원 서비스입니다.
 저희 서비스를 이용하기 위한 최소한의 동의 절차이므로 다음을 잘 읽어주시기 바랍니다. :)
 
