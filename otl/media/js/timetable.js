@@ -231,7 +231,9 @@ var LectureList = {
 			url:'/timetable/search/',
 			onRequest:function()
 			{
-				if (!this.loading)
+				if (this.loading)
+					Notifier.showIndicator();
+				else
 					Notifier.setLoadingMsg('검색 중입니다...');
 			}.bind(this),
 			onSuccess:function(responseText)
@@ -253,6 +255,8 @@ var LectureList = {
 				} catch(e) {
 					Notifier.setErrorMsg('오류가 발생하였습니다. ('+e.message+')');
 				}
+				if (this.loading)
+					Notifier.clearIndicator();
 				this.loading = false;
 			}.bind(this),
 			onFailure:function(xhr)

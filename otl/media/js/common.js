@@ -11,6 +11,10 @@ var Notifier = {
 	{
 		// Nothing to do.
 	},
+	showIndicator: function()
+	{
+		$('indicator').addClass('waiting');
+	},
 	setLoadingMsg: function(msg)
 	{
 		if (this.timeout)
