@@ -54,15 +54,16 @@ LinkThumb=
 	onOut:function(e)
 	  {
 			this.thumb.hide();
-			this.img.src = null;
+			this.img.src = '../media/images/5.gif';
 			this.isOver=false;
 	  }
 };
 
 		
 	Event.observe(window,'load',function()
-			{
+	{
 		LinkThumb.initialize('publicFavorites','favorite-link');
+		LinkThumb.initialize('publicFavorites','search-link');
 	});
 </script>
 <style type="text/css">
