@@ -11,6 +11,6 @@ def home(request):
 
 def about(request):
 	return render_to_response('about.html', {
-		'title': u'개발자 노트',
+		'title': u'만든 사람들',
 		'section': u'info',
 	}, context_instance=RequestContext(request))

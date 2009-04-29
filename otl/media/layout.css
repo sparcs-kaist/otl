@@ -92,7 +92,8 @@ body
 	text-align:center;
 	color:#eee;
 
-	padding-top:20px;
+	margin-top:40px;
+	padding-top:10px;
 	height:100px;
 }
 
@@ -151,6 +152,22 @@ body
 	background:#292929;
 }
 
+#feedbacks
+{
+	text-align:center;
+	margin-top: 18px;
+	color: #333;
+}
+
+#feedbacks a
+{
+	color: #666;
+}
+
+#copyright
+{
+	color: #555;
+}
 
 .clear
 {

@@ -13,7 +13,10 @@ window.addEvent('domready', function() {
 		'meeting-sparcsroom.jpg': {caption: '조모임 보드 회의 때... (사실은 설정샷?)'},
 		'meeting-sparcsroom2.jpg': {caption: '회의 장면. 서로 간의 생각 차이를 좁히기 위한 무한 토론의 시간.'},
 		'joongi-timeline.png': {caption: '새벽 6시까지 달린 commit log...'},
-		'stay-all-night.jpg': {caption: '...그리고 보는 교양분관 뒷편의 일출. orz'}
+		'stay-all-night.jpg': {caption: '...그리고 보는 교양분관 뒷편의 일출. orz'},
+		'dualmonitor.jpg': {caption: '개발하고 있는 모니터 화면'},
+		'two-guys.jpg': {caption: '스팍스 회장님께 지적(?)당하는 모습 -_-'},
+		'serverroom.jpg': {caption: '서버실과 우리의 바퀴 짱'}
 	};
 	var slideshow = new Slideshow('photoflow', slideshow_data, {
 		controller:false, captions:true, thumbnails:false,
@@ -27,13 +30,16 @@ window.addEvent('domready', function() {
 </script>
 {% endblock %}
 {% block content %}
-	<h2>개발자 노트</h2>
-	<div class="right" style="margin-right:20px">
+	<h2>만든 사람들</h2>
+	<h3>Developer</h3>
+	<div class="right" style="margin-right:20px; margin-left:10px">
 		<div id="photoflow" style="width:400px"></div>
 	</div>
-	<h3>개발자</h3>
 	<div class="developer">
 		<h4>김민우 (Julingks)</h4>
+		<div class="member-photo">
+			<img src="/media/images/about/minwoo.jpg" alt="PHOTO" width="100" height="100" />
+		</div>
 		<ul>
 			<li>모의 시간표, 일정관리, 약속잡기 웹 프론트핸드</li>
 			<li>템플릿 디자인</li>
@@ -47,6 +53,9 @@ window.addEvent('domready', function() {
 	</div>
 	<div class="developer">
 		<h4>김종균 (Truth0233)</h4>
+		<div class="member-photo">
+			<img src="/media/images/about/jongkyun.jpg" alt="PHOTO" width="100" height="100" />
+		</div>
 		<ul>
 			<li>과목즐겨찾기</li>
 			<li>조모임 게시판 UI</li>
@@ -60,6 +69,9 @@ window.addEvent('domready', function() {
 	</div>
 	<div class="developer">
 		<h4>김준기 (Daybreaker)</h4>
+		<div class="member-photo">
+			<img src="/media/images/about/joongi.jpg" alt="PHOTO" width="100" height="100" />
+		</div>
 		<ul>
 			<li>Django 교육 담당 : <a href="http://blog.insightbook.co.kr/entry/%ED%8C%8C%EC%9D%B4%EC%8D%AC-%EA%B0%9C%EB%B0%9C%EC%9E%90%EB%9D%BC%EB%A9%B4-%EC%9E%A5%EA%B3%A0">쉽고 빠른 웹 개발 Django</a> 번역 리뷰 및 추천사</li>
 			<li>학사DB 연동, Arara API 연동 기능 작성</li>
@@ -74,6 +86,9 @@ window.addEvent('domready', function() {
 	</div>
 	<div class="developer">
 		<h4>유충국 (Majja)</h4>
+		<div class="member-photo">
+			<img src="/media/images/about/choonggook.jpg" alt="PHOTO" width="100" height="100" />
+		</div>
 		<ul>
 			<li>조모임 게시판</li>
 			<li>과목즐겨찾기</li>
@@ -85,12 +100,26 @@ window.addEvent('domready', function() {
 	<h3>Special Thanks to...</h3>
 	<div class="contributor">
 		<h4>안병욱 (바퀴 짱)</h4>
+		<div class="member-photo">
+			<img src="/media/images/about/byeongwook.jpg" alt="PHOTO" width="100" height="100" />
+		</div>
 		<ul>
-			<li>서비스 머신 셋업 (Xen)</li>
+			<li>서비스 기계/OS 설치</li>
 			<li>삽질할 때 함께 괴로워해주기</li>
 		</ul>
 		<p>여러 고수 선배님들의 노력하시는 모습을 볼 수 있어 영광이었습니다.<br/>
 		비록 제가 많이 한 일은 없습니다만 이렇게 나마 도울 수 있어서 즐거웠습니다. <br/>
 		앞으로도 삽질할 수 있는 기회가 많기를 기대해 봅니다. OTL <br/>
 	</div>
+	<div class="contributor">
+		<h4>강철 (회장님)</h4>
+		<div class="member-photo">
+			<img src="/media/images/about/cheol.jpg" alt="PHOTO" width="100" height="100" />
+		</div>
+		<ul>
+			<li>우리의 정신적 지주?</li>
+		</ul>
+		<p>할 말이...</p>
+	</div>
+	<div class="clear"></div>
 {% endblock %}
