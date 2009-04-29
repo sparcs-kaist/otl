@@ -1,0 +1,217 @@
+#! /bin/sh
+# -*- ksh -*-
+
+# pstumble --- Insert the PostScript magic code so that it is printed Tumble
+
+# Copyright (c) 1988, 89, 90, 91, 92, 93 Miguel Santana
+# Copyright (c) 1995, 96, 97, 98 Akim Demaille, Miguel Santana
+
+# $Id: pstumble 203 2002-10-28 05:04:16Z djc $
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, you can either send email to this
+# program's maintainer or write to: The Free Software Foundation,
+# Inc.; 59 Temple Place, Suite 330; Boston, MA 02111-1307, USA.
+
+# Commentary:
+
+# Author: Akim Demaille <demaille@inf.enst.fr>
+
+# In the interest of general portability, some common bourne shell
+# constructs were avoided because they weren't guaranteed to be available
+# in some earlier implementations.  I've tried to make this program as
+# portable as possible.  Welcome to unix, where the lowest common
+# denominator is rapidly diminishing.
+#
+# Among the more interesting lossages I noticed with some bourne shells
+# are:
+#     * No shell functions.
+#     * No `unset' builtin.
+#     * `shift' cannot take a numeric argument, and signals an error if
+#       there are no arguments to shift.
+
+# Todo:
+# Maybe rewrite in perl.  It would help to handle (Begin|End)Document
+# which allows several Trailers etc.
+
+# Code:
+
+# Minimal path.  It must be able to see the psutils.
+PATH=/usr/local/bin:$PATH
+export PATH
+
+# Get the name of the program
+program=`echo $0 | sed 's#.*/##g'`
+
+# Local vars
+debug=
+file=
+output=
+tmpdir=/tmp/$program.$$
+verbose=echo
+
+
+# The version/usage strings
+version="pstumble 0.1 (a2ps 4.9.9j)
+
+Copyright (c) 1988, 89, 90, 91, 92, 93 Miguel Santana
+Copyright (c) 1995, 96, 97, 98 Akim Demaille, Miguel Santana
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+Written by <Akim.Demaille@inf.enst.fr> and <Miguel.Santana@st.com>
+News, updates and documentation: visit http://www.inf.enst.fr/a2ps/"
+
+usage="\
+Usage: $program FILE
+Produce a Duplex/Tumble version of the PostScript FILE.
+
+Options:
+ -h, --help           display this help and exit
+ -v, --version        display version information and exit
+ -q, --quiet          don't print informational messages
+ -o, --output=FILE    save result in FILE.  If FILE is \`-', send to stdout
+
+Produced output is meant for PS level 2 printers.
+
+Report bugs to <a2ps-bugs@inf.enst.fr>"
+
+help="Try \`$program --help' for more information."
+
+# The PostScript line to ask manual feed
+# We go and pick up setpagedevice because the psutils (here psselect)
+# define an ineffective setpagedevice.
+# I hope setpagedevice is always in systemdict...
+psTumble='% Pagedevice definitions:
+countdictstack [{
+%%BeginFeature: *Duplex True
+  (<<) cvx exec /Duplex true (>>) cvx exec
+  systemdict /setpagedevice get exec
+%%EndFeature
+%%BeginFeature: *Tumble True
+  (<<) cvx exec /Tumble true (>>) cvx exec
+  systemdict /setpagedevice get exec
+%%EndFeature
+} stopped
+cleartomark
+countdictstack exch sub dup 0 gt
+{
+  { end } repeat
+}{
+  pop
+} ifelse'
+
+# Don't leave really new lines in it
+sedTumble=`echo "$psTumble" | tr '\012' ''`
+
+# Parse our command line options once, thoroughly.
+while test $# -gt 0
+do
+  arg="$1"
+  shift
+  
+  case "$arg" in
+    -*=*) optarg=`echo "$arg" | sed 's/[-_a-zA-Z0-9]*=//'` ;;
+    *) optarg= ;;
+  esac
+  
+  # If the previous option needs an argument, assign it.
+  if test -n "$prevopt"; then
+    optarg="$arg"
+    arg="$prevopt="
+    prevopt=
+  fi
+  
+  # Have we seen a non-optional argument yet?
+  case "$arg" in
+    --help|-h)
+      echo "$usage"
+      exit 0
+      ;;
+    
+    --version|-v)
+      echo "$version"
+      exit 0
+      ;;
+    
+    -s|-q|--quiet|--silent) verbose=: ;;
+    # Delay debugging so that options parsing does not appear
+    -D|--debug) debug=: ;;
+    
+    --output|-o) prevopt="--output" ;;
+    --output=*) 
+      output=$optarg
+      ;;
+    
+    -) # We are working with stdin
+       nonopt="$nonopt $arg"
+       ;;
+
+    -*)
+      case "$arg" in
+        --*=* ) arg=`echo "$arg" | sed -e 's/=.*//'` ;;
+      esac
+      exec 1>&2
+      echo "$program: Unknown or ambiguous option \`$arg'."
+      echo "$program: Try \`--help' for more information."
+      exit 1
+      ;;
+    
+    *)
+      nonopt="$nonopt $arg"
+    ;;
+  esac
+done
+
+if test -n "$prevopt"; then
+  echo "$program: option \`$prevopt' requires an argument" 1>&2
+  echo "$help" 1>&2
+  exit 1
+fi
+
+case `echo "$nonopt" | wc -w | sed -e 's/[\t ]//g'` in
+  0)  file=-;;
+  1)  file=$nonopt;;
+  *)  echo "$program: too many arguments" 1>&2
+      echo "$help"  1>&2
+      exit 1;;
+esac
+
+# Set -x now if debugging
+test $debug && set -x
+
+# Temp dir.  Get ready not to leave junk (if not debugging)
+test $debug || trap "/bin/rm -rf $tmpdir" 0 1 2 3 13 14 15
+mkdir $tmpdir
+
+# If printing from stdin, save into a tmp file
+if test $file = '-'; then
+  file=$tmpdir/stdin.ps
+  cat > $file
+fi
+
+# Insert the manual feed request at the first page of the second half
+# This page has as page num, $MIDPAGENUM.  
+# Make sure to skip human readable page number.
+if test "$output" && test "$output" != '-'; then
+  sed -e "s#^%%EndProlog\$#%%EndProlog$sedTumble#g" \
+     $file | tr '' '\012' > $output || exit 1
+else
+  sed -e "s#^%%EndProlog\$#%%EndProlog$sedTumble#g" \
+     $file | tr '' '\012' || exit 1
+fi
+
+# Don't remove files if debugging
+test $debug || /bin/rm -rf $tmpdir
+
+exit 0

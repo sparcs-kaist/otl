@@ -19,6 +19,40 @@ ul.actions {
 	list-style: none;
 }
 
+#login-form p {
+	margin: 0.4em; 
+}
+
+#login-form table {
+	margin: 4px;
+}
+
+#login-form td {
+	padding: 2px 6px;
+}
+
+#login-form input[type=submit] {
+	padding: 2px 4px;
+}
+
+#login-form input[type=text],
+#login-form input[type=password] {
+	border: 1px solid #ccc;
+	width: 12em;
+	padding: 2px;
+	font-size: 10pt;
+}
+
+#login-form input[type=text]:focus,
+#login-form input[type=password]:focus {
+	background: #ffffcc;
+}
+
+#id_favorite_departments {
+	width: 50%;
+	height: 12em;
+}
+
 /* TODO: 이것들을 default.css로 빼낼까? */
 .actions li {
 	margin: 0 5px;

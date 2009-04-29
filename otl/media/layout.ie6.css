@@ -1,0 +1,11 @@
+@charset "utf-8";
+
+#header
+{
+	background-image: url('images/bg_top.gif');
+}
+
+#header-content
+{
+	height: 54px;
+}

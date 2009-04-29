@@ -4,59 +4,96 @@
 {% endblock %}
 {% block content %}
 <h2>조모임 - {{current_group.course_code}} : {{current_group.course_name}} - {{current_group.group_name}}</h2>
-<div id="articleList">
-	{% if user.is_authenticated %}
-	<ul>
+{% if user.is_authenticated %}
+	{% if article_list %}
+<table id="article-list" class="article-list">
+	<thead>
+		<tr>
+			<th class ="author">작성자</th>
+			<th class ="tag">내용</th>
+			<th class ="date">작성시간</th>
+			<th class ="delete">삭제</th>
+			<th class ="modify">수정</th>
+		</th>
+	</thead>
+	<tbody>
 		{% for item in article_list %}
-		<li>
-		<h4>{{item.id}} : {{item.tag}}</h4>
-		<span class = "writer">글쓴이 : <a href="/accounts/view/{{item.writer.username}}">{{item.writer.username}}</a></span>
-		<a class="control-delete" href="/groups/list/delete/?id={{item.group.id}}&num={{item.id}}">delete</a>
-		<a class="control-modify" href="/groups/list/modify/?id={{item.group.id}}&num={{item.id}}">modify</a>
-		<form id="modify-form" method="post" action="/groups/list/modify/?id={{item.group.id}}&num={{item.id}}">
+		<tr class="{% if forloop.counter|divisibleby:"2" %}even {% endif %}">
+			<td class="author"><a href="/accounts/view/{{item.writer.username}}">{{item.writer.username}}</a></td>
+			<td class="tag">{{item.tag}}</td>
+			<td class="date">{{item.written|date:"Y/m/d"}}</td>
+			<td class="delete"><a class="control-delete" href="/groups/list/delete/?id={{item.group.id}}&num={{item.id}}">delete</a></td>
+			<td class="modify"><form id="modify-form" method="post" action="/groups/list/modify/?id={{item.group.id}}&num={{item.id}}">
 			<p><label for="article-modify">수정 : </label><input type="text" id="modify" name="modify" />
-				<input id ="article-modify" type="submit" value="수정"/></p>
+			<input id ="article-modify" type="submit" value="수정"/></p></td>
 		</form>
-		</li>
 		{% endfor %}
-	</ul>
+	</tbody>
+</table>
 	{% else %}
-	<p>로그인하지 않았습니다. :)</p>
+		<p>글이 없습니다. </p>
 	{% endif %}
-</div>
+	<div class="list-pages">
+		{% if current_page.has_previous %}
+		<a class="prev-page" href="/groups/list/?id={{current_group.id}}&page={{current_page.previous_page_number}}">prev</a>
+		{% endif %}
+		{% for page in current_page.paginator.page_range %}
+		<a class="page{% ifequal page.number current_page.number %} selected{% endifequal %}" href="/groups/list/?id={{current_group.id}}&page={{page.number}}">{{page.number}}</a>
+		{% endfor %}
+		{% if current_page.has_next %}
+		<a class="next-page" href="/groups/list/?id={{current_group.id}}&page={{current_page.next_page_number}}">next</a>
+		{% endif %}
+	</div>
+{% else %}
+	<p>로그인하지 않았습니다. :)</p>
+{% endif %}
 <div id ="write-form">
 	<form id="write" method="post" action="/groups/list/write/{{current_group.id}}">
 		<p><label for="write-article">글쓰기 : </label><input type="text" id="write-article" name="article" />
 		<input type="submit" value="쓰기" /></p>
 	</form>
 </div>
-<div id ="search">
-	<form id="search-form" method="post" action="/groups/list/search/{{current_group.id}}">
-		<p><label for="search-query">검색 : </label><input type="text" id="query" name="query" />
-		<input id="search-query" type="submit" value="검색"/></p>
-		<ul>
-			{% if search_list %}
-				{% for item in search_list %}
-				<li>
-				<h4>{{item.id}} : {{item.tag}}</h4>
-					<span class="submitter">글쓴이 : <a href="/accounts/view/{{item.writer.username}}">{{item.writer.username}}</a></span>
-				</li>
-				{% endfor%}
-			{% else %}
-				<p>검색 결과가 없습니다.</p>
-			{% endif %}
-		</ul>
-			<div class="search-pages">
-			{% if search_page.has_previous %}
-			<a class="search-prev-page" href="?query={{search_code}}&search-page={{search_page.previous_page_number}}">Prev</a>
-			{% endif %}
-			{% for page in search_page.paginator.page_range %}
-			<a class="search-page{% ifequal page.number search_page.number %} selected{% endifequal %}" href="?query={{search_code}}&search-page={{page.number}}">{{page.number}}</a>
-			{% endfor %}
-			{% if search_page.has_next %}
-			<a class="search-next-page" href="?query={{search_code}}&search-page={{search_page.next_page_number}}">Next</a>
-			{% endif %}
-			</div>
+<div id ="search-form">
+	<form id="search-form" method="get" action="/groups/list/search/?id={{current_group.id}}">
+		<p><label for="search-query">검색 : </label><input type="text" id="search-query" name="query" />
+		<input type="submit" value="검색"/></p>
 	</form>
 </div>
+	{% if search_list %}
+	<table id="search" class="search-list">
+		<thead>
+			<tr>
+				<th class = "author">작성자</th>
+				<th class = "tag">내용</th>
+				<th class = "date">작성시간</th>
+				<th class = "delete">삭제</th>
+				<th class = "modify">수정</th>
+			</tr>
+		</thead>
+		<tbody>
+				{% for item in search_list %}
+				<tr class = "{% if forloop.counter|divisibleby:"2" %}even {% endif %}">
+					<td class = "author"><a href="/accounts/view/{{item.writer.username}}">{{item.writer.username}}</a></td>
+					<td class = "tag">{{item.tag}}</td>
+					<td class = "date">{{item.written|date:"Y/m/d"}}</td>
+					<td class = "delete"><a class="control-delete" href="/groups/list/delete/?id={{item.group.id}}&num={{item.id}}">delete</a></td>
+					<td class = "modify">수정</td>
+				</tr>
+				{% endfor%}
+		</tbody>
+	</table>
+	{% else %}
+		<p>검색 결과가 없습니다.</p>
+	{% endif %}
+			<div class="search-pages">
+			{% if search_page.has_previous %}
+			<a class="search-prev-page" href="/groups/list/search/?id={{current_group.id}}&query={{search_code}}&search-page={{search_page.previous_page_number}}">Prev</a>
+			{% endif %}
+			{% for page in search_page.paginator.page_range %}
+			<a class="search-page{% ifequal page.number search_page.number %} selected{% endifequal %}" href="/groups/list/search/?id={{current_group.id}}&query={{search_code}}&search-page={{page.number}}">{{page.number}}</a>
+			{% endfor %}
+			{% if search_page.has_next %}
+			<a class="search-next-page" href="/groups/list/search/?id={{current_group.id}}&query={{search_code}}&search-page={{search_page.next_page_number}}">Next</a>
+			{% endif %}
+			</div>
 {% endblock %}

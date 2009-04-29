@@ -1,0 +1,21 @@
+Metadata-Version: 1.0
+Name: python-sybase
+Version: 0.39
+Summary: Sybase module for Python
+Home-page: http://python-sybase.sourceforge.net/
+Author: Sebastien Sable
+Author-email: sable@users.sourceforge.net
+License: http://www.opensource.org/licenses/bsd-license.html
+Description: The Sybase module provides a Python interface to the Sybase relational
+        database system. The Sybase package supports all of the Python
+        Database API, version 2.0 with extensions.
+        
+Platform: any
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: BSD License
+Classifier: Programming Language :: Python
+Classifier: Topic :: Database
+Classifier: Topic :: Software Development :: Libraries :: Python Modules
+Classifier: Operating System :: Microsoft :: Windows
+Classifier: Operating System :: Unix

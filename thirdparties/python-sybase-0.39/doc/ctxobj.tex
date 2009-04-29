@@ -1,0 +1,338 @@
+\subsection{CS_CONTEXT Objects}
+
+Calling the \function{cs_ctx_alloc()} or \function{cs_ctx_global()}
+function will create a \class{CS_CONTEXT} object.  When the
+\class{CS_CONTEXT} object is deallocated the Sybase
+\function{cs_ctx_drop()} function will be called for the context.
+
+\class{CS_CONTEXT} objects have the following interface:
+
+\begin{memberdesc}[CS_CONTEXT]{debug}
+An integer which controls printing of debug messages to the debug file
+established by the \function{set_debug()} function.  The default value
+is zero.
+\end{memberdesc}
+
+\begin{methoddesc}[CS_CONTEXT]{debug_msg}{msg}
+If the \member{debug} member is non-zero the \var{msg} argument will
+be written to the debug file established by the \function{set_debug()}
+function.
+\end{methoddesc}
+
+\begin{methoddesc}[CS_CONTEXT]{cs_config}{action, property \optional{, value}}
+Configures, retrieves and clears properties of the \texttt{comn}
+library for the context.
+
+When \var{action} is \code{CS_SET} a compatible \var{value} argument
+must be supplied and the method returns the Sybase result code.  The
+Sybase-CT \function{cs_config()} function is called like this:
+
+\begin{verbatim}
+/* bool property value */
+status = cs_config(ctx, CS_SET, property, &bool_value, CS_UNUSED, NULL);
+
+/* int property value */
+status = cs_config(ctx, CS_SET, property, &int_value, CS_UNUSED, NULL);
+
+/* string property value */
+status = cs_config(ctx, CS_SET, property, str_value, CS_NULLTERM, NULL);
+
+/* locale property value */
+status = cs_config(ctx, CS_SET, property, locale, CS_UNUSED, NULL);
+
+/* callback property value */
+status = cs_config(ctx, CS_SET, property, cslib_cb, CS_UNUSED, NULL);
+\end{verbatim}
+
+When \var{action} is \code{CS_GET} the method returns a tuple
+containing the Sybase result code and the property value.  The
+Sybase-CT \function{cs_callback()} function is called like this:
+
+\begin{verbatim}
+/* bool property value */
+status = cs_config(ctx, CS_GET, property, &bool_value, CS_UNUSED, NULL);
+
+/* int property value */
+status = cs_config(ctx, CS_GET, property, &int_value, CS_UNUSED, NULL);
+
+/* string property value */
+status = cs_config(ctx, CS_GET, property, str_buff, sizeof(str_buff), &buff_len);
+\end{verbatim}
+
+When \var{action} is \code{CS_CLEAR} the method clears the property
+and returns the Sybase result code.  The Sybase-CT
+\function{cs_callback()} function is called like this:
+
+\begin{verbatim}
+status = cs_config(ctx, CS_CLEAR, property, NULL, CS_UNUSED, NULL);
+\end{verbatim}
+
+The recognised properties are:
+
+\begin{longtable}{l|l}
+\var{property} & type \\
+\hline
+\code{CS_EXTERNAL_CONFIG} & \code{bool} \\
+\code{CS_EXTRA_INF}       & \code{bool} \\
+\code{CS_NOAPI_CHK}       & \code{bool} \\
+\code{CS_VERSION}         & \code{int} \\
+\code{CS_APPNAME}         & \code{string} \\
+\code{CS_CONFIG_FILE}     & \code{string} \\
+\code{CS_LOC_PROP}        & \code{locale} \\
+\code{CS_MESSAGE_CB}      & \code{function} \\
+\end{longtable}
+
+For an explanation of the property values and get/set/clear semantics
+please refer to the Sybase documentation.
+\end{methoddesc}
+
+\begin{methoddesc}[CS_CONTEXT]{ct_callback}{action, type \optional{, cb_func \code{= None}}}
+Installs, removes, or queries current Sybase callback function.  This
+is only available when the \module{sybasect} module has been compiled
+without the \code{WANT_THREADS} macro defined in \texttt{sybasect.h}.
+
+When \code{CS_SET} is passed as the \var{action} argument the
+Sybase-CT \function{ct_callback()} function is called like this:
+
+\begin{verbatim}
+status = ct_callback(ctx, NULL, CS_SET, type, cb_func);
+\end{verbatim}
+
+The \var{cb_func} argument is stored inside the \code{CS_CONTEXT}
+object.  Whenever a callback of the specified type is called by the
+Sybase CT library, the \module{sybasect} wrapper locates the
+corresponding \code{CS_CONTEXT} object and calls the stored function.
+
+If \code{None} is passed in the \var{cb_func} argument the callback
+identified by \var{type} will be removed.  The Sybase result code is
+returned.
+
+When \var{action} is \code{CS_GET} the Sybase-CT
+\function{ct_callback()} function is called like this:
+
+\begin{verbatim}
+status = ct_callback(ctx, NULL, CS_GET, type, &cb_func);
+\end{verbatim}
+
+The return value is a two element tuple containing the Sybase result
+code and the current callback function.  When the Sybase result code
+is not \code{CS_SUCCEED} or there is no current callback, the returned
+function will be \code{None}.
+
+The \var{type} argument identifies the callback function type.
+Currently only the following callback functions are supported.
+
+\begin{longtable}{l|l}
+\var{type} & callback function arguments \\
+\hline
+\code{CS_CLIENTMSG_CB} & \code{ctx, conn, msg} \\
+\code{CS_SERVERMSG_CB} & \code{ctx, conn, msg} \\
+\end{longtable}
+
+The following will allocate and initialise a CT library context then
+will install a callback.
+
+\begin{verbatim}
+from sybasect import *
+
+def ctlib_server_msg_handler(conn, cmd, msg):
+    return CS_SUCCEED
+
+status, ctx = cs_ctx_alloc()
+if status != CS_SUCCEED:
+    raise CSError(ctx, 'cs_ctx_alloc')
+if ctx.ct_init(CS_VERSION_100):
+    raise CSError(ctx, 'ct_init')
+if ctx.ct_callback(CS_SET, CS_SERVERMSG_CB,
+                   ctlib_server_msg_handler) != CS_SUCCEED:
+    raise CSError(ctx, 'ct_callback')
+\end{verbatim}
+\end{methoddesc}
+
+\begin{methoddesc}[CS_CONTEXT]{cs_loc_alloc}{}
+Allocates a new \class{CS_LOCALE} object which is used to control
+locale settings.  Calls the Sybase-CT \function{cs_loc_alloc()}
+function like this:
+
+\begin{verbatim}
+status = cs_loc_alloc(ctx, &locale);
+\end{verbatim}
+
+Returns a tuple containing the Sybase result code and a new instance
+of the \class{CS_LOCALE} class constructed from the \var{locale}
+returned by \function{cs_loc_alloc()}.  \code{None} is returned as the
+\class{CS_LOCALE} object when the result code is not \code{CS_SUCCEED}.
+\end{methoddesc}
+
+\begin{methoddesc}[CS_CONTEXT]{ct_con_alloc}{}
+Allocates a new \class{CS_CONNECTION} object which is used to connect
+to a Sybase server.  Calls the Sybase-CT \function{ct_callback()}
+function like this:
+
+\begin{verbatim}
+status = ct_con_alloc(ctx, &conn);
+\end{verbatim}
+
+Returns a tuple containing the Sybase result code and a new instance
+of the \class{CS_CONNECTION} class constructed from the \var{conn}
+returned by \function{ct_con_alloc()}.  \code{None} is returned as the
+\class{CS_CONNECTION} object when the result code is not
+\code{CS_SUCCEED}.
+\end{methoddesc}
+
+\begin{methoddesc}[CS_CONTEXT]{ct_config}{action, property \optional{, value}}
+Sets, retrieves and clears properties of the context object
+
+When \var{action} is \code{CS_SET} a compatible \var{value} argument
+must be supplied and the method returns the Sybase result code.  The
+Sybase-CT \function{ct_config()} function is called like this:
+
+\begin{verbatim}
+/* int property value */
+status = ct_config(ctx, CS_SET, property, &int_value, CS_UNUSED, NULL);
+
+/* string property value */
+status = ct_config(ctx, CS_SET, property, str_value, CS_NULLTERM, NULL);
+\end{verbatim}
+
+When \var{action} is \code{CS_GET} the method returns a tuple
+containing the Sybase result code and the property value.  The
+Sybase-CT \function{ct_callback()} function is called like this:
+
+\begin{verbatim}
+/* int property value */
+status = ct_config(ctx, CS_GET, property, &int_value, CS_UNUSED, NULL);
+
+/* string property value */
+status = ct_config(ctx, CS_GET, property, str_buff, sizeof(str_buff), &buff_len);
+\end{verbatim}
+
+When \var{action} is \code{CS_CLEAR} the method clears the property
+and returns the Sybase result code.  The Sybase-CT
+\function{ct_callback()} function is called like this:
+
+\begin{verbatim}
+status = ct_config(ctx, CS_CLEAR, property, NULL, CS_UNUSED, NULL);
+\end{verbatim}
+
+The recognised properties are:
+
+\begin{longtable}{l|l}
+\var{property} & type \\
+\hline
+\code{CS_LOGIN_TIMEOUT} & \code{int} \\
+\code{CS_MAX_CONNECT}   & \code{int} \\
+\code{CS_NETIO}         & \code{int} \\
+\code{CS_NO_TRUNCATE}   & \code{int} \\
+\code{CS_TEXTLIMIT}     & \code{int} \\
+\code{CS_TIMEOUT}       & \code{int} \\
+\code{CS_VERSION}       & \code{int} \\
+\code{CS_IFILE}         & \code{string} \\
+\code{CS_VER_STRING}    & \code{string} \\
+\end{longtable}
+
+For an explanation of the property values and get/set/clear semantics
+please refer to the Sybase documentation.
+\end{methoddesc}
+
+\begin{methoddesc}[CS_CONTEXT]{ct_exit}{\optional{option \code{= CS_UNUSED}}}
+Calls the Sybase \function{ct_exit()} function like this:
+
+\begin{verbatim}
+status = ct_exit(ctx, option);
+\end{verbatim}
+
+Returns the Sybase result code.
+\end{methoddesc}
+
+\begin{methoddesc}[CS_CONTEXT]{ct_init}{\optional{version \code{= CS_VERSION_100}}}
+Initialises the context object and tells the CT library which version
+of behaviour is expected.  This method must be called immediately
+after creating the context.  The Sybase \function{ct_init()} function
+is called like this:
+
+\begin{verbatim}
+status = ct_init(ctx, version);
+\end{verbatim}
+
+Returns the Sybase result code.
+\end{methoddesc}
+
+\begin{methoddesc}[CS_CONTEXT]{cs_ctx_drop}{}
+Calls the Sybase \function{cs_ctx_drop()} function like this:
+
+\begin{verbatim}
+status = cs_ctx_drop(ctx);
+\end{verbatim}
+
+Returns the Sybase result code.
+
+This method will be automatically called when the \class{CS_CONTEXT}
+object is deleted.  Applications do not need to call the method.
+\end{methoddesc}
+
+\begin{methoddesc}[CS_CONTEXT]{cs_diag}{operation \optional{, \ldots}}
+Manage Open Client/Server error messages for the context.
+
+When \var{operation} is \code{CS_INIT} a single argument is accepted
+and the Sybase result code is returned.  The Sybase
+\function{cs_diag()} function is called like this:
+
+\begin{verbatim}
+status = cs_diag(ctx, CS_INIT, CS_UNUSED, CS_UNUSED, NULL);
+\end{verbatim}
+
+When \var{operation} is \code{CS_MSGLIMIT} two additional arguments
+are expected; \var{type} and \var{num}.  The Sybase result code is
+returned.  The Sybase \function{cs_diag()} function is called like
+this:
+
+\begin{verbatim}
+status = cs_diag(ctx, CS_MSGLIMIT, type, CS_UNUSED, &num);
+\end{verbatim}
+
+When \var{operation} is \code{CS_CLEAR} an additional \var{type}
+argument is accepted and the Sybase result code is returned.  The
+Sybase \function{cs_diag()} function is called like this:
+
+\begin{verbatim}
+status = cs_diag(ctx, CS_CLEAR, type, CS_UNUSED, NULL);
+\end{verbatim}
+
+When \var{operation} is \code{CS_GET} two additional arguments are
+expected; \var{type} which currently must be \code{CS_CLIENTMSG_TYPE},
+and \var{index}.  A tuple is returned which contains the Sybase result
+code and the requested \class{CS_CLIENTMSG} message.  \code{None} is
+returned as the message object when the result code is not
+\code{CS_SUCCEED}.  The Sybase \function{cs_diag()} function is called
+like this:
+
+\begin{verbatim}
+status = cs_diag(ctx, CS_GET, type, index, &msg);
+\end{verbatim}
+
+When \var{operation} is \code{CS_STATUS} an additional \var{type}
+argument is accepted.  A tuple is returned which contains the Sybase
+result code and the number of messages available for retrieval.  The
+Sybase \function{cs_diag()} function is called like this:
+
+\begin{verbatim}
+status = cs_diag(ctx, CS_STATUS, type, CS_UNUSED, &num);
+\end{verbatim}
+
+The following will retrieve and print all messages from the context.
+
+\begin{verbatim}
+def print_msgs(ctx):
+    status, num_msgs = ctx.cs_diag(CS_STATUS, CS_CLIENTMSG_TYPE)
+    if status == CS_SUCCEED:
+        for i in range(num_msgs):
+            status, msg = ctx.cs_diag(CS_GET, CS_CLIENTMSG_TYPE, i + 1)
+            if status != CS_SUCCEED:
+                continue
+            for attr in dir(msg):
+                print '%s: %s' % (attr, getattr(msg, attr))
+    ctx.cs_diag(CS_CLEAR, CS_CLIENTMSG_TYPE)
+\end{verbatim}
+\end{methoddesc}
+

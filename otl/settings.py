@@ -107,6 +107,8 @@ AUTH_PROFILE_MODULE = 'apps.accounts.userprofile'
 LOGIN_URL = '/login/'
 
 # Should be overriden at settings_local.py
+SERVICE_STATUS = 'released'
+
 from datetime import date
 CURRENT_YEAR = 2009 # context_processors.globaltime may override this with the system clock.
 CURRENT_SEMESTER = 1
@@ -123,6 +125,8 @@ ARARA_BASE_PORT = 0
 ARARA_USER = ''
 ARARA_PASSWORD = ''
 ARARA_SESSION_TIMEOUT = 3600
+
+CACHE_BACKEND = 'dummy:///'
 
 try:
 	from otl.settings_local import *

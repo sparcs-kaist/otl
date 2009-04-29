@@ -49,6 +49,7 @@ def list_ara(request):
 	
 	return render_to_response('board/index_ara.html', {
 		'section': 'board',
+		'title': u'과목 Q&A',
 		'article_list': article_list,
 		'page_no': page_no,
 		'pages': pages,
@@ -76,6 +77,7 @@ def read_ara(request, id):
 	page_no = int(request.GET.get('page', 1))
 	return render_to_response('board/read_ara.html', {
 		'section': 'board',
+		'title': u'과목 Q&A - %s' % article_list[0].title.decode('utf-8'),
 		'article_list': article_list,
 		'page_no': page_no,
 	}, context_instance=RequestContext(request))

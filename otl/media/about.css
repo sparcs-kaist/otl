@@ -1,0 +1,10 @@
+@charset "utf-8";
+
+#content li {
+	margin-left: 2em;
+}
+
+h4 {
+	font-size: 1.1em;
+	margin: 0.3em 1em;
+}

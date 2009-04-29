@@ -1,0 +1,11 @@
+@charset "utf-8";
+
+#center
+{
+	margin-right: -3px;
+}
+
+#map-arrow
+{
+    background-image: url('images/timetable/map_arrow.gif')
+}

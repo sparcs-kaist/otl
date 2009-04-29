@@ -1,0 +1,53 @@
+\subsection{CS_DATAFMT Objects}
+
+\class{CS_DATAFMT} objects are a very thing wrapper around the
+Sybase \code{CS_DATAFMT} structure.  They have the following
+attributes:
+
+\begin{tabular}{l|l}
+attribute & type \\
+\hline
+\code{name}      & \code{string} \\
+\code{datatype}  & \code{int} \\
+\code{format}    & \code{int} \\
+\code{maxlength} & \code{int} \\
+\code{scale}     & \code{int} \\
+\code{precision} & \code{int} \\
+\code{status}    & \code{int} \\
+\code{count}     & \code{int} \\
+\code{usertype}  & \code{int} \\
+\code{strip}     & \code{int} \\
+\end{tabular}
+
+The \code{strip} attribute is an extension of the Sybase
+\code{CS_DATAFMT} structure.  Please refer to the \class{DataBuf}
+documentation.
+
+\class{CS_DATAFMT} structures are mostly used to create
+\class{DataBuf} objects for sending data to and receiving data from
+the server.
+
+A \class{CS_DATAFMT} object created via the \function{CS_DATAFMT()}
+constructor will have the following values:
+
+\begin{tabular}{l|l}
+attribute & value \\
+\hline
+\code{name}      & \code{'$\backslash$0'} \\
+\code{datatype}  & \code{CS_CHAR_TYPE} \\
+\code{format}    & \code{CS_FMT_NULLTERM} \\
+\code{maxlength} & \code{1} \\
+\code{scale}     & \code{0} \\
+\code{precision} & \code{0} \\
+\code{status}    & \code{0} \\
+\code{count}     & \code{0} \\
+\code{usertype}  & \code{0} \\
+\code{strip}     & \code{0} \\
+\end{tabular}
+
+You will almost certainly need to provide new values for some of the
+attributes before you use the object.
+
+A \class{CS_DATAFMT} object created as a return value from the
+\function{ct_bind()} function will be ready to use for creating a
+\class{DataBuf} object.

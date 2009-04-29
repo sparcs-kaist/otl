@@ -1,0 +1,110 @@
+\subsection{CS_LOCALE Objects}
+
+\class{CS_LOCALE} objects are a wrapper around the Sybase
+\code{CS_LOCALE} structure.  The objects are created by calling the
+\method{cs_loc_alloc()} method of a \class{CS_CONTEXT} object.
+
+They have the following interface:
+
+\begin{methoddesc}[CS_LOCALE]{cs_dt_info}{action, type \optional{, \ldots}}
+Sets or retrieves datetime information of the locale object
+
+When \var{action} is \code{CS_SET} a compatible \var{value} argument
+must be supplied and the method returns the Sybase result code.  The
+Sybase-CT \function{cs_dt_info()} function is called like this:
+
+\begin{verbatim}
+status = cs_dt_info(ctx, CS_SET, locale, type, CS_UNUSED,
+                    &int_value, sizeof(int_value), &out_len);
+\end{verbatim}
+
+When \var{action} is \code{CS_GET} the method returns a tuple
+containing the Sybase result code and a value.  When a string value is
+requested an optional \var{item} argument can be passed which defaults
+to \code{CS_UNUSED}.
+
+The return result depends upon the value of the \var{type} argument.
+
+\begin{longtable}{l|l|l}
+\var{type} & need item? & return values \\
+\hline
+\code{CS_12HOUR}     & no  & \code{status, bool} \\
+\code{CS_DT_CONVFMT} & no  & \code{status, int} \\
+\code{CS_MONTH}      & yes & \code{status, string} \\
+\code{CS_SHORTMONTH} & yes & \code{status, string} \\
+\code{CS_DAYNAME}    & yes & \code{status, string} \\
+\code{CS_DATEORDER}  & no  & \code{status, string} \\
+\end{longtable}
+
+The Sybase-CT \function{cs_dt_info()} function is called like this:
+
+\begin{verbatim}
+/* bool value */
+status = cs_dt_info(ctx, CS_GET, locale, type, CS_UNUSED,
+                    &bool_value, sizeof(bool_value), &out_len);
+
+/* int value */
+status = cs_dt_info(ctx, CS_GET, locale, type, CS_UNUSED,
+                    &int_value, sizeof(int_value), &out_len);
+
+/* string value */
+status = cs_dt_info(ctx, CS_GET, locale, type, item,
+                    str_buff, sizeof(str_buff), &buff_len);
+\end{verbatim}
+\end{methoddesc}
+
+\begin{methoddesc}[CS_LOCALE]{cs_loc_drop}{}
+Calls the Sybase \function{cs_loc_drop()} function like this:
+
+\begin{verbatim}
+status = cs_loc_drop(ctx, locale);
+\end{verbatim}
+
+Returns the Sybase result code.
+
+This method will be automatically called when the \class{CS_LOCALE}
+object is deleted.  Applications do not need to call the method.
+\end{methoddesc}
+
+\begin{methoddesc}[CS_LOCALE]{cs_locale}{action, type \optional{, value}}
+Load the object with localisation values or retrieves the locale name
+previously used to load the object.
+
+When \var{action} is \code{CS_SET} a string \var{value} argument
+must be supplied and the method returns the Sybase result code.  The
+Sybase-CT \function{cs_locale()} function is called like this:
+
+\begin{verbatim}
+status = cs_locale(ctx, CS_SET, locale, type, value, CS_NULLTERM, NULL);
+\end{verbatim}
+
+The recognised values for \var{type} are:
+
+\begin{longtable}{l}
+\var{type} \\
+\hline
+\code{CS_LC_COLLATE}  \\
+\code{CS_LC_CTYPE}    \\
+\code{CS_LC_MESSAGE}  \\
+\code{CS_LC_MONETARY} \\
+\code{CS_LC_NUMERIC}  \\
+\code{CS_LC_TIME}     \\
+\code{CS_LC_ALL}      \\
+\code{CS_SYB_LANG}    \\
+\code{CS_SYB_CHARSET} \\
+\code{CS_SYB_SORTORDER} \\
+\code{CS_SYB_COLLATE}   \\
+\code{CS_SYB_LANG_CHARSET} \\
+\code{CS_SYB_TIME}     \\
+\code{CS_SYB_MONETARY} \\
+\code{CS_SYB_NUMERIC}  \\
+\end{longtable}
+
+When \var{action} is \code{CS_GET} the method returns a tuple
+containing the Sybase result code and a locale name.  The
+Sybase-CT \function{cs_locale()} function is called like this:
+
+\begin{verbatim}
+status = cs_locale(ctx, CS_GET, locale, type, str_buff, sizeof(str_buff), &str_len);
+\end{verbatim}
+\end{methoddesc}

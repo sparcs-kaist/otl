@@ -1,0 +1,23 @@
+\subsection{CS_IODESC Objects}
+
+\class{CS_IODESC} objects are a very thing wrapper around the
+Sybase \code{CS_IODESC} structure.  They have the following
+attributes:
+
+\begin{tabular}{l|l}
+attribute & type \\
+\hline
+\code{iotype}        & \code{int} \\
+\code{datatype}      & \code{int} \\
+\code{usertype}      & \code{int} \\
+\code{total_txtlen}  & \code{int} \\
+\code{offset}        & \code{int} \\
+\code{log_on_update} & \code{int} \\
+\code{name}          & \code{string} \\
+\code{timestamp}     & \code{binary} \\
+\code{textptr}       & \code{binary} \\
+\end{tabular}
+
+These objects are created either by calling the
+\method{ct_data_info()} method of a \class{CS_COMMAND} object, or by
+calling the \function{CS_IODESC} constructor.

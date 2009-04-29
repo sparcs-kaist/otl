@@ -1,0 +1,9 @@
+- Connection.rollback() cannot be called while a cursor is in flight...
+
+- Cursor.callproc() does not return parameters - write alternative?
+
+- Expose value_str() to Python.
+
+- BLOB columns (text/image)
+
+- Bulkcopy copy out

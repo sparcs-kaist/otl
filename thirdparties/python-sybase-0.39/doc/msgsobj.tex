@@ -1,0 +1,37 @@
+\subsection{CS_CLIENTMSG Objects}
+
+\class{CS_CLIENTMSG} objects are a very thing wrapper around the
+Sybase \code{CS_CLIENTMSG} structure.  They have the following
+read only attributes:
+
+\begin{tabular}{l|l}
+attribute & type \\
+\hline
+\code{severity}  & \code{int} \\
+\code{msgnumber} & \code{int} \\
+\code{msgstring} & \code{string} \\
+\code{osnumber}  & \code{int} \\
+\code{osstring}  & \code{string} \\
+\code{status}    & \code{int} \\
+\code{sqlstate}  & \code{string} \\
+\end{tabular}
+
+\subsection{CS_SERVERMSG Objects}
+
+\class{CS_SERVERMSG} objects are a very thing wrapper around the
+Sybase \code{CS_SERVERMSG} structure.  They have the following
+read only attributes:
+
+\begin{tabular}{l|l}
+attribute & type \\
+\hline
+\code{msgnumber} & \code{int} \\
+\code{state}     & \code{int} \\
+\code{severity}  & \code{int} \\
+\code{text}      & \code{string} \\
+\code{svrname}   & \code{string} \\
+\code{proc}      & \code{string} \\
+\code{line}      & \code{int} \\
+\code{status}    & \code{int} \\
+\code{sqlstate}  & \code{string} \\
+\end{tabular}

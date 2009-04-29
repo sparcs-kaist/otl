@@ -2,840 +2,42 @@
 {% block headers %}
 	<link rel="stylesheet" type="text/css" href="/media/table.css" />
 	<link rel="stylesheet" type="text/css" href="/media/timetable.css" />
+	<!--[if lte IE 6]><link rel="stylesheet" type="text/css" href="/media/timetable.ie6.css" /><![endif]-->
 	<script type="text/javascript" src="/media/js/mootools/mootools-1.2.1-core-yc.js"></script>
 	<script type="text/javascript" src="/media/js/mootools/mootools-1.2-more-yc.js"></script>
+	<script type="text/javascript" src="/media/js/common.js"></script>
+	<script type="text/javascript" src="/media/js/timetable.js"></script>
 	<script type="text/javascript">
 	//<![CDATA[
-	var Data = {};
-	Data.Map = 
-	[
-		{code:'N7',name:'기계공학동', x:227,y:247},
-		{code:'W1',name:'응용공학동', x:217,y:515},
-		{code:'E11',name:'창의학습관', x:368,y:356},
-		{code:'N4',name:'대학 1호관', x:432,y:251},
-		{code:'N5',name:'대학 2호관', x:517,y:243},
-		{code:'N8',name:'대학 3호관', x:435,y:231},
-		{code:'E6',name:'자연과학동', x:474,y:391},
-		{code:'E16',name:'정문술빌딩', x:367,y:313},
-		{code:'E2',name:'산업경영동', x:405,y:495},
-		{code:'E7',name:'의과학연구센터', x:529,y:369},
-		{code:'E3',name:'정보전자동', x:494,y:446},
-		{code:'',name:'궁리실험관', x:422,y:373}
-	];
-	var NUM_ITEMS_PER_LIST = 20;
-
-	Data.CurrentYear = {{current_year}};
-	Data.CurrentTerm = {{current_semester}};
-	Data.NextYear = {{next_year}};
-	Data.NextTerm = {{next_semester}};
-	Data.Lectures = []; // Initialized via ajax calls after page loading.
-
-
-	/* Example of a lecture item.
-	Data.Lectures = 
-	[
-		{
-			id:'1',
-			year:'2008',
-			term:'3',
-			dept:'전산학전공',
-			classification:'기초필수',
-			course_no:'CS202',
-			class:'A',
-			code:'37.231',
-			title:'데이타구조',
-			lec_time:'2',
-			lab_time:'3',
-			credit:'3',
-			prof:'김민우',
-			times:[{day:'화',start:480,end:600},{day:'수',start:480,end:600}],
-			classroom:'창의학습관 304',
-			fixed_num:'200',
-			remarks:'영어강의',
-			examtime:{day:'화,start:480,end:630}
-		}
-	];
-	*/
-
-	var Mootabs = new Class({
-		initialize: function(tabs, contents, trigerEvent) 
-		{
-			if (trigerEvent==null) trigerEvent = 'mouseover';
-			this.data = [];
-
-			this.tabs = $(tabs).getChildren();
-			this.contents = $(contents).getChildren();
-			this.tabs.each(function(item,key) 
-			{
-				this.data[key] = {credit:0,au:0};
-				item.addEvent(trigerEvent, function()
-					{
-						this.activate(key);
-					}.bind(this)
-				);
-			}.bind(this));
-			this.contents.each(function(item)
-			{
-				item.addClass('none');
-			});
-
-			this.activate(0);
-		},
-		setData:function(index,data)
-		{
-			this.data[index] = data;
-		},
-		updateData:function()
-	   	{
-			$('total_credit').set('html',this.data[this.activeKey].credit);
-			$('total_au').set('html',this.data[this.activeKey].au);
-			$('total_credit').highlight('#FFFF00');
-			$('total_au').highlight('#FFFF00');
-	   	},
-		activate: function(key)
-		{
-			this.tabs.each(function(item,index)
-			{
-				if (index==key)
-					item.addClass('active');
-				else
-					item.removeClass('active');
-			});
-			this.contents.each(function(item,index)
-			{
-				if (index==key) item.removeClass('none');
-				else item.addClass('none');
-			});
-			this.activeKey = key;
-
-			this.updateData();
-		},
-		cleanActiveTab:function()
-	   	{
-			this.contents[this.activeKey].empty();
-	   	},
-		getActiveTab:function()
-		{
-			return this.contents[this.activeKey];
-		},
-		getTabByKey:function(key)
-		{
-			return this.contents[key];
-		},
-		getTableId:function()
-	   	{
-			return this.activeKey;
-	   	}
-	});
-
-	var UDF = {
-		days : ['월','화','수','목','금'],
-		modulecolors : ['#FFC7FE','#FFCECE','#DFE8F3','#D1E9FF','#D2F1EE','#FFEAD1','#E1D1FF','#FAFFC1','#D4FFC1','#DEDEDE','#BDBDBD'],
-		getRandomColor:function()
-		{
-			return UDF.modulecolors[Math.floor(Math.random()*10)];
-		},
-		getColorByIndex:function(index)
-		{
-			//index =index*3;
-			//index = UDF.modulecolors.length % index;
-			return UDF.modulecolors[index];
-		},
-		cumulativeOffset : function(el)
-		{
-			var valueT = 0, valueL = 0;
-			do {
-				valueT += el.offsetTop  || 0;
-				valueL += el.offsetLeft || 0;
-				el = el.offsetParent;
-			} while (el);
-			return {x:valueL,y:valueT};
-		},
-		mousePos:function(e, wrap)
-		{
-			var event =new Event(e);
-			var pos= UDF.cumulativeOffset(wrap);
-			return { 
-				x:(event.page.x-pos.x),
-				y:(event.page.y-pos.y)
-			}
-		},
-		clickable : function(o)
-		{
-			o.addEvent('mousedown',function(){ o.addClass('clicked') });
-			document.addEvent('mouseup',function(){ o.removeClass('clicked') });
-		},
-		NumericTimeToReadable: function(t)
-		{
-			var hour = Math.floor(t / 60);
-			var minute = t % 60;
-			return (hour < 10 ? '0':'') + hour + ':' + (minute < 10 ? '0':'') + minute;
-		}
-	}
-
-	// TODO: Refactor this: move into a common js library.
-	var Notifier = {
-		initialize: function()
-		{
-			// Nothing to do.
-		},
-		setLoadingMsg: function(msg)
-		{
-			if (this.timeout)
-				window.clearTimeout(this.timeout);
-			$('indicator').addClass('waiting');
-			$('message').set('html', msg);
-			$('message-wrap').fade('show');
-		},
-		setMsg: function(msg)
-		{
-			this.clearIndicator();
-			$('message').set('html', msg);
-			$('message-wrap').fade('show');
-			$('message-wrap').highlight('#FAD163');
-			if (this.timeout)
-				window.clearTimeout(this.timeout);
-			this.timeout = window.setTimeout(function() {
-				$('message-wrap').fade('out');
-			}, 4000);
-		},
-		setErrorMsg: function(msg)
-		{
-			this.clearIndicator();
-			$('message').set('html', msg);
-			$('message-wrap').fade('show');
-			$('message-wrap').highlight('#F00');
-			if (this.timeout)
-				window.clearTimeout(this.timeout);
-			this.timeout = window.setTimeout(function() {
-				$('message-wrap').fade('out');
-			}, 4000);
-		},
-		clearIndicator: function()
-		{
-			$('indicator').removeClass('waiting');
-		},
-		clear: function()
-		{
-			if (this.timeout)
-				window.clearTimeout(this.timeout);
-			this.clearIndicator();
-			$('message-wrap').fade('hide');
-		}
-	}
-
-	var Map = {
-		initialize:function()
-		{
-			this.container = $('map-drag-container');
-			this.dragmap = $('dragmap');
-			this.maptext= $('map-text');
-			this.settings = 
-			{
-				cW:this.container.offsetWidth,
-				cH:this.container.offsetHeight,
-				dW:this.dragmap.offsetWidth,
-				dH:this.dragmap.offsetHeight
-			}
-
-			this.dragging = false;
-			this.clickPos = null
-
-			this.dragmap.setStyle('left',-258);
-			this.dragmap.setStyle('top',-270);
-			this.registHandles();
-		},
-		registHandles:function()
-		{
-			this.fx = new Fx.Morph(this.dragmap, {
-				wait:false,
-				duration:250,
-				transition: Fx.Transitions.Quad.easeInOut
-				});
-
-			this.dragHandler = this.onDrag.bindWithEvent(this);
-			this.dragEndHandler = this.onEnd.bindWithEvent(this);
-			this.dragmap.addEvent('mousedown',this.onMousedown.bindWithEvent(this));
-
-			$('test').addEvent('click',
-				function()
-				{
-					this.find(Data.Map.getRandom().name);
-				}.bind(this)
-			);
-		},
-		onMousedown:function(e)
-		{
-			this.dragging=true;
-			document.addEvent('mousemove', this.dragHandler);
-			document.addEvent('mouseup', this.dragEndHandler);
-			this.clickPos = UDF.mousePos(e,this.dragmap);
-			e.stop();
-		},
-		onDrag:function(e)
-		{
-			if (this.dragging)
-			{
-				var pos = UDF.mousePos(e,this.container);
-				pos.x-=this.clickPos.x;
-				pos.y-=this.clickPos.y;
-
-				var s = this.settings;
-				var left = (pos.x).limit((s.cW-s.dW+2), 0);
-				var top = (pos.y).limit((s.cH-s.dH+2), 0);
-				this.dragmap.style.left=left+'px';
-				this.dragmap.style.top=top+'px';
-
-				e.stop();
-			}
-		},
-		onEnd:function(e)
-		{
-			document.removeEvent('mousemove', this.dragHandler);
-			document.removeEvent('mouseup', this.dragEndHandler);
-			if (this.dragging)
-			{
-				this.dragging=false;
-				e.stop();
-			}
-		},
-		move:function(x,y)
-		{
-			var s = this.settings;
-
-			x-=(s.cW/2);
-			y-=(s.cH/2);
-
-			var left = (x).limit(0, s.dW-s.cW);
-			var top = (y).limit(0, s.dH-s.cH);
-			this.fx.start({
-					left : (-left),
-					top :(-top)
-				});
-		},
-		find:function(name)
-		{
-			var arr = Data.Map.filter(function(item)
-			{
-				return item.name==name;
-			});
-			if (arr.length==0) return;
-
-			var item = arr[0];
-			var x = item.x;
-			var y = item.y;
-			this.maptext.style.left=(x-6)+'px';
-			this.maptext.style.top=(y-60)+'px';
-			$('map-name').innerHTML=item.code+' '+item.name;
-			this.move(x,y);
-		}
-	};
-
-	var LectureList = {
-		initialize:function(tabs,contents)
-		{
-			this.tabs = $('lecture_tabs');
-			this.contents = $('lecture_contents');
-			this.data = $A(Data.Lectures);
-			this.dept = $('department');
-			this.classf= $('classification');
-
-			this.dept.selectedIndex = 0;
-			this.registHandles();
-			this.onChange();
-		},
-		registHandles:function()
-		{
-			this.dept.addEvent('change',this.onChange.bind(this,'dept'));
-			this.classf.addEvent('change',this.onChange.bind(this,'dept'));
-		},
-		onChange:function()
-		{
-			var dept = this.dept.options[this.dept.selectedIndex].text;
-			var classification = this.classf.options[this.classf.selectedIndex].text;
-			if (dept == '전체보기' && classification == '전체보기')
-				Notifier.setErrorMsg('학과 전체보기는 과목 구분을 선택한 상태에서만 가능합니다.');
-			else
-				this.filter({'dept':dept,'type':classification});
-		},
-		filter:function(conditions)
-		{
-			if (conditions.type == undefined)
-				conditions.type = '전체보기';
-			var request = new Request({
-				method:'get',
-				url:'/timetable/search/',
-				onRequest:function()
-				{
-					Notifier.setLoadingMsg('검색 중입니다...');
-				},
-				onSuccess:function(responseText)
-				{
-					try {
-						var resObj = JSON.decode(responseText);
-						if (resObj.length == 0) {
-
-							LectureList.contents.empty(); 
-							LectureList.buildTabs(LectureList.contents.getChildren().length);
-
-							Notifier.setErrorMsg('과목 정보를 찾지 못했습니다.');
-
-						} else {
-
-							LectureList.contents.empty(); 
-							var max = NUM_ITEMS_PER_LIST;
-							var count=0;
-							var content = new Element('div',{'class':'lecture_content'}).inject(LectureList.contents);
-							var currCategory;
-							var category = (conditions.type=="전체보기") ? 'classification' : 'dept';
-							resObj.each(function(item)
-							{
-								var key = item.classification;
-								if (currCategory != key) {
-									currCategory = key;
-									if(count<max) new Element('h4',{'html':currCategory}).inject(content);
-								}
-
-								if (count>=max) {
-									content = new Element('div',{'class':'lecture_content'}).inject(this.contents);
-									new Element('h4',{'html':currCategory}).inject(content);
-									count=0;
-								} else
-									count++;
-
-								var el = new Element('a',{'html':item.title}).inject(content);
-								UDF.clickable(el);
-								
-								el.addEvent('mousedown',Timetable.addLecture.bindWithEvent(Timetable,item));
-								el.addEvent('mouseover',Timetable.onMouseover.bind(Timetable,item));
-								el.addEvent('mouseout',Timetable.onMouseout.bind(Timetable,item));
-							}.bind(LectureList));
-							LectureList.buildTabs(LectureList.contents.getChildren().length);
-							new Mootabs('lecture_tabs','lecture_contents');
-
-							Notifier.setMsg('검색 결과를 확인하세요.');
-						}
-					} catch(e) {
-						alert('Unexpected Error: '+e.message);
-					}
-				},
-				onFailure:function(xhr)
-				{
-					alert('ERROR');
-					Notifier.clear();
-				}
-			});
-			query = '';
-			if (conditions.year == undefined)
-				conditions.year = Data.NextYear;
-			if (conditions.term == undefined)
-				conditions.term = Data.NextTerm;
-			for (key in conditions) {
-				query += key + '=' + encodeURIComponent(conditions[key]) + '&'
-			}
-			request.send(query);
-		},
-		buildTabs:function(n)
-		{
-			this.tabs.empty();
-			for (var i=1;i<=n;i++)
-				new Element('div',{'html':i}).inject(new Element('div',{'class':'lecture_tab'}).inject(this.tabs));
-		},
-		getCategories:function(arr,category) // currently unused
-		{
-			var categories = [];
-			arr.each(function(item)
-			{
-				var key = $H(item).get(category);
-				if (!categories.contains(key))
-					categories.push(key);
-			});
-			return categories;
-		},
-		clustering:function(arr,category) // currently unused
-		{
-			var categories = this.getCategories(arr,category);
-			var ret = [];
-			categories.each(function(key)
-			{
-				arr.each(function(item){ 
-					if($H(item).get(category)==key) ret.push(item) 
-				});
-			});
-			return ret;
-		}
-	};
-
-	var RangeSearch = {
-		initialize:function()
-	   	{
-			this.grid = $('grid');
-			this.overlap = $('overlap_modules');
-			this.overlap.setStyle('display','none');
-
-			this.dragging=false;
-			this.startCell = {row:0,col:0};
-
-			this.options=
-			{
-				cellHeight:21,
-				cellWidth:100
-			}
-			this.selection=$('cellselected');
-			this.selection.setStyle('display','none');
-
-			this.registHandlers();
-		},
-		registHandlers:function()
-		{
-			this.dragHandler = this.onDrag.bindWithEvent(this);
-			this.dragEndHandler = this.onEnd.bindWithEvent(this);
-			this.grid.addEvent('mousedown',this.onMousedown.bindWithEvent(this));
-		},
-		onMousedown:function(e)
-		{
-			this.dragging=true;
-			document.addEvent('mousemove', this.dragHandler);
-			document.addEvent('mouseup', this.dragEndHandler);
-			var pos = UDF.mousePos(e,this.grid);
-			this.startCell = this.getCell(pos);
-
-			var x = (this.startCell.col * this.options.cellWidth)+1;
-			var y = (this.startCell.row * this.options.cellHeight);
-			this.selection.setStyles(
-				{
-					display:'block',
-					left:x,
-					top:y,
-					width:this.options.cellWidth,
-					height:this.options.cellHeight
-				}
-			);
-			e.stop();
-		},
-		onDrag:function(e)
-		{
-			if(this.dragging)
-			{
-				var pos = UDF.mousePos(e,this.grid);
-				var currentCell = this.getCell(pos);
-				var cell = this.modCell(this.startCell,currentCell);
-				this.draw(cell.c1,cell.r1,cell.c2,cell.r2);
-				e.stop();
-			}
-		},
-		onEnd:function(e)
-	  	{
-			document.removeEvent('mousemove',this.dragHandler);
-			document.removeEvent('mouseup',this.dragEndHandler);
-			if(this.dragging)
-			{
-				var pos = UDF.mousePos(e,this.grid);
-				var endCell = this.getCell(pos);
-				this.selection.setStyle('display','none');
-				var cell = this.modCell(this.startCell,endCell);
-
-				var startDay = cell.c1;
-				var endDay = cell.c2;
-				var startTime = cell.r1*30+480;
-				var endTime = cell.r2*30+510;
-
-				this.dragging=false;
-				$('lecturelist-filter').setStyle('display','none');
-				var dayRange = '';
-				if (startDay == endDay)
-					dayRange = UDF.days[startDay]+'요일';
-				else
-					dayRange = UDF.days[startDay]+'요일부터 '+UDF.days[endDay]+'요일까지';
-				$('lecturelist-range').set('html', '<h4>범위 검색</h4><p>'+dayRange+'<br/>' + 
-					UDF.NumericTimeToReadable(startTime)+'부터 '+UDF.NumericTimeToReadable(endTime)+'까지</p>');
-
-				var return_button = new Element('button', {'text':'학과/구분 검색으로 돌아가기'});
-				return_button.addEvent('click', function() {
-					$('lecturelist-filter').setStyle('display','block');
-					$('lecturelist-range').set('html', '');
-					var dept = LectureList.dept.options[LectureList.dept.selectedIndex].text;
-					var classification = LectureList.classf.options[LectureList.classf.selectedIndex].text;
-					LectureList.filter({dept:dept, type:classification});
-				});
-				$('lecturelist-range').appendChild(return_button);
-				LectureList.filter({start_day:startDay, end_day:endDay, start_time:startTime, end_time:endTime});
-			}
-	  	},
-		modCell:function(cell1,cell2)
-		{
-			return {
-				c1 :Math.max(Math.min(cell1.col,cell2.col),0),
-				r1 :Math.max(Math.min(cell1.row,cell2.row),0),
-				c2 :Math.min(Math.max(cell1.col,cell2.col),4),
-				r2 :Math.min(Math.max(cell1.row,cell2.row),31)
-			};
-		},
-		draw:function(col1,row1,col2,row2)
-	 	{
-			var x = col1 * this.options.cellWidth + 1; // +1 fix
-			var y = row1 * this.options.cellHeight;
-			var width = (col2-col1+1) * this.options.cellWidth;
-			var height = (row2-row1+1) * this.options.cellHeight;
-			this.selection.setStyles(
-				{
-					left:x,
-					top:y,
-					width:width,
-					height:height
-				}
-			);
-	 	},
-		getCell:function(coords)
-		{
-			var row = Math.floor(coords.y/this.options.cellHeight);
-			var col = Math.floor(coords.x/this.options.cellWidth);
-			return {row:row,col:col};
-		}
-		
-	};
-
-	var Timetable = {
-		initialize:function()
-		{
-			this.grid = $('grid');
-			this.overlap = $('overlap_modules');
-			this.overlap.setStyle('display','none');
-			this.tabs = new Mootabs('timetable_tabs','timetable_contents','mousedown');
-			this.onLoad();
-			this.registHandlers();
-		},
-		onLoad:function()
-	   	{
-			var initData = JSON.decode($('timetable_init_json').get('value'));
-			initData.each(function(arr,key)
-			{
-				var credit=0,au=0;
-				var wrap = Timetable.tabs.getTabByKey(key);
-				arr.each(function(obj,index)
-				{
-					credit+=obj.credit;
-					au+=obj.au;
-					var bgcolor = UDF.getColorByIndex(index);
-					Timetable.buildlmodules(wrap,obj,bgcolor,true);
-				});
-				Timetable.tabs.setData(key,{credit:credit,au:au});
-			});
-			Timetable.tabs.updateData();
-	   	},
-		registHandlers:function()
-	   	{
-			$('clean_table').addEvent('click',this.deleteLecture.bindWithEvent(this,null));
-	   	},
-		onMouseout:function()
-		{
-			$('add_credit').empty();
-			$('add_au').empty();
-			this.overlap.setStyle('display','none');
-		},
-		addLecture:function(e,obj)
-		{
-			e.stop();
-			var table_id = Timetable.tabs.getTableId();
-			var lecture_id = obj.id;
-
-			var myRequest = new Request({
-				method: 'get', 
-				url: '/timetable/add/',
-				onRequest:function()
-				{
-					Notifier.setLoadingMsg('추가하는 중입니다...');
-				},
-				onSuccess:function(responseText)
-				{
-					try{
-						var resObj = JSON.decode(responseText);
-						if (resObj.result=='OK')
-						{
-							Timetable.update(resObj);
-							Notifier.setMsg('<strong>'+obj.title+'</strong> 추가 되었습니다');
-						}
-						else
-						{
-							var msg;
-							switch(resObj.result)
-							{
-								case 'NOT_EXIST':
-									msg='강의가 존재하지 않습니다.' ;
-								break;
-								case 'OVERLAPPED':
-								case 'DUPLICATED':
-									msg='강의 시간이 겹칩니다.';
-								break;
-								case 'ERROR':
-									msg = '에러';
-								break;
-							}
-							Notifier.setErrorMsg(msg);
-						}
-					}
-					catch(e)
-					{
-						alert('ERROR! '+e.message);
-						Notifier.clear();
-					}
-				},
-				onFailure:function(xhr) {
-					alert('ERROR');
-					Notifier.clear();
-		  		}
-			});
-			myRequest.send('table_id='+table_id+'&lecture_id='+lecture_id);
-		},
-		deleteLecture:function(e,obj)
-	  	{
-			e.stop();
-			var confirmMsg,sendMsg,successMsg, table_id = Timetable.tabs.getTableId();
-			if (obj==null) 
-			{
-				confirmMsg='현재 예비 시간표를 초기화 하겠습니까?';
-				sendMsg='table_id='+table_id;
-				successMsg = '예비 시간표가 <strong>초기화</strong> 되었습니다';
-			}
-			else
-			{
-				confirmMsg='"'+obj.title+'" 예비 시간표에서 삭제 하시겠습니까?';
-				sendMsg='table_id='+table_id+'&lecture_id='+obj.id;
-				successMsg='<strong>'+obj.title+'</strong> 삭제 되었습니다';
-			}
-
-			if(confirm(confirmMsg))
-			{
-				var myRequest = new Request({
-					method: 'get', 
-					url: '/timetable/delete/',
-					onRequest:function() {
-						Notifier.setLoadingMsg('삭제하는 중입니다...');
-					},
-					onSuccess:function(responseText)
-					{
-						try{
-							var resObj = JSON.decode(responseText);
-							if (resObj.result=='OK')
-							{
-								Timetable.update(resObj);
-								Notifier.setMsg(successMsg);
-							}
-							else 
-							{
-								//'NOT_EXIST', 'ERROR'
-								alert(resObj.result);
-								Notifier.clear();
-							}
-						}
-						catch(e)
-						{
-							alert('ERROR');
-							Notifier.clear();
-						}
-					},
-					onFailure:function(xhr) {
-						alert('ERROR');
-						Notifier.clear();
-					}
-				});
-				myRequest.send(sendMsg);
-			}
-	  	},
-		update:function(resObj)
-	   	{
-			var credit=0,au=0;
-			Timetable.tabs.cleanActiveTab();
-			resObj.data.each(function(obj,index)
-			{
-				credit+=obj.credit;
-				au+=obj.au;
-				var bgcolor = UDF.getColorByIndex(index);
-				Timetable.buildlmodules(Timetable.tabs.getActiveTab(),obj,bgcolor,true);
-			});
-			
-			Timetable.tabs.setData(Timetable.tabs.getTableId(),{credit:credit,au:au});
-			Timetable.tabs.updateData();
-	   	},
-		onMouseover: function(obj)
-		{
-
-			var h = $H(obj);
-			var keys= h.getKeys();
-			keys.each(function(key)
-			{
-				if ($('DS_'+key)!=null)
-				{
-					var item = h.get(key);
-					if (item!=null)
-					{
-						if (key=='examtime')
-						{
-							var time = UDF.NumericTimeToReadable(item.start) + '~' + UDF.NumericTimeToReadable(item.end);
-							$('DS_'+key).set('html', UDF.days[item.day]+time);
-						}
-						else if (key=='credit'||key=='au')
-						{
-							$('add_'+key).set('text','(+'+item+')');
-							$('DS_'+key).set('text',item);
-						}
-						else if (key == 'title' || key == 'prof')
-						{
-							$('DS_'+key).set('html','<p>'+item+'</p>');
-						}
-						else
-						{
-							$('DS_'+key).set('text',item);
-						}
-					}
-				}
-			});
-
-			var tokens = obj.classroom.split(' ');
-			var classroom = tokens.slice(0, tokens.length-1).join(' ');
-			Map.find(classroom);
-
-
-			this.overlap.setStyle('display','block');
-			this.overlap.empty();
-
-			var bgcolor = '#FF9933';
-			this.buildlmodules(this.overlap,obj,bgcolor,false);
-		},
-		buildlmodules:function(wrap,obj,bgcolor,enableDelete)
-		{
-			obj.times.each(function(time)
-			{
-				var lmodule=new Element('div',{'class':'lmodule'});
-				var bg=new Element('div',{'class':'bg'});
-				var textbody=new Element('div',{'class':'textbody'});
-				bg.inject(lmodule);
-				textbody.inject(lmodule);
-				var html;
-				if (enableDelete) 
-				{
-					textbody.set('html','<a class="cursor"><strong>'+obj.title+'</strong></a><br />'+obj.prof+'<br />'+obj.classroom+'<br />');
-					textbody.getElements('a').addEvent('mousedown',Timetable.deleteLecture.bindWithEvent(Timetable,obj));
-				}
-				else
-					textbody.set('html','<strong>'+obj.title+'</strong><br />'+obj.prof+'<br />'+obj.classroom+'<br />');
-
-				var left = time.day*100+3;
-				var top = Math.floor((time.start-480)/30)*21;
-				var height =Math.floor((time.end-time.start)/30)*21 -2;
-
-				bg.set({'styles':{'background':bgcolor}});
-				lmodule.set({'styles':{'left':left,'top':top,'height':height}});
-				lmodule.inject(wrap);
-			}.bind(this));
-		}
-	};
-
 	window.addEvent('domready',function() 
 	{
+		Data.Map = 
+		[
+			{code:'N7',name:'기계공학동', x:227,y:247},
+			{code:'W1',name:'응용공학동', x:217,y:515},
+			{code:'E11',name:'창의학습관', x:368,y:356},
+			{code:'N4',name:'대학 1호관', x:432,y:251},
+			{code:'N5',name:'대학 2호관', x:517,y:243},
+			{code:'N8',name:'대학 3호관', x:435,y:231},
+			{code:'E6',name:'자연과학동', x:474,y:391},
+			{code:'E16',name:'정문술빌딩', x:367,y:313},
+			{code:'E2',name:'산업경영동', x:405,y:495},
+			{code:'E7',name:'의과학연구센터', x:529,y:369},
+			{code:'E3',name:'정보전자동', x:494,y:446},
+			{code:'',name:'궁리실험관', x:422,y:373}
+		];
+
+		Data.Lectures = []; // Initialized via ajax calls after page loading.
+		Data.Timetables = [];
+		Data.MyLectures = {{my_lectures|safe}};
+		Data.CurrentYear = {{current_year}};
+		Data.CurrentTerm = {{current_semester}};
+		Data.NextYear = {{next_year}};
+		Data.NextTerm = {{next_semester}};
+
+		Notifier.initialize();
 		LectureList.initialize();
 		Map.initialize();
-		Notifier.initialize();
 		Timetable.initialize();
 		RangeSearch.initialize();
 	});
@@ -845,23 +47,26 @@
 {% block content %}
 	<div id="left-side">
 		<div style="margin-bottom:10px">
-			<a id="test" >테스트</a>
-			<div id="lecturelist-range">&nbsp;</div>
+			<div id="lecturelist-range"></div>
 			<div id="lecturelist-filter">
 				<label>학과&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-size:11px">(<a href="/accounts/myinfo/">관심학과 설정</a>)</span></label>
 				<select id="department" style="width:100%">
 					<optgroup label="소속학과/관심학과">
-						{% ifnotequal user.userprofile.department.name "무학과" %}
-						<option value="{{ user.userprofile.department.code }}">{{ user.userprofile.department.name }}</option>
+						{% if user.is_authenticated and not user.is_superuser %}
+						{% ifnotequal user.userprofile.department.id 10000 %}
+						<option value="{{ user.userprofile.department.id }}">{{ user.userprofile.department.name }}</option>
 						{% endifnotequal %}
 						{% for item in user.userprofile.favorite_departments.all %}
-						<option value="{{ item.code }}">{{ item.name }}</option>
+						<option value="{{ item.id }}">{{ item.name }}</option>
 						{% endfor %}
+						{% else %}
+						<option value="2044">인문사회과학부</option>
+						{% endif %}
 					</optgroup>
 					<optgroup label="전체 목록">
-						<option value="0">전체보기</option>
-						{% for item in departments %}
-						<option value="{{ item.code }}">{{ item.name }}</option>
+						<option value="-1">전체보기</option>
+						{% for item in departments %}{# Firefox에서는 사용자가 선택한 form 값을 자동 저장하여 새로고침했을 때 아래의 selected 속성이 무시되는 문제가 있음. #}
+						<option value="{{ item.id }}"{% ifequal item.id 2044 %} selected="selected"{% endifequal %}>{{ item.name }}</option>
 						{% endfor %}
 					</optgroup>
 				</select>
@@ -902,9 +107,6 @@
 		</div>
 	</div>
 	<div id="center">
-		<textarea id="timetable_init_json" class="none">
-{{my_lectures|safe}}
-		</textarea>
 		<div id="center-top">
 			<table class="lecture-info">
 				<thead>
@@ -916,9 +118,9 @@
 				</thead>
 				<tbody>
 					<tr>
-						<td id="DS_classroom">공동실험실</td>
-						<td id="DS_examtime">12:00~13:00</td>
-						<td id="DS_remarks" class="end">영어강의</td>
+						<td id="DS_classroom">&nbsp;</td>
+						<td id="DS_examtime">&nbsp;</td>
+						<td id="DS_remarks" class="end">&nbsp;</td>
 					</tr>
 				</tbody>
 			</table>
@@ -936,13 +138,13 @@
 				</thead>
 				<tbody>
 					<tr>
-						<td id="DS_course_no">MS213</td>
-						<td id="DS_class">A</td>
-						<td id="DS_title"><p>결정구조 및 회절</p></td>
-						<td id="DS_prof"><p>김민우</p></td>
-						<td id="DS_lec_time">2</td>
-						<td id="DS_lab_time">3</td>
-						<td id="DS_credit" class="end">3</td>
+						<td id="DS_course_no">&nbsp;</td>
+						<td id="DS_class">&nbsp;</td>
+						<td id="DS_title"><p>&nbsp;</p></td>
+						<td id="DS_prof"><p>&nbsp;</p></td>
+						<td id="DS_lec_time">0</td>
+						<td id="DS_lab_time">0</td>
+						<td id="DS_credit" class="end">0</td>
 					</tr>
 				</tbody>
 			</table>
@@ -968,8 +170,8 @@
 				</div>
 			</div>
 			<div class="right">
-				<a id="clean_table" style="cursor:pointer">초기화</a> |
-				<a href="#">인쇄</a>
+				<a id="action-cleanTable" style="cursor:pointer">초기화</a> |
+				<a id="action-print" href="#">인쇄</a>
 			</div>
 			&nbsp;
 		</div>
@@ -1052,14 +254,16 @@
 		</div>
 		<div id="examtable">
 			<table cellspacing="0" cellpadding="0" border="0">
+				<colgroup>
+					<col class="day" />
+					<col class="examtime" />
+				</colgroup>
 				<tr>
-					<th colspan="2">
-				시험시간표
-					</th>
+					<th colspan="2">시험시간표</th>
 				</tr>
 				<tr>
-					<td style="width:16px">월</td>
-					<td class="end"><span id="examtime1">자연어 처리 14:00~15:00</span><span id="add_examtime1" class="blue"></span></td>
+					<td>월</td>
+					<td class="end"><span id="examtime1"></span><span id="add_examtime1" class="blue"></span></td>
 				</tr>
 				<tr class="even">
 					<td>화</td>

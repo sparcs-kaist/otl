@@ -26,6 +26,7 @@ def index(request):
 
 	return render_to_response('groups/index.html', {
 		'section': 'groups',
+		'title': u'조모임',
 		'group_list': group_list,
 		'recently_added_list': group_pages,
 	}, context_instance=RequestContext(request))
@@ -95,13 +96,15 @@ def morelist(request):
 
 	return render_to_response('groups/index.html', {
 		'section': 'groups',
+		'title': u'조모임',
 		'group_list': group_list,
 		'recently_added_list': current_page.object_list,
 		'current_page': current_page,
 	}, context_instance=RequestContext(request))
 
-def list(request, group_id):
+def list(request):
 	if request.user.is_authenticated():
+		group_id=request.GET.get('id')
 		user = request.user
 		group =user.group_set.filter(id__exact = group_id) 
 		if group:
@@ -110,9 +113,10 @@ def list(request, group_id):
 			current_page = article_pages.page(page)
 			return render_to_response('groups/list.html', {
 				'section': 'groups',
+				'title': u'조모임',
 				'current_group': group[0],
 				'article_list': current_page.object_list,
-				'article_page': current_page,
+				'current_page': current_page,
 			}, context_instance=RequestContext(request))
 
 	return HttpResponseRedirect('/groups/');
@@ -126,7 +130,7 @@ def write(request, group_id):
 			new_tag = request.POST.get('article')
 			GroupArticle.objects.create(group = current_group, tag = new_tag, writer = user, written = new_written)
 
-	return HttpResponseRedirect('/groups/list/'+group_id);
+	return HttpResponseRedirect('/groups/list/?id='+group_id);
 
 def delete(request):
 	if request.user.is_authenticated():
@@ -137,7 +141,7 @@ def delete(request):
 		if delete_article != None :
 			delete_article.delete()
 
-	return HttpResponseRedirect('/groups/list/'+group_id);
+	return HttpResponseRedirect('/groups/list/?id='+group_id);
 
 def modify(request):
 	if request.user.is_authenticated():
@@ -147,22 +151,24 @@ def modify(request):
 		new_article = request.POST.get('modify')
 		GroupArticle.objects.filter(writer__exact = user, id__exact = article_id).update(tag = new_article)
 
-	return HttpResponseRedirect('/groups/list/'+group_id);
+	return HttpResponseRedirect('/groups/list/?id='+group_id);
 
-def article_search(request, group_id):
+def article_search(request):
 	if request.user.is_authenticated():
+		group_id=request.GET.get('id')
 		user = request.user
 		group = user.group_set.filter(id__exact = group_id)
 		if group:
 			page = request.GET.get('page',1)
 			article_pages = Paginator(GroupArticle.objects.filter(group__id__exact = group_id).order_by('-written'), NUM_PER_PAGE)
 			current_page = article_pages.page(page)
-			search_code = request.POST.get('query')
-			search_list = Paginator(GroupArticle.objects.filter(Q(id__exact = group_id),Q(writer__username__icontains = search_code)|Q(tag__icontains = search_code)).order_by('-written'),NUM_PER_PAGE)
+			search_code = request.GET.get('query')
+			search_list = Paginator(GroupArticle.objects.filter(Q(group__id__exact = group_id), (Q(writer__username__icontains = search_code)|Q(tag__icontains = search_code))).order_by('-written'),NUM_PER_PAGE)
 			search_page = request.GET.get('search-page',1)
 			current_search_page = search_list.page(search_page)
 			return render_to_response('groups/list.html', {
 				'section': 'groups',
+				'title': u'조모임',
 				'current_group': group[0],
 				'article_list': current_page.object_list,
 				'article_page': current_page,

@@ -1,10 +1,13 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
-		<title>OTL - {{title}}</title>
+        <title>OTL - {{title}}</title>
 		<link rel="stylesheet" type="text/css" href="/media/default.css" ></link>
 		<link rel="stylesheet" type="text/css" href="/media/layout.css" ></link>
-		{% block headers %}{% endblock %}
+        <link rel="stylesheet" type="text/css" href="/media/default.css" />
+        <link rel="stylesheet" type="text/css" href="/media/layout.css" />
+        <!--[if lte IE 6]><link rel="stylesheet" type="text/css" href="/media/layout.ie6.css" /><![endif]-->
+        {% block headers %}{% endblock %}
     </head>
     <body>
         <div id="gbar">
@@ -20,46 +23,56 @@
                     </div>
                 </h1> 
                 <div id="global-info">
-					{% if user.is_authenticated %}
-					{{ user }}{% if user.is_superuser %} (관리자){% endif %} | <a href="/accounts/myinfo">내 계정</a> | <a href="/logout/">로그아웃</a>
-					{% else %}
-					<a href="/login/">로그인</a>
-					{% endif %}
+                    {% if user.is_authenticated %}
+                    {{ user }}{% if user.is_superuser %} (관리자){% endif %} | <a href="/accounts/myinfo">내 계정</a> | <a href="/logout/">로그아웃</a>
+                    {% else %}
+                    <a href="/login/">로그인</a>
+                    {% endif %}
                 </div>
                 <div class="clear"></div>
             </div>
         </div>
         <div id="header">
             <div id="header-content">
-				<h2><span class="logo"></span></h2>
-				<div id="navigation">
-					<div class="navigation-wrap">
-						<a class="left{% ifequal section 'calendar' %} selected{% endifequal %}" href="/calendar/">일정 관리</a>
-						<a class="left{% ifequal section 'appointment' %} selected{% endifequal %}" href="/appointment/">약속 잡기</a>
-						<a class="left{% ifequal section 'groups' %} selected{% endifequal %}" href="/groups/">조모임</a>
-						<a class="left{% ifequal section 'favorites' %} selected{% endifequal %}" href="/favorites/">과목 즐겨찾기</a>
-						<a class="left{% ifequal section 'board' %} selected{% endifequal %}" href="/board/lecture/">과목 Q&amp;A</a>
-						<a class="left{% ifequal section 'timetable' %} selected{% endifequal %}" href="/timetable/">모의 시간표</a>
-						<a class="right{% ifequal section 'info' %} selected{% endifequal %}" href="#">개발자 노트</a>
-						<div class="clear"></div>
-					</div>
-				</div>
+                <h2><span class="logo"></span></h2>
+                <div id="navigation">
+                    <div class="navigation-wrap">
+                        <a class="left{% ifequal section 'calendar' %} selected{% endifequal %}" href="/calendar/">일정 관리</a>
+                        <a class="left{% ifequal section 'appointment' %} selected{% endifequal %}" href="/appointment/">약속 잡기</a>
+                        <a class="left{% ifequal section 'groups' %} selected{% endifequal %}" href="/groups/">조모임</a>
+                        <a class="left{% ifequal section 'favorites' %} selected{% endifequal %}" href="/favorites/">과목 즐겨찾기</a>
+                        <a class="left{% ifequal section 'board' %} selected{% endifequal %}" href="/board/lecture/">과목 Q&amp;A</a>
+                        <a class="left{% ifequal section 'timetable' %} selected{% endifequal %}" href="/timetable/">모의 시간표</a>
+                        <a class="right{% ifequal section 'info' %} selected{% endifequal %}" href="/about/">개발자 노트</a>
+                        <div class="clear"></div>
+                    </div>
+                </div>
             </div>
         </div>
         <div id="container">
         <div id="content-wrap">
             <div id="content">
-				{% block content %}{% endblock %}
+                {% block content %}{% endblock %}
             </div><!--content-->
         </div><!--content-wrap-->
         </div><!--container-->
         <div id="footer">
             <div id="footer-content">
-				<p id="copyright">Copyright &copy;2009, 
+                <p id="copyright">Copyright &copy;2009, 
                     <span style="color:#FF3399">S</span><span style="color:#33CC66">P</span><span style="color:#00CCFF">A</span><span style="color:#FF9900">R</span><span style="color:#33CCCC">C</span><span style="color:#9966FF">S</span>
-					OTL Team</p>
+                    OTL Team</p>
                 <div class="clear"></div>
             </div>
         </div>
+    <script type="text/javascript">
+    var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+    document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+    </script>
+    <script type="text/javascript">
+    try {
+    var pageTracker = _gat._getTracker("UA-8592495-1");
+    pageTracker._trackPageview();
+    } catch(err) {}
+    </script>
     </body>
 </html>

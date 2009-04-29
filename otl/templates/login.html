@@ -1,13 +1,22 @@
 {% extends 'layout.html' %}
 {% block headers %}
 <link rel="stylesheet" type="text/css" href="/media/accounts.css" />
+<script type="text/javascript" src="/media/js/mootools/mootools-1.2.1-core-yc.js"></script>
+<script type="text/javascript">
+//<![CDATA[
+window.addEvent('domready', function() {
+	$('id_username').focus();
+});
+//]]>
+</script>
 {% endblock %}
 {% block content %}
 {% if msg %}<div class="msg{% if error %} error{% endif %}">{{ msg }}</div>{% endif %}
-<form action="/login/" method="post">
+<form action="/login/" id="login-form" method="post">
+<p>Portal ID로 로그인하세요.</p>
 <table>
 {{ form_login.as_table }}
-<tr><td colspan="2"><input type="submit" value="Login" /></td></tr>
+<tr><td colspan="2"><input type="submit" value="Log In" /></td></tr>
 </table>
 </form>
 {% endblock %}

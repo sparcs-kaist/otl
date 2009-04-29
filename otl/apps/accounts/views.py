@@ -20,6 +20,7 @@ def login(request):
 			if not f.is_valid():
 				return render_to_response('login.html', {
 					'form_login': f,
+					'title': u'로그인',
 					'error': True,
 					'msg': u'아이디/비밀번호를 모두 적어야 합니다.',
 				}, context_instance=RequestContext(request))
@@ -29,6 +30,7 @@ def login(request):
 			if user is None: # Login Failed
 				return render_to_response('login.html', {
 					'form_login': f,
+					'title': u'로그인',
 					'error': True,
 					'msg': u'로그인에 실패하였습니다.',
 				}, context_instance=RequestContext(request))
@@ -41,6 +43,7 @@ def login(request):
 					# First Login
 					return render_to_response('login_agreement.html', {
 						'username': user.username,
+						'title': u'로그인',
 						'kuser_info': user.kuser_info,
 						'form_profile': ProfileForm(),
 					}, context_instance=RequestContext(request))
@@ -71,6 +74,7 @@ def login(request):
 	else:
 		# Show login form
 		return render_to_response('login.html', {
+			'title': u'로그인',
 			'form_login': LoginForm(),
 		}, context_instance=RequestContext(request))
 
@@ -101,6 +105,7 @@ def myinfo(request):
 		})
 		msg = u''
 	return render_to_response('accounts/myinfo.html', {
+		'title': u'내 계정',
 		'form_profile': f,
 		'user_profile': profile,
 		'error': error,

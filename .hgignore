@@ -15,3 +15,6 @@ documents/*.log
 documents/*.lof
 documents/*.idx
 documents/*.bak
+thirdparties/python-sybase-0.39/python_sybase.egg-info/
+thirdparties/python-sybase-0.39/build/
+thirdparties/python-sybase-0.39/dist/
