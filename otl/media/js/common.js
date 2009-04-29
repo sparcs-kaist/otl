@@ -114,6 +114,7 @@ var Map = {
 			var top = (pos.y).limit((s.cH-s.dH+2), 0);
 			this.dragmap.style.left=left+'px';
 			this.dragmap.style.top=top+'px';
+			this.previous_target = null;
 
 			e.stop();
 		}
