@@ -32,7 +32,7 @@ Data.Lectures =
 ];
 */
 
-var NUM_ITEMS_PER_LIST = 20;
+var NUM_ITEMS_PER_LIST = 15;
 var Data = {};
 var Mootabs = new Class({
 	initialize: function(tabs, contents, trigerEvent, useAsTimetable)
