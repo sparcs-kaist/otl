@@ -445,6 +445,7 @@ var Timetable = {
 		this.grid = $('grid');
 		this.overlap = $('overlap_modules');
 		this.overlap.setStyle('display','none');
+		this.fx_overlap = new Fx.Tween(this.overlap, {property:'opacity', duration:200});
 		this.tabs = new Mootabs('timetable_tabs','timetable_contents','mousedown', true);
 		this.onLoad();
 		this.registHandlers();
@@ -513,7 +514,7 @@ var Timetable = {
 					if (resObj.result=='OK')
 					{
 						Timetable.update(resObj);
-						Timetable.overlap.fade('out');
+						Timetable.fx_overlap.start(0);
 						
 						Notifier.setMsg('<strong>'+obj.title+'</strong> 추가 되었습니다');
 					}
@@ -657,11 +658,11 @@ var Timetable = {
 	{
 		this.onMouseover(obj, true);
 
-		this.overlap.fade('show');
-		this.overlap.setStyle('display','block');
+		this.fx_overlap.cancel();
 		this.overlap.empty();
-
+		this.overlap.setStyle('display','block');
 		this.buildlmodules(this.overlap,obj,-1,false);
+		this.fx_overlap.set(1);
 	},
 	onMouseover: function(obj, is_adding)
 	{
