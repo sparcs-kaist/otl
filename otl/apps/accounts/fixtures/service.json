@@ -80,7 +80,7 @@
 		"fields": {"num_id": "40", "code": "ME", "name": "기계공학과"}
 	},
 	{
-		"pk": "3693",
+		"pk": "103693",
 		"model": "accounts.department",
 		"fields": {"num_id": "10040", "code": "ME", "name": "항공우주공학전공"}
 	},
@@ -138,6 +138,11 @@
 		"pk": "3692",
 		"model": "accounts.department",
 		"fields": {"num_id": "69", "code": "NST", "name": "나노과학기술학과"}
+	},
+	{
+		"pk": "3723",
+		"model": "accounts.department",
+		"fields": {"num_id": "26", "code": "ICC", "name": "정보통신공학과"}
 	},
 	{
 		"pk": "2222",
