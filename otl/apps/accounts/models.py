@@ -45,9 +45,10 @@ def get_dept_from_deptname(name):
 		return Department.objects.get(name__exact=name)
 	except Department.DoesNotExist:
 		if name == u'기계공학전공':
-			name = u'기계공학과'
-			return Department.objects.get(name__exact=name)
+			return Department.objects.get(id__exact=210) # 기계공학과
+		elif name == u'한국정보통신대학':
+			return Department.objects.get(id__exact=3723) # 정보통신공학과
 		elif name == u'학과없음':
-			return Department.objects.get(id__exact=10000)
+			return Department.objects.get(id__exact=10000) # 무학과
 	
 	raise Department.DoesNotExist('Cannot match the department name (%s)' % name.encode('utf8').encode('hex'))

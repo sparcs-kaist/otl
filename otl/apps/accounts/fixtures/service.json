@@ -80,6 +80,11 @@
 		"fields": {"num_id": "40", "code": "ME", "name": "기계공학과"}
 	},
 	{
+		"pk": "3693",
+		"model": "accounts.department",
+		"fields": {"num_id": "10040", "code": "ME", "name": "항공우주공학전공"}
+	},
+	{
 		"pk": "3648",
 		"model": "accounts.department",
 		"fields": {"num_id": "41", "code": "BiS", "name": "바이오및뇌공학과"}
