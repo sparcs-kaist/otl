@@ -49,7 +49,10 @@ def login(request):
 					'num_groups': num_groups,
 				}, context_instance=RequestContext(request))
 
-			user = auth.authenticate(username=request.POST['username'], password=request.POST['password'])
+			try:
+				user = auth.authenticate(username=request.POST['username'], password=request.POST['password'])
+			except UnicodeEncodeError:
+				return HttpResponseBadRequest('Bad Request')
 
 			if user is None: # Login Failed
 				return render_to_response('login.html', {
