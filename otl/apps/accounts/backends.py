@@ -1,7 +1,7 @@
 # encoding: utf-8
 from django.contrib import auth
 from django.contrib.auth.models import User
-from otl.apps.accounts.models import UserProfile, Department
+from otl.apps.accounts.models import UserProfile, Department, get_dept_from_deptname
 import urllib, urllib2
 import base64
 import re
@@ -63,7 +63,7 @@ class KAISTSSOBackend:
 			profile = UserProfile.objects.get(user=user)
 			changed = False
 			if profile.department.name != kuser_info['department']:
-				profile.department = Department.objects.get(name=kuser_info['department'])
+				profile.department = get_dept_from_deptname(kuser_info['department'])
 				changed = True
 			if profile.student_id != kuser_info['student_id']:
 				profile.student_id = kuser_info['student_id']

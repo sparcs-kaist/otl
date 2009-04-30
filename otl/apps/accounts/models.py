@@ -36,3 +36,18 @@ class UserAdmin(admin.ModelAdmin):
 
 admin.site.register(UserProfile, UserProfileAdmin)
 admin.site.register(User, UserAdmin)
+
+def get_dept_from_deptname(name):
+	"""
+	A mapping function from string names to department objects with handling some exceptional cases.
+	"""
+	try:
+		return Department.objects.get(name__exact=name)
+	except Department.DoesNotExist:
+		if name == u'기계공학전공':
+			name = u'기계공학과'
+			return Department.objects.get(name__exact=name)
+		elif name == u'학과없음':
+			return Department.objects.get(id__exact=10000)
+	
+	raise Department.DoesNotExist('Cannot match the department name (%s)' % name.encode('utf8').encode('hex'))

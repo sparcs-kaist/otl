@@ -10,7 +10,7 @@ from otl.apps.timetable.models import Lecture
 from otl.apps.favorites.models import CourseLink
 from otl.apps.groups.models import GroupBoard
 from otl.apps.calendar.models import Schedule
-from otl.apps.accounts.models import UserProfile, Department
+from otl.apps.accounts.models import UserProfile, Department, get_dept_from_deptname
 from otl.apps.accounts.forms import LoginForm, ProfileForm
 import base64, hashlib, time, random, urllib, re
 
@@ -92,7 +92,7 @@ def login(request):
 				profile = UserProfile()
 				profile.user = user
 				profile.language = request.POST['language']
-				profile.department = Department.objects.get(name__exact=request.POST['department'])
+				profile.department = get_dept_from_deptname(request.POST['department'])
 				profile.student_id = request.POST['student_id']
 				profile.save()
 				profile.favorite_departments.add(Department.objects.get(id=2044)) # 인문사회과학부는 기본으로 추가
