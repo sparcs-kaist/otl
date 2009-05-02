@@ -5,8 +5,6 @@ from django.contrib.auth.models import User
 from otl.apps.common import *
 
 class GroupBoard(models.Model):
-	course_code = models.CharField(max_length=10)
-	course_name = models.CharField(max_length=60)
 	group_name = models.CharField(max_length=60)
 	comment = models.CharField(max_length=100)
 	passwd = models.CharField(max_length=32)
@@ -23,7 +21,7 @@ class GroupArticle(models.Model):
 	written = models.DateTimeField()
 
 class GroupBoardAdmin(admin.ModelAdmin):
-	list_display = ('course_code', 'course_name', 'group_name', 'year', 'semester', 'maker')
+	list_display = ('group_name', 'year', 'semester', 'maker')
 	ordering = ('-made',)
 
 admin.site.register(GroupBoard, GroupBoardAdmin)

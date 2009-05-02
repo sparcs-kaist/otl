@@ -67,13 +67,7 @@ Event.observe(window,'load',function()
 <script type="text/javascript">
 function CheckNull(form)
 {
-	if(form.code.value.length==0)
-	{
-		alert("과목 코드를 작성해주세요.");
-		form.code.focus();
-		return false;
-	}
-	else if(form.name.value.length==0)
+	if(form.name.value.length==0)
 	{
 		alert("내용을 작성해주세요.");
 		form.name.focus();
@@ -101,7 +95,7 @@ function CheckNull(form)
 		{% for item in favorite_list %}
 		<li>
 			<a class="favorite-link" href="{{item.url}}" target="_blank" >	
-				<h4>{{item.course_code}}: {{item.course_name}} (등록수 : {{item.favored_count}})</h4>
+				<h4>{{item.course_name}} (등록수 : {{item.favored_count}})</h4>
 				{{item.url}}
 			</a>
 			<a class="control-delete" href="/favorites/delete/{{item.id}}">Delete</a>:
@@ -120,7 +114,7 @@ function CheckNull(form)
 	<a href="/favorites/morelist">더보기</a>
 	<form id="create-form" method="get" onSubmit="return CheckNull(this);" action="/favorites/create/">
 		<div id="add-public-favorite">
-			<strong>즐겨찾기 등록</strong>&nbsp;|&nbsp;과목코드: <input type="text" id="create-form-code" name="code" value="" size="5"/>
+			<strong>즐겨찾기 등록</strong>&nbsp;|&nbsp;
 			&nbsp;제목: <input type="text" id="create-form-name" name="name" value="" size="5"/>	
 			&nbsp;주소: <input type="text" id="create-form-url" name="url" value="" size="5"/>
 			<input id="create-form" type="submit" value="등록" />
@@ -130,7 +124,7 @@ function CheckNull(form)
 	{% for item in recently_added_list %}
 		<li>
 		<a class="favorite-link" href="{{item.url}}" target="_blank" >
-				<h4>{{item.course_code}}: {{item.course_name}} (등록수 : {{item.favored_count}})</h4>
+				<h4>{{item.course_name}} (등록수 : {{item.favored_count}})</h4>
 				{{item.url}}
 			</a>
 			<span class="submitter">올린이 : <a href="/accounts/view/{{item.writer.username}}">{{item.writer.username}}</a></span>	
@@ -156,7 +150,7 @@ function CheckNull(form)
 				{% for item in search_list %}
 				<li>
 					<a class="search-link" href="{{item.url}}" target="_blank">
-						<h4>{{item.year}} {{item.semester}} {{item.course_code}}: {{item.course_name}} ( 등록수 : {{item.favored_count}} )</h4>
+						<h4>{{item.year}} {{item.semester}} : {{item.course_name}} ( 등록수 : {{item.favored_count}} )</h4>
 						{{item.url}}
 					</a>
 					<span class="submitter">올린이 : <a href="/accounts/view/{{item.writer.username}}">{{item.writer.username}}</a></span>

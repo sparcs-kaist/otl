@@ -1,23 +1,10 @@
 {% extends 'layout.html' %}
 {% block headers %}
 <link rel="stylesheet" type="text/css" href="/media/groups.css" />
-
 <script type="text/javascript">
 function CheckNull(form)
 {
-	if(form.code.value.length==0)
-	{
-		alert("과목 코드를 작성해주세요.");
-		form.code.focus();
-		return false;
-	}
-	else if(form.cname.value.length==0)
-	{
-		alert("과목 이름을 작성해주세요.");
-		form.cname.focus();
-		return false;
-	}
-	else if(form.gname.value.length==0)
+	if(form.gname.value.length==0)
 	{
 		alert("조 이름을 작성해주세요.");
 		form.gname.focus();
@@ -38,6 +25,13 @@ function CheckNull(form)
 	else return true;
 }
 </script>
+<script type="text/javascript">
+function pwShow(form)
+{
+	form.style.display= "block";
+	return false;
+}
+</script>
 
 {% endblock %}
 {% block content %}
@@ -45,15 +39,19 @@ function CheckNull(form)
 <div id="myGroups">
 	<h3>내가 가입한 조모임</h3>
 	{% if user.is_authenticated %}
-	<ul>
+		{% if group_list %}
+		<ul>
 		{% for item in group_list %}
-		<li>
-		<h4>{{item.course_code}}: {{item.course_name}}</h4>
-		<a class="group_link" href="/groups/list/?id={{item.id}}">{{item.group_name}}</a>
-		<a class="control-withdraw" href="/groups/withdraw/{{item.id}}">탈퇴</a>
-		</li>
+			<li>
+			<h4>{{item.group_name}}: {{item.comment}}</h4>
+			<a class="group_link" href="/groups/list/?id={{item.id}}">{{item.group_name}}</a>
+			<a class="control-withdraw" href="/groups/withdraw/{{item.id}}">탈퇴</a>
+			</li>
 		{% endfor %}
-	</ul>
+		</ul>
+		{% else %}
+			<p>등록한 조모임이 없습니다. </p>
+		{% endif %}
 	{% else %}
 		<p>로그인하지 않았습니다. :)</p>
 	{% endif %}
@@ -61,10 +59,9 @@ function CheckNull(form)
 <div id="publicGroups">
 	<h3>다른 조모임</h3>
 	<a href="/groups/morelist">더보기</a>
-	<form id="create-form" method="post" onSubmit="return CheckNull(this)" action="/groups/create/">
+	<form id="create-form" method="post" onSubmit="return CheckNull(this);" action="/groups/create/">
 		<div id="create-group">
-			조모임 생성 : code  : <input type="text" id="code" name="code" value="" size="5"/>
-			course name : <input type="text" id="coursename" name="cname" value="" size="5"/>
+			조모임 생성 : 
 			group name : <input type="text" id="groupname" name="gname" value="" size="5"/>
 			password : <input type="password" id="passwd" name="passwd" value="" size="5"/>
 			comment : <input type="text" id="comment" name="comment" value="" size="5"/>
@@ -74,11 +71,11 @@ function CheckNull(form)
 	<ul>
 		{% for item in recently_added_list %}
 		<li>
-		<h4>{{item.course_code}}: {{item.course_name}} - {{item.comment}}</h4>
+		<h4>{{item.group_name}}: {{item.comment}}</h4>
 			<a class="group-link" href="/groups/list/?id={{item.id}}">{{item.group_name}}</a>
-			<a class="control-join" href="/groups/join/{{item.id}}">join</a>
-			<form id="join-form" method="post" action="/groups/join/{{item.id}}">
-				<div id="join-group">
+			<a class="control-join" href="#" onClick="return pwShow(joinform{{item.id}});" >join</a>
+			<form id="joinform{{item.id}}" method="post" style="display:none" action="/groups/join/{{item.id}}">
+				<div id="join_group" >
 					password : <input type="password" id="passwd" name="passwd" value="" size="5" />
 					<input id="join-form" type="submit" value="가입" />
 				</div>
@@ -105,7 +102,7 @@ function CheckNull(form)
 			{% if search_list %}
 				{% for item in search_list %}
 				<li>
-				<h4>{{item.year}} {{item.semester}} {{item.course_code}}: {{item.course_name}} - {{item.comment}}</h4>
+				<h4>{{item.year}} {{item.semester}} {{item.group_name}}: {{item.comment}}</h4>
 					<a class="search-link" href="/group/list/?id={{item.id}}">{{item.group_name}}</a>
 					<span class="submitter">올린이 : <a href="/accounts/view/{{item.maker.username}}">{{item.maker.username}}</a></span>
 					<a class="control-join" href="/group/join/{{item.id}}">Join</a>
