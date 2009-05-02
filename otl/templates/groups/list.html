@@ -5,11 +5,16 @@
 <script type="text/javascript">
 function ShowModify(form)
 {
-	form.style.display= "block";
-	return false;
+	if(form.style.display == "block"){
+		form.style.display= "none";
+		return false;
+	}
+	else{
+		form.style.display= "block";
+		return false;
+	}
 }
 </script>
-
 
 {% endblock %}
 {% block content %}
@@ -24,7 +29,7 @@ function ShowModify(form)
 			<th class ="date">작성시간</th>
 			<th class ="delete">삭제</th>
 			<th class ="modify">수정</th>
-		</th>
+		</tr>
 	</thead>
 	<tbody>
 		{% for item in article_list %}
@@ -39,7 +44,7 @@ function ShowModify(form)
 			</td>
 			<td class="date">{{item.written|date:"Y/m/d"}}</td>
 			<td class="delete"><a class="control-delete" href="/groups/list/delete/?id={{item.group.id}}&num={{item.id}}">delete</a></td>
-			<td class="modify"><a class="control-modity" href="#" onClick="return ShowModify(modifyform{{item.id}})">modify</a></td>
+			<td class="modify"><a class="control-modity" href="#" onClick="return ShowModify(modifyform{{item.id}})">modify</a></td></tr>
 		{% endfor %}
 	</tbody>
 </table>
@@ -60,8 +65,8 @@ function ShowModify(form)
 {% else %}
 	<p>로그인하지 않았습니다. :)</p>
 {% endif %}
-<a class="write-toggle" href="#" onClick="return ShowModify('write')">글쓰기</a>
-<form id="write" method="post" style="display:block" action="/groups/list/write/{{current_group.id}}">
+<a class="write-toggle" href="#" onClick="return ShowModify(write)">글쓰기</a>
+<form id="write" method="post" style="display:none" action="/groups/list/write/{{current_group.id}}">
 	<div id="write-article">글쓰기 : <input type="text" id="write-article" name="article" />
 		<input type="submit" value="쓰기" />
 	</div>
@@ -87,10 +92,16 @@ function ShowModify(form)
 				{% for item in search_list %}
 				<tr class = "{% if forloop.counter|divisibleby:"2" %}even {% endif %}">
 					<td class = "author"><a href="/accounts/view/{{item.writer.username}}">{{item.writer.username}}</a></td>
-					<td class = "tag">{{item.tag}}</td>
+					<td class = "tag">{{item.tag}}
+						<form id="searchmodifyform{{item.id}}" method="post" style="display:none" action="/groups/list/modify/?id={{item.group.id}}&num={{item.id}}">
+							<div id="article-modify{{item.id}}" ><input type="text" id="modify" name="modify" />
+								<input id ="article-modify" type="submit" value="수정"/>
+							</div>
+						</form>
+					</td>
 					<td class = "date">{{item.written|date:"Y/m/d"}}</td>
 					<td class = "delete"><a class="control-delete" href="/groups/list/delete/?id={{item.group.id}}&num={{item.id}}">delete</a></td>
-					<td class = "modify">수정</td>
+					<td class = "modify"><a class="control-modity" href="#" onClick="return ShowModify(searchmodifyform{{item.id}})">modify</a></td>
 				</tr>
 				{% endfor%}
 		</tbody>

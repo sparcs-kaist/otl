@@ -28,8 +28,16 @@ function CheckNull(form)
 <script type="text/javascript">
 function pwShow(form)
 {
-	form.style.display= "block";
-	return false;
+	if(form.style.display=="block")
+	{
+		form.style.display= "none";
+		return false;
+	}
+	else
+	{
+		form.style.display= "block";
+		return false;
+	}
 }
 </script>
 
@@ -62,9 +70,9 @@ function pwShow(form)
 	<form id="create-form" method="post" onSubmit="return CheckNull(this);" action="/groups/create/">
 		<div id="create-group">
 			조모임 생성 : 
-			group name : <input type="text" id="groupname" name="gname" value="" size="5"/>
-			password : <input type="password" id="passwd" name="passwd" value="" size="5"/>
-			comment : <input type="text" id="comment" name="comment" value="" size="5"/>
+			group name : <input type="text" id="groupname" name="gname" value="" size="5" maxlength="60"/>
+			password : <input type="password" id="passwd" name="passwd" value="" size="5" maxlength="32"/>
+			comment : <input type="text" id="comment" name="comment" value="" size="5" maxlength="100"/>
 			<input id="create-form" type="submit" value="생성" />
 		</div>
 	</form>
@@ -73,10 +81,10 @@ function pwShow(form)
 		<li>
 		<h4>{{item.group_name}}: {{item.comment}}</h4>
 			<a class="group-link" href="/groups/list/?id={{item.id}}">{{item.group_name}}</a>
-			<a class="control-join" href="#" onClick="return pwShow(joinform{{item.id}});" >join</a>
+			<a class="control-join" href="#" onClick="return pwShow(joinform{{item.id}});" >Join</a>
 			<form id="joinform{{item.id}}" method="post" style="display:none" action="/groups/join/{{item.id}}">
 				<div id="join_group" >
-					password : <input type="password" id="passwd" name="passwd" value="" size="5" />
+					password : <input type="password" id="passwd" name="passwd" value="" size="5" maxlength="32"/>
 					<input id="join-form" type="submit" value="가입" />
 				</div>
 			</form>
@@ -105,7 +113,13 @@ function pwShow(form)
 				<h4>{{item.year}} {{item.semester}} {{item.group_name}}: {{item.comment}}</h4>
 					<a class="search-link" href="/group/list/?id={{item.id}}">{{item.group_name}}</a>
 					<span class="submitter">올린이 : <a href="/accounts/view/{{item.maker.username}}">{{item.maker.username}}</a></span>
-					<a class="control-join" href="/group/join/{{item.id}}">Join</a>
+					<a class="search-join" href="#" onClick="return pwShow(searchjoinform{{item.id}});" >Join</a>
+					<form id="searchjoinform{{item.id}}" method="post" style="display:none" action="/groups/join/{{item.id}}">
+						<div id="join_group" >
+							password : <input type="password" id="passwd" name="passwd" value="" size="5" maxlength="32"/>
+							<input id="join-form" type="submit" value="가입" />
+						</div>
+					</form>
 				</li>
 				{% endfor%}
 			{% else %}

@@ -115,8 +115,8 @@ function CheckNull(form)
 	<form id="create-form" method="get" onSubmit="return CheckNull(this);" action="/favorites/create/">
 		<div id="add-public-favorite">
 			<strong>즐겨찾기 등록</strong>&nbsp;|&nbsp;
-			&nbsp;제목: <input type="text" id="create-form-name" name="name" value="" size="5"/>	
-			&nbsp;주소: <input type="text" id="create-form-url" name="url" value="" size="5"/>
+			&nbsp;제목: <input type="text" id="create-form-name" name="name" value="" size="5" maxlength="60"/>	
+			&nbsp;주소: <input type="text" id="create-form-url" name="url" value="" size="5" maxlength="100"/>
 			<input id="create-form" type="submit" value="등록" />
 		</div>
 	</form>
@@ -144,7 +144,7 @@ function CheckNull(form)
 		{% endif %}
 	</div>
 	<form id="search-form" method="get" action="/favorites/search/">
-		<p><label for="search-query">검색 : </label><input type="text" id="search-query" name="query" /><input type="submit" value="Find" /></p>
+		<p><label for="search-query">검색 : </label><input type="text" id="search-query" name="query" value="" maxlength="20"/><input type="submit" value="Find" /></p>
 		<ul>
 			{% if search_list %}
 				{% for item in search_list %}
