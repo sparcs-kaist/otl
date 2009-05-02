@@ -92,7 +92,10 @@ def login(request):
 			if request.POST['agree'] == 'yes':
 				user = User.objects.get(username = request.POST['username'])
 				user.backend = 'otl.apps.accounts.backends.KAISTSSOBackend'
-				profile = UserProfile()
+				try:
+					profile = UserProfile.objects.get(user__exact = user)
+				except UserProfile.DoesNotExist:
+					profile = UserProfile()
 				profile.user = user
 				profile.language = request.POST['language']
 				profile.department = get_dept_from_deptname(request.POST['department'])
