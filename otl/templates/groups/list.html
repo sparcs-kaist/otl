@@ -66,7 +66,7 @@ function ShowModify(form)
 	<p>로그인하지 않았습니다. :)</p>
 {% endif %}
 <a class="write-toggle" href="#" onClick="return ShowModify(write)">글쓰기</a>
-<form id="write" method="post" style="display:none" action="/groups/list/write/{{current_group.id}}">
+<form id="write" method="post" style="display:block" action="/groups/list/write/{{current_group.id}}">
 	<div id="write-article">글쓰기 : <input type="text" id="write-article" name="article" />
 		<input type="submit" value="쓰기" />
 	</div>

@@ -33,7 +33,7 @@ def index(request):
 
 def create(request):
 	if request.user.is_authenticated():
-#		if GroupBoard.objects.filter(maker__exact = request.user).count() < 11:
+		if GroupBoard.objects.filter(maker__exact = request.user).count() < 11:
 			new_group_name = request.POST.get('gname')
 			new_pw = request.POST.get('passwd')
 			new_comment = request.POST.get('comment')
