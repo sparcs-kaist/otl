@@ -111,6 +111,10 @@ a.control-withdraw, a.control-join {
 	background: #f2f2f2;
 }
 
+.article-list td
+{
+}
+
 .article-list tr.even td
 {
 	background: #f8f8f8;
@@ -160,6 +164,10 @@ a.control-withdraw, a.control-join {
 	border-bottom: 1px solid #ccc;
 	text-align: center;
 	background: #f2f2f2;
+}
+
+.search-list td
+{
 }
 
 .search-list tr.even td

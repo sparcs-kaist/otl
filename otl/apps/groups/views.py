@@ -33,7 +33,9 @@ def index(request):
 
 def create(request):
 	if request.user.is_authenticated():
-#		if GroupBoard.objects.filter(maker__exact = request.user).count() < 11:
+		if GroupBoard.objects.filter(maker__exact = request.user).count() < 11:
+			new_code = request.POST.get('code')
+			new_course_name = request.POST.get('cname')
 			new_group_name = request.POST.get('gname')
 			new_pw = request.POST.get('passwd')
 			new_comment = request.POST.get('comment')
@@ -42,7 +44,7 @@ def create(request):
 			new_maker = request.user
 			new_made = time.strftime('%Y-%m-%d %H:%M:%S')
 			pw = md5.new(new_pw).hexdigest()
-			new_group = GroupBoard.objects.create(group_name = new_group_name, passwd = pw, comment = new_comment, year = new_year, semester = new_semester, maker = new_maker, made = new_made)
+			new_group = GroupBoard.objects.create(course_code = new_code, course_name = new_course_name, group_name = new_group_name, passwd = pw, comment = new_comment, year = new_year, semester = new_semester, maker = new_maker, made = new_made)
 			new_group.group_in.add(new_maker);
 
 
@@ -73,7 +75,7 @@ def search(request):
 	
 	group_pages = GroupBoard.objects.filter(year=settings.CURRENT_YEAR, semester=settings.CURRENT_SEMESTER).order_by('-made')[0:RECENTLY_PER_PAGE]
 	search_code = request.GET.get('query')
-	search_list = Paginator(GroupBoard.objects.filter(Q(year=settings.CURRENT_YEAR),Q(semester=settings.CURRENT_SEMESTER), Q(comment__icontains = search_code)|Q(group_name__icontains = search_code)).order_by('-made'),NUM_PER_PAGE)
+	search_list = Paginator(GroupBoard.objects.filter(Q(year=settings.CURRENT_YEAR),Q(semester=settings.CURRENT_SEMESTER), Q(course_code__icontains = search_code)|Q(course_name__icontains = search_code)|Q(group_name__icontains = search_code)).order_by('-made'),NUM_PER_PAGE)
 	search_page = request.GET.get('search-page',1)
 	current_search_page = search_list.page(search_page)
 	return render_to_response('groups/index.html', {
@@ -162,10 +164,7 @@ def article_search(request):
 			page = request.GET.get('page',1)
 			article_pages = Paginator(GroupArticle.objects.filter(group__id__exact = group_id).order_by('-written'), NUM_PER_PAGE)
 			current_page = article_pages.page(page)
-			if request.GET.get('query'):
-				search_code = request.GET.get('query')
-			else : 
-				search_code = request.POST.get('query')
+			search_code = request.GET.get('query')
 			search_list = Paginator(GroupArticle.objects.filter(Q(group__id__exact = group_id), (Q(writer__username__icontains = search_code)|Q(tag__icontains = search_code))).order_by('-written'),NUM_PER_PAGE)
 			search_page = request.GET.get('search-page',1)
 			current_search_page = search_list.page(search_page)
