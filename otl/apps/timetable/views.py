@@ -1,6 +1,7 @@
 # encoding: utf-8
 from django.shortcuts import render_to_response
 from django.db.models import Count
+from django.db import IntegrityError
 from django.http import *
 from django.template import RequestContext
 from django.views.decorators.cache import cache_page
