@@ -1,6 +1,16 @@
 {% extends 'layout.html' %}
 {% block headers %}
 <link rel="stylesheet" type="text/css" href="/media/groups.css" />
+
+<script type="text/javascript">
+function ShowModify(form)
+{
+	form.style.display= "block";
+	return false;
+}
+</script>
+
+
 {% endblock %}
 {% block content %}
 <h2>조모임 - {{current_group.course_code}} : {{current_group.course_name}} - {{current_group.group_name}}</h2>
@@ -20,13 +30,16 @@
 		{% for item in article_list %}
 		<tr class="{% if forloop.counter|divisibleby:"2" %}even {% endif %}">
 			<td class="author"><a href="/accounts/view/{{item.writer.username}}">{{item.writer.username}}</a></td>
-			<td class="tag">{{item.tag}}</td>
+			<td class="tag">{{item.tag}}
+				<form id="modifyform{{item.id}}" method="post" style="display:none" action="/groups/list/modify/?id={{item.group.id}}&num={{item.id}}">
+					<div id="article-modify{{item.id}}" ><input type="text" id="modify" name="modify" />
+						<input id ="article-modify" type="submit" value="수정"/>
+					</div>
+				</form>
+			</td>
 			<td class="date">{{item.written|date:"Y/m/d"}}</td>
 			<td class="delete"><a class="control-delete" href="/groups/list/delete/?id={{item.group.id}}&num={{item.id}}">delete</a></td>
-			<td class="modify"><form id="modify-form" method="post" action="/groups/list/modify/?id={{item.group.id}}&num={{item.id}}">
-			<p><label for="article-modify">수정 : </label><input type="text" id="modify" name="modify" />
-			<input id ="article-modify" type="submit" value="수정"/></p></td>
-		</form>
+			<td class="modify"><a class="control-modity" href="#" onClick="return ShowModify(modifyform{{item.id}})">modify</a></td>
 		{% endfor %}
 	</tbody>
 </table>
@@ -47,14 +60,14 @@
 {% else %}
 	<p>로그인하지 않았습니다. :)</p>
 {% endif %}
-<div id ="write-form">
-	<form id="write" method="post" action="/groups/list/write/{{current_group.id}}">
-		<p><label for="write-article">글쓰기 : </label><input type="text" id="write-article" name="article" />
-		<input type="submit" value="쓰기" /></p>
-	</form>
-</div>
+<a class="write-toggle" href="#" onClick="return ShowModify('write')">글쓰기</a>
+<form id="write" method="post" style="display:block" action="/groups/list/write/{{current_group.id}}">
+	<div id="write-article">글쓰기 : <input type="text" id="write-article" name="article" />
+		<input type="submit" value="쓰기" />
+	</div>
+</form>
 <div id ="search-form">
-	<form id="search-form" method="get" action="/groups/list/search/?id={{current_group.id}}">
+	<form id="search-form" method="post" action="/groups/list/search/?id={{current_group.id}}">
 		<p><label for="search-query">검색 : </label><input type="text" id="search-query" name="query" />
 		<input type="submit" value="검색"/></p>
 	</form>
