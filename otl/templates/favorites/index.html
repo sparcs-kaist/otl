@@ -64,6 +64,31 @@ Event.observe(window,'load',function()
 	LinkThumb.initialize('publicFavorites','search-link');
 });
 </script>
+<script type="text/javascript">
+function CheckNull(form)
+{
+	if(form.code.value.length==0)
+	{
+		alert("과목 코드를 작성해주세요.");
+		form.code.focus();
+		return false;
+	}
+	else if(form.name.value.length==0)
+	{
+		alert("내용을 작성해주세요.");
+		form.name.focus();
+		return false;
+	}
+	else if(form.url.value.length==0)
+	{
+		alert("과목 홈페이지를 작성해주세요.");
+		form.url.focus();
+		return false;
+	}
+	else return true;
+}
+</script>
+
 
 {% endblock %}
 {% block content %}
@@ -93,7 +118,7 @@ Event.observe(window,'load',function()
 <div id="publicFavorites">
 	<h3>다른 사람들의 즐겨찾기</h3>
 	<a href="/favorites/morelist">더보기</a>
-	<form id="create-form" method="get" action="/favorites/create/">
+	<form id="create-form" method="get" onSubmit="return CheckNull(this);" action="/favorites/create/">
 		<div id="add-public-favorite">
 			<strong>즐겨찾기 등록</strong>&nbsp;|&nbsp;과목코드: <input type="text" id="create-form-code" name="code" value="" size="5"/>
 			&nbsp;제목: <input type="text" id="create-form-name" name="name" value="" size="5"/>	

@@ -1,6 +1,44 @@
 {% extends 'layout.html' %}
 {% block headers %}
 <link rel="stylesheet" type="text/css" href="/media/groups.css" />
+
+<script type="text/javascript">
+function CheckNull(form)
+{
+	if(form.code.value.length==0)
+	{
+		alert("과목 코드를 작성해주세요.");
+		form.code.focus();
+		return false;
+	}
+	else if(form.cname.value.length==0)
+	{
+		alert("과목 이름을 작성해주세요.");
+		form.cname.focus();
+		return false;
+	}
+	else if(form.gname.value.length==0)
+	{
+		alert("조 이름을 작성해주세요.");
+		form.gname.focus();
+		return false;
+	}
+	else if(form.passwd.value.length==0)
+	{
+		alert("암호를 작성해주세요.");
+		form.passwd.focus();
+		return false;
+	}
+	else if(form.comment.value.length==0)
+	{
+		alert("comment를 작성해주세요.");
+		form.comment.focus();
+		return false;
+	}
+	else return true;
+}
+</script>
+
 {% endblock %}
 {% block content %}
 <h2>조모임 ({{current_year}}년 {{current_semester}}학기)</h2>
@@ -23,7 +61,7 @@
 <div id="publicGroups">
 	<h3>다른 조모임</h3>
 	<a href="/groups/morelist">더보기</a>
-	<form id="create-form" method="post" action="/groups/create/">
+	<form id="create-form" method="post" onSubmit="return CheckNull(this)" action="/groups/create/">
 		<div id="create-group">
 			조모임 생성 : code  : <input type="text" id="code" name="code" value="" size="5"/>
 			course name : <input type="text" id="coursename" name="cname" value="" size="5"/>
