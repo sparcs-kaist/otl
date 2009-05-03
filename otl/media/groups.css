@@ -69,16 +69,6 @@ a.control-withdraw, a.control-join {
 	background: url(./images/icon_add.png) no-repeat left center;
 }
 
-#search-form {
-	margin: 10px;
-}
-#search-query {
-	width: 500px;
-	margin: 0 8px;
-}
-#search-form input[type=submit] {
-	padding: 2px 4px;
-}
 
 #write-form {
 	margin: 10px;
@@ -109,6 +99,10 @@ a.control-withdraw, a.control-join {
 	border-bottom: 1px solid #ccc;
 	text-align: center;
 	background: #f2f2f2;
+}
+
+.article-list td
+{
 }
 
 .article-list tr.even td
@@ -160,6 +154,10 @@ a.control-withdraw, a.control-join {
 	border-bottom: 1px solid #ccc;
 	text-align: center;
 	background: #f2f2f2;
+}
+
+.search-list td
+{
 }
 
 .search-list tr.even td

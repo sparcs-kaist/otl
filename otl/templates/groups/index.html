@@ -6,7 +6,7 @@ function CheckNull(form)
 {
 	if(form.gname.value.length==0)
 	{
-		alert("조 이름을 작성해주세요.");
+		alert("조 이름을 작성해주세요. EX) CS408 SPARCS OTL 팀");
 		form.gname.focus();
 		return false;
 	}
@@ -18,7 +18,7 @@ function CheckNull(form)
 	}
 	else if(form.comment.value.length==0)
 	{
-		alert("comment를 작성해주세요.");
+		alert("comment를 작성해주세요. EX) OTL 많이 이용해주세요~");
 		form.comment.focus();
 		return false;
 	}
@@ -102,11 +102,8 @@ function pwShow(form)
 		<a class="next-page" href="/groups/morelist/?page={{current_page.next_page_number}}">Next</a>
 		{% endif %}
 	</div>
-</div>
-<h3>조모임 보드 찾아보기</h3>
-<form id="search-form" method="get" action="/groups/search/">
+	<form id="search-form" method="get" action="/groups/search/">
 	<p><label for="search-query">검색 : </label><input type="text" id="search-query" name="query" /><input type="submit" value="Find" /></p>
-		<ul>
 			{% if search_list %}
 				{% for item in search_list %}
 				<li>
@@ -125,7 +122,6 @@ function pwShow(form)
 			{% else %}
 				<p>검색 결과가 없습니다.</p>
 			{% endif %}
-		</ul>
 			<div class="search-pages">
 			{% if search_page.has_previous %}
 			<a class="search-prev-page" href="/groups/search/?query={{search_code}}&search-page={{search_page.previous_page_number}}">Prev</a>
@@ -137,5 +133,6 @@ function pwShow(form)
 			<a class="search-next-page" href="/groups/search/?query={{search_code}}&search-page={{search_page.next_page_number}}">Next</a>
 			{% endif %}
 		</div>
-</form>
+	</form>
+</div>
 {% endblock %}

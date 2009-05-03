@@ -74,7 +74,7 @@ def create(request):
 		new_writer = request.user
 		new_course_link = CourseLink.objects.create(course_name = new_name, year = settings.CURRENT_YEAR, \
 				semester = settings.CURRENT_SEMESTER, url = new_url, writer= new_writer, favored_count = 1)
-		new_course_link.favored_by.add(new_writer)
+		new_course_link.favored_by.add( new_writer )
 	else:
 		favorite_list = None
 

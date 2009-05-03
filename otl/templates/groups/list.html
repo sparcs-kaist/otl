@@ -65,12 +65,13 @@ function ShowModify(form)
 {% else %}
 	<p>로그인하지 않았습니다. :)</p>
 {% endif %}
-<a class="write-toggle" href="#" onClick="return ShowModify(write)">글쓰기</a>
-<form id="write" method="post" style="display:block" action="/groups/list/write/{{current_group.id}}">
-	<div id="write-article">글쓰기 : <input type="text" id="write-article" name="article" />
-		<input type="submit" value="쓰기" />
-	</div>
-</form>
+<a class="write-toggle" href="#" onClick="return ShowModify(writearticle)">글쓰기</a>
+<div id="writearticle" style="display:none" >
+	<form id="write-form" method="post" action="/groups/list/write/{{current_group.id}}">
+		<p><label for="write-article">글쓰기 : </label><input type="text" id="write-article" name="article" />
+		<input type="submit" value="쓰기" /></p>
+	</form>
+</div>
 <div id ="search-form">
 	<form id="search-form" method="post" action="/groups/list/search/?id={{current_group.id}}">
 		<p><label for="search-query">검색 : </label><input type="text" id="search-query" name="query" />

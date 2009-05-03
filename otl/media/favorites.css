@@ -49,6 +49,7 @@ h3 {
 	top: 2px;
 	right: 5px;
 }
+
 #add-public-favorite a {
 	color: #56c;
 }
@@ -64,7 +65,7 @@ a.control-delete, a.control-add {
 	padding: 2px 2px 2px 20px;
 	background: url(./images/icon_delete.png) no-repeat left center;
 }
-#publicFavorites a.control-add {
+a.control-add {
 	color: #0a0;
 	padding: 2px 2px 2px 20px;
 	background: url(./images/icon_add.png) no-repeat left center;
