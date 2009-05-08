@@ -13,6 +13,7 @@ class Command(BaseCommand):
 	option_list = BaseCommand.option_list + (
 		make_option('--host', dest='host', help=u'Specifies server address.'),
 		make_option('--user', dest='user', help=u'Specifies user name to log in.'),
+		make_option('--password', dest='password', help=u'Specifies passowrd to log in.'),
 		make_option('--encoding', dest='encoding', help=u'Sepcifies character encoding to decode strings from database. (default is cp949)', default='cp949'),
 		make_option('--exclude-lecture', action='store_true', dest='exclude_lecture', help=u'Don\'t update lecture information when you want to update time information only.', default=False),
 	)
@@ -23,11 +24,13 @@ class Command(BaseCommand):
 		rx_dept_code = re.compile(ur'([a-zA-Z]+)(\d+)')
 		host = options.get('host', None)
 		user = options.get('user', None)
+		password = options.get('password', None)
 		encoding = options.get('encoding', 'cp949')
 		exclude_lecture = options.get('exclude_lecture', False)
 		lecture_count = 0
 		try:
-			password = getpass.getpass()
+			if password is None:
+				password = getpass.getpass()
 		except (KeyboardInterrupt, EOFError):
 			print
 			return

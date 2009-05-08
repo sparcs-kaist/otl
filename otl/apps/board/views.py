@@ -27,7 +27,12 @@ def list_ara(request):
 	except:
 		return HttpResponseBadRequest()
 
-	article_result = server.article_manager.article_list(session, 'Lecture', page_no, NUM_PER_PAGE)
+	try:
+		article_result = server.article_manager.article_list(session, 'Lecture', page_no, NUM_PER_PAGE)
+	except:
+		response = render_to_response('500.html', {'msg': u'아라 서버 접속이 원활하지 않습니다.'})
+		response.status_code = 500
+		return response
 	article_list = article_result.hit
 
 	# Pre-conversion
