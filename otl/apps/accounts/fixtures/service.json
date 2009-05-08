@@ -205,7 +205,7 @@
 		"fields": {"num_id": "24", "code": "AM", "name": "응용수학전공", "visible": false}
 	},
 	{
-		"pk": "10000",
+		"pk": "0",
 		"model": "accounts.department",
 		"fields": {"num_id": "0", "code": "NONE", "name": "무학과"}
 	}

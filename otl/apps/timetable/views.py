@@ -34,7 +34,7 @@ def index(request):
 	return render_to_response('timetable/index.html', {
 		'section': 'timetable',
 		'title': u'모의시간표',
-		'departments': Department.objects.all(),
+		'departments': Department.objects.filter(visible=True).order_by('name'),
 		'my_lectures': my_lectures_output,
 		'lecture_list': _lectures_to_output(_search(dept=u'2044', type=u'전체보기'))
 	}, context_instance=RequestContext(request))
