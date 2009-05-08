@@ -9,6 +9,7 @@ class Department(models.Model):
 	code = models.CharField(max_length=5, help_text=u'과목에서 prefix로 사용하는 문자열로 된 ID')
 	name = models.CharField(max_length=60)
 	name_en = models.CharField(max_length=60, null=True)
+	visible = models.BooleanField(default=True)
 
 	def __unicode__(self):
 		return u'%s(%d) "%s"' % (self.code, self.num_id, self.name)

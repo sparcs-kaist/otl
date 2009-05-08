@@ -77,12 +77,17 @@
 	{
 		"pk": "210",
 		"model": "accounts.department",
-		"fields": {"num_id": "40", "code": "ME", "name": "기계공학과"}
+		"fields": {"num_id": "40", "code": "MAE", "name": "기계공학과"}
 	},
 	{
-		"pk": "103693",
+		"pk": "211",
 		"model": "accounts.department",
-		"fields": {"num_id": "10040", "code": "ME", "name": "항공우주공학전공"}
+		"fields": {"num_id": "100211", "code": "ME", "name": "기계공학전공", "visible": false}
+	},
+	{
+		"pk": "212",
+		"model": "accounts.department",
+		"fields": {"num_id": "100212", "code": "AE", "name": "항공우주공학전공", "visible": false}
 	},
 	{
 		"pk": "3648",
@@ -145,6 +150,26 @@
 		"fields": {"num_id": "26", "code": "ICC", "name": "정보통신공학과"}
 	},
 	{
+		"pk": "3724",
+		"model": "accounts.department",
+		"fields": {"num_id": "27", "code": "BAT", "name": "IT경영학과"}
+	},
+	{
+		"pk": "3725",
+		"model": "accounts.department",
+		"fields": {"num_id": "27", "code": "ICE", "name": "소프트웨어공학 프로그램"}
+	},
+	{
+		"pk": "3726",
+		"model": "accounts.department",
+		"fields": {"num_id": "27", "code": "DMP", "name": "디지털미디어 프로그램"}
+	},
+	{
+		"pk": "3799",
+		"model": "accounts.department",
+		"fields": {"num_id": "80", "code": "EEW", "name": "EEWS대학원"}
+	},
+	{
 		"pk": "2222",
 		"model": "accounts.department",
 		"fields": {"num_id": "70", "code": "BM", "name": "의과학학제전공"}
@@ -165,14 +190,19 @@
 		"fields": {"num_id": "79", "code": "SEP", "name": "소프트웨어전문가과정학제전공"}
 	},
 	{
-		"pk": "10022",
+		"pk": "3564",
 		"model": "accounts.department",
-		"fields": {"num_id": "22", "code": "MA", "name": "수학전공"}
+		"fields": {"num_id": "58", "code": "IM", "name": "정보미디어경영대학원"}
 	},
 	{
-		"pk": "10024",
+		"pk": "141",
 		"model": "accounts.department",
-		"fields": {"num_id": "24", "code": "MA", "name": "응용수학전공"}
+		"fields": {"num_id": "22", "code": "MA", "name": "수학전공", "visible": false}
+	},
+	{
+		"pk": "142",
+		"model": "accounts.department",
+		"fields": {"num_id": "24", "code": "AM", "name": "응용수학전공", "visible": false}
 	},
 	{
 		"pk": "10000",
