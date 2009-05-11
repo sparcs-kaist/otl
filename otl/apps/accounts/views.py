@@ -155,3 +155,19 @@ def myinfo(request):
 		'msg': msg,
 	}, context_instance=RequestContext(request))
 
+def view(request, user_id):
+	if request.user.is_authenticated():
+		search = UserProfile.objects.filter(user__username__exact = user_id)
+		if search:
+			search_user = search[0]
+			department = search_user.department.name
+			first_name = search_user.user.first_name
+			last_name = search_user.user.last_name
+			return render_to_response('accounts/view.html', {
+				'title': u'다른 사람 정보 보기',
+				'department': department,
+				'fname': first_name,
+				'lname': last_name,
+			}, context_instance=RequestContext(request))
+
+	return HttpResponseRedirect('/')
