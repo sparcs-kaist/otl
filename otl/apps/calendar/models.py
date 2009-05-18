@@ -2,7 +2,6 @@
 from django.db import models
 from django.contrib import admin
 from django.contrib.auth.models import User
-from django import forms
 from otl.apps.accounts.models import Department
 from otl.utils import MultiSelectField, get_choice_display
 from otl.apps.common import *
@@ -61,6 +60,14 @@ class Schedule(models.Model):
 	description = models.TextField(blank=True)
 
 class ScheduleAdmin(admin.ModelAdmin):
+	pass
+
+def fetch_assignments(student_id):
+	"""
+	Moodle DB에 접속하여 해당 학번의 학생이 듣고 있는 과목들에 대한 과제 정보를 가져온다.
+	"""
+
+	# TODO: Impelement
 	pass
 
 admin.site.register(Calendar, CalendarAdmin)
