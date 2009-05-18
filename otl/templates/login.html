@@ -1,4 +1,5 @@
 {% extends 'layout.html' %}
+{% load forms %}
 {% block headers %}
 <link rel="stylesheet" type="text/css" href="/media/accounts.css" />
 <script type="text/javascript">
@@ -23,8 +24,8 @@ window.addEvent('domready', function() {
 <form action="/login/{% if next %}?next={{next|iriencode}}{% endif %}" id="login-form" method="post">
 <p>KAIST Portal ID로 로그인하세요.</p>
 <table>
-{{ form_login.as_table }}
-<tr><td colspan="2"><input type="submit" value="Log In" /></td></tr>
+	{% print_form_as_table form_login %}
+	<tr><td colspan="2"><input type="submit" value="Log In" /></td></tr>
 </table>
 </form>
 <div id="service-info">
