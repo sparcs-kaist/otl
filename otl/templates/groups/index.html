@@ -1,4 +1,5 @@
 {% extends 'layout.html' %}
+{% load yearterm %}
 {% block headers %}
 <link rel="stylesheet" type="text/css" href="/media/groups.css" />
 <script type="text/javascript">
@@ -43,7 +44,7 @@ function pwShow(form)
 
 {% endblock %}
 {% block content %}
-<h2>조모임 ({{current_year}}년 {{current_semester}}학기)</h2>
+<h2>조모임 ({{current_year}}년 {{current_semester|term2str}}학기)</h2>
 <div id="myGroups">
 	<h3>내가 가입한 조모임</h3>
 	{% if user.is_authenticated %}

@@ -97,6 +97,7 @@ INSTALLED_APPS = (
     'otl.apps.groups',
     'otl.apps.favorites',
     'otl.apps.accounts',
+    'otl.utils',
 )
 
 AUTHENTICATION_BACKENDS = (

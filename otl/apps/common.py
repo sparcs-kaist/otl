@@ -2,18 +2,18 @@
 # This file includes commonly used constants and definitions.
 
 LANGUAGES = (
-	('ko-KR', '한국어 (Korean)'),
-	('en-US', '영어 (English)'),
+	('ko-KR', u'한국어 (Korean)'),
+	('en-US', u'영어 (English)'),
 )
 CLASS_TYPES = (
 	('l', u'강의'),
 	('e', u'실험'),
 )
 SEMESTER_TYPES = (
-	(1, '봄'),
-	(2, '여름'),
-	(3, '가을'),
-	(4, '겨울'),
+	(1, u'봄'),
+	(2, u'여름'),
+	(3, u'가을'),
+	(4, u'겨울'),
 )
 AUDIENCE_TYPES = (
 	(0, u'학사'),
