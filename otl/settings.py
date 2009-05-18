@@ -111,7 +111,7 @@ LOGIN_URL = '/login/'
 SERVICE_STATUS = 'released'
 
 from datetime import date
-CURRENT_YEAR = 2009 # context_processors.globaltime may override this with the system clock.
+CURRENT_YEAR = 2009
 CURRENT_SEMESTER = 1
 NEXT_YEAR = 2009
 NEXT_SEMESTER = 1
@@ -120,6 +120,11 @@ SCHOLARDB_HOST = ''
 SCHOLARDB_USER = ''
 SCHOLARDB_PASSWORD = ''
 SCHOLARDB_NAME = ''
+
+MOODLEDB_HOST = 'moodle.kaist.ac.kr'
+MOODLEDB_USER = ''
+MOODLEDB_PASSWORD = ''
+MOODLEDB_NAME = ''
 
 ARARA_HOST = ''
 ARARA_BASE_PORT = 0

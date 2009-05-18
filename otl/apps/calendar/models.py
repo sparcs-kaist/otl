@@ -1,10 +1,13 @@
 # encoding: utf-8
 from django.db import models
+from django.core.exceptions import *
 from django.contrib import admin
 from django.contrib.auth.models import User
+from django.conf import settings
 from otl.apps.accounts.models import Department
 from otl.utils import MultiSelectField, get_choice_display
 from otl.apps.common import *
+import Sybase, MySQLdb
 
 class Calendar(models.Model):
 	owner = models.ForeignKey(User)
@@ -66,9 +69,42 @@ def fetch_assignments(student_id):
 	"""
 	Moodle DB에 접속하여 해당 학번의 학생이 듣고 있는 과목들에 대한 과제 정보를 가져온다.
 	"""
+	if not isinstance(student_id, int):
+		raise TypeError('student_id must be an integer.')
 
-	# TODO: Impelement
-	pass
+	# TODO: cache!!
+
+	taking_courses = []
+	try:
+		scholar_db = Sybase.connect(settings.SCHOLARDB_HOST, settings.SCHOLARDB_USER, settings.SCHOLARDB_PASSWORD, settings.SCHOLARDB_NAME)
+	except:
+		raise DatabaseError('Cannot access the scholar database!')
+	cursor = scholar_db.cursor()
+	cursor.execute("SELECT a.subject_no, l.old_no FROM view_OTL_attend a, view_OTL_lecture l
+	WHERE a.student_no = %d AND a.lecture_year = %d AND a.lecture_term = %d
+	AND a.lecture_year = l.lecture_year AND a.lecture_term = l.lecture_term AND a.subject_no = l.subject_no AND a.lecture_class = l.lecture_class AND a.dept_id = l.dept_id",
+		(student_id, settings.CURRENT_YEAR, settings.CURRENT_SEMESTER))
+	rows = cursor.fetchall()
+	for row in rows:
+		taking_courses.append(row[1])
+	cursor.close()
+	scholar_db.close()
+
+	assignments = []
+	try:
+		moodle_db = MySQLdb.connect(host=settings.MOODLEDB_HOST, user=settings.MOODLEDB_USER, password=settings.MOODLEDB_PASSWORD, db=settings.MOODLEDB_NAME, use_unicode=True, charset='utf8')
+	except:
+		raise DatabaseError('Cannot access the moodle database!')
+	cursor = moodle_db.cursor()
+	for course_no in taking_courses:
+		# TODO: implement!
+		cursor.execute("SELECT * FROM mdl_assignment WHERE ...")
+		rows = cursor.fetchall()
+		for row in rows:
+			pass
+	moodle_db.close()
+
+	return assignments
 
 admin.site.register(Calendar, CalendarAdmin)
 admin.site.register(RepeatedSchedule, RepeatedScheduleAdmin)
