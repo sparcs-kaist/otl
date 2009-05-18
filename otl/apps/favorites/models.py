@@ -2,12 +2,13 @@
 from django.db import models
 from django.contrib import admin
 from django.contrib.auth.models import User
+from django.conf import settings
 from otl.apps.common import *
 
 class CourseLink(models.Model):
 	course_name = models.CharField(max_length=60)
-	year = models.IntegerField()
-	semester = models.SmallIntegerField(choices=SEMESTER_TYPES)
+	year = models.IntegerField(default=settings.CURRENT_YEAR)
+	semester = models.SmallIntegerField(default=settings.CURRENT_SEMESTER, choices=SEMESTER_TYPES)
 	url = models.URLField()
 	favored_count = models.IntegerField(default=0)
 	writer = models.ForeignKey(User, related_name='courselink_set')

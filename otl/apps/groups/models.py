@@ -2,6 +2,7 @@
 from django.db import models
 from django.contrib import admin
 from django.contrib.auth.models import User
+from django.conf import settings
 from otl.apps.common import *
 
 class GroupBoard(models.Model):
@@ -10,8 +11,8 @@ class GroupBoard(models.Model):
 	group_name = models.CharField(max_length=60)
 	comment = models.CharField(max_length=100)
 	passwd = models.CharField(max_length=32)
-	year = models.IntegerField()
-	semester = models.SmallIntegerField(choices=SEMESTER_TYPES)
+	year = models.IntegerField(default=settings.CURRENT_YEAR)
+	semester = models.SmallIntegerField(default=settings.CURRENT_SEMESTER, choices=SEMESTER_TYPES)
 	maker = models.ForeignKey(User, related_name='groupboard_set')
 	made = models.DateTimeField()
 	group_in = models.ManyToManyField(User, related_name='group_set')
