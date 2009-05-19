@@ -1,12 +1,12 @@
 # encoding: utf-8
-from django.db import models
-from django.core.exceptions import *
+from django.db import models, DatabaseError
 from django.contrib import admin
 from django.contrib.auth.models import User
 from django.conf import settings
 from otl.apps.accounts.models import Department
 from otl.utils import MultiSelectField, get_choice_display
 from otl.apps.common import *
+from datetime import datetime
 import Sybase, MySQLdb
 
 class Calendar(models.Model):
@@ -80,10 +80,10 @@ def fetch_assignments(student_id):
 	except:
 		raise DatabaseError('Cannot access the scholar database!')
 	cursor = scholar_db.cursor()
-	cursor.execute("SELECT a.subject_no, l.old_no FROM view_OTL_attend a, view_OTL_lecture l
+	cursor.execute("""SELECT a.subject_no, l.old_no FROM view_OTL_attend a, view_OTL_lecture l
 	WHERE a.student_no = %d AND a.lecture_year = %d AND a.lecture_term = %d
-	AND a.lecture_year = l.lecture_year AND a.lecture_term = l.lecture_term AND a.subject_no = l.subject_no AND a.lecture_class = l.lecture_class AND a.dept_id = l.dept_id",
-		(student_id, settings.CURRENT_YEAR, settings.CURRENT_SEMESTER))
+	AND a.lecture_year = l.lecture_year AND a.lecture_term = l.lecture_term AND a.subject_no = l.subject_no AND a.lecture_class = l.lecture_class AND a.dept_id = l.dept_id"""
+		% (student_id, settings.CURRENT_YEAR, settings.CURRENT_SEMESTER))
 	rows = cursor.fetchall()
 	for row in rows:
 		taking_courses.append(row[1])
@@ -92,16 +92,25 @@ def fetch_assignments(student_id):
 
 	assignments = []
 	try:
-		moodle_db = MySQLdb.connect(host=settings.MOODLEDB_HOST, user=settings.MOODLEDB_USER, password=settings.MOODLEDB_PASSWORD, db=settings.MOODLEDB_NAME, use_unicode=True, charset='utf8')
+		moodle_db = MySQLdb.connect(host=settings.MOODLEDB_HOST, user=settings.MOODLEDB_USER, passwd=settings.MOODLEDB_PASSWORD, db=settings.MOODLEDB_NAME, use_unicode=True, charset='utf8')
 	except:
 		raise DatabaseError('Cannot access the moodle database!')
 	cursor = moodle_db.cursor()
 	for course_no in taking_courses:
-		# TODO: implement!
-		cursor.execute("SELECT * FROM mdl_assignment WHERE ...")
+		cursor.execute("""SELECT c.shortname, a.name, a.description, a.format, a.assignmenttype, a.timedue, a.timeavailable, a.grade, a.timemodified
+		FROM mdl_assignment a, mdl_course c WHERE c.id = a.course AND c.shortname LIKE '%s%%'""" % course_no) 
+		# TODO: moodle 조교와 협의하여 shortname에 과목 코드뿐만 아니라 분반, 개설년도/개설학기 정보도 포함시켜 정확한 과목 matching이 이루어지게 한다.
+		#       현재 같은 과목이라도 분반에 따라 moodle을 이용하기도 하고 이용하지 않기도 하는 경우가 있어 과목코드만으로 가져오면 실제로 자기하고는
+		#       상관 없는 과제 정보를 얻어오는 경우가 있다.
 		rows = cursor.fetchall()
 		for row in rows:
-			pass
+			# Convert time
+			assignment = [item for item in row]
+			assignment[5] = datetime.fromtimestamp(assignment[5])
+			assignment[6] = datetime.fromtimestamp(assignment[6])
+			assignment[8] = datetime.fromtimestamp(assignment[8])
+			assignments.append(assignment)
+	cursor.close()
 	moodle_db.close()
 
 	return assignments
