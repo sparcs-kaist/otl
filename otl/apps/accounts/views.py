@@ -16,7 +16,6 @@ import base64, hashlib, time, random, urllib, re
 
 def login(request):
 
-	# TODO: check if default value is evaluated before method calling.
 	num_users = cache_with_default('stat.num_users', lambda: User.objects.count() - 1, 60)
 	num_lectures = cache_with_default('stat.num_lectures', lambda: Lecture.objects.filter(year=settings.NEXT_YEAR, semester=settings.NEXT_SEMESTER).count(), 600)
 	num_favorites = cache_with_default('stat.num_favorites', lambda: CourseLink.objects.count(), 60)
