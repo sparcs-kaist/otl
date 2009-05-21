@@ -1,11 +1,11 @@
 # encoding: utf-8
 from django.template import RequestContext
 from django.http import *
-from django.core.cache import cache
 from django.contrib import auth
 from django.shortcuts import render_to_response
 from django.contrib.admin.models import User
 from django.contrib.auth.decorators import login_required
+from otl.utils import cache_with_default
 from otl.apps.timetable.models import Lecture
 from otl.apps.favorites.models import CourseLink
 from otl.apps.groups.models import GroupBoard
@@ -17,17 +17,11 @@ import base64, hashlib, time, random, urllib, re
 def login(request):
 
 	# TODO: check if default value is evaluated before method calling.
-	num_users = cache.get('stat.num_users', User.objects.count() - 1)
-	num_lectures = cache.get('stat.num_lectures', Lecture.objects.filter(year=settings.NEXT_YEAR, semester=settings.NEXT_SEMESTER).count())
-	num_favorites = cache.get('stat.num_favorites', CourseLink.objects.count())
-	num_schedules = cache.get('stat.num_schedules', Schedule.objects.count())
-	num_groups = cache.get('stat.num_groups', GroupBoard.objects.count())
-
-	cache.set('stat.num_users', num_users, 60)
-	cache.set('stat.num_lectures', num_lectures, 600)
-	cache.set('stat.num_favorites', num_favorites, 60)
-	cache.set('stat.num_schedules', num_schedules, 20)
-	cache.set('stat.num_groups', num_groups, 60)
+	num_users = cache_with_default('stat.num_users', lambda: User.objects.count() - 1, 60)
+	num_lectures = cache_with_default('stat.num_lectures', lambda: Lecture.objects.filter(year=settings.NEXT_YEAR, semester=settings.NEXT_SEMESTER).count(), 600)
+	num_favorites = cache_with_default('stat.num_favorites', lambda: CourseLink.objects.count(), 60)
+	num_schedules = cache_with_default('stat.num_schedules', lambda: Schedule.objects.count(), 30)
+	num_groups = cache_with_default('stat.num_groups', lambda: GroupBoard.objects.count(), 60)
 
 	next_url = request.GET.get('next', '/')
 	if request.method == 'POST':
