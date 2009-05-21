@@ -108,6 +108,8 @@ AUTHENTICATION_BACKENDS = (
 AUTH_PROFILE_MODULE = 'apps.accounts.userprofile'
 LOGIN_URL = '/login/'
 
+SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
+
 # Should be overriden at settings_local.py
 SERVICE_STATUS = 'released'
 
