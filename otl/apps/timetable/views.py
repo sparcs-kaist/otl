@@ -51,9 +51,6 @@ def search(request):
 		if output is None:
 			output = _lectures_to_output(_search(**q))
 			cache.set(cache_key, output, 3600)
-			print 'creating cache %s' % cache_key
-		else:
-			print 'cache hit %s' % cache_key
 		return HttpResponse(output)
 	except ValidationError:
 		return HttpResponseBadRequest()
