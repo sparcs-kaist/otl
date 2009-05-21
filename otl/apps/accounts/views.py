@@ -79,6 +79,9 @@ def login(request):
 					if not user.is_superuser:
 						profile = UserProfile.objects.get(user=user)
 					auth.login(request, user)
+					# If persistent login options is set, let the session expire after 2-weeks.
+					if request.POST.has_key('persistent_login'):
+						request.session.set_expiry(28*24*3600)
 					return HttpResponseRedirect(next_url)
 		else:
 			# Show privacy agreement form after confirming this is a valid user in KAIST.
