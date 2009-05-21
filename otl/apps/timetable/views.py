@@ -4,10 +4,10 @@ from django.db.models import Count
 from django.db import IntegrityError
 from django.http import *
 from django.template import RequestContext
-from django.views.decorators.cache import cache_page
 from django.utils import simplejson as json
 from django.conf import settings
 from django.core.exceptions import *
+from django.core.cache import cache
 from otl.utils.decorators import login_required_ajax
 from otl.apps.accounts.models import Department
 from otl.apps.timetable.models import Lecture, ExamTime, ClassTime, Syllabus, Timetable, OverlappingTimeError
@@ -39,14 +39,21 @@ def index(request):
 		'lecture_list': _lectures_to_output(_search(dept=u'2044', type=u'전체보기'))
 	}, context_instance=RequestContext(request))
 
-#@cache_page(1800)
 def search(request):
 	try:
 		# Convert QueryDict to a normal python dict.
 		q = {}
 		for key, value in request.GET.iteritems():
 			q[str(key)] = value
-		output = _lectures_to_output(_search(**q))
+		# Cache using search parameters
+		cache_key = 'timetable-search-cache:' + ':'.join(['%s=%s' % (key, value) for key, value in q.iteritems()])
+		output = cache.get(cache_key)
+		if output is None:
+			output = _lectures_to_output(_search(**q))
+			cache.set(cache_key, output, 3600)
+			print 'creating cache %s' % cache_key
+		else:
+			print 'cache hit %s' % cache_key
 		return HttpResponse(output)
 	except ValidationError:
 		return HttpResponseBadRequest()
