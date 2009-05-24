@@ -7,11 +7,6 @@ from otl.apps.accounts.models import Department
 from otl.utils import MultiSelectField, get_choice_display
 from otl.apps.common import *
 from datetime import datetime
-try:
-	import Sybase
-	import MySQLdb
-except ImportError:
-	pass
 
 class Calendar(models.Model):
 	owner = models.ForeignKey(User)
@@ -50,7 +45,6 @@ class RepeatedSchedule(models.Model):
 			rules = u', '.join(map(lambda day: get_choice_display(WEEKDAYS, int(day)), self.weekdays))
 		elif self.rule == 2: # 매월 일정
 			rule = u'매월'
-			rules = u', '.join(map(lambda day: get_choice_display(WEEKDAYS, int(day)), self.weekdays))
 			rules = u'일, '.join(self.day_of_months) + u'일'
 		else:
 			rule = u'?'
@@ -104,8 +98,9 @@ def fetch_assignments(student_id):
 
 	taking_courses = []
 	try:
+		import Sybase
 		scholar_db = Sybase.connect(settings.SCHOLARDB_HOST, settings.SCHOLARDB_USER, settings.SCHOLARDB_PASSWORD, settings.SCHOLARDB_NAME)
-	except NameError:
+	except ImportError:
 		raise DatabaseError('Sybase module is not installed!')
 	except:
 		raise DatabaseError('Cannot access the scholar database!')
@@ -122,8 +117,9 @@ def fetch_assignments(student_id):
 
 	assignments = []
 	try:
+		import MySQLdb
 		moodle_db = MySQLdb.connect(host=settings.MOODLEDB_HOST, user=settings.MOODLEDB_USER, passwd=settings.MOODLEDB_PASSWORD, db=settings.MOODLEDB_NAME, use_unicode=True, charset='utf8')
-	except NameError:
+	except ImportError:
 		raise DatabaseError('MySQLdb module is not installed!')
 	except:
 		raise DatabaseError('Cannot access the moodle database!')
