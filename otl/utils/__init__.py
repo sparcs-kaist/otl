@@ -1,7 +1,10 @@
 # encoding: utf-8
 from django.db import models
 from django import forms
+from django.utils import simplejson as json
+from django.http import HttpResponse
 from django.core.cache import cache
+from django.conf import settings
 
 def get_choice_display(choices, key):
 	for item in choices:
@@ -31,6 +34,11 @@ def cache_with_default(key, default, timeout=300):
 		value = default()
 		cache.set(key, value, timeout)
 	return value
+
+def render_as_json(obj):
+	output = json.dumps(result, ensure_ascii=False, indent=4 if settings.DEBUG else 0)
+	type = 'application/json' if request.is_ajax() else 'text/plain'
+	return HttpResponse(output, mimetype=type)
 
 # MultiSelectField customization from http://www.djangosnippets.org/snippets/1200/
 class MultiSelectFormField(forms.MultipleChoiceField):

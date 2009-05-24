@@ -11,6 +11,7 @@ from datetime import datetime
 class Calendar(models.Model):
 	owner = models.ForeignKey(User)
 	title = models.CharField(max_length=60)
+	color = models.IntegerField()
 	enabled = models.BooleanField(default=True)
 
 	def __unicode__(self):
