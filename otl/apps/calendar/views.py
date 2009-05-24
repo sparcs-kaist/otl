@@ -19,11 +19,43 @@ def index(request):
 
 @login_required_ajax
 def add_shcedule(request):
-	pass
+	"""
+	Adds a schedule item.
+	Currently does not support repeated schedules.
+
+	Request: use GET parameters
+	- type : "repeated" | "single"
+	- summary : user string (max 120 chars)
+	- location : user string (max 120 chars, may be blank)
+	- description : user string (long, may be blank)
+	- date : "YYYY-MM-DD"
+	- time_start : integer representing minutes from 00:00
+	- time_end : integer representing minutes from 00:00
+
+	Response: use JSON string
+	{
+		"result": "OK" | "FAILED",
+		"id": integer id of the created item,
+	}
+	"""
+
+	# TODO: implement
 
 @login_required_ajax
 def delete_schedule(request):
-	pass
+	"""
+	Delete a schedule item.
+
+	Request: use GET parameters
+	- id : integer id of an item
+
+	Response: use JSON string
+	{
+		"result": "OK" | "NOT_FOUND" | "FAILED"
+	}
+	"""
+
+	# TODO: implement
 
 @login_required
 def search_schedule(request):
