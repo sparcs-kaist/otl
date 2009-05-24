@@ -2,6 +2,7 @@
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.conf import settings
+from django.utils import simplejson as json
 from django.contrib.auth.decorators import login_required
 from otl.apps.calendar.forms import ScheduleForm
 from otl.utils.decorators import login_required_ajax
@@ -88,7 +89,7 @@ def list_schedule(request):
 	# TODO: implement
 
 @login_required_ajax
-def add_shcedule(request):
+def add_schedule(request):
 	"""
 	Adds a schedule item.
 	Currently does not support repeated schedules.
