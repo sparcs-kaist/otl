@@ -27,8 +27,8 @@ def list_calendar(request):
 	[
 		{
 			"id": integer id of a calendar,
-			"title": string
-			"color": integer index of predefined colors
+			"title": string,
+			"color": integer index of predefined colors,
 			"enabeld": boolean
 		},
 		...
@@ -52,6 +52,33 @@ def modify_calendar(request):
 	{
 		"result": "OK" | "NOT_FOUND" | "FAILED"
 	}
+	"""
+
+	# TODO: implement
+
+@login_required_ajax
+def list_schedule(request):
+	"""
+	Lists schedule items within a specific date range.
+
+	Request: use GET parameters
+	- date_start : "YYYY-MM-DD"
+	- date_end : "YYYY-MM-DD"
+	
+	Response: use JSON string
+	[
+		{
+			"id": integer id of an item,
+			"calendar": integer id of the calendar to which this belongs,
+			"summary": string,
+			"location": string or null,
+			"description": string or null,
+			"date": "YYYY-MM-DD",
+			"time_start": integer representing minutes from 00:00,
+			"time_end": integer representing minutes from 00:00
+		},
+		...
+	]
 	"""
 
 	# TODO: implement
