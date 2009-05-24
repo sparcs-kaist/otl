@@ -3,6 +3,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from otl.apps.calendar.forms import ScheduleForm
 from otl.utils.decorators import login_required_ajax
 
 def index(request):
@@ -12,9 +13,11 @@ def index(request):
 			'title': u'일정관리',
 		}, context_instance=RequestContext(request))
 	else:
+		f = ScheduleForm()
 		return render_to_response('calendar/index.html', {
 			'section': 'calendar',
 			'title': u'일정관리',
+			'schedule_form': f,
 		}, context_instance=RequestContext(request))
 
 @login_required_ajax
@@ -22,7 +25,8 @@ def list_calendar(request):
 	"""
 	Lists the calendars.
 
-	Request: None
+	Request: None; method is GET
+
 	Response: use JSON string
 	[
 		{
@@ -98,6 +102,8 @@ def add_shcedule(request):
 	- time_start : integer representing minutes from 00:00
 	- time_end : integer representing minutes from 00:00
 
+	May use ScheduleForm in forms.py in the template passed as schedule_form.
+
 	Response: use JSON string
 	{
 		"result": "OK" | "FAILED",
@@ -113,12 +119,15 @@ def modify_schedule(request):
 	Modifies a schedule item.
 
 	Request: use POST parameters
-	- summary
-	- location
-	- description
-	- date
-	- time_start
-	- time_end
+	- id : integer id of an item
+	- summary : user string
+	- location : user string (optional)
+	- description : user string (optional)
+	- date : "YYYY-MM-DD" (optional)
+	- time_start : integer representing minutes from 00:00 (optional)
+	- time_end : integer representing minutes from 00:00 (optional)
+
+	May use ScheduleForm in forms.py in the template passed as schedule_form.
 
 	Response: use JSON string
 	{
