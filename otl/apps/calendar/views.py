@@ -18,16 +18,55 @@ def index(request):
 		}, context_instance=RequestContext(request))
 
 @login_required_ajax
+def list_calendar(request):
+	"""
+	Lists the calendars.
+
+	Request: None
+	Response: use JSON string
+	[
+		{
+			"id": integer id of a calendar,
+			"title": string
+			"color": integer index of predefined colors
+			"enabeld": boolean
+		},
+		...
+	]
+	"""
+
+	# TODO: implement
+
+@login_required_ajax
+def modify_calendar(request):
+	"""
+	Modifies the propreties of the indicated calendar.
+
+	Request: use POST parameters
+	- id : integer id of a calendar
+	- color : integer index of predefined colors (1~10, optional)
+	- title : user string (max 60 chars, optional)
+	- enabled : true or false (optional)
+
+	Response: use JSON string
+	{
+		"result": "OK" | "NOT_FOUND" | "FAILED"
+	}
+	"""
+
+	# TODO: implement
+
+@login_required_ajax
 def add_shcedule(request):
 	"""
 	Adds a schedule item.
 	Currently does not support repeated schedules.
 
-	Request: use GET parameters
+	Request: use POST parameters
 	- type : "repeated" | "single"
 	- summary : user string (max 120 chars)
-	- location : user string (max 120 chars, may be blank)
-	- description : user string (long, may be blank)
+	- location : user string (max 120 chars, optional)
+	- description : user string (long, optional)
 	- date : "YYYY-MM-DD"
 	- time_start : integer representing minutes from 00:00
 	- time_end : integer representing minutes from 00:00
@@ -42,11 +81,30 @@ def add_shcedule(request):
 	# TODO: implement
 
 @login_required_ajax
+def modify_schedule(request):
+	"""
+	Modifies a schedule item.
+
+	Request: use POST parameters
+	- summary
+	- location
+	- description
+	- date
+	- time_start
+	- time_end
+
+	Response: use JSON string
+	{
+		"result": "OK" | "NOT_FOUND" | "FAILED"
+	}
+	"""
+
+@login_required_ajax
 def delete_schedule(request):
 	"""
 	Delete a schedule item.
 
-	Request: use GET parameters
+	Request: use POST parameters
 	- id : integer id of an item
 
 	Response: use JSON string
