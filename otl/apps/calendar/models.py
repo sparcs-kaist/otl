@@ -10,9 +10,21 @@ from datetime import datetime
 
 class Calendar(models.Model):
 	owner = models.ForeignKey(User)
+	system_id = models.CharField(max_length=20, blank=True)
 	title = models.CharField(max_length=60)
 	color = models.IntegerField()
 	enabled = models.BooleanField(default=True)
+
+	"""
+	시스템 상에서 사용자가 생성될 때 기본으로 추가되는 Calendar 종류는 다음과 같다.
+	Calendar 이름은 가입시 설정하는 언어에 따라 생성되며 나중에 사용자가 변경할 수 있다.
+	각각은 뒤에 붙어있는 system_id 값을 가지며 이 값이 비어있지 않은 경우 사용자가 임의로 삭제할 수 없다.
+	(사용자가 생성하는 달력은 해당 값을 비워두어 구분하는데, 아직 사용자 달력 생성은 지원하지 않음)
+
+	- 학과시간표 / timetable
+	- 약속 / appointment
+	- 개인일정 / private
+	"""
 
 	def __unicode__(self):
 		return u'%s\'s %s' % (self.title, self.owner.username)

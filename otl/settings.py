@@ -90,15 +90,15 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.admin',
-    'django_extensions',
-    'otl.apps.main',
     'otl.apps.timetable',
     'otl.apps.calendar',
-    'otl.apps.appointment',
     'otl.apps.groups',
     'otl.apps.favorites',
+    'otl.apps.appointment',
     'otl.apps.accounts',
     'otl.utils',
+    'otl.apps.main',
+    'django_extensions',
 )
 
 AUTHENTICATION_BACKENDS = (
