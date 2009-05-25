@@ -43,6 +43,8 @@ def list_calendar(request):
 	]
 	"""
 
+	# TODO: 기본으로 가지는 시간표 달력이나, 가입할 때 자동으로 추가할 기본 달력 결정 필요
+
 	items = Calendar.objects.filter(owner=request.user)	
 	result = []
 	for item in items:
@@ -113,6 +115,8 @@ def list_schedule(request):
 		...
 	]
 	"""
+
+	# TODO: 시간표 달력 데이터를 가져와서 이런 형태로 가공?
 
 	items = Schedule.objects.filter(date__gte=date_start, date__lte=date_end)
 	result = []
