@@ -107,6 +107,7 @@ def list_schedule(request):
 			"calendar": integer id of the calendar to which this belongs,
 			"summary": string,
 			"location": string or null,
+			"range": integer; 0 (일일), 1 (종일)
 			"description": string or null,
 			"date": "YYYY-MM-DD",
 			"time_start": integer representing minutes from 00:00,
@@ -126,6 +127,7 @@ def list_schedule(request):
 			'calendar': item.belongs_to.id,
 			'summary': item.summary,
 			'location': item.location,
+			'range': item.range,
 			'description': item.description,
 			'date': item.date.strftime('%Y-%m-%d'),
 			'time_start': item.time_start.hour * 60 + item.time_start.minute,
@@ -179,6 +181,7 @@ def add_schedule(request):
 	- calendar : integer id of a calendar which will include this item
 	- summary : user string (max 120 chars)
 	- location : user string (max 120 chars, optional)
+	- range : integer; 0 (일일), 1 (종일)
 	- description : user string (long, optional)
 	- date : "YYYY-MM-DD"
 	- time_start : integer representing minutes from 00:00
@@ -202,6 +205,7 @@ def add_schedule(request):
 				item.summary = f.cleaned_data['summary']
 				item.location = f.cleaned_data['location']
 				item.description = f.cleaned_data['description']
+				item.range = f.cleaned_data['range']
 				item.date = f.cleaned_data['date']
 				item.time_start = f.cleaned_data['time_start']
 				item.time_end = f.cleaned_data['time_end']
@@ -224,15 +228,6 @@ def modify_schedule(request):
 	Modifies a schedule item.
 
 	Request: use POST parameters
-<<<<<<< /home/julingks/cs408/otl/apps/calendar/views.py
-    - id
-	- summary
-	- location
-	- description
-	- date
-	- time_start
-	- time_end
-=======
 	- id : integer id of an item
 	- summary : user string
 	- location : user string (optional)
@@ -244,7 +239,6 @@ def modify_schedule(request):
 	You should refer ScheduleModifyForm in forms.py.
 	The request should be filled with all necessary fields.
 	(Not only the changed fields)
->>>>>>> /tmp/views.py~other.BwB4yF
 
 	Response: use JSON string
 	{

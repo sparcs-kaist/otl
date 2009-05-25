@@ -30,6 +30,14 @@ WEEKDAYS = (
 	(6, u'일'),
 )
 MONTHDAYS = [(i, u'%d' % i) for i in xrange(1, 32)]
+SCHEDULE_TYPES = (
+	('repeated', u'반복 일정'),
+	('single', u'단독 일정'),
+)
+SCHEDULE_RANGES = (
+	(0, u'일일'),
+	(1, u'종일'),
+)
 SCHEDULE_REPEAT_TYPES = (
 	(1, u'매주'),
 	(2, u'매월'),

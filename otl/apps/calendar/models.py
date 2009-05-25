@@ -85,9 +85,10 @@ class Schedule(models.Model):
 	one_of = models.ForeignKey(RepeatedSchedule, null=True, blank=True)
 	summary = models.CharField(max_length=120)
 	location = models.CharField(max_length=120, blank=True)
+	range = models.SmallIntegerField(choices=SCHEDULE_RANGES, default=0)
 	date = models.DateField()
-	begin = models.TimeField()
-	end = models.TimeField()
+	begin = models.TimeField(blank=True, null=True)
+	end = models.TimeField(blank=True, null=True)
 	description = models.TextField(blank=True)
 
 	def separate_from_repeated(self):
