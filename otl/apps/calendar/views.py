@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 from otl.apps.calendar.forms import ScheduleForm
 from otl.apps.calendar.models import Calendar, Schedule
 from otl.utils.decorators import login_required_ajax
-from otl.utils import render_as_json
+from otl.utils import response_as_json
 
 def index(request):
 	if settings.SERVICE_STATUS == 'beta':
@@ -54,7 +54,7 @@ def list_calendar(request):
 			'color': item.color,
 			'enabled': item.enabled,
 		})
-	return render_as_json(result)
+	return response_as_json(request, result)
 
 @login_required_ajax
 def modify_calendar(request):
@@ -89,7 +89,7 @@ def modify_calendar(request):
 			result = {'result':'FAILED'}
 	else:
 		return HttpResponseBadRequest('Should be called with POST method')
-	return render_as_json(result)
+	return response_as_json(request, result)
 
 @login_required_ajax
 def list_schedule(request):
@@ -131,7 +131,7 @@ def list_schedule(request):
 			'time_start': item.time_start.hour * 60 + item.time_start.minute,
 			'time_end': item.time_end.hour * 60 + item.time_end.minute,
 		})
-	return render_as_json(result)
+	return response_as_json(request, result)
 
 @login_required_ajax
 def get_schedule(request):
@@ -166,7 +166,7 @@ def get_schedule(request):
 		result = {'result':'NOT_FOUND'}
 	except (KeyError, TypeError, ValueError):
 		result = {'result':'FAILED'}
-	return render_as_json(result)
+	return response_as_json(request, result)
 
 @login_required_ajax
 def add_schedule(request):
@@ -216,7 +216,7 @@ def add_schedule(request):
 			result = {'result':'FAILED'}
 	else:
 		return HttpResponseBadRequest('Should be called with POST method.')
-	return render_as_json(result)
+	return response_as_json(request, result)
 
 @login_required_ajax
 def modify_schedule(request):
@@ -263,7 +263,7 @@ def modify_schedule(request):
 			result = {'result':'FAILED'}
 	else:
 		return HttpResponseBadRequest('Should be called with POST method.')
-	return render_as_json(result)
+	return response_as_json(request, result)
 
 @login_required_ajax
 def delete_schedule(request):
@@ -289,7 +289,7 @@ def delete_schedule(request):
 			result = {'result':'FAILED'}
 	else:
 		return HttpResponseBadRequest('Should be called with POST method.')
-	return render_as_json(result)
+	return response_as_json(request, result)
 
 @login_required
 def search_schedule(request):

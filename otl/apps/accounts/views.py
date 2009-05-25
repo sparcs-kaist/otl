@@ -9,7 +9,7 @@ from otl.utils import cache_with_default
 from otl.apps.timetable.models import Lecture
 from otl.apps.favorites.models import CourseLink
 from otl.apps.groups.models import GroupBoard
-from otl.apps.calendar.models import Calendar
+from otl.apps.calendar.models import Calendar, RepeatedSchedule, Schedule
 from otl.apps.accounts.models import UserProfile, Department, get_dept_from_deptname
 from otl.apps.accounts.forms import LoginForm, ProfileForm
 import base64, hashlib, time, random, urllib, re
@@ -19,7 +19,7 @@ def login(request):
 	num_users = cache_with_default('stat.num_users', lambda: User.objects.count() - 1, 60)
 	num_lectures = cache_with_default('stat.num_lectures', lambda: Lecture.objects.filter(year=settings.NEXT_YEAR, semester=settings.NEXT_SEMESTER).count(), 600)
 	num_favorites = cache_with_default('stat.num_favorites', lambda: CourseLink.objects.count(), 60)
-	num_schedules = cache_with_default('stat.num_schedules', lambda: Schedule.objects.count(), 30)
+	num_schedules = cache_with_default('stat.num_schedules', lambda: Schedule.objects.filter(one_of=None).count() + RepeatedSchedule.objects.count(), 30)
 	num_groups = cache_with_default('stat.num_groups', lambda: GroupBoard.objects.count(), 60)
 
 	next_url = request.GET.get('next', '/')
@@ -78,10 +78,11 @@ def login(request):
 					# Already existing user
 					if not user.is_superuser:
 						profile = UserProfile.objects.get(user=user)
+						# TODO: update profile from portal account if needed
 					auth.login(request, user)
 					# If persistent login options is set, let the session expire after 2-weeks.
 					if request.POST.has_key('persistent_login'):
-						request.session.set_expiry(28*24*3600)
+						request.session.set_expiry(14*24*3600)
 					return HttpResponseRedirect(next_url)
 		else:
 			# Show privacy agreement form after confirming this is a valid user in KAIST.
@@ -89,7 +90,7 @@ def login(request):
 				user = User.objects.get(username = request.POST['username'])
 				user.backend = 'otl.apps.accounts.backends.KAISTSSOBackend'
 
-				# Create/update user's profile
+				# Create user's profile
 				try:
 					profile = UserProfile.objects.get(user__exact = user)
 				except UserProfile.DoesNotExist:
