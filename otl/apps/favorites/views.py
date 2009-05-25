@@ -6,10 +6,10 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
-
+from django.db.models import Q
 from otl.apps.favorites.models import CourseLink
 from otl.apps.common import *
-from django.db.models import Q
+from otl.utils.decorators import login_required_ajax
 import time
 
 NUM_PER_PAGE = 10
@@ -59,7 +59,7 @@ def add(request, course_id):
 	count = course_selected.favored_count
 	n=user.favorite_set.filter(id__exact = course_id).count()
 	if n==0:
-		course_selected.favored_by.add( user )
+		course_selected.favored_by.add(user)
 		CourseLink.objects.filter(id__exact = course_id).update(favored_count = count + 1)
 	return HttpResponseRedirect('/favorites/');
 
@@ -72,7 +72,7 @@ def create(request):
 	new_writer = request.user
 	new_course_link = CourseLink.objects.create(course_name = new_name, year = settings.CURRENT_YEAR, \
 			semester = settings.CURRENT_SEMESTER, url = new_url, writer= new_writer, favored_count = 1)
-	new_course_link.favored_by.add( new_writer )
+	new_course_link.favored_by.add(new_writer)
 
 	return HttpResponseRedirect('/favorites/');
 

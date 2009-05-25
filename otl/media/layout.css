@@ -152,6 +152,95 @@ body
 	background:#292929;
 }
 
+a#myfavorites
+{
+	display: block;
+	position: absolute;
+	bottom: 0;
+	right: 130px;
+	float: none;
+	border: 0 none;
+	background: transparent url('./images/icon_favorite_star.png') no-repeat 2px center;
+	width: 80px;
+	height: 15px;
+	line-height: 1.0;
+	padding: 6px 3px 3px 22px;
+	margin-right: 10px;
+	text-align: left;
+	cursor: pointer;
+}
+
+a#myfavorites:hover
+{
+	background: transparent;
+	color: black;
+}
+
+#myfavorites-menu
+{
+	position: absolute;
+	background: transparent;
+	visibility: hidden;
+	width: 140px;
+	z-index: 1000;
+	margin: 0;
+	padding: 0;
+}
+
+#myfavorites-menu p
+{
+	width: 140px;
+	height: 15px;
+	background: transparent url('./images/bg_myfavorites.gif') no-repeat 0 0;
+	margin: 0;
+	line-height: 1.0;
+	padding: 6px 3px 2px 22px;
+	text-align: left;
+}
+
+#myfavorites-menu ul
+{
+	list-style: none;
+	border-left: 1px solid #999;
+	border-right: 1px solid #999;
+	border-bottom: 1px solid #999;
+	margin: 0;
+	padding: 0;
+	box-shadow: 2px 2px 3px #999;
+	-webkit-box-shadow: 2px 2px 3px #999;
+}
+
+#myfavorites-menu li
+{
+	float: none;
+	margin: 0;
+	padding: 0;
+	background: white;
+}
+
+#myfavorites-menu li span
+{
+	padding-left: 2px;
+}
+
+#myfavorites-menu a
+{
+	display: block;
+	border: 0 none;
+	margin: 0;
+	padding: 2px 4px;
+	line-height: 1.4;
+	background: white;
+	text-align: left;
+	cursor: pointer;
+}
+
+#myfavorites-menu a:hover
+{
+	background: #ffc;
+	color: black;
+}
+
 #feedbacks
 {
 	text-align:center;
