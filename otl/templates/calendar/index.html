@@ -2,22 +2,189 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<title>OTL - Calendar</title>
-	<link rel="stylesheet" type="text/css" href="/media/default.css" />
+	<title>OTL - Calendar</title>
+	<link rel="stylesheet" type="text/css" href="/media/default.css"/>
 	<link rel="stylesheet" type="text/css" href="/media/calendar.css"/>
-	<link rel="stylesheet" type="text/css" href="/media/js/calendarview/calendarview.css"/>
+	<link rel="stylesheet" type="text/css" href="/media/js/scal/styles/scal.css"/>
 
 	<script type="text/javascript" src="/media/js/prototype/prototype-1.6.0.3.js"></script>
+	<script type="text/javascript" src="/media/js/scriptaculous/src/scriptaculous.js?load=effects,builder"></script>
 	<script type="text/javascript" src="/media/js/layoutmanager/src/layout_manager.js"></script>
-	<script type="text/javascript" src="/media/js/calendarview/calendarview.js"></script>
-	<script type="text/javascript">
+	<script type="text/javascript" src="/media/js/scal/javascripts/scal.js"> </script>
+	<script type="text/javascript" src="/media/js/browserdetect/browserdetect.js"></script>
+<script type="text/javascript">
 
-	var layoutManager = null;
+var LayoutMgr;
+
+var DrawBlock =	{
+initialize:
+	function(){
+		this.grid=$('grid');
+		this.dragging=false;
+		this.onLoad();
+		this.registHandlers();
+	},
+onLoad:
+	function(){
+		this.block=Builder.node('div',{'class':'block-drag'});
+		this.block.style.width=(this.grid.offsetWidth/7-3)+'px';
+		this.block.hide();
+		this.grid.appendChild(this.block); 
+	},
+registHandlers:
+	function(){
+		Event.observe(this.grid,'mousedown',this.onStart.bindAsEventListener(this));
+		Event.observe(document,'mousemove',this.onDrag.bindAsEventListener(this));
+		Event.observe(document,'mouseup',this.onEnd.bindAsEventListener(this));
+	},
+getPosition:
+	function(wrap,e)
+	{
+		var  wrapOffsets = Position.cumulativeOffset(wrap);
+		while( wrap.nodeName != 'BODY' ) 
+		{
+			wrapOffsets[1] -= wrap.scrollTop  || 0;
+			wrapOffsets[0] -= wrap.scrollLeft || 0;
+			wrap = wrap.parentNode;
+		}           
+		return {
+			x : (Event.pointerX(e)-wrapOffsets[0]),
+			y : (Event.pointerY(e)-wrapOffsets[1])
+		};
+	},
+onStart:
+	function(e){
+		Popup.hide();
+		this.dragging=true;
+		this.startPos = this.getPosition(this.grid,e);
+		var w = this.grid.offsetWidth/7;
+		//var w = Math.floor(this.grid.offsetWidth/7);
+
+		var x =  Math.floor(this.startPos.x/w)*w+3;
+		var y =  Math.floor(this.startPos.y/21)*21;
+
+		this.block.style.left=x+'px';
+		this.block.style.top=y+'px';
+		this.block.style.height='21px';
+		this.block.show();
+		Event.stop(e);
+	},
+onDrag:
+	function(e){
+		if(this.dragging)
+		{
+			var curPos = this.getPosition(this.grid,e);
+			var height = Math.floor((curPos.y-this.startPos.y)/21+1)*21;
+			this.block.style.height=height +'px';
+		}
+	},
+onEnd:
+	function(e){
+		if(this.dragging)
+		{
+			this.dragging=false;
+			var curPos = this.getPosition(document.body,e);
+			Popup.show();
+		}
+	}
+};
+
+
+
+MWCalendar = 
+{
+
+initialize:
+	function(){
+		var options ={
+			titleformat:'mmmm yyyy',
+			updateformat:'yyyy-mm-dd',	
+			dayheadlength:2,
+			weekdaystart:0,
+			tabular:false,
+			planner:false
+		};
+		var  scal= new Scal('calendar',this.onChange.bindAsEventListener(this), options);
+		this.onLoad();
+		this.registHandlers();
+	},
+onLoad:
+	function(){
+	},
+onChange:
+	function(e)
+	{
+	},
+registHandlers:
+	function(){
+	}
+};
+
+Popup=
+{
+initialize:
+	function(){
+		this.popup=$('popup');
+		this.popup.hide();
+		this.registHandlers();
+	},
+show:
+	function(time){
+		$('schedule-time').update('14');
+		$('schedule-summary').value='';
+		$('schedule-location').value='';
+		$('schedule-description').value='';
+		this.popup.show();
+		$('schedule-summary').activate();
+	},
+hide:
+	function(){
+		DrawBlock.block.hide();
+		this.popup.hide();
+	},
+registHandlers:
+	function(){
+		Event.observe(document,'keypress',function(e){
+			if (e.keyCode==27&&this.popup.visible) this.hide();
+		}.bind(this));
+		Event.observe($('left-side'), 'mousedown', this.hide.bind(this));
+		Event.observe($('gbar'), 'mousedown', this.hide.bind(this));
+		Event.observe($('navigation'), 'mousedown', this.hide.bind(this));
+		Event.observe($('navigator'), 'mousedown', this.hide.bind(this));
+		Event.observe($('timetable-top'), 'mousedown', this.hide.bind(this));
+		Event.observe($('rowheaders'), 'mousedown', this.hide.bind(this));
+		Event.observe($('popup-submit'), 'click', this.onSubmit.bind(this));
+	},
+onSubmit:
+	function(){
+		//TODO validate
+		//TODO ajax call
+		alert(
+			$('schedule-time').innerHTML+' '+
+			$('schedule-summary').value+' '+
+			$('schedule-location').value+' '+
+			$('schedule-description').value
+		);
+		this.hide();
+	},
+validate:
+	function(){
+	},
+update:
+	function(){
+	}
+};
+
 	Event.observe(window, "load", function() { 
 		var resizeHandler = function()
 		{
 			$('grid-wrap').style.width=($('grid-wrap').parentNode.offsetWidth-$('rowheaders').offsetWidth)+'px';
 		};
-		layoutManager = new LayoutManager(null,{resizeHandler:resizeHandler}); 
+		LayoutMgr = new LayoutManager(null,{resizeHandler:resizeHandler}); 
+		Popup.initialize();
+		BrowserDetect.init();
+		DrawBlock.initialize();
+		MWCalendar.initialize();
 	});
 	</script>
 </head>
@@ -45,35 +212,42 @@
                 <div class="clear"></div>
             </div>
         </div>
-		<div class="lm_left" style="width:10px"></div>
+		<div class="lm_left" style="width:8px"></div>
 		<div id="left-side" class="lm_left">
 			<div class="lm_container">
 				<div  class="header lm_top">
 					<div class="logo"></div>
 				</div>
 				<div  class="header-bottom lm_top"></div>
-				<div class="lm_top" style="height:50px"></div>
-				<div id="calendar-wrap" class="lm_top">
-					<div id="calendar">
+				<div class="lm_top" style="height:40px"></div>
+				<div id="calendar-container" class="lm_top">
+					<div id="calendar-wrap" style="line-height:normal;">
+						<div id="calendar" class="googleblue"></div>
 					</div>
 				</div>
 				<div class="lm_center">
 					<br />
 					<div class="side-box">
-						<div class="top"><div>my calendar</div></div>
-						<div class="content"><div>
-							<ul>
-								<li>calendar 1</li>
-								<li>calendar 2</li>
-								<li>calendar 3</li>
-								<li>calendar 4</li>
-								<li>calendar 5</li>
-							</ul>
-						</div></div>
+						<div class="top"><div>내 캘린더</div></div>
+						<div id="calendar-list" class="content-wrap">
+							<div class="content">
+								<div class="calendar-item">
+									<div class="name tl"><div class="tr"><div class="bl"><div class="br">내 캘린더</div></div></div></div>
+									<a class="color"></a>
+									<div class="clear"></div>
+								</div>
+								<div class="calendar-item">
+									<div class="name tl"><div class="tr"><div class="bl"><div class="br">내 캘린더</div></div></div></div>
+									<a class="color"></a>
+									<div class="clear"></div>
+								</div>
+							</div>
+						</div>
 						<div class="bottom"><div>
-							설정 만들기
+							<a class="right" id="add-calendar">만들기</a>
 						</div></div>
 					</div>
+					<div id="dump"></div>
 				</div>
 				<div class="lm_right" style="width:6px"></div>
 			</div>
@@ -96,11 +270,13 @@
 				</div>
 				<div class="header-bottom lm_top"></div>
 				<div class="lm_top" style="height:5px"></div>
-				<div id="message-bar" class="lm_top">
-					<span style="background:#FAD163">일정이 삭제 되었습니다. 실행취소</span>
-				</div>
-				<div id="navigator" class="lm_top">
-					오늘 2009년 4월 13일 – 19일  새로고침
+				<div id="navigator" class="lm_top" style="height:26px">
+					<a id="prev-day"></a>
+					<button id="today">오늘</button>
+					<a id="next-day"></a>
+					<span id="current-date">2009년 4월 13일 – 9일 </span>
+					<div class="tl message"><div class="tr"><div class="bl"><div class="br" style="padding:2px 10px">일정이 삭제 되었습니다</div></div></div></div>
+					<button class="right" id="refresh">새로고침</button>
 				</div>
 				<div id="center-left" class="lm_left"></div>
 				<div id="center" class="lm_center">
@@ -132,32 +308,30 @@
 						<div id="timetable-wrap" class="lm_center">
 							<div id="timetable">
 								<div id="rowheaders" class="lm_left">
+									<div class="rhead"><span>오전 12시</span></div>
+									<div class="rhead"><span>오전 1시</span></div>
+									<div class="rhead"><span>오전 2시</span></div>
+									<div class="rhead"><span>오전 3시</span></div>
+									<div class="rhead"><span>오전 4시</span></div>
+									<div class="rhead"><span>오전 5시</span></div>
+									<div class="rhead"><span>오전 6시</span></div>
+									<div class="rhead"><span>오전 7시</span></div>
+									<div class="rhead"><span>오전 8시</span></div>
+									<div class="rhead"><span>오전 9시</span></div>
+									<div class="rhead"><span>오전 10시</span></div>
+									<div class="rhead"><span>오전 11시</span></div>
+									<div class="rhead"><span>오후 12시</span></div>
+									<div class="rhead"><span>오후 1시</span></div>
+									<div class="rhead"><span>오후 2시</span></div>
+									<div class="rhead"><span>오후 3시</span></div>
+									<div class="rhead"><span>오후 4시</span></div>
+									<div class="rhead"><span>오후 5시</span></div>
+									<div class="rhead"><span>오후 6시</span></div>
+									<div class="rhead"><span>오후 7시</span></div>
+									<div class="rhead"><span>오후 8시</span></div>
+									<div class="rhead"><span>오후 9시</span></div>
 									<div class="rhead"><span>오후 10시</span></div>
-									<div class="rhead"><span>오후 10시</span></div>
-									<div class="rhead"><span>오후 10시</span></div>
-									<div class="rhead"><span>오후 10시</span></div>
-									<div class="rhead"><span>오후 10시</span></div>
-									<div class="rhead"><span>오후 10시</span></div>
-									<div class="rhead"><span>오후 10시</span></div>
-									<div class="rhead"><span>오후 10시</span></div>
-									<div class="rhead"><span>오후 10시</span></div>
-									<div class="rhead"><span>오후 10시</span></div>
-
-									<div class="rhead"><span>오후 10시</span></div>
-									<div class="rhead"><span>오후 10시</span></div>
-									<div class="rhead"><span>오후 10시</span></div>
-									<div class="rhead"><span>오후 10시</span></div>
-									<div class="rhead"><span>오후 10시</span></div>
-									<div class="rhead"><span>오후 10시</span></div>
-									<div class="rhead"><span>오후 10시</span></div>
-									<div class="rhead"><span>오후 10시</span></div>
-									<div class="rhead"><span>오후 10시</span></div>
-									<div class="rhead"><span>오후 10시</span></div>
-
-									<div class="rhead"><span>오후 10시</span></div>
-									<div class="rhead"><span>오후 10시</span></div>
-									<div class="rhead"><span>오후 10시</span></div>
-									<div class="rhead"><span>오후 10시</span></div>
+									<div class="rhead"><span>오후 11시</span></div>
 								</div><!--rowheaders-->
 								<div id="grid-wrap">
 									<div id="grid">
@@ -178,7 +352,67 @@
 				<div class="lm_bottom" style="height:8px;"></div>
 			</div><!--lm_container-->
 		</div><!--wrap-->
-		<div class="lm_right" style="width:10px"></div>
+		<div class="lm_right" style="width:8px"></div>
 	</div><!--lm_container-->
+	<div id="popup">
+		<table class="container">
+			<thead>
+				<tr>
+					<td class="north-west"></td>
+					<td class="north"></td>
+					<td class="north-east">
+					</td>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td class="west"></td>
+					<td class="middle">	
+						<table>
+							<tr>
+								<td>시간:</td>
+								<td><span id="schedule-time"></span></td>
+							</tr>
+							<tr>
+								<td>내용:</td>
+								<td><input id="schedule-summary" size="35" type="text" /></td>
+							</tr>
+							<tr>
+								<td>장소:</td>
+								<td><input id="schedule-location" size="35" type="text" /></td>
+							</tr>
+							<tr>
+								<td>설명:</td>
+								<td><textarea id="schedule-description" rows="5" cols="30"></textarea></td>
+							</tr>
+							<tr>
+								<td>캘린더:</td>
+								<td>
+									<select id="schedule-calendar">
+										<option>내 캘린더</option>
+										<option>내 캘린더</option>
+										<option>내 캘린더</option>
+										<option>내 캘린더</option>
+									</select>
+								</td>
+							</tr>
+						</table>
+						<br />
+						<button id="popup-submit">일정 만들기</button>
+					</td>
+					<td class="east"></td>
+				</tr>
+			</tbody>
+			<tfoot>
+				<tr>
+					<td class="south-west"></td>
+					<td class="south"></td>
+					<td class="south-east"></td>
+				</tr>
+			</tfoot>
+		</table>
+		<a id="popup-close" onclick="$('popup').hide();return false;"></a>
+		<div id="popup-arrow"></div>
+	</div>
 </body>
 </html>

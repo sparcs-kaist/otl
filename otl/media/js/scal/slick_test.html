@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <title>Scal Slick Functional Test</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <script src="javascripts/prototype.js" type="text/javascript"></script>
+    <script src="javascripts/effects.js" type="text/javascript"></script>
+    <script src="javascripts/scal.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="styles/scaltables.css" type="text/css" media="screen"/>
+    <style type="text/css">
+        html,html body {height:100%;}
+        #container {
+            width: 95%;
+            margin: 0 auto;
+            padding: 0px;
+            height: 100%;
+        }
+        .samplecal {
+            width: 100%;
+            margin: 0 auto;
+            padding: 0px;
+            height: 100%;
+        }
+    </style> 
+  </head>
+    <body>
+        <div id="container">
+            <form name="scalform" id="scalform" method="post" action="#">
+                <input type="text" id="samplecal_value" name="samplecal_value" />
+            </form>
+            <div class="scal tinyscal slick" id="samplecal">&nbsp;</div>
+        </div>
+    <script type="text/javascript" language="javascript">
+    // <![CDATA[
+        var options = Object.extend({
+            titleformat:'mmmm yyyy',
+            closebutton:'<img src="styles/images/close.gif" />',
+            dayheadlength:2,
+            prevbutton: '<img src="styles/images/prev.gif" />',
+            nextbutton: '<img src="styles/images/next.gif" />',
+            yearnext: '<img src="styles/images/nexty.gif" />',
+            yearprev: '<img src="styles/images/prevy.gif" />',
+            weekdaystart:0,
+            tabular: true,
+            planner: false
+        });	
+        var updateyear = function(d){ $('samplecal_value').value = d.format('mmmm dd, yyyy'); };		
+        var samplecal = new scal('samplecal', 'samplecal_value', options);
+        // ]]>
+    </script>
+  </body>
+</html>

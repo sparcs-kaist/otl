@@ -224,6 +224,15 @@ def modify_schedule(request):
 	Modifies a schedule item.
 
 	Request: use POST parameters
+<<<<<<< /home/julingks/cs408/otl/apps/calendar/views.py
+    - id
+	- summary
+	- location
+	- description
+	- date
+	- time_start
+	- time_end
+=======
 	- id : integer id of an item
 	- summary : user string
 	- location : user string (optional)
@@ -235,6 +244,7 @@ def modify_schedule(request):
 	You should refer ScheduleModifyForm in forms.py.
 	The request should be filled with all necessary fields.
 	(Not only the changed fields)
+>>>>>>> /tmp/views.py~other.BwB4yF
 
 	Response: use JSON string
 	{

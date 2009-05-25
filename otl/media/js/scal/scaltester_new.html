@@ -1,0 +1,207 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <link rel="stylesheet" href="styles/stylemain.css" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="styles/scal.css" type="text/css" media="screen"/>
+    <script src="javascripts/prototype.js" type="text/javascript"></script>
+    <script src="javascripts/scal.js" type="text/javascript"></script>
+	
+    <title>Scal Tester - A Mini Test Suite for Checking Scal</title>
+    <style type="text/css">
+        form fieldset {
+            display: block;
+            margin: 0px;
+            padding: 0 1em 1em 1em;
+            font-size: 10pt;
+        }
+
+        form input {
+            display: block;
+            width: 15em;
+        }
+
+        form label {
+            display: block;
+            margin-bottom: 1em;
+            font-weight: bold;
+        }
+
+        form label.first {
+            padding-top: 1em;
+        }
+
+        form select {
+            display: block;
+        }
+    </style>
+</head>
+<script>
+<!--
+/* Sample for support different language translations
+Object.extend(Date.prototype, {
+    monthnames: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+    daynames: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"]
+});
+*/
+var samplecal;
+
+    function init(){
+        showcalendars();
+        $('day').value = samplecal.startdate.getDate();
+        $('month').value = samplecal.startdate.getMonth();
+        $('year').value = samplecal.startdate.getFullYear();
+    }
+    function showcalendars(){
+        var options = Object.extend({
+            titleformat:'mmmm yyyy',
+            closebutton:'X',
+            dayheadlength:2,
+            weekdaystart:0,
+            planner: true
+            },arguments[0] || { });
+        samplecal = new scal('samplecal', updateyear, options);
+    }
+    function switchcalendar(form) {
+        var d = new Date($F('switchyear'),$F('switchmonth'),$F('switchday'));
+        samplecal.setCurrentDate(d);
+    }
+    function buidcalendar(form) {
+        var inputs = form.getInputs();
+        var options = {};
+        inputs.each(function(n){
+            var id = n.getAttribute('id');
+            if(id == 'exactweeks') {
+                var val = n.checked;
+            } else {
+                var val = n.value;
+            }
+            if(/^\d+$/.test(val)) {
+                val = new Number(val);
+            }
+            options[id] = val;
+        });
+        samplecal.destroy();
+        showcalendars(options);
+    }
+    function changestyle(event){
+        clicked = Event.element(event);
+        $('samplecal').className = '';
+        $('samplecal').addClassName(clicked.innerHTML);
+    }
+    function updateyear(d){
+        $('samplecal_value').update(d.format('mmmm dd, yyyy'));
+    }
+    function explodeday(){
+        $(samplecal).setCurrentDate(samplecal.selecteddate);
+        $(samplecal).buildCalendar();
+        $(samplecal).getCalendar();
+        $(samplecal.baseelement).update();
+        $(samplecal.baseelement).appendChild(samplecal.selecteddatecell);
+    }
+
+-->
+</script>
+<body onload="init();">
+    <div>
+        <div style="float:left;width:200px;">
+            <p>Included Styles: (click names to change style of the sample calendar below)
+            <ul>
+                <li class="calname" onclick="changestyle(event);">scal</li>
+                <li class="calname" onclick="changestyle(event);">scal tinyscal</li>
+                <li class="calname" onclick="changestyle(event);">iscal</li>
+                <li class="calname" onclick="changestyle(event);">dashblack</li>
+                <li class="calname" onclick="changestyle(event);">googleblue</li>
+                <li class="calname" onclick="changestyle(event);">iphonic</li>
+            </ul>
+        </div>
+        <div style="margin-left: 220px;min-height:350px;margin-top:20px;">
+            <!--
+            Some testin' stuff!
+            <div class="calbutton" onclick="explodeday();" style="float:left;">Explode Day</div>
+            <div class="calbutton" onclick="samplecal.buildCalendar();samplecal.getCalendar();" style="margin-left:150px;clear:right;">Reset Calendar</div>
+            -->
+            <div class="calbutton" onclick="samplecal.toggleCalendar();" style="float:left;">Close Calendar</div>
+            <div class="calbutton" onclick="samplecal.toggleCalendar();" style="margin-left:150px;clear:right;">Open Calendar</div>
+            <form id="build" name="build" style="display: block; float: right; width: 300px;" onsubmit="buidcalendar(this); return false;">
+                <fieldset>
+                    <legend>
+                        Build Your Own
+                    </legend>
+                    <label class="first" for="titleformat">
+                        Title Format
+                        <input id="titleformat" name="titleformat" type="text" value="mmmm yyyy" />
+                    </label>
+                    <label for="closebutton">
+                        Close Button
+                        <input id="closebutton" name="closebutton" type="text" value="X" />
+                    </label>
+                    <label for="prevbutton">
+                        Previous Button
+                        <input id="prevbutton" name="prevbutton" type="text" value="&amp;laquo;" />
+                    </label>
+                    <label for="nextbutton">
+                        Next Button
+                        <input id="nextbutton" name="nextbutton" type="text" value="&amp;raquo;" />
+                    </label>
+                    <label for="dayheadlength">
+                        Day Head Length
+                        <input id="dayheadlength" name="dayheadlength" type="text" value="2" />
+                    </label>
+                    <label for="weekdaystart">
+                        Weekday Start
+                        <input id="weekdaystart" name="weekdaystart" type="text" value="0" />
+                    </label>
+                    <label for="day">
+                        Start Day
+                        <input id="day" name="day" type="text" value="1" />
+                    </label>
+                    <label for="month">
+                        Start Month
+                        <input id="month" name="month" type="text" value="1" />
+                    </label>
+                    <label for="year">
+                        Start Year
+                        <input id="year" name="year" type="text" value="" />
+                    </label>
+                    <label for="exactweeks">
+                        Exact Weeks
+                        <input style="width: 20px;" id="exactweeks" name="exactweeks" type="checkbox" />
+                    </label>
+
+                    <input type="submit" value="Build It" />
+                </fieldset>
+            </form>
+            <form id="switch" name="switch" style="display: block; float: right; width: 300px;" onsubmit="switchcalendar(this); return false;">
+                <fieldset>
+                    <legend>Switch Date</legend>
+                    <label for="switchday">
+                        Day
+                        <input id="switchday" name="switchday" type="text" value="" />
+                    </label>
+                    <label for="switchmonth">
+                        Month
+                        <input id="switchmonth" name="switchmonth" type="text" value="" />
+                    </label>
+                    <label for="switchyear">
+                        Year
+                        <input id="switchyear" name="switchyear" type="text" value="" />
+                    </label>
+                    <label for="switchstring">
+                        Or pick one from the list:
+                    <select id="switchstring" name="switchstring" onchange="samplecal.setCurrentDate($F('switchstring')); return false;">
+                        <option>init</option>
+                        <option>monthup</option>
+                        <option>monthdown</option>
+                        <option>yearup</option>
+                        <option>yeardown</option>						
+                    </select>
+                    </label>
+                    <input type="submit" value="Switch It" />
+                </fieldset>
+            </form>            
+            <div id="samplecal" class="scal"></div>
+            <div id="samplecal_value" class="featured">&nbsp;</div>
+        </div>
+    </div>
+</body>
+</html>
