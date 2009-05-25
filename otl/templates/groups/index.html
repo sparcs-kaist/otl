@@ -80,8 +80,8 @@ function pwShow(form)
 	<ul>
 		{% for item in recently_added_list %}
 		<li>
-		<h4>{{item.group_name}}: {{item.comment}}</h4>
-			<a class="group-link" href="/groups/list/?id={{item.id}}">{{item.group_name}}</a>
+		<h4><a href="/groups/list/?id={{item.id}}">{{item.group_name}}: {{item.comment}}</a></h4>
+		만든이 : <a href="/accounts/view/{{item.maker.username}}">{{item.maker.username}}</a>
 			<a class="control-join" href="#" onClick="return pwShow(joinform{{item.id}});" >Join</a>
 			<form id="joinform{{item.id}}" method="post" style="display:none" action="/groups/join/{{item.id}}">
 				<div id="join_group" >
