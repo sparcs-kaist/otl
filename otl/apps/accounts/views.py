@@ -9,7 +9,7 @@ from otl.utils import cache_with_default
 from otl.apps.timetable.models import Lecture
 from otl.apps.favorites.models import CourseLink
 from otl.apps.groups.models import GroupBoard
-from otl.apps.calendar.models import Schedule
+from otl.apps.calendar.models import Calendar
 from otl.apps.accounts.models import UserProfile, Department, get_dept_from_deptname
 from otl.apps.accounts.forms import LoginForm, ProfileForm
 import base64, hashlib, time, random, urllib, re
@@ -88,6 +88,8 @@ def login(request):
 			if request.POST['agree'] == 'yes':
 				user = User.objects.get(username = request.POST['username'])
 				user.backend = 'otl.apps.accounts.backends.KAISTSSOBackend'
+
+				# Create/update user's profile
 				try:
 					profile = UserProfile.objects.get(user__exact = user)
 				except UserProfile.DoesNotExist:
@@ -99,13 +101,42 @@ def login(request):
 				profile.save()
 				profile.favorite_departments.add(Department.objects.get(id=2044)) # 인문사회과학부는 기본으로 추가
 
+				# Create user's default system calendars
+				try:
+					Calendar.objects.get(owner=user, system_id='timetable')
+				except Calendar.DoesNotExist:
+					c = Calendar()
+					c.system_id = 'timetable'
+					c.title = u'시간표'
+					c.color = 1
+					c.save()
+
+				try:
+					Calendar.objects.get(owner=user, system_id='appointment')
+				except Calendar.DoesNotExist:
+					c = Calendar()
+					c.system_id = 'appointment'
+					c.title = u'약속'
+					c.color = 2
+					c.save()
+
+				try:
+					Calendar.objects.get(owner=user, system_id='private')
+				except Calendar.DoesNotExist:
+					c = Calendar()
+					c.system_id = 'private'
+					c.title = u'개인 일정'
+					c.color = 3
+					c.save()
+
+				# Registration finished!
 				auth.login(request, user)
 				return HttpResponseRedirect(next_url)
 			else:
 				return HttpResponseNotAllowed(u'개인정보 활용에 동의하셔야 서비스를 이용하실 수 있습니다. 죄송합니다.')
 
 	else:
-		# Show login form
+		# Show login form for GET requests
 		return render_to_response('login.html', {
 			'title': u'로그인',
 			'form_login': LoginForm(),

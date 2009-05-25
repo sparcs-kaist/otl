@@ -14,3 +14,9 @@ def index(request):
 			'section': 'appointment',
 			'title': u'약속 잡기',
 		}, context_instance=RequestContext(request))
+	
+def view(request, hash):
+	pass
+
+def create(request):
+	pass
