@@ -5,6 +5,7 @@ from django.core.paginator import Paginator
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
+from django.contrib.auth.decorators import login_required
 
 from otl.apps.favorites.models import CourseLink
 from otl.apps.common import *
@@ -50,45 +51,38 @@ def search(request):
 		'search_list': current_search_page.object_list,
 		'search_page': current_search_page,
 	}, context_instance=RequestContext(request))
-	
+
+@login_required
 def add(request, course_id):
-	if request.user.is_authenticated():	
-		user = request.user
-		course_selected = CourseLink.objects.get( id__exact = course_id )
-		count = course_selected.favored_count
-		n=user.favorite_set.filter(id__exact = course_id).count()
-		if n==0:
-			course_selected.favored_by.add( user )
-			CourseLink.objects.filter(id__exact = course_id).update(favored_count = count + 1)
-	else:
-		favorite_list = None
-
+	user = request.user
+	course_selected = CourseLink.objects.get( id__exact = course_id )
+	count = course_selected.favored_count
+	n=user.favorite_set.filter(id__exact = course_id).count()
+	if n==0:
+		course_selected.favored_by.add( user )
+		CourseLink.objects.filter(id__exact = course_id).update(favored_count = count + 1)
 	return HttpResponseRedirect('/favorites/');
 
+@login_required
 def create(request):
-	if request.user.is_authenticated():
-		new_name = request.GET.get('name')
-		new_url = request.GET.get('url').strip()
-		if new_url[0:7] not in 'http://':
-			new_url = 'http://' + new_url
-		new_writer = request.user
-		new_course_link = CourseLink.objects.create(course_name = new_name, year = settings.CURRENT_YEAR, \
-				semester = settings.CURRENT_SEMESTER, url = new_url, writer= new_writer, favored_count = 1)
-		new_course_link.favored_by.add( new_writer )
-	else:
-		favorite_list = None
+	new_name = request.GET.get('name')
+	new_url = request.GET.get('url').strip()
+	if new_url[0:7] not in 'http://':
+		new_url = 'http://' + new_url
+	new_writer = request.user
+	new_course_link = CourseLink.objects.create(course_name = new_name, year = settings.CURRENT_YEAR, \
+			semester = settings.CURRENT_SEMESTER, url = new_url, writer= new_writer, favored_count = 1)
+	new_course_link.favored_by.add( new_writer )
 
 	return HttpResponseRedirect('/favorites/');
 
+@login_required
 def delete(request, course_id):
-	if request.user.is_authenticated():
-		user = request.user
-		delete_course = CourseLink.objects.get(id__exact = course_id)
-		count = delete_course.favored_count
-		delete_course.favored_by.remove(user)
-		CourseLink.objects.filter(id__exact = course_id).update(favored_count = count -1)
-	else:
-		favorite_list = None
+	user = request.user
+	delete_course = CourseLink.objects.get(id__exact = course_id)
+	count = delete_course.favored_count
+	delete_course.favored_by.remove(user)
+	CourseLink.objects.filter(id__exact = course_id).update(favored_count = count -1)
 	return HttpResponseRedirect('/favorites/');
 
 def morelist(request):
