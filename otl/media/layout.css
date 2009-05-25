@@ -167,7 +167,6 @@ a#myfavorites
 	padding: 6px 3px 3px 22px;
 	margin-right: 10px;
 	text-align: left;
-	cursor: pointer;
 }
 
 a#myfavorites:hover
@@ -196,6 +195,7 @@ a#myfavorites:hover
 	line-height: 1.0;
 	padding: 6px 3px 2px 22px;
 	text-align: left;
+	cursor: pointer;
 }
 
 #myfavorites-menu ul
