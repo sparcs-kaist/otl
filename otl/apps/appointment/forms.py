@@ -8,5 +8,5 @@ class CreateForm(forms.Form):
 	time_ranges = MultipleDateTimeRangeField()
 
 class ChangeForm(forms.Form):
-	submit_operation = forms.ChoiceField(choices=APPOINTMENT_OPERATIONS)
+	operation = forms.ChoiceField(choices=APPOINTMENT_OPERATIONS)
 	time_ranges = MultipleDateTimeRangeField()

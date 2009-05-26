@@ -1,7 +1,8 @@
 # encoding: utf-8
-from django.http import HttpResponseRedirect, HttpResponseBadRequest, HttpResponseNotFound
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+from django.db.models import Q
+from django.http import *
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.utils import simplejson as json
@@ -40,6 +41,7 @@ def view(request, hash):
 	# Initialize variables according to the current mode.
 	all_confirmed = False
 	final_appointment_shcedule = None
+	candidate_time_ranges = []
 	time_ranges_of_others = []
 	submit_caption = u'참여 가능 시간 확정하기'
 	submit_operation = u'participate-confirm'
@@ -54,10 +56,18 @@ def view(request, hash):
 		p.confirmed = False
 		p.save()
 
-	# Collect all participating time ranges of the appointment.
+	# Collect other participants' participating time ranges of the appointment.
 	# NOTE: Some of them may overlap with others.
-	for item in ParticipatingTimeRange.objects.filter(belongs_to__appointment=appointment):
+	for item in ParticipatingTimeRange.objects.filter(Q(belongs_to__appointment=appointment) & ~Q(belongs_to__participant=request.user)):
 		time_ranges_of_others.append({
+			'date': item.date,
+			'time_start': item.time_start,
+			'time_end': item.time_end,
+		})
+	
+	# Collect the candidate time ranges.
+	for item in CandidateTimeRange.objects.filter(belongs_to=appointment):
+		candidate_time_ranges.append({
 			'date': item.date,
 			'time_start': item.time_start,
 			'time_end': item.time_end,
@@ -86,7 +96,7 @@ def view(request, hash):
 		'mode': json.dumps(mode),
 		'all_confirmed': json.dumps(all_confirmed),
 		'final_appointment_schedule': json.dumps(final_appointment_schedule),
-		'my_schedules': json.dumps(my_schedules),
+		'candidate_time_ranges': json.dumps(candidate_time_rages),
 		'time_ranges_of_others': json.dumps(time_ranges_of_others),
 		'submit_operation': submit_oepration,
 		'submit_caption': submit_caption,
@@ -94,21 +104,70 @@ def view(request, hash):
 
 @login_required
 def change(request):
+	"""
+	Changes the state of the participating appointment.
+	Perform necessary processes according to the operation parameter.
+
+	Request: use POST parameters
+	- operation : string; "participate-confirm" | "finalize"
+	- time_ranges : string repr of array of DateTimeRange
+	
+	"""
 	if request.method == 'POST':
-		# TODO: implement adding ParticipatingTimeRange...
 		f = ChangeForm(request.POST)
 		if f.is_valid():
-			op = f.cleaned_data['submit_operation']
+			op = f.cleaned_data['operation']
+			hash = f.cleaned_data['hash']
+			time_ranges = f.cleaned_data['time_ranges']
+			try:
+				appointment = Appointment.objects.get(hash=hash)
+			except Appointment.DoesNotExist:
+				return HttpResponseNotFound()
+
 			if op == 'participate-confirm':
-				pass
+				# Mark as the participant(current user) confirmed.
+				participating_relation = Participating.objects.get(participant=request.user, apppointment=appointment)
+				participating_relation.confirmed = True
+				participating_relation.save()
+
+				# Users may change their participating times after their first confirms.
+				# So delete previous participating time ranges if exist.
+				ParticipatingTimeRange.objects.filter(belongs_to=participating_relation).delete()
+
+				# Add new participating time ranges.
+				for t in time_ranges:
+					p = ParticipatingTimeRange()
+					p.belongs_to = participating_relation
+					p.date = t.date
+					p.time_start = t.time_start
+					p.time_end = t.time_end
+					p.save()
+
 			elif op == 'finalize':
-				pass
+				# Check again if all participants confirmed.
+				num_participants = Participating.objects.filter(appointment=appointment).count()
+				if not (num_participants > 0 and num_participants == Participating.objects.filter(appointment=appointment, confirmed=True).count()):
+					return HttpResponseForbidden('Not allowed to finalize before all participants confirm.')
+
+				# Use the time_ranges parameter as the final appointment time decided.
+				t = time_ranges[0]
+				appointment.date = t.date
+				appointment.time_start = t.time_start
+				appointment.time_end = t.time_end
+
+				# Make the appointment completed.
+				appointment.completed = True
+				appointment.save()
+
+				# Clean up all participating relations for this appointment.
+				Participating.objects.filter(appointment=appointment).delete()
+
 			else:
-				return HttpResponseBadRequest()
+				return HttpResponseBadRequest('Invalid operation.')
 		else:
-			return HttpResponseBadRequest()
+			return HttpResponseBadRequest('Invliad parameters.')
 	else:
-		return HttpResponseBadRequest()
+		return HttpResponseBadRequest('Invalid request.')
 
 @login_required
 def create(request):
