@@ -188,7 +188,7 @@ a#myfavorites:hover
 
 #myfavorites-menu p
 {
-	width: 140px;
+	width: 115px;
 	height: 15px;
 	background: transparent url('./images/bg_myfavorites.gif') no-repeat 0 0;
 	margin: 0;
@@ -207,6 +207,7 @@ a#myfavorites:hover
 	margin: 0;
 	padding: 0;
 	box-shadow: 2px 2px 3px #999;
+	-moz-box-shadow: 2px 2px 3px #999;
 	-webkit-box-shadow: 2px 2px 3px #999;
 }
 
