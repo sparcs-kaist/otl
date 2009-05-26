@@ -110,6 +110,7 @@ def login(request):
 						Calendar.objects.get(owner=user, system_id=key)
 					except Calendar.DoesNotExist:
 						c = Calendar()
+						c.owner = user
 						c.system_id = key
 						c.title = value
 						c.color = color
