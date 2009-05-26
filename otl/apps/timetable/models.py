@@ -110,6 +110,8 @@ class ClassTime(models.Model):
 		return t
 	
 	def get_location(self):
+		if self.room is None:
+			return u'%s' % (self.room_ko)
 		try:
 			int(self.room)
 			return u'%s %s호' % (self.room_ko, self.room)
