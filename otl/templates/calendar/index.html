@@ -94,6 +94,7 @@ onDrag:
 		{
 			var curPos = this.getPosition(this.grid,e);
 			this.draw(curPos);
+			Event.stop(e);
 		}
 	},
 draw:function(curPos)
@@ -111,7 +112,11 @@ onEnd:
 			var curPos = this.getPosition(this.grid,e);
 			var time = this.getTime(curPos);
 			this.draw(curPos);
-			Popup.show(time);
+
+			var pos = this.getPosition(document.body,e);
+			if (this.startPos.y<curPos.y)
+				Popup.show(pos,time);
+			Event.stop(e);
 		}
 	}
 };
@@ -172,6 +177,24 @@ onChange:
 		var el = this.scal.getElementByDate(dt).siblings().each(function(elem){
 			elem.addClassName('dayselected');
 		});
+		this.getSchedules(week);
+	},
+getSchedules:
+	function(week)
+	{
+		var url = 'schedule/list';
+		var params = 'date_start='+week[0].dt.format('yyyy-mm-dd')+'&date_end='+week[0].dt.format('yyyy-mm-dd');
+		new Ajax.Request(url, {
+			method: 'get',
+			parameters:params,
+			onSuccess: function(t) {
+				alert(t.responseText);
+			}
+		});
+	},
+updateSchedules:
+	function(){
+
 	},
 getWeek:
 	function(d)
@@ -220,13 +243,25 @@ Popup=
 {
 initialize:
 	function(){
+		this.arrow=$('popup-arrow');
 		this.popup=$('popup');
 		this.popup.hide();
 		this.registHandlers();
 	},
 show:
-	function(time){
-		$('schedule-time').update(DrawBlock.min2time(time.start)+' - '+DrawBlock.min2time(time.end));
+	function(pos,time){
+		this.arrow.show();
+		var x= (pos.x+30);
+		var y= (pos.y-340);
+		if ((document.body.offsetWidth-x)<370) 
+		{
+			x= (document.body.offsetWidth-370);
+			this.arrow.hide();
+		}
+		if (y<10) { y = 10;this.arrow.hide(); };
+		this.popup.style.left=x+'px';
+		this.popup.style.top=y+'px';
+		$('schedule-time').update(time.whatday+'요일 '+DrawBlock.min2time(time.start)+' - '+DrawBlock.min2time(time.end));
 		$('schedule-summary').value='';
 		$('schedule-location').value='';
 		$('schedule-description').value='';
