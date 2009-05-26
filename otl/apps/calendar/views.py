@@ -127,8 +127,10 @@ def list_schedule(request):
 		date_end = f.cleaned_data['date_end']
 		if date_end - date_start > timedelta(days=7, hours=0, minutes=0):
 			return HttpResponseBadRequest('Unimplemented size of date difference.')
+		result = []
 
 		# Auto-update schedules from timetables
+		# TODO: cache!
 		current_week_start = date_start - timedelta(days = (date_start.toordinal() % 7), hours=0, minutes=0)
 		timetable_calendar = get_system_calendar(request.user, 'timetable')
 		lectures = fetch_taking_courses(int(request.user.userprofile.student_id))
@@ -138,22 +140,20 @@ def list_schedule(request):
 			for class_time in class_times:
 				# TODO: 과목시간표에 대한 30분 단위 올림 처리
 				class_date = current_week_start + timedelta(days=class_time.day + 1, hours=0, minutes=0)
+				# TODO: 개강/종강 시점 처리
 				if class_date >= date_start and class_date <= date_end:
-					try:
-						Schedule.objects.get(summary__startswith=lecture.title, date=class_date, begin=class_time.begin, end=class_time.end)
-					except Schedule.DoesNotExist:
-						s = Schedule()
-						s.summary = u'%s%s' % (lecture.title, u' (실험)' if class_time.type == 'e' else u'')
-						s.belongs_to = timetable_calendar
-						s.one_of = None
-						s.location = class_time.get_location()
-						s.range = 0 # 일일 일정
-						s.date = class_date
-						s.begin = class_time.begin
-						s.end = class_time.end
-						s.save()
+					result.append({
+						'id': -1, # This is a virtual schedule item, so users cannot modify it.
+						'calendar': timetable_calendar
+						'summary': u'%s%s' % (lecture.title, u' (실험)' if class_time.type == 'e' else u'')
+						'location': class_time.get_location()
+						'range': 0 # 일일 일정
+						'description': u'',
+						'date': class_date,
+						'time_start': class_time.begin,
+						'time_end': class_time.end,
+					})
 
-		result = []
 		items = Schedule.objects.filter(date__gte=date_start, date__lte=date_end)
 		for item in items:
 			result.append({

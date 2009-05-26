@@ -5,26 +5,24 @@ from otl.apps.common import *
 # TODO: refactor the following 2 forms?
 
 class ScheduleForm(forms.Form):
-	# TODO: support repeated schedule type also.
-	type = forms.ChoiceField(label=u'형식', choices=SCHEDULE_TYPES, widget=forms.HiddenInput(), initial='single')
 	summary = forms.CharField(label=u'제목', max_length=120)
 	location = forms.CharField(label=u'장소', max_length=120, required=False)
 	description = forms.CharField(label=u'설명', required=False)
-	range = forms.ChoiceField(choices=SCHEDULE_RANGES)
 	date = forms.DateField(label=u'날짜', input_formats=['%Y-%m-%d'])
-	time_start = forms.IntegerField(widget=forms.HiddenInput())
-	time_end = forms.IntegerField(widget=forms.HiddenInput())
+
+	# 일일 일정인 경우에는 시간 정의 필요 없음.
+	time_start = forms.IntegerField(widget=forms.HiddenInput(), required=False)
+	time_end = forms.IntegerField(widget=forms.HiddenInput(), required=False)
 
 	# TODO: validate the range of time_start, time_end?
 
-class ScheduleModifyForm(forms.Form):
+class ScheduleCreateForm(ScheduleForm):
+	# TODO: support repeated schedule type also.
+	type = forms.ChoiceField(label=u'형식', choices=SCHEDULE_TYPES, widget=forms.HiddenInput(), initial='single')
+	range = forms.ChoiceField(label=u'일일/종일', choices=SCHEDULE_RANGES)
+
+class ScheduleModifyForm(ScheduleForm):
 	id = forms.IntegerField(widget=forms.HiddenInput())
-	summary = forms.CharField(label=u'제목', max_length=120)
-	location = forms.CharField(label=u'장소', max_length=120, required=False)
-	description = forms.CharField(label=u'설명', required=False)
-	date = forms.DateField(label=u'날짜', input_formats=['%Y-%m-%d'])
-	time_start = forms.IntegerField(widget=forms.HiddenInput())
-	time_end = forms.IntegerField(widget=forms.HiddenInput())
 
 class ScheduleListForm(forms.Form):
 	date_start = forms.DateField(input_formats=['%Y-%m-%d'])
