@@ -30,6 +30,11 @@ WEEKDAYS = (
 	(6, u'일'),
 )
 MONTHDAYS = [(i, u'%d' % i) for i in xrange(1, 32)]
+SYSTEM_CALENDAR_NAMES = {
+	'timetable': u'학과시간표',
+	'appointment': u'약속',
+	'private': u'개인 일정',
+}
 SCHEDULE_TYPES = (
 	('repeated', u'반복 일정'),
 	('single', u'단독 일정'),

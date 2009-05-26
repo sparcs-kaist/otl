@@ -4,6 +4,7 @@ from django.contrib import admin
 from django.contrib.auth.models import User
 from django.conf import settings
 from otl.apps.accounts.models import Department
+from otl.apps.timetable.models import Lecture
 from otl.utils import MultiSelectField, get_choice_display
 from otl.apps.common import *
 from datetime import datetime
@@ -105,6 +106,23 @@ class ScheduleAdmin(admin.ModelAdmin):
 	list_display = ('belongs_to', 'one_of', '__unicode__')
 	list_links = ('__unicode__',)
 
+admin.site.register(Calendar, CalendarAdmin)
+admin.site.register(RepeatedSchedule, RepeatedScheduleAdmin)
+admin.site.register(Schedule, ScheduleAdmin)
+
+def get_system_calendar(user, system_id):
+	try:
+		c = Calendar.objects.get(owner=user, system_id=system_id)
+	except Calendar.DoesNotExist:
+		c = Calendar()
+		c.owner = user
+		c.title = SYSTEM_CALENDAR_NAMES[system_id]
+		c.system_id = system_id
+		c.color = 1
+		c.enabled = True
+		c.save()
+	return c
+
 def fetch_assignments(student_id):
 	"""
 	Moodle DB에 접속하여 해당 학번의 학생이 듣고 있는 과목들에 대한 과제 정보를 가져온다.
@@ -113,26 +131,7 @@ def fetch_assignments(student_id):
 		raise TypeError('student_id must be an integer.')
 
 	# TODO: cache!!
-
-	taking_courses = []
-	try:
-		import Sybase
-		scholar_db = Sybase.connect(settings.SCHOLARDB_HOST, settings.SCHOLARDB_USER, settings.SCHOLARDB_PASSWORD, settings.SCHOLARDB_NAME)
-	except ImportError:
-		raise DatabaseError('Sybase module is not installed!')
-	except:
-		raise DatabaseError('Cannot access the scholar database!')
-	cursor = scholar_db.cursor()
-	cursor.execute("""SELECT a.subject_no, l.old_no FROM view_OTL_attend a, view_OTL_lecture l
-	WHERE a.student_no = %d AND a.lecture_year = %d AND a.lecture_term = %d
-	AND a.lecture_year = l.lecture_year AND a.lecture_term = l.lecture_term AND a.subject_no = l.subject_no AND a.lecture_class = l.lecture_class AND a.dept_id = l.dept_id"""
-		% (student_id, settings.CURRENT_YEAR, settings.CURRENT_SEMESTER))
-	rows = cursor.fetchall()
-	for row in rows:
-		taking_courses.append(row[1])
-	cursor.close()
-	scholar_db.close()
-
+	taking_courses = fetch_taking_courses(student_id)
 	assignments = []
 	try:
 		import MySQLdb
@@ -142,9 +141,9 @@ def fetch_assignments(student_id):
 	except:
 		raise DatabaseError('Cannot access the moodle database!')
 	cursor = moodle_db.cursor()
-	for course_no in taking_courses:
+	for lecture in taking_courses:
 		cursor.execute("""SELECT c.shortname, a.name, a.description, a.format, a.assignmenttype, a.timedue, a.timeavailable, a.grade, a.timemodified
-		FROM mdl_assignment a, mdl_course c WHERE c.id = a.course AND c.shortname LIKE '%s%%'""" % course_no) 
+		FROM mdl_assignment a, mdl_course c WHERE c.id = a.course AND c.shortname LIKE '%s%%'""" % lecture.old_code) 
 		# TODO: moodle 조교와 협의하여 shortname에 과목 코드뿐만 아니라 분반, 개설년도/개설학기 정보도 포함시켜 정확한 과목 matching이 이루어지게 한다.
 		#       현재 같은 과목이라도 분반에 따라 moodle을 이용하기도 하고 이용하지 않기도 하는 경우가 있어 과목코드만으로 가져오면 실제로 자기하고는
 		#       상관 없는 과제 정보를 얻어오는 경우가 있다.
@@ -161,7 +160,35 @@ def fetch_assignments(student_id):
 
 	return assignments
 
-admin.site.register(Calendar, CalendarAdmin)
-admin.site.register(RepeatedSchedule, RepeatedScheduleAdmin)
-admin.site.register(Schedule, ScheduleAdmin)
+def fetch_taking_courses(student_id):
+	"""
+	학사 DB에 접속하여 해당 학번의 학생이 듣고 있는 과목 정보를 가져온다.
+	"""
+	if not isinstance(student_id, int):
+		raise TypeError('student_id must be an integer.')
+
+	# TODO: cache!!
+	taking_courses = []
+	try:
+		import Sybase
+		scholar_db = Sybase.connect(settings.SCHOLARDB_HOST, settings.SCHOLARDB_USER, settings.SCHOLARDB_PASSWORD, settings.SCHOLARDB_NAME)
+	except ImportError:
+		raise DatabaseError('Sybase module is not installed!')
+	except:
+		raise DatabaseError('Cannot access the scholar database!')
+	cursor = scholar_db.cursor()
+	cursor.execute("""SELECT l.subject_no, l.old_no, l.dept_id, l.lecture_class FROM view_OTL_attend a, view_OTL_lecture l
+	WHERE a.student_no = %d AND a.lecture_year = %d AND a.lecture_term = %d
+	AND a.lecture_year = l.lecture_year AND a.lecture_term = l.lecture_term AND a.subject_no = l.subject_no AND a.lecture_class = l.lecture_class AND a.dept_id = l.dept_id"""
+		% (student_id, settings.CURRENT_YEAR, settings.CURRENT_SEMESTER))
+	rows = cursor.fetchall()
+	try:
+		for row in rows:
+			taking_courses.append(Lecture.objects.get(year=settings.CURRENT_YEAR, semester=settings.CURRENT_SEMESTER, code=row[0], department__id=row[2], class_no=row[3].strip()))
+	except Lecture.DoesNotExist:
+		raise DatabaseError('Matching lecture(%s) which a student(%d) is taking was not found! Check scholar-db synchronization.' % (row[0], student_id))
+	cursor.close()
+	scholar_db.close()
+
+	return taking_courses
 

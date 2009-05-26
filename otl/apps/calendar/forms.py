@@ -25,3 +25,7 @@ class ScheduleModifyForm(forms.Form):
 	date = forms.DateField(label=u'날짜', input_formats=['%Y-%m-%d'])
 	time_start = forms.IntegerField(widget=forms.HiddenInput())
 	time_end = forms.IntegerField(widget=forms.HiddenInput())
+
+class ScheduleListForm(forms.Form):
+	date_start = forms.DateField(input_formats=['%Y-%m-%d'])
+	date_end = forms.DateField(input_formats=['%Y-%m-%d'])

@@ -6,10 +6,12 @@ from django.conf import settings
 from django.utils import simplejson as json
 from django.contrib.auth.decorators import login_required
 from django.db import DatabaseError
-from otl.apps.calendar.forms import ScheduleForm
-from otl.apps.calendar.models import Calendar, Schedule, fetch_assignments
+from otl.apps.calendar.forms import ScheduleForm, ScheduleListForm
+from otl.apps.calendar.models import Calendar, Schedule, fetch_assignments, fetch_taking_courses, get_system_calendar
+from otl.apps.timetable.models import Lecture, ClassTime
 from otl.utils.decorators import login_required_ajax
 from otl.utils import response_as_json
+from datetime import *
 
 def index(request):
 	if settings.SERVICE_STATUS == 'beta':
@@ -43,8 +45,6 @@ def list_calendar(request):
 		...
 	]
 	"""
-
-	# TODO: 기본으로 가지는 시간표 달력이나, 가입할 때 자동으로 추가할 기본 달력 결정 필요
 
 	items = Calendar.objects.filter(owner=request.user)	
 	result = []
@@ -118,23 +118,58 @@ def list_schedule(request):
 	]
 	"""
 
-	# TODO: 시간표 달력 데이터를 가져와서 이런 형태로 가공?
+	f = ScheduleListForm(request.GET)
+	print 'processing list_schedule()'
+	if f.is_valid():
+		
+		# TODO: 나중에 일주일보다 큰 간격으로 요청해올 경우 시간표 schedule 처리를 loop로 돌아야 함.
+		date_start = f.cleaned_data['date_start']
+		date_end = f.cleaned_data['date_end']
+		if date_end - date_start > timedelta(days=7, hours=0, minutes=0):
+			return HttpResponseBadRequest('Unimplemented size of date difference.')
 
-	items = Schedule.objects.filter(date__gte=date_start, date__lte=date_end)
-	result = []
-	for item in items:
-		result.append({
-			'id': item.id,
-			'calendar': item.belongs_to.id,
-			'summary': item.summary,
-			'location': item.location,
-			'range': item.range,
-			'description': item.description,
-			'date': item.date.strftime('%Y-%m-%d'),
-			'time_start': item.time_start.hour * 60 + item.time_start.minute,
-			'time_end': item.time_end.hour * 60 + item.time_end.minute,
-		})
-	return response_as_json(request, result)
+		# Auto-update schedules from timetables
+		current_week_start = date_start - timedelta(days = (date_start.toordinal() % 7), hours=0, minutes=0)
+		timetable_calendar = get_system_calendar(request.user, 'timetable')
+		lectures = fetch_taking_courses(int(request.user.userprofile.student_id))
+		for lecture in lectures:
+			class_times = lecture.classtime_set.all()
+			print 'Taking course : %s' % lecture.code
+			for class_time in class_times:
+				# TODO: 과목시간표에 대한 30분 단위 올림 처리
+				class_date = current_week_start + timedelta(days=class_time.day + 1, hours=0, minutes=0)
+				if class_date >= date_start and class_date <= date_end:
+					try:
+						Schedule.objects.get(summary__startswith=lecture.title, date=class_date, begin=class_time.begin, end=class_time.end)
+					except Schedule.DoesNotExist:
+						s = Schedule()
+						s.summary = u'%s%s' % (lecture.title, u' (실험)' if class_time.type == 'e' else u'')
+						s.belongs_to = timetable_calendar
+						s.one_of = None
+						s.location = class_time.get_location()
+						s.range = 0 # 일일 일정
+						s.date = class_date
+						s.begin = class_time.begin
+						s.end = class_time.end
+						s.save()
+
+		result = []
+		items = Schedule.objects.filter(date__gte=date_start, date__lte=date_end)
+		for item in items:
+			result.append({
+				'id': item.id,
+				'calendar': item.belongs_to.id,
+				'summary': item.summary,
+				'location': item.location,
+				'range': item.range,
+				'description': item.description,
+				'date': item.date.strftime('%Y-%m-%d'),
+				'time_start': item.begin.hour * 60 + item.begin.minute,
+				'time_end': item.end.hour * 60 + item.end.minute,
+			})
+		return response_as_json(request, result)
+	else:
+		return HttpResponseBadRequest('Invalid parameters (date_start, date_end)')
 
 @login_required_ajax
 def get_schedule(request):
@@ -320,7 +355,7 @@ def get_assignments(request):
 	"""
 
 	try:
-		items = fetch_assignments(request.user.profile.student_id)
+		items = fetch_assignments(int(request.user.userprofile.student_id))
 		assignments = []
 		for item in items:
 			# item[5], item[6], item[8] was already converted to python datetime objects.
@@ -337,8 +372,8 @@ def get_assignments(request):
 			'result': 'OK',
 			'assignments': assignments,
 		}
-	except DatabaseError:
-		result = {'result': 'FAILED', 'assignments': []}
+	except DatabaseError, e:
+		result = {'result': 'FAILED', 'error': e.message, 'assignments': []}
 	
 	return response_as_json(request, result)
 
