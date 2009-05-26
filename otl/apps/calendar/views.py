@@ -7,7 +7,7 @@ from django.utils import simplejson as json
 from django.contrib.auth.decorators import login_required
 from django.db import DatabaseError
 from otl.apps.calendar.forms import ScheduleForm, ScheduleListForm
-from otl.apps.calendar.models import Calendar, Schedule, fetch_assignments, fetch_taking_courses, get_system_calendar
+from otl.apps.calendar.models import Calendar, Schedule, fetch_assignments, fetch_taking_courses, get_system_calendar, is_in_current_semester
 from otl.apps.timetable.models import Lecture, ClassTime
 from otl.utils.decorators import login_required_ajax
 from otl.utils import response_as_json
@@ -141,7 +141,7 @@ def list_schedule(request):
 				# TODO: 과목시간표에 대한 30분 단위 올림 처리
 				class_date = current_week_start + timedelta(days=class_time.day + 1, hours=0, minutes=0)
 				# TODO: 개강/종강 시점 처리
-				if class_date >= date_start and class_date <= date_end:
+				if class_date >= date_start and class_date <= date_end and is_in_current_semester(class_date):
 					result.append({
 						'id': -1, # This is a virtual schedule item, so users cannot modify it.
 						'calendar': timetable_calendar.id,

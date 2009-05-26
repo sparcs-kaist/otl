@@ -124,6 +124,11 @@ def get_system_calendar(user, system_id):
 		c.save()
 	return c
 
+def is_in_current_semester(date):
+	start = settings.SEMESTER_RNAGES[(settings.CURRENT_YEAR, settings.CURRENT_SEMESTER)][0]
+	end = settings.SEMESTER_RNAGES[(settings.CURRENT_YEAR, settings.CURRENT_SEMESTER)][1]
+	return date >= start and date <= end
+
 def fetch_assignments(student_id):
 	"""
 	Moodle DB에 접속하여 해당 학번의 학생이 듣고 있는 과목들에 대한 과제 정보를 가져온다.
