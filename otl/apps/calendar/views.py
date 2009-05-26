@@ -144,14 +144,14 @@ def list_schedule(request):
 				if class_date >= date_start and class_date <= date_end:
 					result.append({
 						'id': -1, # This is a virtual schedule item, so users cannot modify it.
-						'calendar': timetable_calendar
-						'summary': u'%s%s' % (lecture.title, u' (실험)' if class_time.type == 'e' else u'')
-						'location': class_time.get_location()
-						'range': 0 # 일일 일정
+						'calendar': timetable_calendar.id,
+						'summary': u'%s%s' % (lecture.title, u' (실험)' if class_time.type == 'e' else u''),
+						'location': class_time.get_location(),
+						'range': 0, # 일일 일정
 						'description': u'',
-						'date': class_date,
-						'time_start': class_time.begin,
-						'time_end': class_time.end,
+						'date': class_date.strftime('%Y-%m-%d'),
+						'time_start': class_time.begin.hour * 60 + class_time.begin.minute,
+						'time_end': class_time.end.hour * 60 + class_time.end.minute,
 					})
 
 		items = Schedule.objects.filter(date__gte=date_start, date__lte=date_end)
