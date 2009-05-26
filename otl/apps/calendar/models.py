@@ -5,7 +5,8 @@ from django.contrib.auth.models import User
 from django.conf import settings
 from otl.apps.accounts.models import Department
 from otl.apps.timetable.models import Lecture
-from otl.utils import MultiSelectField, get_choice_display
+from otl.utils.models import MultiSelectField
+from otl.utils import get_choice_display
 from otl.apps.common import *
 from datetime import datetime
 
