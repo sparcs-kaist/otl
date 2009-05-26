@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 from otl.apps.calendar.forms import ScheduleForm
 from otl.apps.calendar.models import Calendar, Schedule
 from otl.utils.decorators import login_required_ajax
-from otl.utils import render_as_json
+from otl.utils import response_as_json
 
 def index(request):
 	if settings.SERVICE_STATUS == 'beta':
@@ -54,7 +54,7 @@ def list_calendar(request):
 			'color': item.color,
 			'enabled': item.enabled,
 		})
-	return render_as_json(result)
+	return response_as_json(request, result)
 
 @login_required_ajax
 def modify_calendar(request):
@@ -89,7 +89,7 @@ def modify_calendar(request):
 			result = {'result':'FAILED'}
 	else:
 		return HttpResponseBadRequest('Should be called with POST method')
-	return render_as_json(result)
+	return response_as_json(request, result)
 
 @login_required_ajax
 def list_schedule(request):
@@ -107,6 +107,7 @@ def list_schedule(request):
 			"calendar": integer id of the calendar to which this belongs,
 			"summary": string,
 			"location": string or null,
+			"range": integer; 0 (일일), 1 (종일)
 			"description": string or null,
 			"date": "YYYY-MM-DD",
 			"time_start": integer representing minutes from 00:00,
@@ -126,12 +127,13 @@ def list_schedule(request):
 			'calendar': item.belongs_to.id,
 			'summary': item.summary,
 			'location': item.location,
+			'range': item.range,
 			'description': item.description,
 			'date': item.date.strftime('%Y-%m-%d'),
 			'time_start': item.time_start.hour * 60 + item.time_start.minute,
 			'time_end': item.time_end.hour * 60 + item.time_end.minute,
 		})
-	return render_as_json(result)
+	return response_as_json(request, result)
 
 @login_required_ajax
 def get_schedule(request):
@@ -166,7 +168,7 @@ def get_schedule(request):
 		result = {'result':'NOT_FOUND'}
 	except (KeyError, TypeError, ValueError):
 		result = {'result':'FAILED'}
-	return render_as_json(result)
+	return response_as_json(request, result)
 
 @login_required_ajax
 def add_schedule(request):
@@ -179,6 +181,7 @@ def add_schedule(request):
 	- calendar : integer id of a calendar which will include this item
 	- summary : user string (max 120 chars)
 	- location : user string (max 120 chars, optional)
+	- range : integer; 0 (일일), 1 (종일)
 	- description : user string (long, optional)
 	- date : "YYYY-MM-DD"
 	- time_start : integer representing minutes from 00:00
@@ -202,6 +205,7 @@ def add_schedule(request):
 				item.summary = f.cleaned_data['summary']
 				item.location = f.cleaned_data['location']
 				item.description = f.cleaned_data['description']
+				item.range = f.cleaned_data['range']
 				item.date = f.cleaned_data['date']
 				item.time_start = f.cleaned_data['time_start']
 				item.time_end = f.cleaned_data['time_end']
@@ -216,7 +220,7 @@ def add_schedule(request):
 			result = {'result':'FAILED'}
 	else:
 		return HttpResponseBadRequest('Should be called with POST method.')
-	return render_as_json(result)
+	return response_as_json(request, result)
 
 @login_required_ajax
 def modify_schedule(request):
@@ -263,7 +267,7 @@ def modify_schedule(request):
 			result = {'result':'FAILED'}
 	else:
 		return HttpResponseBadRequest('Should be called with POST method.')
-	return render_as_json(result)
+	return response_as_json(request, result)
 
 @login_required_ajax
 def delete_schedule(request):
@@ -289,7 +293,7 @@ def delete_schedule(request):
 			result = {'result':'FAILED'}
 	else:
 		return HttpResponseBadRequest('Should be called with POST method.')
-	return render_as_json(result)
+	return response_as_json(request, result)
 
 @login_required
 def search_schedule(request):

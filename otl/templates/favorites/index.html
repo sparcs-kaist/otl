@@ -1,9 +1,9 @@
 {% extends 'layout.html' %}
 {% load yearterm %}
 {% block headers %}
-<link rel="stylesheet" type="text/css" href="/media/favorites.css" ></link>
-<script type="text/javascript" src="/media/js/prototype/prototype-1.6.0.3.js" ></script>
-<script type="text/javascript" >
+<link rel="stylesheet" type="text/css" href="/media/favorites.css" />
+<script type="text/javascript">
+//<!--
 LinkThumb=
 {
 	initialize:function(wrap,className)
@@ -15,55 +15,53 @@ LinkThumb=
 	   },
 	onLoad:function()
 	   {
-			this.thumb = document.createElement('div');
-			Element.extend(this.thumb);
-			this.thumb.addClassName('linkthumb');
+			this.thumb = new Element('div');
+			this.thumb.addClass('linkthumb');
 
-			this.img = document.createElement('img');
+			this.img = new Element('img');
 			this.thumb.appendChild(this.img);
 
-			this.thumb.hide();
+			this.thumb.fade('hide');
 			document.body.appendChild(this.thumb);
 
 			this.registerHandlers();
 	   },
 	registerHandlers:function()
 		 {
-			Event.observe(document,'mousemove',this.onMove.bindAsEventListener(this));
-			this.anchors.each(function(item)
-					{
-						Event.observe(item,'mouseover',this.onOver.bindAsEventListener(this,item));
-						Event.observe(item,'mouseout',this.onOut.bindAsEventListener(this));
-					}.bind(this));
+			document.addEvent('mousemove',this.onMove.bindWithEvent(this));
+			this.anchors.each(function(item) {
+				item.addEvent('mouseover',this.onOver.bindWithEvent(this,item));
+				item.addEvent('mouseout',this.onOut.bindWithEvent(this));
+			}.bind(this));
 		 },
 	onMove:function(e)
 		{
 			if(this.isOver)
 			{
-				var x=e.pointerX()+20,y=e.pointerY()+20;
+				var x=e.page.x + 20,y=e.page.y + 20;
 				this.thumb.style.left=x+'px';
 				this.thumb.style.top=y+'px';
 			}
 		},
 	onOver:function(e,item)
 		{
-			this.img.src= 'http://open.thumbshots.org/image.aspx?url='+item.href;
-			this.thumb.show();
+			this.img.src= 'http://open.thumbshots.org/image.aspx?url='+encodeURIComponent(item.href);
+			this.thumb.fade('show');
 			this.isOver=true;
 			this.onMove(e);
 		},
 	onOut:function(e)
 	  {
-			this.thumb.hide();
+			this.thumb.fade('hide');
 			this.img.src='';
 			this.isOver=false;
 	  }
 };
-Event.observe(window,'load',function()
-{
+window.addEvent('domready', function () {
 	LinkThumb.initialize('publicFavorites','favorite-link');
 	LinkThumb.initialize('publicFavorites','search-link');
 });
+//-->
 </script>
 <script type="text/javascript">
 function CheckNull(form)

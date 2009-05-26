@@ -35,8 +35,8 @@ def cache_with_default(key, default, timeout=300):
 		cache.set(key, value, timeout)
 	return value
 
-def render_as_json(obj):
-	output = json.dumps(result, ensure_ascii=False, indent=4 if settings.DEBUG else 0)
+def response_as_json(request, obj):
+	output = json.dumps(obj, ensure_ascii=False, indent=4 if settings.DEBUG else 0)
 	type = 'application/json' if request.is_ajax() else 'text/plain'
 	return HttpResponse(output, mimetype=type)
 

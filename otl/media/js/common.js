@@ -20,7 +20,7 @@ var Notifier = {
 			indicator: $('indicator'),
 			message: $('message'),
 			wrapper: $('message-wrap'),
-			clear_timeout: 10000,
+			clear_timeout: 10000
 		};
 		$extend(my_options, options);
 		this.indicator = my_options.indicator;
@@ -79,3 +79,35 @@ var Notifier = {
 	}
 };
 
+var MyFavorites = {
+	initialize: function() {
+		this.button = $('myfavorites');
+		this.menu = $('myfavorites-menu');
+		this.fx_hide = new Fx.Tween(this.menu, {duration:300});
+		this.button.addEvent('click', function(ev) {
+			ev.preventDefault();
+			return false;
+		});
+		this.button.addEvent('mouseover', function(ev) {
+			var mypos = this.button.getCoordinates();
+			var ppos = $(this.button.getParent()).getCoordinates();
+			this.menu.setStyles({
+				'left': (mypos.left - ppos.left) + 'px',
+				'top': (mypos.top - ppos.top) + 'px'
+			});
+			this.fx_hide.cancel();
+			this.fx_hide.set('opacity', 1);
+		}.bind(this));
+		this.menu.addEvent('mouseout', function(ev) {
+			var rel = (ev.relatedTarget) ? ev.relatedTarget : ev.toElement;
+			while (rel != ev.target && rel.nodeName != 'BODY') {
+				if (rel.id == this.menu.id)
+					return;
+				rel = rel.parentNode;
+			}
+			if (rel == ev.target)
+				return;
+			this.fx_hide.start('opacity', 0);
+		}.bind(this));
+	}
+};

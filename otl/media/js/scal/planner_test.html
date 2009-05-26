@@ -1,0 +1,109 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<link rel="stylesheet" href="styles/stylemain.css" type="text/css" media="screen"/>
+	<link rel="stylesheet" href="styles/scal.css" type="text/css" media="screen"/>
+	<script src="javascripts/prototype.js" type="text/javascript"></script>
+	<script src="javascripts/effects.js" type="text/javascript"></script>
+	<script src="javascripts/scal.js" type="text/javascript"></script>
+	<script src="javascripts/scalplanner.js" type="text/javascript"></script>
+	
+	<title>Scal Planner Tester - Functional testing of scal planner</title>
+
+</head>
+<style type="text/css">
+ p.celebration {
+    background: yellow;
+ }
+ p.reminders {
+    background: #ED0008;
+    color: #fff;
+ }
+ p.dragons, p.pepperfest {
+    background: green;
+    color: #fff;
+ }
+ p.dragonremove {
+    background: #000;
+    color: #fff;
+ }
+</style>
+<script>
+<!--
+
+var myplanner = [
+    { period: 'December 17, 2007', label: ["Mom's Birthday", "Julie's Birthday"], cls: 'celebration'},
+    { period: 'November 10, 2007', label: ['renew license','pickup mom'], cls: 'reminders'},
+    { period: $A($R(new Date('November 5, 2007'),new Date('November 9, 2007'))), label: ['dragon days'], cls: 'dragons'} 
+];
+
+
+var samplecal;
+	function showcalendars(){
+		//samplecal = new scal('samplecal','samplecal_value',{year:2007,month:8,day:3,titleformat:'mmmm yyyy',closebutton:'X',dayheadlength:2});
+        samplecal = new scal('samplecal',updateyear,{titleformat:'mmmm yyyy',closebutton:'X',dayheadlength:2,weekdaystart:0,planner: myplanner});
+        var cell = samplecal.setPlannerValue(2007,11,28,"Here be dragons!"); // new planner date
+        new Effect.Highlight(cell);
+        cell = samplecal.setPlannerValue(2007,11,10,"mom's appt", 'appt'); // existing planner date
+        new Effect.Highlight(cell);
+        cell = samplecal.setPlannerValue(2007,10,10,"payed rent", 'rent'); // month previous
+        samplecal.setPlannerValue(2007,11,29,"Remove dragons!", 'dragonremove');
+        cell = samplecal.updateDayValue(1,1, "More dragons!");
+        new Effect.Highlight(cell);
+        samplecal.updateDayValue(2,1, "Pepper Fest!", 'pepperfest');
+        var dt = samplecal.getDatesByEvent('renew license')[0];
+        samplecal.removeEventsByDate(dt,0);
+        var decevts = samplecal.getEventsByDate(new Date('December 17, 2007'));
+        var evtels = samplecal.getEventElementsByDate(new Date('November 7, 2007'));
+        var allevents = samplecal.getCurrentEvents(true);
+        var wkevents = samplecal.getEventElementsByWeek(1);
+        var selevents = samplecal.getSelectedEvents();
+        var todaysevents = samplecal.getTodaysEvents();
+	}
+
+	function changestyle(event){
+		clicked = Event.element(event);
+		$('samplecal').className = '';
+		$('samplecal').addClassName(clicked.innerHTML);
+	}
+    function updateyear(d){
+		$('samplecal_value').update(d.format('mmmm dd, yyyy'));
+	}
+	function explodeday(){
+		$(samplecal).setCurrentDate(samplecal.selecteddate);
+		$(samplecal).buildCalendar();
+		$(samplecal).getCalendar();
+		$(samplecal.baseelement).update();
+		$(samplecal.baseelement).appendChild(samplecal.selecteddatecell);
+	}
+	
+-->
+</script>
+<body onload="showcalendars();">
+		<div>
+			<div style="float:left;width:200px;">
+			<p>Included Styles: (click names to change style of the sample calendar below)
+			<ul>
+				<li class="calname" onclick="changestyle(event);">scal</li>
+				<li class="calname" onclick="changestyle(event);">scal tinyscal</li>
+				<li class="calname" onclick="changestyle(event);">iscal</li>
+				<li class="calname" onclick="changestyle(event);">dashblack</li>
+				<li class="calname" onclick="changestyle(event);">googleblue</li>
+				<li class="calname" onclick="changestyle(event);">iphonic</li>
+			</ul>
+			</div>
+			<div style="margin-left: 220px;min-height:350px;margin-top:20px;">
+				<!--
+				Some testin' stuff!
+				<div class="calbutton" onclick="explodeday();" style="float:left;">Explode Day</div>
+				<div class="calbutton" onclick="samplecal.buildCalendar();samplecal.getCalendar();" style="margin-left:150px;clear:right;">Reset Calendar</div>
+				-->
+				<div class="calbutton" onclick="samplecal.toggleCalendar();" style="float:left;">Close Calendar</div>
+				<div class="calbutton" onclick="samplecal.toggleCalendar();" style="margin-left:150px;clear:right;">Open Calendar</div>
+				<div id="samplecal" class="iscal"></div>
+				<div id="samplecal_value" class="featured">&nbsp;</div>
+			</div>
+		</div>
+</body>
+</html>
+

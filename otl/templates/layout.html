@@ -8,6 +8,15 @@
 		<script type="text/javascript" src="/media/js/mootools/mootools-1.2.1-core-yc.js"></script>
 		<script type="text/javascript" src="/media/js/mootools/mootools-1.2-more-yc.js"></script>
 		<script type="text/javascript" src="/media/js/common.js?v=1241020334"></script>
+		{% if user.is_authenticated %}
+		<script type="text/javascript">
+		//<!--
+		window.addEvent('domready', function() {
+			MyFavorites.initialize();
+		});
+		//-->
+		</script>
+		{% endif %}
 		{% block headers %}{% endblock %}
 	</head>
 	<body>
@@ -45,6 +54,19 @@
 						<a class="left{% ifequal section 'board' %} selected{% endifequal %}" href="/board/lecture/">과목 Q&amp;A</a>
 						<a class="left{% ifequal section 'timetable' %} selected{% endifequal %}" href="/timetable/">모의 시간표</a>
 						<a class="right{% ifequal section 'info' %} selected{% endifequal %}" href="/about/">만든 사람들</a>
+						{% if user.is_authenticated %}
+						<a class="right" id="myfavorites" href="#myfavorites">내 즐겨찾기</a>
+						<div id="myfavorites-menu">
+							<p>내 즐겨찾기</p>
+							<ul>
+							{% for item in myfavorites %}
+								<li><a href="{{item.url}}">{{item.course_name}}</a></li>
+							{% empty %}
+								<li><span>즐겨찾기가 없습니다.</span></li>
+							{% endfor %}
+							</ul>
+						</div>
+						{% endif %}
 						<div class="clear"></div>
 					</div>
 				</div>

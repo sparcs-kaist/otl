@@ -16,14 +16,18 @@ class Calendar(models.Model):
 	enabled = models.BooleanField(default=True)
 
 	"""
-	시스템 상에서 사용자가 생성될 때 기본으로 추가되는 Calendar 종류는 다음과 같다.
+	시스템 상에서 사용자가 생성될 때 기본으로 추가되는 시스템 Calendar 종류는 다음과 같다.
 	Calendar 이름은 가입시 설정하는 언어에 따라 생성되며 나중에 사용자가 변경할 수 있다.
 	각각은 뒤에 붙어있는 system_id 값을 가지며 이 값이 비어있지 않은 경우 사용자가 임의로 삭제할 수 없다.
 	(사용자가 생성하는 달력은 해당 값을 비워두어 구분하는데, 아직 사용자 달력 생성은 지원하지 않음)
 
-	- 학과시간표 / timetable
-	- 약속 / appointment
-	- 개인일정 / private
+	- 학과시간표 / timetable : 강의 시간, 시험 및 과제 일정
+	- 약속 / appointment : 약속 잡기 기능으로부터 추가된 약속 일정들
+	- 개인일정 / private : 개인용으로만 사용되는 일정(시스템에 의한 추가/삭제 없음)
+
+	시스템 Calendar라 하더라도 개인이 스스로 일정을 지우거나 삭제할 수 있다.
+
+	@see login() at otl/apps/accounts/views.py
 	"""
 
 	def __unicode__(self):
@@ -81,9 +85,10 @@ class Schedule(models.Model):
 	one_of = models.ForeignKey(RepeatedSchedule, null=True, blank=True)
 	summary = models.CharField(max_length=120)
 	location = models.CharField(max_length=120, blank=True)
+	range = models.SmallIntegerField(choices=SCHEDULE_RANGES, default=0)
 	date = models.DateField()
-	begin = models.TimeField()
-	end = models.TimeField()
+	begin = models.TimeField(blank=True, null=True)
+	end = models.TimeField(blank=True, null=True)
 	description = models.TextField(blank=True)
 
 	def separate_from_repeated(self):

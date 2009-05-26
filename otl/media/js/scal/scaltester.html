@@ -1,0 +1,65 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<link rel="stylesheet" href="styles/stylemain.css" type="text/css" media="screen"/>
+	<link rel="stylesheet" href="styles/scal.css" type="text/css" media="screen"/>
+	<script src="javascripts/prototype.js" type="text/javascript"></script>
+	<script src="javascripts/scriptaculous.js" type="text/javascript"></script>
+	<script src="javascripts/scal.js" type="text/javascript"></script>
+	
+	<title>Scal Tester - A Mini Test Suite for Checking Scal</title>
+
+</head>
+<script>
+<!--
+var samplecal;
+	function showcalendars(){
+		//samplecal = new scal('samplecal','samplecal_value',{year:2007,month:8,day:3,titleformat:'mmmm yyyy',closebutton:'X',dayheadlength:2});
+		samplecal = new scal('samplecal',updateyear,{titleformat:'mmmm yyyy',closebutton:'X',dayheadlength:2,weekdaystart:0});
+	}
+
+	function changestyle(event){
+		clicked = Event.element(event);
+		$('samplecal').className = '';
+		$('samplecal').addClassName(clicked.innerHTML);
+	}
+    function updateyear(e){
+		$('samplecal_value').update(e.date.format('mmmm dd, yyyy'));
+	}
+	function explodeday(){
+		$(samplecal).setCurrentDate(samplecal.selecteddate);
+		$(samplecal).buildCalendar();
+		$(samplecal).getCalendar();
+		$(samplecal.baseelement).update();
+		$(samplecal.baseelement).appendChild(samplecal.selecteddatecell);
+	}
+	
+-->
+</script>
+<body onload="showcalendars();">
+		<div>
+			<div style="float:left;width:200px;">
+			<p>Included Styles: (click names to change style of the sample calendar below)
+			<ul>
+				<li class="calname" onclick="changestyle(event);">scal</li>
+				<li class="calname" onclick="changestyle(event);">scal tinyscal</li>
+				<li class="calname" onclick="changestyle(event);">iscal</li>
+				<li class="calname" onclick="changestyle(event);">dashblack</li>
+				<li class="calname" onclick="changestyle(event);">googleblue</li>
+				<li class="calname" onclick="changestyle(event);">iphonic</li>
+			</ul>
+			</div>
+			<div style="margin-left: 220px;min-height:350px;margin-top:20px;">
+				<!--
+				Some testin' stuff!
+				<div class="calbutton" onclick="explodeday();" style="float:left;">Explode Day</div>
+				<div class="calbutton" onclick="samplecal.buildCalendar();samplecal.getCalendar();" style="margin-left:150px;clear:right;">Reset Calendar</div>
+				-->
+				<div class="calbutton" onclick="samplecal.toggleCalendar();" style="float:left;">Close Calendar</div>
+				<div class="calbutton" onclick="samplecal.toggleCalendar();" style="margin-left:150px;clear:right;">Open Calendar</div>
+				<div id="samplecal" class="scal"></div>
+				<div id="samplecal_value" class="featured">&nbsp;</div>
+			</div>
+		</div>
+</body>
+</html>
