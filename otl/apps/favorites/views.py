@@ -16,18 +16,12 @@ NUM_PER_PAGE = 10
 RECENTLY_PER_PAGE=3
 
 def index(request):
-	if request.user.is_authenticated():
-		favorite_list = CourseLink.objects.filter(year=settings.CURRENT_YEAR, semester=settings.CURRENT_SEMESTER, favored_by__exact=request.user)
-	else:
-		favorite_list = None
-	
 	courselink_pages = CourseLink.objects.filter(year=settings.CURRENT_YEAR, semester=settings.CURRENT_SEMESTER).order_by('-written')[0:RECENTLY_PER_PAGE]
 	# TODO: 나중에 영문 과목명과 한글 과목명 처리는 어떻게?
 
 	return render_to_response('favorites/index.html', {
 		'section': 'favorites',
 		'title': u'과목 즐겨찾기',
-		'favorite_list': favorite_list,
 		'recently_added_list': courselink_pages,
 	}, context_instance=RequestContext(request))
 

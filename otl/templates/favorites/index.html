@@ -90,8 +90,8 @@ function CheckNull(form)
 	<h3>내 즐겨찾기</h3>
 {% if user.is_authenticated %}
 <ul>
-	{% if favorite_list %}
-		{% for item in favorite_list %}
+	{% if myfavorites %}
+		{% for item in myfavorites %}
 		<li>
 			<a class="favorite-link" href="{{item.url}}" target="_blank" >	
 				<h4>{{item.course_name}} (등록수 : {{item.favored_count}})</h4>
