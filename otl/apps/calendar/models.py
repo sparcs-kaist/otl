@@ -125,8 +125,8 @@ def get_system_calendar(user, system_id):
 	return c
 
 def is_in_current_semester(date):
-	start = settings.SEMESTER_RNAGES[(settings.CURRENT_YEAR, settings.CURRENT_SEMESTER)][0]
-	end = settings.SEMESTER_RNAGES[(settings.CURRENT_YEAR, settings.CURRENT_SEMESTER)][1]
+	start = settings.SEMESTER_RANGES[(settings.CURRENT_YEAR, settings.CURRENT_SEMESTER)][0]
+	end = settings.SEMESTER_RANGES[(settings.CURRENT_YEAR, settings.CURRENT_SEMESTER)][1]
 	return date >= start and date <= end
 
 def fetch_assignments(student_id):
