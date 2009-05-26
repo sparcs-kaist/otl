@@ -96,7 +96,7 @@ def view(request, hash):
 def change(request):
 	if request.method == 'POST':
 		# TODO: implement adding ParticipatingTimeRange...
-		f = ChangeForm(request.POST):
+		f = ChangeForm(request.POST)
 		if f.is_valid():
 			op = f.cleaned_data['submit_operation']
 			if op == 'participate-confirm':
