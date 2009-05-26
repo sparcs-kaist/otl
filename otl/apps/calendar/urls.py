@@ -10,5 +10,6 @@ urlpatterns = patterns('',
 	(ur'^schedule/add', views.add_schedule),
 	(ur'^schedule/modify', views.modify_schedule),
 	(ur'^schedule/delete', views.delete_schedule),
+	(ur'^assignments/get', views.get_assignments),
 )
 

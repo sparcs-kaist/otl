@@ -5,8 +5,9 @@ from django.template import RequestContext
 from django.conf import settings
 from django.utils import simplejson as json
 from django.contrib.auth.decorators import login_required
+from django.db import DatabaseError
 from otl.apps.calendar.forms import ScheduleForm
-from otl.apps.calendar.models import Calendar, Schedule
+from otl.apps.calendar.models import Calendar, Schedule, fetch_assignments
 from otl.utils.decorators import login_required_ajax
 from otl.utils import response_as_json
 
@@ -295,7 +296,49 @@ def delete_schedule(request):
 		return HttpResponseBadRequest('Should be called with POST method.')
 	return response_as_json(request, result)
 
-@login_required
-def search_schedule(request):
-	pass
+@login_required_ajax
+def get_assignments(request):
+	"""
+	Retrieves the current user's assignments from Moodle.
+
+	Request: None
+	Response: use JSON string
+	{
+		"result": "OK" | "FAILED", // This handler may fail due to connection problems.
+		"assignments": [
+			{
+				"course": string (2~3 alphabet + 3 digits),
+				"name": string,
+				"description": string,
+				"due_date": "YYYY-MM-DD",
+				"due_time": integer representing minutes from 00:00,
+				"grade": integer
+			},
+			...
+		]
+	}
+	"""
+
+	try:
+		items = fetch_assignments(request.user.profile.student_id)
+		assignments = []
+		for item in items:
+			# item[5], item[6], item[8] was already converted to python datetime objects.
+			t = item[5].time()
+			assignments.append({
+				'course': item[0],
+				'name': item[1],
+				'description': item[2],
+				'due_date': item[5].date().strftime('%Y-%m-%d'),
+				'due_time': t.hour * 60 + t.minute,
+				'grade': item[7],
+			})
+		result = {
+			'result': 'OK',
+			'assignments': assignments,
+		}
+	except DatabaseError:
+		result = {'result': 'FAILED', 'assignments': []}
+	
+	return response_as_json(request, result)
 
