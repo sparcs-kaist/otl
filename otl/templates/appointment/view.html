@@ -33,9 +33,10 @@ var mode = {{ mode }};{# string #}
 var all_confirmed = {{ all_confirmed }};{# boolean #}
 var final_appointment_schedule = {{ final_appointment_schedule }};{# string #}
 
-{# my_schedules와 time_ranges_of_others 변수를 이용하여 자신의 일정과 다른 사람의 약속 참여 가능 시간대를 연하게 겹쳐 표시한다. #}
-var my_schedules = {{ my_schedules|safe }};{# Array of schedules. 각 item은 summary, date, time_start, time_end 정보만 포함. #}
+{# time_ranges_of_others 변수를 이용하여 자신의 일정과 다른 사람의 약속 참여 가능 시간대를 연하게 겹쳐 표시한다. #}
 var time_ranges_of_others = {{ time_ranges_of_others|safe }};{# Array of time_range. 각 item은 date, time_start, time_end 정보만 포함. #}
+
+{# 현재 로그인한 사용자 자신의 schedule은 /calendar/schedule/list 주소를 이용해 얻어올 수 있다. (여기에 자신의 시간표 정보도 포함) #}
 //]]>
 </script>
 {% endblock %}
@@ -48,6 +49,7 @@ var time_ranges_of_others = {{ time_ranges_of_others|safe }};{# Array of time_ra
 			선택된 날짜별 시간대는 create할 때와 마찬가지 형식으로 서버에 전달한다.
 			(구체적인 handler는 작업 예정. AJAX가 아닌 form submit으로 한다.)
 		-->
+		<input type="hidden" name="time_ranges" value="" />
 		<input type="hidden" name="operation" value="{{ submit_operation }}" />
 		<input type="submit" value="{{ submit_caption }}" />
 	</form>

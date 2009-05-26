@@ -24,6 +24,11 @@ NOTE: CandidateTimeRange는 Appointment 하나 당 여러 개를 추가할 수 �
       마찬가지로 ParticipatingTimeRange는 Participating 관계 하나 당 여러 개를 설정할 수 있다.
 """
 
+APPOINTMENT_OPERATIONS = (
+	('participate-confirm', u'참여 확인하기'),
+	('finalize', u'약속 확정하기'),
+)
+
 class Appointment(models.Model):
 	hash = models.CharField(max_length=32)
 	owner = models.ForeignKey('auth.User')

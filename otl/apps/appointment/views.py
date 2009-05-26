@@ -6,7 +6,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.utils import simplejson as json
 from otl.apps.appointment.models import Appointment, Participating, CandidateTimeRange, ParticipatingTimeRange
-from otl.apps.appointment.forms import CreateForm
+from otl.apps.appointment.forms import CreateForm, ChangeForm
 from otl.utils.forms import DateTimeRange
 
 def index(request):
@@ -42,7 +42,7 @@ def view(request, hash):
 	final_appointment_shcedule = None
 	time_ranges_of_others = []
 	submit_caption = u'참여 가능 시간 확정하기'
-	submit_operation = u'participate'
+	submit_operation = u'participate-confirm'
 	
 	# The owner is also a participant, so we just create the relationship.
 	try:
@@ -56,7 +56,12 @@ def view(request, hash):
 
 	# Collect all participating time ranges of the appointment.
 	# NOTE: Some of them may overlap with others.
-	time_ranges_of_others = ParticipatingTimeRange.objects.filter(belongs_to__appointment=appointment)
+	for item in ParticipatingTimeRange.objects.filter(belongs_to__appointment=appointment):
+		time_ranges_of_others.append({
+			'date': item.date,
+			'time_start': item.time_start,
+			'time_end': item.time_end,
+		})
 
 	# If this appointment is already finished, just show the finalized schedule.
 	if mode == 'completed':
@@ -94,7 +99,7 @@ def change(request):
 		f = ChangeForm(request.POST):
 		if f.is_valid():
 			op = f.cleaned_data['submit_operation']
-			if op == 'participate':
+			if op == 'participate-confirm':
 				pass
 			elif op == 'finalize':
 				pass
@@ -138,3 +143,4 @@ def create(request):
 		'create_step1_form': f1,
 		'error_msg': err,
 	}, context_instance=RequestContext(request))
+
