@@ -167,16 +167,25 @@ button
 {
 	height:22px;
 	width:100%;
+	font-size:11px;
 }
 
 #colheaders .chead
 {
+	float:left;
 	height:100%;
 	width:14.2857143%;
-	float:left;
 	line-height:22px;
 	text-align:center;
+	color:#112AAB;
+    background:#C3D9FF;
+}
+
+#colheaders .today
+{
+	color:#fff;
 	background:#88AACC;
+	font-weight:bold;
 }
 
 #day-schedule
@@ -254,19 +263,30 @@ button
 	padding:0;	
 }
 
-#grid .block-day
+#grid #table
 {
 	position:relative;
-	float:left;
-	width:14.2857%;
+	border-collapse:collapse;
+	width:100%;
 	height:100%;
-	background:transparent url('images/cell_800.gif') repeat-y;
 }
 
-#grid .block-day .schedule
+#grid #table td
 {
-
+	width:auto;
+	height:100%;
+	font-family:monospace;
+	background:transparent url('images/cell_800.gif') repeat-y;
+	padding:0;
+	margin:0;
+	position:relative;
 }
+
+#grid #table td.today
+{
+	background-color:#FFFFCC;
+}
+
 
 .side-box .top
 {
@@ -306,7 +326,7 @@ button
 }
 
 
-#prev-day,#next-day
+#prev-week,#next-week
 {
 	float:left;
 	display:block;
@@ -326,11 +346,11 @@ button
 	margin-right:5px;
 }
 
-#prev-day
+#prev-week
 {
 	background-position:-150px -17px;
 }
-#next-day
+#next-week
 {
 	background-position:-150px 0px;
 }
@@ -478,4 +498,5 @@ button
 	height:21px;
 	opacity:0.5;
 	filter:alpha(opacity=50);
+	color:#fff;
 }

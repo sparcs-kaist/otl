@@ -52,13 +52,31 @@ getPosition:
 			y : (Event.pointerY(e)-wrapOffsets[1])
 		};
 	},
+getTime:
+	function(curPos){
+		var days=['일','월','화','수','목','금','토'];
+		var w = this.grid.offsetWidth/7;
+		return {
+			index : Math.floor(this.startPos.x/w),
+			whatday : days[Math.floor(this.startPos.x/w)],
+			start : Math.floor(this.startPos.y/21)*30,
+			end   : Math.floor(curPos.y/21+1)*30
+		};
+	},
+min2time:
+	function(minutes)
+	{
+		var str = (minutes<12*60)?'오전 ':'오후 ';
+		str+=Math.floor(minutes/60);
+		str+=((minutes % 60)==0)?'시':':'+(minutes % 60);
+		return str;
+	},
 onStart:
 	function(e){
 		Popup.hide();
 		this.dragging=true;
 		this.startPos = this.getPosition(this.grid,e);
 		var w = this.grid.offsetWidth/7;
-		//var w = Math.floor(this.grid.offsetWidth/7);
 
 		var x =  Math.floor(this.startPos.x/w)*w+3;
 		var y =  Math.floor(this.startPos.y/21)*21;
@@ -67,6 +85,7 @@ onStart:
 		this.block.style.top=y+'px';
 		this.block.style.height='21px';
 		this.block.show();
+		this.draw(this.startPos);
 		Event.stop(e);
 	},
 onDrag:
@@ -74,17 +93,25 @@ onDrag:
 		if(this.dragging)
 		{
 			var curPos = this.getPosition(this.grid,e);
-			var height = Math.floor((curPos.y-this.startPos.y)/21+1)*21;
-			this.block.style.height=height +'px';
+			this.draw(curPos);
 		}
 	},
+draw:function(curPos)
+	 {
+		var height = Math.floor((curPos.y-this.startPos.y)/21+1)*21;
+		this.block.style.height=height +'px';
+		var time = this.getTime(curPos);
+		this.block.update(time.whatday+'요일 '+this.min2time(time.start)+' - '+this.min2time(time.end));
+	 },
 onEnd:
 	function(e){
 		if(this.dragging)
 		{
 			this.dragging=false;
-			var curPos = this.getPosition(document.body,e);
-			Popup.show();
+			var curPos = this.getPosition(this.grid,e);
+			var time = this.getTime(curPos);
+			this.draw(curPos);
+			Popup.show(time);
 		}
 	}
 };
@@ -93,10 +120,16 @@ onEnd:
 
 MWCalendar = 
 {
-
 initialize:
 	function(){
+
+		this.onLoad();
+		this.registHandlers();
+	},
+onLoad:
+	function(){
 		var options ={
+			oncalchange:this.onChange.bindAsEventListener(this),
 			titleformat:'mmmm yyyy',
 			updateformat:'yyyy-mm-dd',	
 			dayheadlength:2,
@@ -104,19 +137,82 @@ initialize:
 			tabular:false,
 			planner:false
 		};
-		var  scal= new Scal('calendar',this.onChange.bindAsEventListener(this), options);
-		this.onLoad();
-		this.registHandlers();
-	},
-onLoad:
-	function(){
-	},
-onChange:
-	function(e)
-	{
+		this.scal= new Scal('calendar',this.onChange.bindAsEventListener(this), options);
+		this.goToday();
 	},
 registHandlers:
 	function(){
+		Event.observe($('today'),'click',this.goToday.bind(this));
+		Event.observe($('prev-week'),'click',this.goPrevWeek.bind(this));
+		Event.observe($('next-week'),'click',this.goNextWeek.bind(this));
+	},
+goToday:
+	function(){
+		this.scal.setCurrentDate(new Date());
+	},
+goNextWeek:
+	function(){
+		var next = new Date();
+		next.setTime(this.scal.currentdate.getTime()+(1000*60*60*24*7));
+		this.scal.setCurrentDate(next);
+	},
+goPrevWeek:
+	function(){
+		var prev = new Date();
+		prev.setTime(this.scal.currentdate.getTime()-(1000*60*60*24*7));
+		this.scal.setCurrentDate(prev);
+	},
+onChange:
+	function(d)
+	{
+		var dt = (d instanceof Date) ? d : d.date;
+		var week=this.getWeek(dt);
+		this.updateCurrentDate(week);
+		this.updateCurrentChead(week);
+		var el = this.scal.getElementByDate(dt).siblings().each(function(elem){
+			elem.addClassName('dayselected');
+		});
+	},
+getWeek:
+	function(d)
+	{
+		var oneday=1000*60*60*24;
+		var week = [];
+		for (var i=0;i<7;i++)
+		{
+			var day = new Date();
+			day.setTime(d.getTime()+((i-d.getDay()) * oneday));
+			week.push({
+				whatday: day.getDay(),
+				month: day.format('mm'),
+				day: day.format('dd'),
+				year: day.getFullYear(),
+				dt: day
+			});
+		}
+		return week;
+	},
+updateCurrentDate:
+	function(week)
+	{
+		var s = week[0].year+'년 '+week[0].month+'월 '+week[0].day+'일 - ';
+		if (week[0].year!=week[6].year) s+=week[6].year+'년 ';
+		if (week[0].month!=week[6].month) s+=week[6].month+'월 ';
+		s+=week[6].day+'일';
+		$('current-date').update(s);
+	},
+updateCurrentChead:
+	function(week)
+	{
+		var days=['일','월','화','수','목','금','토'];
+		for(var i=0;i<7;i++)
+		{
+			$('chead'+i).update(week[i].month+'/'+week[i].day+' ('+days[week[i].whatday]+')');
+			if (week[i].dt.format('yy-mm-dd')==(new Date()).format('yy-mm-dd'))
+				$('chead'+i).addClassName('today');
+			else
+				$('chead'+i).removeClassName('today');
+		}
 	}
 };
 
@@ -130,7 +226,7 @@ initialize:
 	},
 show:
 	function(time){
-		$('schedule-time').update('14');
+		$('schedule-time').update(DrawBlock.min2time(time.start)+' - '+DrawBlock.min2time(time.end));
 		$('schedule-summary').value='';
 		$('schedule-location').value='';
 		$('schedule-description').value='';
@@ -176,13 +272,17 @@ update:
 };
 
 	Event.observe(window, "load", function() { 
+		BrowserDetect.init();
 		var resizeHandler = function()
 		{
 			$('grid-wrap').style.width=($('grid-wrap').parentNode.offsetWidth-$('rowheaders').offsetWidth)+'px';
+			if(BrowserDetect.browser=='Explorer')
+			{
+				$('grid').style.width = ($('grid').offsetWidth-18)+'px';
+			}
 		};
 		LayoutMgr = new LayoutManager(null,{resizeHandler:resizeHandler}); 
 		Popup.initialize();
-		BrowserDetect.init();
 		DrawBlock.initialize();
 		MWCalendar.initialize();
 	});
@@ -271,9 +371,9 @@ update:
 				<div class="header-bottom lm_top"></div>
 				<div class="lm_top" style="height:5px"></div>
 				<div id="navigator" class="lm_top" style="height:26px">
-					<a id="prev-day"></a>
-					<button id="today">오늘</button>
-					<a id="next-day"></a>
+					<a id="prev-week"></a>
+					<a id="next-week"></a>
+					<button id="today">이번주</button>
 					<span id="current-date">2009년 4월 13일 – 9일 </span>
 					<div class="tl message"><div class="tr"><div class="bl"><div class="br" style="padding:2px 10px">일정이 삭제 되었습니다</div></div></div></div>
 					<button class="right" id="refresh">새로고침</button>
@@ -284,17 +384,16 @@ update:
 						<div id="timetable-top" class="lm_top">
 							<div class="lm_container">
 								<div class="lm_left" style="width:61px">
-
 								</div>
 								<div class="lm_center">
 									<div id="colheaders">
-										<div class="chead"><span>월</span></div>
-										<div class="chead"><span>화</span></div>
-										<div class="chead"><span>수</span></div>
-										<div class="chead"><span>목</span></div>
-										<div class="chead"><span>금</span></div>
-										<div class="chead"><span>토</span></div>
-										<div class="chead"><span>일</span></div>
+										<div id="chead0" class="chead"></div>
+										<div id="chead1" class="chead"></div>
+										<div id="chead2" class="chead"></div>
+										<div id="chead3" class="chead"></div>
+										<div id="chead4" class="chead"></div>
+										<div id="chead5" class="chead"></div>
+										<div id="chead6" class="chead"></div>
 										<div class="clear"></div>
 									</div>
 									<div id="day-schedule">
@@ -335,13 +434,19 @@ update:
 								</div><!--rowheaders-->
 								<div id="grid-wrap">
 									<div id="grid">
-										<div class="block-day"></div>
-										<div class="block-day"></div>
-										<div class="block-day"></div>
-										<div class="block-day"></div>
-										<div class="block-day"></div>
-										<div class="block-day"></div>
-										<div class="block-day"></div>
+										<table id="table">
+											<tbody>
+											<tr>
+												<td id=""></td>
+												<td id=""></td>
+												<td id=""></td>
+												<td id=""></td>
+												<td id=""></td>
+												<td id=""></td>
+												<td id=""></td>
+											</tr>
+											</tbody>
+										</table>
 									</div>
 								</div>
 							</div><!--timetable-->
@@ -383,7 +488,7 @@ update:
 							</tr>
 							<tr>
 								<td>설명:</td>
-								<td><textarea id="schedule-description" rows="5" cols="30"></textarea></td>
+								<td><textarea id="schedule-description" rows="4" cols="30"></textarea></td>
 							</tr>
 							<tr>
 								<td>캘린더:</td>
@@ -397,8 +502,7 @@ update:
 								</td>
 							</tr>
 						</table>
-						<br />
-						<button id="popup-submit">일정 만들기</button>
+						<button class="right"id="popup-submit">일정 만들기</button>
 					</td>
 					<td class="east"></td>
 				</tr>
