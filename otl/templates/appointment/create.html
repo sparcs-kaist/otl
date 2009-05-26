@@ -1,0 +1,41 @@
+{% extends 'layout.html' %}
+{% load forms %}
+{% block headers %}
+		<link rel="stylesheet" type="text/css" href="/media/appointment.css" />
+		<script type="text/javascript" src="/media/js/appointment-create.js"></script>
+{% endblock %}
+{% block content %}
+	<form id="appointmentCreateForm" method="post" action="/appointment/create/">
+		<table>
+			<tr><th colspan="2"><h3>Step 1: 약속 정보 입력</h3></th></tr>
+			{% print_form_as_table create_step1_form %}
+			<tr><th colspan="2"><h3>Step 2: 날짜 선택</h3></th></tr>
+			<tr>
+				<td colspan="2">
+					<!-- TODO: 주(week) 선택 UI -->
+					<!--
+						여기서 선택한 날짜들에 대해서만 시간대 선택이 가능하도록 아래의 UI를 조정한다.
+					-->
+				</td>
+			</tr>
+			<tr><th colspan="2"><h3>Step 3: 시간대 선택</h3></th></tr>
+			<tr>
+				<td colspan="2">
+					<!-- TODO: 시간대 선택 UI -->
+					<!--
+						아래의 time_ranges input 요소의 값은 "YYYY-MM-DD/hh:mm-hh:mm" 형식으로
+						여러 개 반복하여 찍어준다.
+						(원한다면 hh:mm 대신 00:00으로부터의 분 단위 정수로 바꿔도 무방함)
+						각 항목 사이에는 콤마를 찍어준다. (끝에는 붙든 안 붙든 상관 없음)
+
+						시간 선택은 30분 단위로 할 수 있다.
+
+						ex) 2009-05-24/10:00-12:00,2009-05-25/10:00-12:00,2009-05-26/18:00-19:30
+					-->
+					<input type="hidden" name="time_ranges" value="" />
+				</td>
+			</tr>
+			<tr><td colspan="2"><input type="submit" value="생성하기" /></td></tr>
+		</table>
+	</form>
+{% endblock %}

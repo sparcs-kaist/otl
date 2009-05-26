@@ -1,0 +1,53 @@
+{% extends 'layout.html' %}
+{% block headers %}
+<script type="text/javascript">
+//<![CDATA[
+{#
+mode 변수는 'owner', 'participant', 'completed' 중 하나의 값을 가진다.
+
+'owner'일때:
+	현재 로그인한 사용자는 이 약속을 처음 제안(생성)한 사람이다.
+	이 사람은 자신의 참여 가능 시간을 completed==true가 되기 전까지 언제든지 바꿀 수 있다.
+
+	if (all_confirmed == true)
+		모든 참여자가 참여 가능 일정을 확정한 상태로 최종 약속 시간을 고를 수 있도록 UI를 조작한다.
+		최종 약속 시간을 골라 submit하고 나서부턴 'completed' mode가 된다.
+	else
+		아직 참여 가능 일정을 확정하지 않은 참여자가 있는 상태로 최종 약속 시간을 고를 수 없다.
+	
+	final_appointment_schedule 변수는 null이다.
+	
+'participant'일때:
+	현재 로그인한 사용자는 이 약속에 참여하려고 하는 사람이다.
+	all_confirmed 변수는 항상 false로 세팅된다.
+	final_appointment_schedule 변수는 null이다.
+
+	이 상태에서는 자신의 참여 가능 시간대를 고를 수 있도록 하고, 결정하면 서버에 submit한다. (AJAX 아님)
+
+'completed'일때:
+	이미 이 약속은 약속잡기가 완료된 것으로 수정하거나 새로운 사람이 참여할 수 없다.
+	이 상태에서는 어떠한 UI 요소도 조작할 수 없고 단지 보는 것만 가능하다.
+	최종 약속 시간을 가리키는 final_appointment_schedule 변수가 설정되므로 이것을 표시해준다.
+#}
+var mode = {{ mode }};{# string #}
+var all_confirmed = {{ all_confirmed }};{# boolean #}
+var final_appointment_schedule = {{ final_appointment_schedule }};{# string #}
+
+{# my_schedules와 time_ranges_of_others 변수를 이용하여 자신의 일정과 다른 사람의 약속 참여 가능 시간대를 연하게 겹쳐 표시한다. #}
+var my_schedules = {{ my_schedules|safe }};{# Array of schedules. 각 item은 summary, date, time_start, time_end 정보만 포함. #}
+var time_ranges_of_others = {{ time_ranges_of_others|safe }};{# Array of time_range. 각 item은 date, time_start, time_end 정보만 포함. #}
+//]]>
+</script>
+{% endblock %}
+{% block content %}
+	<form id="appointmentForm" method="post" action="/appointment/change/">
+		<p>TODO: 일정관리 형태로 약속 잡기 User Interface 구현</p>
+		<!-- TODO: 시간대 선택 UI -->
+		<!--
+			이곳에는 table 형태로 자신이 참여하고 싶은 시간대를 선택할 수 있게 한다.
+			선택된 날짜별 시간대는 create할 때와 마찬가지 형식으로 서버에 전달한다.
+			(구체적인 handler는 작업 예정. AJAX가 아닌 form submit으로 한다.)
+		-->
+		<input type="submit" value="{{ submit_caption }}" />
+	</form>
+{% endblock %}
