@@ -38,6 +38,9 @@ class Appointment(models.Model):
 	time_start = models.TimeField(blank=True)
 	time_end = models.TimeField(blank=True)
 
+	class Meta:
+		unique_together = (('hash',),)
+
 class Participating(models.Model):
 	participant = models.ForeignKey('auth.User')
 	appointment = models.ForeignKey(Appointment)

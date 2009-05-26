@@ -2,6 +2,12 @@
 from django import forms
 from datetime import datetime
 
+class DateTimeRange(object):
+	def __init__(self, date, time_start, time_end):
+		self.date = date
+		self.time_start = time_start
+		self.time_end = time_end
+
 class MultipleDateTimeRangeField(forms.Field):
 	widget = forms.HiddenInput
 
@@ -22,11 +28,7 @@ class MultipleDateTimeRangeField(forms.Field):
 				thedate = datetime.strptime(parts[0], '%Y-%m-%d').date()
 				time_start = datetimetime.strptime(ranges[0], '%H:%M').time()
 				time_end = datetime.strptime(ranges[1], '%H:%M').time()
-				result.append({
-					'date': thedate,
-					'time_start': time_start,
-					'time_end': time_end,
-				})
+				result.append(DateTimeRange(thedate, time_start, time_end))
 		except (IndexError, ValueError):
 			raise ValidationError(u'The input could not be parsed.')
 		return result
