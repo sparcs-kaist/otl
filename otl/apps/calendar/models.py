@@ -124,10 +124,29 @@ def get_system_calendar(user, system_id):
 		c.save()
 	return c
 
-def is_in_current_semester(date):
+def is_in_current_semester(someday):
 	start = settings.SEMESTER_RANGES[(settings.CURRENT_YEAR, settings.CURRENT_SEMESTER)][0]
 	end = settings.SEMESTER_RANGES[(settings.CURRENT_YEAR, settings.CURRENT_SEMESTER)][1]
-	return date >= start and date <= end
+	return someday >= start and someday <= end
+
+def is_in_exam_periods(someday):
+	exam_periods = settings.EXAM_PERIODS[(settings.CURRENT_YEAR, settings.CURRENT_SEMESTER)]
+	for p in exam_periods:
+		if someday >= p[0] and someday <= p[1]:
+			return True
+	return False
+
+def is_holiday(someday):
+	if someday.month == 3 and someday.day == 1: # 삼일절
+		return True
+	if someday.month == 5 and someday.day == 5: # 어린이날
+		return True
+	if someday.month == 10 and someday.day == 3: # 개천절
+		return True
+	# TODO: add more holidays!
+	# TODO: 강성훈의 Python 음력 변환기를 사용하여 추석, 설, 초파일도 자동 처리?
+	
+	return False
 
 def fetch_assignments(student_id):
 	"""

@@ -5,6 +5,7 @@ from django.utils import simplejson as json
 from django.http import HttpResponse
 from django.core.cache import cache
 from django.conf import settings
+from datetime import date, timedelta
 
 def get_choice_display(choices, key):
 	for item in choices:
@@ -39,4 +40,22 @@ def response_as_json(request, obj):
 	output = json.dumps(obj, ensure_ascii=False, indent=4 if settings.DEBUG else 0)
 	type = 'application/json' if request.is_ajax() else 'text/plain'
 	return HttpResponse(output, mimetype=type)
+
+def date_range(start, end):
+	"""
+	지정한 두 날짜 사이의 모든 날짜(inclusively)를 하루 단위로 돌려주는 iterator.
+	"""
+	if not isinstance(start, date) or not isinstance(end, date):
+		raise TypeError('Arguments should be python date.')
+	
+	if start > end:
+		raise ValueError('Ending date should be later than starting date.')
+	
+	current = start
+	one_day = timedelta(days=1)
+	while True:
+		yield current
+		current += one_day
+		if current - one_day == end:
+			break
 

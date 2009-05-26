@@ -7,10 +7,11 @@ from django.utils import simplejson as json
 from django.contrib.auth.decorators import login_required
 from django.db import DatabaseError
 from otl.apps.calendar.forms import ScheduleForm, ScheduleListForm
-from otl.apps.calendar.models import Calendar, Schedule, fetch_assignments, fetch_taking_courses, get_system_calendar, is_in_current_semester
+from otl.apps.calendar.models import Calendar, Schedule, fetch_assignments, fetch_taking_courses, get_system_calendar
+from otl.apps.calendar.models import is_in_current_semester, is_in_exam_periods, is_holiday
 from otl.apps.timetable.models import Lecture, ClassTime
 from otl.utils.decorators import login_required_ajax
-from otl.utils import response_as_json
+from otl.utils import response_as_json, date_range
 from datetime import *
 
 def index(request):
@@ -122,37 +123,38 @@ def list_schedule(request):
 	print 'processing list_schedule()'
 	if f.is_valid():
 		
-		# TODO: 나중에 일주일보다 큰 간격으로 요청해올 경우 시간표 schedule 처리를 loop로 돌아야 함.
 		date_start = f.cleaned_data['date_start']
 		date_end = f.cleaned_data['date_end']
-		if date_end - date_start > timedelta(days=7, hours=0, minutes=0):
-			return HttpResponseBadRequest('Unimplemented size of date difference.')
+		if date_start > date_end:
+			return HttpResponseBadRequest('Ending date should be later than starting date.')
 		result = []
 
 		# Auto-update schedules from timetables
-		# TODO: cache!
 		current_week_start = date_start - timedelta(days = (date_start.toordinal() % 7), hours=0, minutes=0)
 		timetable_calendar = get_system_calendar(request.user, 'timetable')
+		# TODO: cache!
 		lectures = fetch_taking_courses(int(request.user.userprofile.student_id))
+
+		# For all lectures I'm taking, with someday iteration from date_start to date_end and within the semester,
+		# fetch class times which belongs to someday.
 		for lecture in lectures:
-			class_times = lecture.classtime_set.all()
 			print 'Taking course : %s' % lecture.code
-			for class_time in class_times:
-				# TODO: 과목시간표에 대한 30분 단위 올림 처리
-				class_date = current_week_start + timedelta(days=class_time.day + 1, hours=0, minutes=0)
-				# TODO: 개강/종강 시점 처리
-				if class_date >= date_start and class_date <= date_end and is_in_current_semester(class_date):
-					result.append({
-						'id': -1, # This is a virtual schedule item, so users cannot modify it.
-						'calendar': timetable_calendar.id,
-						'summary': u'%s%s' % (lecture.title, u' (실험)' if class_time.type == 'e' else u''),
-						'location': class_time.get_location(),
-						'range': 0, # 일일 일정
-						'description': u'',
-						'date': class_date.strftime('%Y-%m-%d'),
-						'time_start': class_time.begin.hour * 60 + class_time.begin.minute,
-						'time_end': class_time.end.hour * 60 + class_time.end.minute,
-					})
+			for someday in date_range(date_start, date_end):
+				if is_in_current_semester(someday) and not is_in_exam_periods(someday) and not is_holiday(someday):
+					class_times = lecture.classtime_set.filter(day=someday.weekday())
+					for class_time in class_times:
+						# TODO: 과목시간표에 대한 30분 단위 올림 처리
+						result.append({
+							'id': -1, # This is a virtual schedule item, so users cannot modify it.
+							'calendar': timetable_calendar.id,
+							'summary': u'%s%s' % (lecture.title, u' (실험)' if class_time.type == 'e' else u''),
+							'location': class_time.get_location(),
+							'range': 0, # 일일 일정
+							'description': u'',
+							'date': someday.strftime('%Y-%m-%d'),
+							'time_start': class_time.begin.hour * 60 + class_time.begin.minute,
+							'time_end': class_time.end.hour * 60 + class_time.end.minute,
+						})
 
 		items = Schedule.objects.filter(date__gte=date_start, date__lte=date_end)
 		for item in items:
