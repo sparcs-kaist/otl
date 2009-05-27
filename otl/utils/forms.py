@@ -16,21 +16,23 @@ class MultipleDateTimeRangeField(forms.Field):
 	
 	def clean(self, value):
 		super(MultipleDateTimeRangeField, self).clean(value)
-		if value in EMPTY_VALUES:
+		if value in forms.fields.EMPTY_VALUES:
 			return None
 
 		try:
 			tokens = value.split(',')
 			result = []
 			for token in tokens:
+				if token in forms.fields.EMPTY_VALUES:
+					continue
 				parts = token.split('/')
 				ranges = parts[1].split('-')
 				thedate = datetime.strptime(parts[0], '%Y-%m-%d').date()
-				time_start = datetimetime.strptime(ranges[0], '%H:%M').time()
+				time_start = datetime.strptime(ranges[0], '%H:%M').time()
 				time_end = datetime.strptime(ranges[1], '%H:%M').time()
 				result.append(DateTimeRange(thedate, time_start, time_end))
 		except (IndexError, ValueError):
-			raise ValidationError(u'The input could not be parsed.')
+			raise forms.ValidationError(u'The input could not be parsed.')
 		return result
 
 # MultiSelectField customization from http://www.djangosnippets.org/snippets/1200/

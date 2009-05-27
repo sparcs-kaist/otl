@@ -9,6 +9,7 @@ from django.utils import simplejson as json
 from otl.apps.appointment.models import Appointment, Participating, CandidateTimeRange, ParticipatingTimeRange
 from otl.apps.appointment.forms import CreateForm, ChangeForm
 from otl.utils.forms import DateTimeRange
+import random
 
 def index(request):
 	if settings.SERVICE_STATUS == 'beta':
@@ -33,14 +34,14 @@ def view(request, hash):
 	if appointment.completed:
 		mode = 'completed'
 	else:
-		if request.user.id == appointmnet.owner.id:
+		if request.user.id == appointment.owner.id:
 			mode = 'owner'
 		else:
 			mode = 'participant'
 	
 	# Initialize variables according to the current mode.
 	all_confirmed = False
-	final_appointment_shcedule = None
+	final_appointment_schedule = None
 	candidate_time_ranges = []
 	time_ranges_of_others = []
 	submit_caption = u'참여 가능 시간 확정하기'
@@ -60,17 +61,17 @@ def view(request, hash):
 	# NOTE: Some of them may overlap with others.
 	for item in ParticipatingTimeRange.objects.filter(Q(belongs_to__appointment=appointment) & ~Q(belongs_to__participant=request.user)):
 		time_ranges_of_others.append({
-			'date': item.date,
-			'time_start': item.time_start,
-			'time_end': item.time_end,
+			'date': item.date.strftime('%Y-%m-%d'),
+			'time_start': item.time_start.hour * 60 + item.time_start.minute,
+			'time_end': item.time_end.hour * 60 + item.time_end.minute,
 		})
 	
 	# Collect the candidate time ranges.
 	for item in CandidateTimeRange.objects.filter(belongs_to=appointment):
 		candidate_time_ranges.append({
-			'date': item.date,
-			'time_start': item.time_start,
-			'time_end': item.time_end,
+			'date': item.date.strftime('%Y-%m-%d'),
+			'time_start': item.time_start.hour * 60 + item.time_start.minute,
+			'time_end': item.time_end.hour * 60 + item.time_end.minute,
 		})
 
 	# If this appointment is already finished, just show the finalized schedule.
@@ -96,9 +97,9 @@ def view(request, hash):
 		'mode': json.dumps(mode),
 		'all_confirmed': json.dumps(all_confirmed),
 		'final_appointment_schedule': json.dumps(final_appointment_schedule),
-		'candidate_time_ranges': json.dumps(candidate_time_rages),
+		'candidate_time_ranges': json.dumps(candidate_time_ranges),
 		'time_ranges_of_others': json.dumps(time_ranges_of_others),
-		'submit_operation': submit_oepration,
+		'submit_operation': submit_operation,
 		'submit_caption': submit_caption,
 	}, context_instance=RequestContext(request))
 
@@ -171,7 +172,7 @@ def change(request):
 
 @login_required
 def create(request):
-	err = u''
+	err_msg = u''
 	if request.method == 'POST':
 		f = CreateForm(request.POST)
 		if f.is_valid():
@@ -193,13 +194,13 @@ def create(request):
 
 			return HttpResponseRedirect('/appointment/view/%s' % key)
 		else:
-			err = u'내용을 올바로 입력해주세요.'
+			err_msg = u'시간대를 선택하지 않았거나, 요약이 빠졌습니다.'
 	else:
-		f1 = CreateForm()
+		f = CreateForm()
 	return render_to_response('appointment/create.html', {
 		'section': 'appointment',
 		'title': u'약속 만들기',
-		'create_step1_form': f1,
-		'error_msg': err,
+		'create_form': f,
+		'err_msg': err_msg,
 	}, context_instance=RequestContext(request))
 

@@ -1,8 +1,8 @@
 {% extends 'layout.html' %}
 {% block headers %}
-<script type="text/javascript">
-//<![CDATA[
-{#
+<link rel="stylesheet" type="text/css" href="/media/appointment.css" />
+<script type="text/javascript" src="/media/js/appointment.js"></script>
+{% comment %}
 mode 변수는 'owner', 'participant', 'completed' 중 하나의 값을 가진다.
 
 'owner'일때:
@@ -28,15 +28,30 @@ mode 변수는 'owner', 'participant', 'completed' 중 하나의 값을 가진�
 	이미 이 약속은 약속잡기가 완료된 것으로 수정하거나 새로운 사람이 참여할 수 없다.
 	이 상태에서는 어떠한 UI 요소도 조작할 수 없고 단지 보는 것만 가능하다.
 	최종 약속 시간을 가리키는 final_appointment_schedule 변수가 설정되므로 이것을 표시해준다.
-#}
-var mode = {{ mode }};{# string #}
-var all_confirmed = {{ all_confirmed }};{# boolean #}
-var final_appointment_schedule = {{ final_appointment_schedule }};{# string #}
+{% endcomment %}
+<script type="text/javascript">
+//<![CDATA[
+var mode = {{ mode|safe }};{# string #}
+var all_confirmed = {{ all_confirmed|safe }};{# boolean #}
+var final_appointment_schedule = {{ final_appointment_schedule|safe }};{# string #}
 
 {# time_ranges_of_others 변수를 이용하여 자신의 일정과 다른 사람의 약속 참여 가능 시간대를 연하게 겹쳐 표시한다. #}
 var time_ranges_of_others = {{ time_ranges_of_others|safe }};{# Array of time_range. 각 item은 date, time_start, time_end 정보만 포함. #}
 
 {# 현재 로그인한 사용자 자신의 schedule은 /calendar/schedule/list 주소를 이용해 얻어올 수 있다. (여기에 자신의 시간표 정보도 포함) #}
+
+window.addEvent('domready', function() {
+	if (mode == 'completed') {
+		// This appointment is completed.
+		alert('completed');
+	} else if (mode == 'owner' && all_confirmed == true) {
+		// Finalizing mode. The owner may choose only one single time range for the final appointment time.
+		alert('finalizing mode');
+	} else {
+		// Participating mode. The user may choose their available time ranges.
+		alert('participating mode');
+	}
+});
 //]]>
 </script>
 {% endblock %}

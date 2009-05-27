@@ -39,9 +39,9 @@ class Appointment(models.Model):
 	completed = models.BooleanField(default=False)
 
 	# Finally decided appointment time
-	date = models.DateField(blank=True)
-	time_start = models.TimeField(blank=True)
-	time_end = models.TimeField(blank=True)
+	date = models.DateField(blank=True, null=True)
+	time_start = models.TimeField(blank=True, null=True)
+	time_end = models.TimeField(blank=True, null=True)
 
 	class Meta:
 		unique_together = (('hash',),)

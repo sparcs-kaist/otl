@@ -4,6 +4,6 @@ from otl.apps.appointment import views
 urlpatterns = patterns('',
 	(ur'^$', views.index),
 	(ur'^create/$', views.create),
-	(ur'^(\d+)$', views.view), # permalink access
+	(ur'^view/(\w+)$', views.view), # permalink access
 )
 

@@ -1,37 +1,77 @@
 {% extends 'layout.html' %}
 {% load forms %}
 {% block headers %}
-		<link rel="stylesheet" type="text/css" href="/media/appointment.css" />
-		<script type="text/javascript" src="/media/js/appointment-create.js"></script>
+<link rel="stylesheet" type="text/css" href="/media/appointment.css" />
+<script type="text/javascript" src="/media/js/appointment.js"></script>
+<script type="text/javascript">
+//<![CDATA[
+var date_picker = null, time_picker = null;
+var datetime_ranges = new Hash();
+var today = null;
+
+function set_time_ranges() {
+	var i, val = '';
+	datetime_ranges.each(function(item, key, hash) {
+		for (i = 0; i < item.length; i++) {
+			val += key+'/'+minutes2str(item[i][0])+'-'+minutes2str(item[i][1])+',';
+		}
+	});
+	$('id_time_ranges').set('value', val);
+}
+
+function calendar_handler(y, m, d) {
+	today = y+'-'+m+'-'+d;
+	if (!datetime_ranges.has(today))
+		datetime_ranges.set(today, []);
+	$('selected_date').set('html', today);
+	time_picker.draw(datetime_ranges.get(today));
+}
+
+function time_handler(selected, time_start, time_end) {
+	if (today == null)
+		return;
+	var i;
+	var ranges = [];
+	for (i = 0; i < 24*2; i++) {
+		var elem = $('TimeRangePicker-slot-'+i);
+		if (elem.hasClass('timerange-slot-selected')) {
+			ranges.push([elem.retrieve('time_start'), elem.retrieve('time_end')]);
+		}
+	}
+	datetime_ranges.set(today, ranges);
+	set_time_ranges();
+}
+
+window.addEvent('domready', function() {
+	date_picker = createCalendar('DatePicker', calendar_handler);
+	now = new Date();
+	today = now.getFullYear()+'-'+(now.getMonth()+1)+'-'+now.getDate();
+	$('selected_date').set('html', today);
+	time_picker = createTimeRangePicker('TimeRangePicker', time_handler);
+});
+//]]>
+		</script>
 {% endblock %}
 {% block content %}
 	<form id="appointmentCreateForm" method="post" action="/appointment/create/">
+		{% if err_msg %}<div class="msg error">{{err_msg}}</div>{% endif %}
 		<table>
 			<tr><th colspan="2"><h3>Step 1: 약속 정보 입력</h3></th></tr>
-			{% print_form_as_table create_step1_form %}
-			<tr><th colspan="2"><h3>Step 2: 날짜 선택</h3></th></tr>
+			{% print_form_as_table create_form %}
+			<tr><th colspan="2"><h3>Step 2: 날짜와 시간 선택</h3></th></tr>
 			<tr>
 				<td colspan="2">
-					<!-- TODO: 주(week) 선택 UI -->
-					<!--
-						여기서 선택한 날짜들에 대해서만 시간대 선택이 가능하도록 아래의 UI를 조정한다.
-					-->
-				</td>
-			</tr>
-			<tr><th colspan="2"><h3>Step 3: 시간대 선택</h3></th></tr>
-			<tr>
-				<td colspan="2">
-					<!-- TODO: 시간대 선택 UI -->
-					<!--
-						아래의 #id_time_ranges input 요소의 값은 "YYYY-MM-DD/hh:mm-hh:mm" 형식으로
-						여러 개 반복하여 찍어준다.
-						(원한다면 hh:mm 대신 00:00으로부터의 분 단위 정수로 바꿔도 무방함)
-						각 항목 사이에는 콤마를 찍어준다. (끝에는 붙든 안 붙든 상관 없음)
-
-						시간 선택은 30분 단위로 할 수 있다.
-
-						ex) 2009-05-24/10:00-12:00,2009-05-25/10:00-12:00,2009-05-26/18:00-19:30
-					-->
+					<p class="help">어떤 시간에 약속을 잡고 싶은지 먼저 후보 시간을 입력합니다.</p>
+					<p class="help">날짜를 클릭하고 원하는 시간대들을 클릭하여 선택하세요. 다시 클릭하면 선택이 해제됩니다.<br/>(여러 날짜에 걸쳐서 선택해둘 수도 있습니다)</p>
+					<div id="DatePicker" class="calendar">
+						<div class="calendar-shortcuts">
+							<a id="DatePicker-previous" href="#" class="calendar-previous">&lsaquo;</a>
+							<a id="DatePicker-next" href="#" class="calendar-next">&rsaquo;</a>
+						</div>
+						<div id="DatePicker-calendar"></div>
+					</div>
+					<p><span id="selected_date"></span>에 대한 시간대 선택:</p>
+					<div id="TimeRangePicker" class="timerange"></div>
 				</td>
 			</tr>
 			<tr><td colspan="2"><input type="submit" value="생성하기" /></td></tr>
