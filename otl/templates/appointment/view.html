@@ -43,19 +43,19 @@ var time_ranges_of_others = {{ time_ranges_of_others|safe }};{# Array of time_ra
 window.addEvent('domready', function() {
 	if (mode == 'completed') {
 		// This appointment is completed.
-		alert('completed');
 	} else if (mode == 'owner' && all_confirmed == true) {
 		// Finalizing mode. The owner may choose only one single time range for the final appointment time.
-		alert('finalizing mode');
 	} else {
 		// Participating mode. The user may choose their available time ranges.
-		alert('participating mode');
 	}
 });
 //]]>
 </script>
 {% endblock %}
 {% block content %}
+	<p style="text-align:center">
+		 <img src="/media/images/temp_appointment_prototype.png" alt="" />
+	</p>
 	<form id="appointmentForm" method="post" action="/appointment/change/">
 		<p>TODO: 일정관리 형태로 약속 잡기 User Interface 구현</p>
 		<!-- TODO: 시간대 선택 UI -->
