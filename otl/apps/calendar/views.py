@@ -160,7 +160,7 @@ def list_schedule(request):
 							'time_end': class_time.end.hour * 60 + class_time.end.minute,
 						})
 
-		items = Schedule.objects.filter(date__gte=date_start, date__lte=date_end)
+		items = Schedule.objects.filter(belongs_to__owner=request.user, date__gte=date_start, date__lte=date_end)
 		for item in items:
 			result.append({
 				'id': item.id,
