@@ -301,7 +301,7 @@ updateDay:
 		items.each(function(item){
 			var div = Builder.node('div',{'class':'schedule-item'});
 			Event.observe(div,'mousedown',this.onClickItem.bindAsEventListener(this,item));
-			div.update('<strong>'+item.summary+'</strong><br />'+item.description);
+			div.update('<strong>'+item.summary+'</strong><br />'+item.description+'<br />'+item.location);
 			div.style.top = item.time_start/30*21 + 'px';
 			div.style.left = item.left + '%';
 			div.style.width = item.width + '%';
@@ -313,6 +313,7 @@ updateDay:
 	},
 onClickItem:
 	function(e,item){
+		Popup.hide();
 		if (confirm('"'+item.summary+'"를 삭제하시겠습니까?'))
 		{
 			var url = 'schedule/delete';
