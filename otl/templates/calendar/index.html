@@ -56,11 +56,13 @@ getTime:
 	function(curPos){
 		var days=['일','월','화','수','목','금','토'];
 		var w = this.grid.offsetWidth/7;
+		var index = Math.floor(this.startPos.x/w);
 		return {
-			index : Math.floor(this.startPos.x/w),
+			index : index,
 			whatday : days[Math.floor(this.startPos.x/w)],
 			start : Math.floor(this.startPos.y/21)*30,
-			end   : Math.floor(curPos.y/21+1)*30
+			end   : Math.floor(curPos.y/21+1)*30,
+			fulldate : MWCalendar.week[index].dt.format('yyyy-mm-dd')
 		};
 	},
 min2time:
@@ -178,23 +180,98 @@ onChange:
 			elem.addClassName('dayselected');
 		});
 		this.getSchedules(week);
+		this.week = week;
 	},
 getSchedules:
 	function(week)
 	{
 		var url = 'schedule/list';
-		var params = 'date_start='+week[0].dt.format('yyyy-mm-dd')+'&date_end='+week[0].dt.format('yyyy-mm-dd');
+		var params = 'date_start='+week[0].dt.format('yyyy-mm-dd')+'&date_end='+week[6].dt.format('yyyy-mm-dd');
 		new Ajax.Request(url, {
 			method: 'get',
 			parameters:params,
 			onSuccess: function(t) {
-				alert(t.responseText);
-			}
+				try {
+					var data = eval('('+t.responseText+')');
+					this.updateSchedules(data);
+				}catch(e) { alert(e.message) };
+			}.bind(this)
 		});
 	},
 updateSchedules:
-	function(){
+	function(arr){
+		var hash  = {};
+		arr.each(function(item){ 
+			if (typeof hash[item.date] == 'undefined')
+				hash[item.date]=[];
+			hash[item.date].push(item);
+		});
 
+		for (var fulldate in hash)
+		{
+			this.week.each(function(item,index){
+				if(item.fulldate == fulldate) this.updateDay($('day'+index), hash[fulldate]);
+			}.bind(this))	
+		}
+	},
+updateDay:
+	function(wrap, items)
+	{
+		var assigned_items = 0; 
+		var index_of_column = 0;
+		var margin_percent = 20;
+
+		items.sort(function(a,b) { return a.time_end-b.time_end;});
+
+		while(assigned_items < items.length) 
+		{
+			index_of_column += 1;	
+			var column_end_time = -1;
+			for(i = 0 ; i < items.length; i ++)
+			{
+				if(items[i].time_start >= column_end_time && typeof items[i].column == 'undefined')
+				{
+					column_end_time = items[i].time_end;
+					items[i].column = index_of_column;
+					assigned_items ++;
+				}	
+			}
+		}
+
+		for(var i = 0; i < items.length ; i ++) {	
+			items[i].nextColumn = items[i].column+1;
+			for(var j = i-1; j >= 0 ; j --){
+				if(items[i].time_start < items[j].time_end) {
+					if(items[i].column < items[j].column ) {
+						if(items[i].nextColumn > items[j].column && items[j].column > items[i].column)
+							items[i].nextColumn = items[j].column;
+					}	
+					else {
+						if(items[j].nextColumn > items[i].column && items[i].column > items[j].column)
+							items[j].nextColumn = items[i].column;
+					}
+				}
+				else break;
+			}
+		}
+
+		for(i = 0; i < items.length; i ++ )
+		{
+			items[i].left = (100-margin_percent)*(items[i].column-1)/index_of_column;
+			items[i].width = (100-margin_percent)*(items[i].nextColumn - items[i].column)/index_of_column;
+			items[i].height = 21 * (items[i].time_end/30 - items[i].time_start/30);
+		}
+
+		wrap.empty();
+		items.each(function(item){
+			var div = Builder.node('div',{'class':'schedule-item'});
+			div.update(item.summary);
+			div.style.top = item.time_start/30*21 + 'px';
+			div.style.left = item.left + '%';
+			div.style.width = item.width + '%';
+			div.style.height = item.height + 'px';
+			wrap.appendChild(div);
+		});
 	},
 getWeek:
 	function(d)
@@ -210,6 +287,7 @@ getWeek:
 				month: day.format('mm'),
 				day: day.format('dd'),
 				year: day.getFullYear(),
+				fulldate: day.format('yyyy-mm-dd'),
 				dt: day
 			});
 		}
@@ -267,6 +345,7 @@ show:
 		$('schedule-description').value='';
 		this.popup.show();
 		$('schedule-summary').activate();
+		this.time = time;
 	},
 hide:
 	function(){
@@ -288,14 +367,18 @@ registHandlers:
 	},
 onSubmit:
 	function(){
-		//TODO validate
-		//TODO ajax call
-		alert(
-			$('schedule-time').innerHTML+' '+
-			$('schedule-summary').value+' '+
-			$('schedule-location').value+' '+
-			$('schedule-description').value
-		);
+		var params = $('popup-form').serialize();
+		params+= '&type=single&range=0&date='+this.time.fulldate+'&time_start='+this.time.start+'&time_end='+this.time.end;
+		var url = 'schedule/add';
+		new Ajax.Request(url, {
+			method: 'post',
+			parameters:params,
+			onSuccess: function(t) {
+				try {
+					alert(t.responseText);
+				}catch(e) { alert(e.message) };
+			}.bind(this)
+		});
 		this.hide();
 	},
 validate:
@@ -472,13 +555,13 @@ update:
 										<table id="table">
 											<tbody>
 											<tr>
-												<td id=""></td>
-												<td id=""></td>
-												<td id=""></td>
-												<td id=""></td>
-												<td id=""></td>
-												<td id=""></td>
-												<td id=""></td>
+												<td><div id="day0" class="day-wrapper"></div></td>
+												<td><div id="day1" class="day-wrapper"></div></td>
+												<td><div id="day2" class="day-wrapper"></div></td>
+												<td><div id="day3" class="day-wrapper"></div></td>
+												<td><div id="day4" class="day-wrapper"></div></td>
+												<td><div id="day5" class="day-wrapper"></div></td>
+												<td><div id="day6" class="day-wrapper"></div></td>
 											</tr>
 											</tbody>
 										</table>
@@ -508,6 +591,7 @@ update:
 				<tr>
 					<td class="west"></td>
 					<td class="middle">	
+						<form id="popup-form">
 						<table>
 							<tr>
 								<td>시간:</td>
@@ -515,29 +599,30 @@ update:
 							</tr>
 							<tr>
 								<td>내용:</td>
-								<td><input id="schedule-summary" size="35" type="text" /></td>
+								<td><input id="schedule-summary" name="summary"  size="35" type="text" /></td>
 							</tr>
 							<tr>
 								<td>장소:</td>
-								<td><input id="schedule-location" size="35" type="text" /></td>
+								<td><input id="schedule-location" name="location"  size="35" type="text" /></td>
 							</tr>
 							<tr>
 								<td>설명:</td>
-								<td><textarea id="schedule-description" rows="4" cols="30"></textarea></td>
+								<td><textarea id="schedule-description"name="description" rows="4" cols="30"></textarea></td>
 							</tr>
 							<tr>
 								<td>캘린더:</td>
 								<td>
-									<select id="schedule-calendar">
-										<option>내 캘린더</option>
-										<option>내 캘린더</option>
-										<option>내 캘린더</option>
-										<option>내 캘린더</option>
+									<select id="schedule-calendar" name="calendar">
+										<option value="0">내 캘린더</option>
+										<option value="1">내 캘린더</option>
+										<option value="2">내 캘린더</option>
+										<option value="3">내 캘린더</option>
 									</select>
 								</td>
 							</tr>
 						</table>
 						<button class="right"id="popup-submit">일정 만들기</button>
+						</form>
 					</td>
 					<td class="east"></td>
 				</tr>

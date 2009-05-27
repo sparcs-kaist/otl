@@ -11,6 +11,13 @@ button
 	height:24px;
 }
 
+form 
+{
+    background:none;
+    border:none;
+    padding:0;
+}
+
 .br {
 	background:transparent url('images/corner_br.gif') bottom right no-repeat;
 }
@@ -273,14 +280,33 @@ button
 
 #grid #table td
 {
-	width:auto;
+	width:14.2857143%;
 	height:100%;
 	font-family:monospace;
 	background:transparent url('images/cell_800.gif') repeat-y;
 	padding:0;
 	margin:0;
-	position:relative;
 }
+#grid #table td div.day-wrapper
+{
+	position:relative;
+	width:100%;
+	height:100%;
+}
+
+div.schedule-item
+{
+	position:absolute;
+	border:1px solid #2952A3;
+	border-top:4px solid #2952A3;
+	background:#668CD9;
+	color:#fff;
+	font-size:11px;
+	margin-left:2px;
+	padding:2px;
+	overflow:hidden;
+}
+
 
 #grid #table td.today
 {
@@ -500,3 +526,5 @@ button
 	filter:alpha(opacity=50);
 	color:#fff;
 }
+
+

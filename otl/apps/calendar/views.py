@@ -220,8 +220,7 @@ def add_schedule(request):
 	- summary : user string (max 120 chars)
 	- location : user string (max 120 chars, optional)
 	- range : integer; 0 (일일), 1 (종일)
-	- description : user string (long, optional)
-	- date : "YYYY-MM-DD"
+	- description : user string (long, optional) - date : "YYYY-MM-DD"
 	- time_start : integer representing minutes from 00:00
 	- time_end : integer representing minutes from 00:00
 
