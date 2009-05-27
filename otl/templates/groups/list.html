@@ -37,7 +37,7 @@ function ShowModify(form)
 			<td class="author" style="word-break:break-all"><a href="/accounts/view/{{item.writer.username}}">{{item.writer.username}}</a></td>
 			<td class="tag" style="word-break:break-all">{{item.tag}}
 				<form id="modifyform{{item.id}}" method="post" style="display:none" action="/groups/list/modify/?id={{item.group.id}}&num={{item.id}}">
-					<div id="article-modify{{item.id}}" ><textarea id="modify" name="modify" cols="65" rows="5" onfocus="this.value=''" >{{item.tag}}</textarea>
+					<div id="article-modify{{item.id}}" ><textarea id="modify" name="modify" cols="65" rows="5" >{{item.tag}}</textarea>
 						<input id ="article-modify" type="submit" value="수정"/>
 					</div>
 				</form>
