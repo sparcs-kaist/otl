@@ -6,7 +6,7 @@ from django.conf import settings
 from django.utils import simplejson as json
 from django.contrib.auth.decorators import login_required
 from django.db import DatabaseError
-from otl.apps.calendar.forms import ScheduleForm, ScheduleListForm
+from otl.apps.calendar.forms import ScheduleCreateForm, ScheduleListForm
 from otl.apps.calendar.models import Calendar, Schedule, fetch_assignments, fetch_taking_courses, get_system_calendar
 from otl.apps.calendar.models import is_in_current_semester, is_in_exam_periods, is_holiday
 from otl.apps.timetable.models import Lecture, ClassTime
@@ -21,11 +21,14 @@ def index(request):
 			'title': u'일정관리',
 		}, context_instance=RequestContext(request))
 	else:
-		f = ScheduleForm()
+		if request.user.is_authenticated():
+			calendars = Calendar.objects.filter(owner=request.user)
+		else:
+			return HttpResponseRedirect(settings.LOGIN_URL + '?next=/calendar/')
 		return render_to_response('calendar/index.html', {
 			'section': 'calendar',
 			'title': u'일정관리',
-			'schedule_form': f,
+			'calendars': calendars,
 		}, context_instance=RequestContext(request))
 
 @login_required_ajax
@@ -147,6 +150,7 @@ def list_schedule(request):
 						result.append({
 							'id': -1, # This is a virtual schedule item, so users cannot modify it.
 							'calendar': timetable_calendar.id,
+                            'color': timetable_calendar.color,
 							'summary': u'%s%s' % (lecture.title, u' (실험)' if class_time.type == 'e' else u''),
 							'location': class_time.get_location(),
 							'range': 0, # 일일 일정
@@ -161,6 +165,7 @@ def list_schedule(request):
 			result.append({
 				'id': item.id,
 				'calendar': item.belongs_to.id,
+                'color': item.belongs_to.color,
 				'summary': item.summary,
 				'location': item.location,
 				'range': item.range,
@@ -234,27 +239,32 @@ def add_schedule(request):
 	}
 	"""
 
+	def int2time(i):
+		hour = i / 60
+		minute = i % 60
+		return time(hour=hour, minute=minute)
+
 	if request.method == 'POST':
 		try:
 			item = Schedule()
-			f = ScheduleForm(request.POST)
-			if f.valid():
+			f = ScheduleCreateForm(request.POST)
+			if f.is_valid():
 				item.summary = f.cleaned_data['summary']
 				item.location = f.cleaned_data['location']
 				item.description = f.cleaned_data['description']
 				item.range = f.cleaned_data['range']
 				item.date = f.cleaned_data['date']
-				item.time_start = f.cleaned_data['time_start']
-				item.time_end = f.cleaned_data['time_end']
-				item.belgons_to = Calendar.objects.get(id__exact=f.cleaned_data['id'])
+				item.begin = int2time(f.cleaned_data['time_start'])
+				item.end= int2time(f.cleaned_data['time_end'])
+				item.belongs_to = Calendar.objects.get(id__exact=f.cleaned_data['calendar'])
 				item.save()
-				result = {'result':'OK'}
+				result = {'result':'OK', 'item':{'id':item.id}}
 			else:
 				result = {'result':'FAILED'}
 		except Calendar.DoesNotExist:
 			result = {'result':'NOT_FOUND'}
-		except (KeyError, TypeError, ValueError):
-			result = {'result':'FAILED'}
+		#except (KeyError, TypeError, ValueError):
+		#	 result = {'result':'FAILED2'}
 	else:
 		return HttpResponseBadRequest('Should be called with POST method.')
 	return response_as_json(request, result)

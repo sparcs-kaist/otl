@@ -19,6 +19,7 @@ class ScheduleForm(forms.Form):
 class ScheduleCreateForm(ScheduleForm):
 	# TODO: support repeated schedule type also.
 	type = forms.ChoiceField(label=u'형식', choices=SCHEDULE_TYPES, widget=forms.HiddenInput(), initial='single')
+	calendar = forms.IntegerField(widget=forms.HiddenInput())
 	range = forms.ChoiceField(label=u'일일/종일', choices=SCHEDULE_RANGES)
 
 class ScheduleModifyForm(ScheduleForm):

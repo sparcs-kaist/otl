@@ -16,6 +16,25 @@
 
 var LayoutMgr;
 
+//var COLOR_BOX = ['#3366CC','#CC3333','#109618'];
+var COLOR_BOX =    ['#E67399', '#668CD9','#D96666','#4CB052', '#B373B3', '#8C66D9', '#668CB3', '#59BFB3', '#65AD89',  '#4CB052', '#528800', '#88880E', '#F2A640', '#E6804D', '#BE9494', '#A992A9', '#A992A9', '#94A2BE', '#85AAA5', '#A7A77D', '#C4A883'];
+var COLOR_BORDER = ['#B1365F', '#2952A3','#A32929','#0D7813', '#7A367A', '#5229A3', '#29527A', '#1B887A', '#28754E',  '#528800', '#88880E', '#AB8B00', '#BE6D00', '#B1440E', '#865A5A', '#705770', '#4E5D6C', '#5A6986', '#4A716C', '#6E6E41', '#8D6F47'];
+
+Message = 
+{
+initialize:
+	function()
+   	{
+		this.box = $('message-box');
+		this.content = $('message-content');
+	},
+show:
+	function(msg){
+		new Effect.Highlight(this.box);
+		this.content.update(msg);
+	}
+}
+
 var DrawBlock =	{
 initialize:
 	function(){
@@ -152,6 +171,11 @@ registHandlers:
 		Event.observe($('today'),'click',this.goToday.bind(this));
 		Event.observe($('prev-week'),'click',this.goPrevWeek.bind(this));
 		Event.observe($('next-week'),'click',this.goNextWeek.bind(this));
+		Event.observe($('refresh'),'click',
+			function(){
+				Message.show('새로고침 되었습니다.');
+				this.onRefresh.bind(this)
+			}.bind(this));
 	},
 goToday:
 	function(){
@@ -182,6 +206,13 @@ onChange:
 		this.getSchedules(week);
 		this.week = week;
 	},
+onRefresh:
+	function() {
+		var week = this.week;
+		this.updateCurrentDate(week);
+		this.updateCurrentChead(week);
+		this.getSchedules(week);
+	},
 getSchedules:
 	function(week)
 	{
@@ -192,7 +223,7 @@ getSchedules:
 			parameters:params,
 			onSuccess: function(t) {
 				try {
-					var data = eval('('+t.responseText+')');
+					var data = eval('('+t.responseText+');');
 					this.updateSchedules(data);
 				}catch(e) { alert(e.message) };
 			}.bind(this)
@@ -200,6 +231,7 @@ getSchedules:
 	},
 updateSchedules:
 	function(arr){
+		for(var i=0;i<7;i++) $('day'+i).update('');
 		var hash  = {};
 		arr.each(function(item){ 
 			if (typeof hash[item.date] == 'undefined')
@@ -258,20 +290,41 @@ updateDay:
 		for(i = 0; i < items.length; i ++ )
 		{
 			items[i].left = (100-margin_percent)*(items[i].column-1)/index_of_column;
-			items[i].width = (100-margin_percent)*(items[i].nextColumn - items[i].column)/index_of_column;
+			items[i].width = (100-margin_percent)*(index_of_column+1 - items[i].column)/index_of_column;
 			items[i].height = 21 * (items[i].time_end/30 - items[i].time_start/30);
 		}
 
-		wrap.empty();
+		wrap.update('');
 		items.each(function(item){
 			var div = Builder.node('div',{'class':'schedule-item'});
-			div.update(item.summary);
+			Event.observe(div,'mousedown',this.onClickItem.bindAsEventListener(this,item));
+			div.update('<strong>'+item.summary+'</strong><br />'+item.description);
 			div.style.top = item.time_start/30*21 + 'px';
 			div.style.left = item.left + '%';
 			div.style.width = item.width + '%';
 			div.style.height = item.height + 'px';
+			div.style.backgroundColor = COLOR_BOX[item.color];
+			div.style.borderColor = COLOR_BORDER[item.color];
 			wrap.appendChild(div);
-		});
+		}.bind(this));
+	},
+onClickItem:
+	function(e,item){
+		if (confirm('"'+item.summary+'"를 삭제하시겠습니까?'))
+		{
+			var url = 'schedule/delete';
+			new Ajax.Request(url, {
+				method: 'post',
+				parameters:'id='+item.id,
+				onSuccess: function(t) {
+					try {
+						Message.show('일정이 삭제 되었습니다.');
+						MWCalendar.onRefresh();
+					}catch(e) { alert(e.message) };
+				}.bind(this)
+			});
+		}
+		Event.stop(e);
 	},
 getWeek:
 	function(d)
@@ -363,7 +416,7 @@ registHandlers:
 		Event.observe($('navigator'), 'mousedown', this.hide.bind(this));
 		Event.observe($('timetable-top'), 'mousedown', this.hide.bind(this));
 		Event.observe($('rowheaders'), 'mousedown', this.hide.bind(this));
-		Event.observe($('popup-submit'), 'click', this.onSubmit.bind(this));
+		Event.observe($('popup-form'), 'submit', this.onSubmit.bindAsEventListener(this));
 	},
 onSubmit:
 	function(){
@@ -375,7 +428,8 @@ onSubmit:
 			parameters:params,
 			onSuccess: function(t) {
 				try {
-					alert(t.responseText);
+					Message.show('일정이 추가 되었습니다.');
+					MWCalendar.onRefresh();
 				}catch(e) { alert(e.message) };
 			}.bind(this)
 		});
@@ -390,6 +444,7 @@ update:
 };
 
 	Event.observe(window, "load", function() { 
+		Message.initialize();
 		BrowserDetect.init();
 		var resizeHandler = function()
 		{
@@ -449,16 +504,13 @@ update:
 						<div class="top"><div>내 캘린더</div></div>
 						<div id="calendar-list" class="content-wrap">
 							<div class="content">
-								<div class="calendar-item">
-									<div class="name tl"><div class="tr"><div class="bl"><div class="br">내 캘린더</div></div></div></div>
+								{% for item in calendars %}
+								<div class="calendar-item calendar-item{{item.color}}">
+									<div class="name tl"><div class="tr"><div class="bl"><div class="br">{{item.title}}{{item.color}}</div></div></div></div>
 									<a class="color"></a>
 									<div class="clear"></div>
 								</div>
-								<div class="calendar-item">
-									<div class="name tl"><div class="tr"><div class="bl"><div class="br">내 캘린더</div></div></div></div>
-									<a class="color"></a>
-									<div class="clear"></div>
-								</div>
+								{% endfor %}
 							</div>
 						</div>
 						<div class="bottom"><div>
@@ -493,7 +545,7 @@ update:
 					<a id="next-week"></a>
 					<button id="today">이번주</button>
 					<span id="current-date">2009년 4월 13일 – 9일 </span>
-					<div class="tl message"><div class="tr"><div class="bl"><div class="br" style="padding:2px 10px">일정이 삭제 되었습니다</div></div></div></div>
+					<div id="message-box" class="tl message"><div class="tr"><div class="bl"><div id="message-content" class="br" style="padding:2px 10px">안녕하세요. 이 서비스는 SPARCS에서 제공하고 있습니다.</div></div></div></div>
 					<button class="right" id="refresh">새로고침</button>
 				</div>
 				<div id="center-left" class="lm_left"></div>
@@ -514,9 +566,7 @@ update:
 										<div id="chead6" class="chead"></div>
 										<div class="clear"></div>
 									</div>
-									<div id="day-schedule">
-										days-schelue
-									</div>
+									<div id="day-schedule"></div>
 								</div>
 								<div class="lm_right" style="width:17px"></div>
 							</div>
@@ -591,7 +641,7 @@ update:
 				<tr>
 					<td class="west"></td>
 					<td class="middle">	
-						<form id="popup-form">
+						<form id="popup-form" onSubmit="return false;">
 						<table>
 							<tr>
 								<td>시간:</td>
@@ -613,15 +663,14 @@ update:
 								<td>캘린더:</td>
 								<td>
 									<select id="schedule-calendar" name="calendar">
-										<option value="0">내 캘린더</option>
-										<option value="1">내 캘린더</option>
-										<option value="2">내 캘린더</option>
-										<option value="3">내 캘린더</option>
+										{% for item in calendars %}
+										<option value="{{item.id}}">{{item.title}}</option>
+										{% endfor %}
 									</select>
 								</td>
 							</tr>
 						</table>
-						<button class="right"id="popup-submit">일정 만들기</button>
+						<input class="right" id="popup-submit"  type="submit" value="일정 만들기" />
 						</form>
 					</td>
 					<td class="east"></td>

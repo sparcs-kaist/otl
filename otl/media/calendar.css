@@ -13,6 +13,7 @@ button
 
 form 
 {
+	margin:0;
     background:none;
     border:none;
     padding:0;
@@ -403,9 +404,22 @@ div.schedule-item
 	overflow:hidden;
 	color:#fff;
 	font-size:11px;
-    background-color:#CC3333;
 	width:140px;
 }
+
+.calendar-item1 .name
+{
+    background-color:#668CD9;
+}
+.calendar-item2 .name
+{
+    background-color:#D96666;
+}
+.calendar-item3 .name
+{
+    background-color:#4CB052;
+}
+
 .calendar-item .name .br
 {
 	padding-top:1px;
@@ -417,13 +431,23 @@ div.schedule-item
 	margin-top:4px;
 	float:right;
 	display:block;
-	width:16px;
-	height:16px;
+	width:15px;
+	height:15px;
 	background-color:transparent;
     background-image:url('images/combined_v6.gif');
 	background-repeat:no-repeat;
-	background-position:-25px -103px;
+	/*background-position:-25px -103px;*/
 	cursor:pointer;
+}
+
+.calendar-item1 a.color {
+	background-position:-101px -103px;
+}
+.calendar-item2 a.color {
+	background-position:-26px -103px;
+}
+.calendar-item3 a.color {
+	background-position:-146px -103px;
 }
 
 #add-calendar
