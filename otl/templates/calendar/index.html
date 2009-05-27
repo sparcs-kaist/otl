@@ -180,15 +180,18 @@ registHandlers:
 goToday:
 	function(){
 		this.scal.setCurrentDate(new Date());
+		Message.show('이번주로 이동 되었습니다.');
 	},
 goNextWeek:
 	function(){
+		Message.show('다음주로 이동 되었습니다');
 		var next = new Date();
 		next.setTime(this.scal.currentdate.getTime()+(1000*60*60*24*7));
 		this.scal.setCurrentDate(next);
 	},
 goPrevWeek:
 	function(){
+		Message.show('이전주로 이동 되었습니다');
 		var prev = new Date();
 		prev.setTime(this.scal.currentdate.getTime()-(1000*60*60*24*7));
 		this.scal.setCurrentDate(prev);
