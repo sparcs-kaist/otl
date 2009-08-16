@@ -1,4 +1,4 @@
-# encoding: utf-8
+# -*- coding: utf-8
 from django.db import models
 from datetime import datetime
 
@@ -25,40 +25,40 @@ NOTE: CandidateTimeRange는 Appointment 하나 당 여러 개를 추가할 수 �
 """
 
 APPOINTMENT_OPERATIONS = (
-	('participate-confirm', u'참여 확인하기'),
-	('finalize', u'약속 확정하기'),
+    ('participate-confirm', u'참여 확인하기'),
+    ('finalize', u'약속 확정하기'),
 )
 
 class Appointment(models.Model):
-	hash = models.CharField(max_length=32)
-	owner = models.ForeignKey('auth.User')
-	group = models.ForeignKey('groups.GroupBoard', blank=True, null=True)
-	participants = models.ManyToManyField('auth.User', related_name='participating_appointments', through='Participating')
-	created = models.DateTimeField(default=datetime.now)
-	summary = models.CharField(max_length=120)
-	completed = models.BooleanField(default=False)
+    hash = models.CharField(max_length=32)
+    owner = models.ForeignKey('auth.User')
+    group = models.ForeignKey('groups.GroupBoard', blank=True, null=True)
+    participants = models.ManyToManyField('auth.User', related_name='participating_appointments', through='Participating')
+    created = models.DateTimeField(default=datetime.now)
+    summary = models.CharField(max_length=120)
+    completed = models.BooleanField(default=False)
 
-	# Finally decided appointment time
-	date = models.DateField(blank=True, null=True)
-	time_start = models.TimeField(blank=True, null=True)
-	time_end = models.TimeField(blank=True, null=True)
+    # Finally decided appointment time
+    date = models.DateField(blank=True, null=True)
+    time_start = models.TimeField(blank=True, null=True)
+    time_end = models.TimeField(blank=True, null=True)
 
-	class Meta:
-		unique_together = (('hash',),)
+    class Meta:
+        unique_together = (('hash',),)
 
 class Participating(models.Model):
-	participant = models.ForeignKey('auth.User')
-	appointment = models.ForeignKey(Appointment)
-	confirmed = models.BooleanField(default=False)
+    participant = models.ForeignKey('auth.User')
+    appointment = models.ForeignKey(Appointment)
+    confirmed = models.BooleanField(default=False)
 
 class CandidateTimeRange(models.Model):
-	belongs_to = models.ForeignKey(Appointment, related_name='candidate_times')
-	date = models.DateField()
-	time_start = models.TimeField()
-	time_end = models.TimeField()
+    belongs_to = models.ForeignKey(Appointment, related_name='candidate_times')
+    date = models.DateField()
+    time_start = models.TimeField()
+    time_end = models.TimeField()
 
 class ParticipatingTimeRange(models.Model):
-	belongs_to = models.ForeignKey(Participating, related_name='participating_times')
-	date = models.DateField()
-	time_start = models.TimeField()
-	time_end = models.TimeField()
+    belongs_to = models.ForeignKey(Participating, related_name='participating_times')
+    date = models.DateField()
+    time_start = models.TimeField()
+    time_end = models.TimeField()

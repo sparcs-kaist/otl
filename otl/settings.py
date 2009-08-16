@@ -61,12 +61,12 @@ TEMPLATE_LOADERS = (
 #     'django.template.loaders.eggs.load_template_source',
 )
 TEMPLATE_CONTEXT_PROCESSORS = (
-	'django.core.context_processors.auth',
-	'django.core.context_processors.debug',
-	'django.core.context_processors.i18n',
-	'django.core.context_processors.media',
-	'otl.utils.context_processors.globaltime',
-	'otl.utils.context_processors.myfavorites',
+    'django.core.context_processors.auth',
+    'django.core.context_processors.debug',
+    'django.core.context_processors.i18n',
+    'django.core.context_processors.media',
+    'otl.utils.context_processors.globaltime',
+    'otl.utils.context_processors.myfavorites',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -103,8 +103,8 @@ INSTALLED_APPS = (
 )
 
 AUTHENTICATION_BACKENDS = (
-	'django.contrib.auth.backends.ModelBackend',
-	'otl.apps.accounts.backends.KAISTSSOBackend',
+    'django.contrib.auth.backends.ModelBackend',
+    'otl.apps.accounts.backends.KAISTSSOBackend',
 )
 AUTH_PROFILE_MODULE = 'apps.accounts.userprofile'
 LOGIN_URL = '/login/'
@@ -122,12 +122,12 @@ CURRENT_SEMESTER = 1
 NEXT_YEAR = 2009
 NEXT_SEMESTER = 1
 SEMESTER_RANGES = {
-	(2009,1): (date(2009,2,2), date(2009,5,22)),
-	(2009,3): (date(2009,9,1), date(2009,12,21)),
+    (2009,1): (date(2009,2,2), date(2009,5,22)),
+    (2009,3): (date(2009,9,1), date(2009,12,21)),
 }
 EXAM_PERIODS = {
-	(2009,1): ((date(2009,3,23), date(2009,3,27)), (date(2009,5,18), date(2009,5,22))),
-	(2009,3): ((date(2009,10,20), date(2009,10,26)), (date(2009,12,15), date(2009,12,21))),
+    (2009,1): ((date(2009,3,23), date(2009,3,27)), (date(2009,5,18), date(2009,5,22))),
+    (2009,3): ((date(2009,10,20), date(2009,10,26)), (date(2009,12,15), date(2009,12,21))),
 }
 
 SCHOLARDB_HOST = ''
@@ -149,6 +149,6 @@ ARARA_SESSION_TIMEOUT = 3600
 CACHE_BACKEND = 'dummy:///'
 
 try:
-	from otl.settings_local import *
+    from otl.settings_local import *
 except ImportError:
-	pass
+    pass
