@@ -143,6 +143,31 @@ input
 	padding: 1px 2px;
 }
 
+form p.help {
+	font-size: 0.9em;
+	color: #555;
+	margin: 2px;
+}
+
+form label {
+	display: inline-block;
+	color: #333;
+	margin: 0;
+	padding: 0;
+	font-weight: bold;
+}
+
+form .errorlist {
+	display: inline-block;
+}
+
+form .errorlist li {
+	margin: 0;
+	padding: 0;
+	color: red;
+}
+
+
 label 
 {
     display:block;
@@ -225,5 +250,16 @@ label
     color:red;
 }
 
+ul.actions li {
+	margin: 0 5px;
+	float: left;
+}
 
+ul.actions a {
+	display: block;
+	padding: 3px 5px;
+	border: 1px solid #ccc;
+	background: #eee;
+	color: #333;
+}
 

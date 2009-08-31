@@ -1,8 +1,9 @@
 {% extends 'layout.html' %}
+{% load yearterm %}
 {% block headers %}
-<link rel="stylesheet" type="text/css" href="/media/favorites.css" ></link>
-<script type="text/javascript" src="/media/js/prototype/prototype-1.6.0.3.js" ></script>
-<script type="text/javascript" >
+<link rel="stylesheet" type="text/css" href="/media/favorites.css" />
+<script type="text/javascript">
+//<!--
 LinkThumb=
 {
 	initialize:function(wrap,className)
@@ -14,74 +15,66 @@ LinkThumb=
 	   },
 	onLoad:function()
 	   {
-			this.thumb = document.createElement('div');
-			Element.extend(this.thumb);
-			this.thumb.addClassName('linkthumb');
+			this.thumb = new Element('div');
+			this.thumb.addClass('linkthumb');
 
-			this.img = document.createElement('img');
+			this.img = new Element('img');
 			this.thumb.appendChild(this.img);
 
-			this.thumb.hide();
+			this.thumb.fade('hide');
 			document.body.appendChild(this.thumb);
 
 			this.registerHandlers();
 	   },
 	registerHandlers:function()
 		 {
-			Event.observe(document,'mousemove',this.onMove.bindAsEventListener(this));
-			this.anchors.each(function(item)
-					{
-						Event.observe(item,'mouseover',this.onOver.bindAsEventListener(this,item));
-						Event.observe(item,'mouseout',this.onOut.bindAsEventListener(this));
-					}.bind(this));
+			document.addEvent('mousemove',this.onMove.bindWithEvent(this));
+			this.anchors.each(function(item) {
+				item.addEvent('mouseover',this.onOver.bindWithEvent(this,item));
+				item.addEvent('mouseout',this.onOut.bindWithEvent(this));
+			}.bind(this));
 		 },
 	onMove:function(e)
 		{
 			if(this.isOver)
 			{
-				var x=e.pointerX()+20,y=e.pointerY()+20;
+				var x=e.page.x + 20,y=e.page.y + 20;
 				this.thumb.style.left=x+'px';
 				this.thumb.style.top=y+'px';
 			}
 		},
 	onOver:function(e,item)
 		{
-			this.img.src= 'http://open.thumbshots.org/image.aspx?url='+item.href;
-			this.thumb.show();
+			this.img.src= 'http://open.thumbshots.org/image.aspx?url='+encodeURIComponent(item.href);
+			this.thumb.fade('show');
 			this.isOver=true;
 			this.onMove(e);
 		},
 	onOut:function(e)
 	  {
-			this.thumb.hide();
+			this.thumb.fade('hide');
 			this.img.src='';
 			this.isOver=false;
 	  }
 };
-Event.observe(window,'load',function()
-{
+window.addEvent('domready', function () {
 	LinkThumb.initialize('publicFavorites','favorite-link');
 	LinkThumb.initialize('publicFavorites','search-link');
 });
+//-->
 </script>
 <script type="text/javascript">
 function CheckNull(form)
 {
-	if(form.code.value.length==0)
+	if(form.name.value.length==0)
 	{
-		alert("과목 코드를 작성해주세요.");
-		form.code.focus();
-		return false;
-	}
-	else if(form.name.value.length==0)
-	{
-		alert("내용을 작성해주세요.");
+		alert("내용을 작성해주세요. ex) CS408 전산학 프로젝트");
 		form.name.focus();
 		return false;
 	}
 	else if(form.url.value.length==0)
 	{
-		alert("과목 홈페이지를 작성해주세요.");
+		alert("과목 홈페이지를 작성해주세요. ex) http://otl.kaist.ac.kr");
 		form.url.focus();
 		return false;
 	}
@@ -92,16 +85,16 @@ function CheckNull(form)
 
 {% endblock %}
 {% block content %}
-<h2>과목 즐겨찾기 ({{current_year}}년 {{current_semester}}학기)</h2>
+<h2>과목 즐겨찾기 ({{current_year}}년 {{current_semester|term2str}}학기)</h2>
 <div id="myFavorites">
 	<h3>내 즐겨찾기</h3>
 {% if user.is_authenticated %}
 <ul>
-	{% if favorite_list %}
-		{% for item in favorite_list %}
+	{% if myfavorites %}
+		{% for item in myfavorites %}
 		<li>
 			<a class="favorite-link" href="{{item.url}}" target="_blank" >	
-				<h4>{{item.course_code}}: {{item.course_name}} (등록수 : {{item.favored_count}})</h4>
+				<h4>{{item.course_name}} (등록수 : {{item.favored_count}})</h4>
 				{{item.url}}
 			</a>
 			<a class="control-delete" href="/favorites/delete/{{item.id}}">Delete</a>:
@@ -114,15 +107,14 @@ function CheckNull(form)
 {% else %}
 	<p>로그인하지 않았습니다. :)</p>
 {% endif %}
-</div>
 <div id="publicFavorites">
 	<h3>다른 사람들의 즐겨찾기</h3>
 	<a href="/favorites/morelist">더보기</a>
 	<form id="create-form" method="get" onSubmit="return CheckNull(this);" action="/favorites/create/">
 		<div id="add-public-favorite">
-			<strong>즐겨찾기 등록</strong>&nbsp;|&nbsp;과목코드: <input type="text" id="create-form-code" name="code" value="" size="5"/>
-			&nbsp;제목: <input type="text" id="create-form-name" name="name" value="" size="5"/>	
-			&nbsp;주소: <input type="text" id="create-form-url" name="url" value="" size="5"/>
+			<strong>즐겨찾기 등록</strong>&nbsp;|&nbsp;
+			&nbsp;제목: <input type="text" id="create-form-name" name="name" value="" size="5" maxlength="60"/>	
+			&nbsp;주소: <input type="text" id="create-form-url" name="url" value="" size="5" maxlength="100"/>
 			<input id="create-form" type="submit" value="등록" />
 		</div>
 	</form>
@@ -130,7 +122,7 @@ function CheckNull(form)
 	{% for item in recently_added_list %}
 		<li>
 		<a class="favorite-link" href="{{item.url}}" target="_blank" >
-				<h4>{{item.course_code}}: {{item.course_name}} (등록수 : {{item.favored_count}})</h4>
+				<h4>{{item.course_name}} (등록수 : {{item.favored_count}})</h4>
 				{{item.url}}
 			</a>
 			<span class="submitter">올린이 : <a href="/accounts/view/{{item.writer.username}}">{{item.writer.username}}</a></span>	
@@ -149,14 +141,16 @@ function CheckNull(form)
 		<a class="next-page" href="?page={{current_page.next_page_number}}">Next</a>
 		{% endif %}
 	</div>
+</div>
 	<form id="search-form" method="get" action="/favorites/search/">
-		<p><label for="search-query">검색 : </label><input type="text" id="search-query" name="query" /><input type="submit" value="Find" /></p>
+		<p><label for="search-query">검색 : </label><input type="text" id="search-query" name="query" value="" maxlength="20"/><input type="submit" value="Find" /></p>
+	</form>
 		<ul>
 			{% if search_list %}
 				{% for item in search_list %}
 				<li>
 					<a class="search-link" href="{{item.url}}" target="_blank">
-						<h4>{{item.year}} {{item.semester}} {{item.course_code}}: {{item.course_name}} ( 등록수 : {{item.favored_count}} )</h4>
+						<h4>{{item.year}} {{item.semester}} : {{item.course_name}} ( 등록수 : {{item.favored_count}} )</h4>
 						{{item.url}}
 					</a>
 					<span class="submitter">올린이 : <a href="/accounts/view/{{item.writer.username}}">{{item.writer.username}}</a></span>
@@ -178,6 +172,4 @@ function CheckNull(form)
 			<a class="search-next-page" href="?query={{search_code}}&search-page={{search_page.next_page_number}}">Next</a>
 			{% endif %}
 		</div>
-	</form>
-</div>
 {% endblock %}

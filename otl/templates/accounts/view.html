@@ -1,0 +1,12 @@
+{% extends 'layout.html' %}
+{% block headers %}
+<link rel="stylesheet" type="text/css" href="/media/accounts.css" />
+{% endblock %}
+{% block content %}
+	<h2>다른 사람 계정 정보</h2>
+	<ul id="othersinfo">
+		<li>이름: {{fname}} {{lname}}</li>
+		<li>학과: {{department}}</li>
+	</ul>
+	<div class="clear"></div>
+{% endblock %}

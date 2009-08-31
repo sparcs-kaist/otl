@@ -1,32 +1,50 @@
 {% extends 'layout.html' %}
 {% block headers %}
 <link rel="stylesheet" type="text/css" href="/media/groups.css" />
+
+<script type="text/javascript">
+function ShowModify(form)
+{
+	if(form.style.display == "block"){
+		form.style.display= "none";
+		return false;
+	}
+	else{
+		form.style.display= "block";
+		return false;
+	}
+}
+</script>
+
 {% endblock %}
 {% block content %}
-<h2>조모임 - {{current_group.course_code}} : {{current_group.course_name}} - {{current_group.group_name}}</h2>
+<h2>조모임 - {{current_group.group_name}}: {{current_group.comment}}</h2>
 {% if user.is_authenticated %}
 	{% if article_list %}
-<table id="article-list" class="article-list">
+<table id="article-list" class="article-list" style="table-layout:fixed">
 	<thead>
-		<tr>
+		<tr height=25px>
 			<th class ="author">작성자</th>
 			<th class ="tag">내용</th>
 			<th class ="date">작성시간</th>
 			<th class ="delete">삭제</th>
 			<th class ="modify">수정</th>
-		</th>
+		</tr>
 	</thead>
 	<tbody>
 		{% for item in article_list %}
-		<tr class="{% if forloop.counter|divisibleby:"2" %}even {% endif %}">
-			<td class="author"><a href="/accounts/view/{{item.writer.username}}">{{item.writer.username}}</a></td>
-			<td class="tag">{{item.tag}}</td>
-			<td class="date">{{item.written|date:"Y/m/d"}}</td>
-			<td class="delete"><a class="control-delete" href="/groups/list/delete/?id={{item.group.id}}&num={{item.id}}">delete</a></td>
-			<td class="modify"><form id="modify-form" method="post" action="/groups/list/modify/?id={{item.group.id}}&num={{item.id}}">
-			<p><label for="article-modify">수정 : </label><input type="text" id="modify" name="modify" />
-			<input id ="article-modify" type="submit" value="수정"/></p></td>
-		</form>
+		<tr class="{% if forloop.counter|divisibleby:"2" %}even {% endif %}" height=30px>
+			<td class="author" style="word-break:break-all"><a href="/accounts/view/{{item.writer.username}}">{{item.writer.username}}</a></td>
+			<td class="tag" style="word-break:break-all">{{item.tag}}
+				<form id="modifyform{{item.id}}" method="post" style="display:none" action="/groups/list/modify/?id={{item.group.id}}&num={{item.id}}">
+					<div id="article-modify{{item.id}}" ><textarea id="modify" name="modify" cols="65" rows="5" >{{item.tag}}</textarea>
+						<input id ="article-modify" type="submit" value="수정"/>
+					</div>
+				</form>
+			</td>
+			<td class="date" align="center">{{item.written|date:"Y/m/d"}}</td>
+			<td class="delete" align="center"><a class="control-delete" href="/groups/list/delete/?id={{item.group.id}}&num={{item.id}}">delete</a></td>
+			<td class="modify" align="center"><a class="control-modity" href="#" onClick="return ShowModify(modifyform{{item.id}})">modify</a></td></tr>
 		{% endfor %}
 	</tbody>
 </table>
@@ -47,14 +65,16 @@
 {% else %}
 	<p>로그인하지 않았습니다. :)</p>
 {% endif %}
-<div id ="write-form">
-	<form id="write" method="post" action="/groups/list/write/{{current_group.id}}">
-		<p><label for="write-article">글쓰기 : </label><input type="text" id="write-article" name="article" />
-		<input type="submit" value="쓰기" /></p>
+<a class="write-toggle" href="#" onClick="return ShowModify(writearticle)" >글쓰기</a>
+<div id="writearticle" style="display:none" >
+	<form id="write-form" method="post" action="/groups/list/write/{{current_group.id}}">
+		<p><label for="write-article">글쓰기 : <textarea id="write-article" name="article" cols="10" rows="5" onfocus="this.value=''">쓰고 싶은 말을 쓰세요.</textarea>
+			<input type="submit" value="쓰기" /></p>
+
 	</form>
 </div>
 <div id ="search-form">
-	<form id="search-form" method="get" action="/groups/list/search/?id={{current_group.id}}">
+	<form id="search-form" method="post" action="/groups/list/search/?id={{current_group.id}}">
 		<p><label for="search-query">검색 : </label><input type="text" id="search-query" name="query" />
 		<input type="submit" value="검색"/></p>
 	</form>
@@ -74,10 +94,16 @@
 				{% for item in search_list %}
 				<tr class = "{% if forloop.counter|divisibleby:"2" %}even {% endif %}">
 					<td class = "author"><a href="/accounts/view/{{item.writer.username}}">{{item.writer.username}}</a></td>
-					<td class = "tag">{{item.tag}}</td>
+					<td class = "tag">{{item.tag}}
+						<form id="searchmodifyform{{item.id}}" method="post" style="display:none" action="/groups/list/modify/?id={{item.group.id}}&num={{item.id}}">
+							<div id="article-modify{{item.id}}" ><input type="text" id="modify" name="modify" />
+								<input id ="article-modify" type="submit" value="수정"/>
+							</div>
+						</form>
+					</td>
 					<td class = "date">{{item.written|date:"Y/m/d"}}</td>
 					<td class = "delete"><a class="control-delete" href="/groups/list/delete/?id={{item.group.id}}&num={{item.id}}">delete</a></td>
-					<td class = "modify">수정</td>
+					<td class = "modify"><a class="control-modity" href="#" onClick="return ShowModify(searchmodifyform{{item.id}})">modify</a></td>
 				</tr>
 				{% endfor%}
 		</tbody>

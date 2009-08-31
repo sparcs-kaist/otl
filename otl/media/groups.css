@@ -69,16 +69,6 @@ a.control-withdraw, a.control-join {
 	background: url(./images/icon_add.png) no-repeat left center;
 }
 
-#search-form {
-	margin: 10px;
-}
-#search-query {
-	width: 500px;
-	margin: 0 8px;
-}
-#search-form input[type=submit] {
-	padding: 2px 4px;
-}
 
 #write-form {
 	margin: 10px;
@@ -94,7 +84,7 @@ a.control-withdraw, a.control-join {
 .article-list
 {
 	border-collapse: collapse;
-	width: 100%;
+	width: 99%;
 	border-bottom: 1px solid #ccc;
 }
 
@@ -122,6 +112,9 @@ a.control-withdraw, a.control-join {
 
 .article-list .author { width: 10%; }
 .article-list .tag { width: 70%; }
+.article-list .date { width: 10%; }
+.article-list .delete { width: 5%; }
+.article-list .modify { width: 5%; }
 
 .article-container
 {

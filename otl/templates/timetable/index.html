@@ -1,11 +1,9 @@
 {% extends 'layout.html' %}
+{% load yearterm %}
 {% block headers %}
 	<link rel="stylesheet" type="text/css" href="/media/table.css" />
 	<link rel="stylesheet" type="text/css" href="/media/timetable.css" />
 	<!--[if lte IE 6]><link rel="stylesheet" type="text/css" href="/media/timetable.ie6.css" /><![endif]-->
-	<script type="text/javascript" src="/media/js/mootools/mootools-1.2.1-core-yc.js"></script>
-	<script type="text/javascript" src="/media/js/mootools/mootools-1.2-more-yc.js"></script>
-	<script type="text/javascript" src="/media/js/common.js?v=1241020334"></script>
 	<script type="text/javascript" src="/media/js/timetable.js?v=1241020334"></script>
 	<script type="text/javascript">
 	//<![CDATA[
@@ -161,7 +159,7 @@
 		<div id="timetable_menu">
 			<div class="left">
 				<div class="left">
-					2009년 가을학기
+					{{next_year}}년 {{next_semester|term2str}}학기
 				</div>
 				<div id="timetable_tabs">
 					<div class="timetable_tab active"><a>시간표 1</a></div>

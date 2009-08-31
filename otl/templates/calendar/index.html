@@ -2,22 +2,466 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<title>OTL - Calendar</title>
-	<link rel="stylesheet" type="text/css" href="/media/default.css" />
+	<title>OTL - Calendar</title>
+	<link rel="stylesheet" type="text/css" href="/media/default.css"/>
 	<link rel="stylesheet" type="text/css" href="/media/calendar.css"/>
-	<link rel="stylesheet" type="text/css" href="/media/js/calendarview/calendarview.css"/>
+	<link rel="stylesheet" type="text/css" href="/media/js/scal/styles/scal.css"/>
 
 	<script type="text/javascript" src="/media/js/prototype/prototype-1.6.0.3.js"></script>
+	<script type="text/javascript" src="/media/js/scriptaculous/src/scriptaculous.js?load=effects,builder"></script>
 	<script type="text/javascript" src="/media/js/layoutmanager/src/layout_manager.js"></script>
-	<script type="text/javascript" src="/media/js/calendarview/calendarview.js"></script>
-	<script type="text/javascript">
+	<script type="text/javascript" src="/media/js/scal/javascripts/scal.js"> </script>
+	<script type="text/javascript" src="/media/js/browserdetect/browserdetect.js"></script>
+<script type="text/javascript">
 
-	var layoutManager = null;
+var LayoutMgr;
+
+//var COLOR_BOX = ['#3366CC','#CC3333','#109618'];
+var COLOR_BOX =    ['#E67399', '#668CD9','#D96666','#4CB052', '#B373B3', '#8C66D9', '#668CB3', '#59BFB3', '#65AD89',  '#4CB052', '#528800', '#88880E', '#F2A640', '#E6804D', '#BE9494', '#A992A9', '#A992A9', '#94A2BE', '#85AAA5', '#A7A77D', '#C4A883'];
+var COLOR_BORDER = ['#B1365F', '#2952A3','#A32929','#0D7813', '#7A367A', '#5229A3', '#29527A', '#1B887A', '#28754E',  '#528800', '#88880E', '#AB8B00', '#BE6D00', '#B1440E', '#865A5A', '#705770', '#4E5D6C', '#5A6986', '#4A716C', '#6E6E41', '#8D6F47'];
+
+Message = 
+{
+initialize:
+	function()
+   	{
+		this.box = $('message-box');
+		this.content = $('message-content');
+	},
+show:
+	function(msg){
+		new Effect.Highlight(this.box);
+		this.content.update(msg);
+	}
+}
+
+var DrawBlock =	{
+initialize:
+	function(){
+		this.grid=$('grid');
+		this.dragging=false;
+		this.onLoad();
+		this.registHandlers();
+	},
+onLoad:
+	function(){
+		this.block=Builder.node('div',{'class':'block-drag'});
+		this.block.style.width=(this.grid.offsetWidth/7-3)+'px';
+		this.block.hide();
+		this.grid.appendChild(this.block); 
+	},
+registHandlers:
+	function(){
+		Event.observe(this.grid,'mousedown',this.onStart.bindAsEventListener(this));
+		Event.observe(document,'mousemove',this.onDrag.bindAsEventListener(this));
+		Event.observe(document,'mouseup',this.onEnd.bindAsEventListener(this));
+	},
+getPosition:
+	function(wrap,e)
+	{
+		var  wrapOffsets = Position.cumulativeOffset(wrap);
+		while( wrap.nodeName != 'BODY' ) 
+		{
+			wrapOffsets[1] -= wrap.scrollTop  || 0;
+			wrapOffsets[0] -= wrap.scrollLeft || 0;
+			wrap = wrap.parentNode;
+		}           
+		return {
+			x : (Event.pointerX(e)-wrapOffsets[0]),
+			y : (Event.pointerY(e)-wrapOffsets[1])
+		};
+	},
+getTime:
+	function(curPos){
+		var days=['일','월','화','수','목','금','토'];
+		var w = this.grid.offsetWidth/7;
+		var index = Math.floor(this.startPos.x/w);
+		return {
+			index : index,
+			whatday : days[Math.floor(this.startPos.x/w)],
+			start : Math.floor(this.startPos.y/21)*30,
+			end   : Math.floor(curPos.y/21+1)*30,
+			fulldate : MWCalendar.week[index].dt.format('yyyy-mm-dd')
+		};
+	},
+min2time:
+	function(minutes)
+	{
+		var str = (minutes<12*60)?'오전 ':'오후 ';
+		str+=Math.floor(minutes/60);
+		str+=((minutes % 60)==0)?'시':':'+(minutes % 60);
+		return str;
+	},
+onStart:
+	function(e){
+		Popup.hide();
+		this.dragging=true;
+		this.startPos = this.getPosition(this.grid,e);
+		var w = this.grid.offsetWidth/7;
+
+		var x =  Math.floor(this.startPos.x/w)*w+3;
+		var y =  Math.floor(this.startPos.y/21)*21;
+
+		this.block.style.left=x+'px';
+		this.block.style.top=y+'px';
+		this.block.style.height='21px';
+		this.block.show();
+		this.draw(this.startPos);
+		Event.stop(e);
+	},
+onDrag:
+	function(e){
+		if(this.dragging)
+		{
+			var curPos = this.getPosition(this.grid,e);
+			this.draw(curPos);
+			Event.stop(e);
+		}
+	},
+draw:function(curPos)
+	 {
+		var height = Math.floor((curPos.y-this.startPos.y)/21+1)*21;
+		this.block.style.height=height +'px';
+		var time = this.getTime(curPos);
+		this.block.update(time.whatday+'요일 '+this.min2time(time.start)+' - '+this.min2time(time.end));
+	 },
+onEnd:
+	function(e){
+		if(this.dragging)
+		{
+			this.dragging=false;
+			var curPos = this.getPosition(this.grid,e);
+			var time = this.getTime(curPos);
+			this.draw(curPos);
+
+			var pos = this.getPosition(document.body,e);
+			if (this.startPos.y<curPos.y)
+				Popup.show(pos,time);
+			Event.stop(e);
+		}
+	}
+};
+
+
+
+MWCalendar = 
+{
+initialize:
+	function(){
+
+		this.onLoad();
+		this.registHandlers();
+	},
+onLoad:
+	function(){
+		var options ={
+			oncalchange:this.onChange.bindAsEventListener(this),
+			titleformat:'mmmm yyyy',
+			updateformat:'yyyy-mm-dd',	
+			dayheadlength:2,
+			weekdaystart:0,
+			tabular:false,
+			planner:false
+		};
+		this.scal= new Scal('calendar',this.onChange.bindAsEventListener(this), options);
+		this.goToday();
+	},
+registHandlers:
+	function(){
+		Event.observe($('today'),'click',this.goToday.bind(this));
+		Event.observe($('prev-week'),'click',this.goPrevWeek.bind(this));
+		Event.observe($('next-week'),'click',this.goNextWeek.bind(this));
+		Event.observe($('refresh'),'click',
+			function(){
+				Message.show('새로고침하였습니다.');
+				this.onRefresh.bind(this)
+			}.bind(this));
+	},
+goToday:
+	function(){
+		this.scal.setCurrentDate(new Date());
+		Message.show('이번주로 이동하였습니다.');
+	},
+goNextWeek:
+	function(){
+		Message.show('다음주로 이동하였습니다');
+		var next = new Date();
+		next.setTime(this.scal.currentdate.getTime()+(1000*60*60*24*7));
+		this.scal.setCurrentDate(next);
+	},
+goPrevWeek:
+	function(){
+		Message.show('이전주로 이동하였습니다');
+		var prev = new Date();
+		prev.setTime(this.scal.currentdate.getTime()-(1000*60*60*24*7));
+		this.scal.setCurrentDate(prev);
+	},
+onChange:
+	function(d)
+	{
+		var dt = (d instanceof Date) ? d : d.date;
+		var week=this.getWeek(dt);
+		this.updateCurrentDate(week);
+		this.updateCurrentChead(week);
+		var el = this.scal.getElementByDate(dt).siblings().each(function(elem){
+			elem.addClassName('dayselected');
+		});
+		this.getSchedules(week);
+		this.week = week;
+	},
+onRefresh:
+	function() {
+		var week = this.week;
+		this.updateCurrentDate(week);
+		this.updateCurrentChead(week);
+		this.getSchedules(week);
+	},
+getSchedules:
+	function(week)
+	{
+		var url = 'schedule/list';
+		var params = 'date_start='+week[0].dt.format('yyyy-mm-dd')+'&date_end='+week[6].dt.format('yyyy-mm-dd');
+		new Ajax.Request(url, {
+			method: 'get',
+			parameters:params,
+			onSuccess: function(t) {
+				try {
+					var data = eval('('+t.responseText+');');
+					this.updateSchedules(data);
+				}catch(e) { alert(e.message) };
+			}.bind(this)
+		});
+	},
+updateSchedules:
+	function(arr){
+		for(var i=0;i<7;i++) $('day'+i).update('');
+		var hash  = {};
+		arr.each(function(item){ 
+			if (typeof hash[item.date] == 'undefined')
+				hash[item.date]=[];
+			hash[item.date].push(item);
+		});
+
+		for (var fulldate in hash)
+		{
+			this.week.each(function(item,index){
+				if(item.fulldate == fulldate) this.updateDay($('day'+index), hash[fulldate]);
+			}.bind(this))	
+		}
+	},
+updateDay:
+	function(wrap, items)
+	{
+		var assigned_items = 0; 
+		var index_of_column = 0;
+		var margin_percent = 20;
+
+		items.sort(function(a,b) { return a.time_end-b.time_end;});
+
+		while(assigned_items < items.length) 
+		{
+			index_of_column += 1;	
+			var column_end_time = -1;
+			for(i = 0 ; i < items.length; i ++)
+			{
+				if(items[i].time_start >= column_end_time && typeof items[i].column == 'undefined')
+				{
+					column_end_time = items[i].time_end;
+					items[i].column = index_of_column;
+					assigned_items ++;
+				}	
+			}
+		}
+
+		for(var i = 0; i < items.length ; i ++) {	
+			items[i].nextColumn = items[i].column+1;
+			for(var j = i-1; j >= 0 ; j --){
+				if(items[i].time_start < items[j].time_end) {
+					if(items[i].column < items[j].column ) {
+						if(items[i].nextColumn > items[j].column && items[j].column > items[i].column)
+							items[i].nextColumn = items[j].column;
+					}	
+					else {
+						if(items[j].nextColumn > items[i].column && items[i].column > items[j].column)
+							items[j].nextColumn = items[i].column;
+					}
+				}
+				else break;
+			}
+		}
+
+		for(i = 0; i < items.length; i ++ )
+		{
+			items[i].left = (100-margin_percent)*(items[i].column-1)/index_of_column;
+			items[i].width = (100-margin_percent)*(index_of_column+1 - items[i].column)/index_of_column;
+			items[i].height = 21 * (items[i].time_end/30 - items[i].time_start/30);
+		}
+
+		wrap.update('');
+		items.each(function(item){
+			var div = Builder.node('div',{'class':'schedule-item'});
+			Event.observe(div,'mousedown',this.onClickItem.bindAsEventListener(this,item));
+			div.update('<strong>'+item.summary+'</strong><br />'+item.description+'<br />'+item.location);
+			div.style.top = item.time_start/30*21 + 'px';
+			div.style.left = item.left + '%';
+			div.style.width = item.width + '%';
+			div.style.height = item.height + 'px';
+			div.style.backgroundColor = COLOR_BOX[item.color];
+			div.style.borderColor = COLOR_BORDER[item.color];
+			wrap.appendChild(div);
+		}.bind(this));
+	},
+onClickItem:
+	function(e,item){
+		Popup.hide();
+		if (confirm('"'+item.summary+'"를 삭제하시겠습니까?'))
+		{
+			var url = 'schedule/delete';
+			new Ajax.Request(url, {
+				method: 'post',
+				parameters:'id='+item.id,
+				onSuccess: function(t) {
+					try {
+						Message.show('일정이 삭제 되었습니다.');
+						MWCalendar.onRefresh();
+					}catch(e) { alert(e.message) };
+				}.bind(this)
+			});
+		}
+		Event.stop(e);
+	},
+getWeek:
+	function(d)
+	{
+		var oneday=1000*60*60*24;
+		var week = [];
+		for (var i=0;i<7;i++)
+		{
+			var day = new Date();
+			day.setTime(d.getTime()+((i-d.getDay()) * oneday));
+			week.push({
+				whatday: day.getDay(),
+				month: day.format('mm'),
+				day: day.format('dd'),
+				year: day.getFullYear(),
+				fulldate: day.format('yyyy-mm-dd'),
+				dt: day
+			});
+		}
+		return week;
+	},
+updateCurrentDate:
+	function(week)
+	{
+		var s = week[0].year+'년 '+week[0].month+'월 '+week[0].day+'일 - ';
+		if (week[0].year!=week[6].year) s+=week[6].year+'년 ';
+		if (week[0].month!=week[6].month) s+=week[6].month+'월 ';
+		s+=week[6].day+'일';
+		$('current-date').update(s);
+	},
+updateCurrentChead:
+	function(week)
+	{
+		var days=['일','월','화','수','목','금','토'];
+		for(var i=0;i<7;i++)
+		{
+			$('chead'+i).update(week[i].month+'/'+week[i].day+' ('+days[week[i].whatday]+')');
+			if (week[i].dt.format('yy-mm-dd')==(new Date()).format('yy-mm-dd'))
+				$('chead'+i).addClassName('today');
+			else
+				$('chead'+i).removeClassName('today');
+		}
+	}
+};
+
+Popup=
+{
+initialize:
+	function(){
+		this.arrow=$('popup-arrow');
+		this.popup=$('popup');
+		this.popup.hide();
+		this.registHandlers();
+	},
+show:
+	function(pos,time){
+		this.arrow.show();
+		var x= (pos.x+30);
+		var y= (pos.y-340);
+		if ((document.body.offsetWidth-x)<370) 
+		{
+			x= (document.body.offsetWidth-370);
+			this.arrow.hide();
+		}
+		if (y<10) { y = 10;this.arrow.hide(); };
+		this.popup.style.left=x+'px';
+		this.popup.style.top=y+'px';
+		$('schedule-time').update(time.whatday+'요일 '+DrawBlock.min2time(time.start)+' - '+DrawBlock.min2time(time.end));
+		$('schedule-summary').value='';
+		$('schedule-location').value='';
+		$('schedule-description').value='';
+		this.popup.show();
+		$('schedule-summary').activate();
+		this.time = time;
+	},
+hide:
+	function(){
+		DrawBlock.block.hide();
+		this.popup.hide();
+	},
+registHandlers:
+	function(){
+		Event.observe(document,'keypress',function(e){
+			if (e.keyCode==27&&this.popup.visible) this.hide();
+		}.bind(this));
+		Event.observe($('left-side'), 'mousedown', this.hide.bind(this));
+		Event.observe($('gbar'), 'mousedown', this.hide.bind(this));
+		Event.observe($('navigation'), 'mousedown', this.hide.bind(this));
+		Event.observe($('navigator'), 'mousedown', this.hide.bind(this));
+		Event.observe($('timetable-top'), 'mousedown', this.hide.bind(this));
+		Event.observe($('rowheaders'), 'mousedown', this.hide.bind(this));
+		Event.observe($('popup-form'), 'submit', this.onSubmit.bindAsEventListener(this));
+	},
+onSubmit:
+	function(){
+		var params = $('popup-form').serialize();
+		params+= '&type=single&range=0&date='+this.time.fulldate+'&time_start='+this.time.start+'&time_end='+this.time.end;
+		var url = 'schedule/add';
+		new Ajax.Request(url, {
+			method: 'post',
+			parameters:params,
+			onSuccess: function(t) {
+				try {
+					Message.show('일정이 추가 되었습니다.');
+					MWCalendar.onRefresh();
+				}catch(e) { alert(e.message) };
+			}.bind(this)
+		});
+		this.hide();
+	},
+validate:
+	function(){
+	},
+update:
+	function(){
+	}
+};
+
 	Event.observe(window, "load", function() { 
+		Message.initialize();
+		BrowserDetect.init();
 		var resizeHandler = function()
 		{
 			$('grid-wrap').style.width=($('grid-wrap').parentNode.offsetWidth-$('rowheaders').offsetWidth)+'px';
+			if(BrowserDetect.browser=='Explorer')
+			{
+				$('grid').style.width = ($('grid').offsetWidth-18)+'px';
+			}
 		};
-		layoutManager = new LayoutManager(null,{resizeHandler:resizeHandler}); 
+		LayoutMgr = new LayoutManager(null,{resizeHandler:resizeHandler}); 
+		Popup.initialize();
+		DrawBlock.initialize();
+		MWCalendar.initialize();
 	});
 	</script>
 </head>
@@ -45,35 +489,39 @@
                 <div class="clear"></div>
             </div>
         </div>
-		<div class="lm_left" style="width:10px"></div>
+		<div class="lm_left" style="width:8px"></div>
 		<div id="left-side" class="lm_left">
 			<div class="lm_container">
 				<div  class="header lm_top">
 					<div class="logo"></div>
 				</div>
 				<div  class="header-bottom lm_top"></div>
-				<div class="lm_top" style="height:50px"></div>
-				<div id="calendar-wrap" class="lm_top">
-					<div id="calendar">
+				<div class="lm_top" style="height:40px"></div>
+				<div id="calendar-container" class="lm_top">
+					<div id="calendar-wrap" style="line-height:normal;">
+						<div id="calendar" class="googleblue"></div>
 					</div>
 				</div>
 				<div class="lm_center">
 					<br />
 					<div class="side-box">
-						<div class="top"><div>my calendar</div></div>
-						<div class="content"><div>
-							<ul>
-								<li>calendar 1</li>
-								<li>calendar 2</li>
-								<li>calendar 3</li>
-								<li>calendar 4</li>
-								<li>calendar 5</li>
-							</ul>
-						</div></div>
+						<div class="top"><div>내 캘린더</div></div>
+						<div id="calendar-list" class="content-wrap">
+							<div class="content">
+								{% for item in calendars %}
+								<div class="calendar-item calendar-item{{item.color}}">
+									<div class="name tl"><div class="tr"><div class="bl"><div class="br">{{item.title}}</div></div></div></div>
+									<a class="color"></a>
+									<div class="clear"></div>
+								</div>
+								{% endfor %}
+							</div>
+						</div>
 						<div class="bottom"><div>
-							설정 만들기
+							<a class="right" id="add-calendar">만들기</a>
 						</div></div>
 					</div>
+					<div id="dump"></div>
 				</div>
 				<div class="lm_right" style="width:6px"></div>
 			</div>
@@ -96,11 +544,13 @@
 				</div>
 				<div class="header-bottom lm_top"></div>
 				<div class="lm_top" style="height:5px"></div>
-				<div id="message-bar" class="lm_top">
-					<span style="background:#FAD163">일정이 삭제 되었습니다. 실행취소</span>
-				</div>
-				<div id="navigator" class="lm_top">
-					오늘 2009년 4월 13일 – 19일  새로고침
+				<div id="navigator" class="lm_top" style="height:26px">
+					<a id="prev-week"></a>
+					<a id="next-week"></a>
+					<button id="today">이번주</button>
+					<span id="current-date">2009년 4월 13일 – 9일 </span>
+					<div id="message-box" class="tl message"><div class="tr"><div class="bl"><div id="message-content" class="br" style="padding:2px 10px">안녕하세요. 이 서비스는 SPARCS에서 제공하고 있습니다.</div></div></div></div>
+					<button class="right" id="refresh">새로고침</button>
 				</div>
 				<div id="center-left" class="lm_left"></div>
 				<div id="center" class="lm_center">
@@ -108,22 +558,19 @@
 						<div id="timetable-top" class="lm_top">
 							<div class="lm_container">
 								<div class="lm_left" style="width:61px">
-
 								</div>
 								<div class="lm_center">
 									<div id="colheaders">
-										<div class="chead"><span>월</span></div>
-										<div class="chead"><span>화</span></div>
-										<div class="chead"><span>수</span></div>
-										<div class="chead"><span>목</span></div>
-										<div class="chead"><span>금</span></div>
-										<div class="chead"><span>토</span></div>
-										<div class="chead"><span>일</span></div>
+										<div id="chead0" class="chead"></div>
+										<div id="chead1" class="chead"></div>
+										<div id="chead2" class="chead"></div>
+										<div id="chead3" class="chead"></div>
+										<div id="chead4" class="chead"></div>
+										<div id="chead5" class="chead"></div>
+										<div id="chead6" class="chead"></div>
 										<div class="clear"></div>
 									</div>
-									<div id="day-schedule">
-										days-schelue
-									</div>
+									<div id="day-schedule"></div>
 								</div>
 								<div class="lm_right" style="width:17px"></div>
 							</div>
@@ -132,42 +579,46 @@
 						<div id="timetable-wrap" class="lm_center">
 							<div id="timetable">
 								<div id="rowheaders" class="lm_left">
+									<div class="rhead"><span>오전 12시</span></div>
+									<div class="rhead"><span>오전 1시</span></div>
+									<div class="rhead"><span>오전 2시</span></div>
+									<div class="rhead"><span>오전 3시</span></div>
+									<div class="rhead"><span>오전 4시</span></div>
+									<div class="rhead"><span>오전 5시</span></div>
+									<div class="rhead"><span>오전 6시</span></div>
+									<div class="rhead"><span>오전 7시</span></div>
+									<div class="rhead"><span>오전 8시</span></div>
+									<div class="rhead"><span>오전 9시</span></div>
+									<div class="rhead"><span>오전 10시</span></div>
+									<div class="rhead"><span>오전 11시</span></div>
+									<div class="rhead"><span>오후 12시</span></div>
+									<div class="rhead"><span>오후 1시</span></div>
+									<div class="rhead"><span>오후 2시</span></div>
+									<div class="rhead"><span>오후 3시</span></div>
+									<div class="rhead"><span>오후 4시</span></div>
+									<div class="rhead"><span>오후 5시</span></div>
+									<div class="rhead"><span>오후 6시</span></div>
+									<div class="rhead"><span>오후 7시</span></div>
+									<div class="rhead"><span>오후 8시</span></div>
+									<div class="rhead"><span>오후 9시</span></div>
 									<div class="rhead"><span>오후 10시</span></div>
-									<div class="rhead"><span>오후 10시</span></div>
-									<div class="rhead"><span>오후 10시</span></div>
-									<div class="rhead"><span>오후 10시</span></div>
-									<div class="rhead"><span>오후 10시</span></div>
-									<div class="rhead"><span>오후 10시</span></div>
-									<div class="rhead"><span>오후 10시</span></div>
-									<div class="rhead"><span>오후 10시</span></div>
-									<div class="rhead"><span>오후 10시</span></div>
-									<div class="rhead"><span>오후 10시</span></div>
-
-									<div class="rhead"><span>오후 10시</span></div>
-									<div class="rhead"><span>오후 10시</span></div>
-									<div class="rhead"><span>오후 10시</span></div>
-									<div class="rhead"><span>오후 10시</span></div>
-									<div class="rhead"><span>오후 10시</span></div>
-									<div class="rhead"><span>오후 10시</span></div>
-									<div class="rhead"><span>오후 10시</span></div>
-									<div class="rhead"><span>오후 10시</span></div>
-									<div class="rhead"><span>오후 10시</span></div>
-									<div class="rhead"><span>오후 10시</span></div>
-
-									<div class="rhead"><span>오후 10시</span></div>
-									<div class="rhead"><span>오후 10시</span></div>
-									<div class="rhead"><span>오후 10시</span></div>
-									<div class="rhead"><span>오후 10시</span></div>
+									<div class="rhead"><span>오후 11시</span></div>
 								</div><!--rowheaders-->
 								<div id="grid-wrap">
 									<div id="grid">
-										<div class="block-day"></div>
-										<div class="block-day"></div>
-										<div class="block-day"></div>
-										<div class="block-day"></div>
-										<div class="block-day"></div>
-										<div class="block-day"></div>
-										<div class="block-day"></div>
+										<table id="table">
+											<tbody>
+											<tr>
+												<td><div id="day0" class="day-wrapper"></div></td>
+												<td><div id="day1" class="day-wrapper"></div></td>
+												<td><div id="day2" class="day-wrapper"></div></td>
+												<td><div id="day3" class="day-wrapper"></div></td>
+												<td><div id="day4" class="day-wrapper"></div></td>
+												<td><div id="day5" class="day-wrapper"></div></td>
+												<td><div id="day6" class="day-wrapper"></div></td>
+											</tr>
+											</tbody>
+										</table>
 									</div>
 								</div>
 							</div><!--timetable-->
@@ -178,7 +629,67 @@
 				<div class="lm_bottom" style="height:8px;"></div>
 			</div><!--lm_container-->
 		</div><!--wrap-->
-		<div class="lm_right" style="width:10px"></div>
+		<div class="lm_right" style="width:8px"></div>
 	</div><!--lm_container-->
+	<div id="popup">
+		<table class="container">
+			<thead>
+				<tr>
+					<td class="north-west"></td>
+					<td class="north"></td>
+					<td class="north-east">
+					</td>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td class="west"></td>
+					<td class="middle">	
+						<form id="popup-form" onSubmit="return false;">
+						<table>
+							<tr>
+								<td>시간:</td>
+								<td><span id="schedule-time"></span></td>
+							</tr>
+							<tr>
+								<td>내용:</td>
+								<td><input id="schedule-summary" name="summary"  size="35" type="text" /></td>
+							</tr>
+							<tr>
+								<td>장소:</td>
+								<td><input id="schedule-location" name="location"  size="35" type="text" /></td>
+							</tr>
+							<tr>
+								<td>설명:</td>
+								<td><textarea id="schedule-description"name="description" rows="4" cols="30"></textarea></td>
+							</tr>
+							<tr>
+								<td>캘린더:</td>
+								<td>
+									<select id="schedule-calendar" name="calendar">
+										{% for item in calendars %}
+										<option value="{{item.id}}">{{item.title}}</option>
+										{% endfor %}
+									</select>
+								</td>
+							</tr>
+						</table>
+						<input class="right" id="popup-submit"  type="submit" value="일정 만들기" />
+						</form>
+					</td>
+					<td class="east"></td>
+				</tr>
+			</tbody>
+			<tfoot>
+				<tr>
+					<td class="south-west"></td>
+					<td class="south"></td>
+					<td class="south-east"></td>
+				</tr>
+			</tfoot>
+		</table>
+		<a id="popup-close" onclick="$('popup').hide();return false;"></a>
+		<div id="popup-arrow"></div>
+	</div>
 </body>
 </html>

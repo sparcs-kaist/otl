@@ -6,6 +6,35 @@ body, html {
 	padding:0;
 }
 
+button
+{
+	height:24px;
+}
+
+form 
+{
+	margin:0;
+    background:none;
+    border:none;
+    padding:0;
+}
+
+.br {
+	background:transparent url('images/corner_br.gif') bottom right no-repeat;
+}
+
+.bl {
+	background:transparent url('images/corner_bl.gif') bottom left no-repeat;
+}
+
+.tr {
+	background:transparent url('images/corner_tr.gif') top right no-repeat;
+}
+
+.tl {
+	background:transparent url('images/corner_tl.gif') top left no-repeat;
+}
+
 #gbar
 {
 	height:34px;
@@ -97,20 +126,17 @@ body, html {
 
 #left-side 
 {
-	width:185px;
+	width:175px;
 }
 
 
-#calendar-wrap
+#calendar-container
 {
     background:#C3D9FF url('images/corner_tl.gif') left top no-repeat;
 }
 
-#calendar
+#calendar-wrap
 {
-	padding-top:8px;
-	padding-left:8px;
-	padding-bottom:8px;
     background:transparent url('images/corner_bl.gif') left bottom no-repeat;
 }
 
@@ -118,7 +144,6 @@ body, html {
 {
 	height:20px;
 }
-
 
 
 #center-left
@@ -150,16 +175,25 @@ body, html {
 {
 	height:22px;
 	width:100%;
+	font-size:11px;
 }
 
 #colheaders .chead
 {
-	height:100%;
-	width:14.2857%;
 	float:left;
+	height:100%;
+	width:14.2857143%;
 	line-height:22px;
 	text-align:center;
+	color:#112AAB;
+    background:#C3D9FF;
+}
+
+#colheaders .today
+{
+	color:#fff;
 	background:#88AACC;
+	font-weight:bold;
 }
 
 #day-schedule
@@ -233,47 +267,82 @@ body, html {
 	position:relative;
 	width:100%;
 	height:100%;
+	margin:0;
+	padding:0;	
 }
 
-#grid .block-day
+#grid #table
 {
 	position:relative;
-	float:left;
-	width:14.2857%;
+	border-collapse:collapse;
+	width:100%;
 	height:100%;
-	background:transparent url('images/cell_800.gif') repeat-y;
 }
 
-#grid .block-day .schedule
+#grid #table td
 {
-
+	width:14.2857143%;
+	height:100%;
+	font-family:monospace;
+	background:transparent url('images/cell_800.gif') repeat-y;
+	padding:0;
+	margin:0;
 }
+#grid #table td div.day-wrapper
+{
+	position:relative;
+	width:100%;
+	height:100%;
+}
+
+div.schedule-item
+{
+	position:absolute;
+	border:1px solid #2952A3;
+	border-top:4px solid #2952A3;
+	background:#668CD9;
+	color:#fff;
+	font-size:11px;
+	margin-left:2px;
+	padding:2px;
+	overflow:hidden;
+}
+
+
+#grid #table td.today
+{
+	background-color:#FFFFCC;
+}
+
 
 .side-box .top
 {
-	height:20px;
+	height:24px;
     background:#C3D9FF url('images/corner_tl.gif') top left no-repeat;
 }
 .side-box .top div
 {
 	height:100%;
+	padding:2px 7px;
     background:transparent url('images/corner_tr.gif') top right no-repeat;
 }
 
-.side-box .content
+.side-box .content-wrap
 {
     background:#C3D9FF;
 	padding-left:2px;
 	padding-right:2px;
 }
 
-.side-box .content div
+.side-box .content-wrap .content
 {
+	padding:2px 3px;
 	background:#fff;
 }
+
 .side-box .bottom 
 {
-	height:20px;
+	height:24px;
     background:#C3D9FF url('images/corner_bl.gif') bottom left no-repeat;
 }
 
@@ -282,4 +351,204 @@ body, html {
 	height:100%;
     background:transparent url('images/corner_br.gif') bottom right no-repeat;
 }
+
+
+#prev-week,#next-week
+{
+	float:left;
+	display:block;
+	cursor:pointer;
+    background-color:transparent;
+    background-image:url('images/combined_v6.gif');
+    background-repeat:no-repeat;
+	width:30px;
+	height:17px;
+	margin-right:5px;
+	margin-top:2px;
+}
+
+#today,#current-date
+{
+	float:left;
+	margin-right:5px;
+}
+
+#prev-week
+{
+	background-position:-150px -17px;
+}
+#next-week
+{
+	background-position:-150px 0px;
+}
+
+.message
+{
+    background-color:#C3D9FF;
+	margin-left:30px;
+	float:left;
+}
+
+
+
+.calendar-item
+{
+	padding-top:2px;
+	padding-bottom:2px;
+}
+
+.calendar-item .name
+{
+	float:left;
+	white-space:nowrap;
+	overflow:hidden;
+	color:#fff;
+	font-size:11px;
+	width:140px;
+}
+
+.calendar-item1 .name
+{
+    background-color:#668CD9;
+}
+.calendar-item2 .name
+{
+    background-color:#D96666;
+}
+.calendar-item3 .name
+{
+    background-color:#4CB052;
+}
+
+.calendar-item .name .br
+{
+	padding-top:1px;
+	padding-left:10px;
+}
+
+.calendar-item a.color
+{
+	margin-top:4px;
+	float:right;
+	display:block;
+	width:15px;
+	height:15px;
+	background-color:transparent;
+    background-image:url('images/combined_v6.gif');
+	background-repeat:no-repeat;
+	/*background-position:-25px -103px;*/
+	cursor:pointer;
+}
+
+.calendar-item1 a.color {
+	background-position:-101px -103px;
+}
+.calendar-item2 a.color {
+	background-position:-26px -103px;
+}
+.calendar-item3 a.color {
+	background-position:-146px -103px;
+}
+
+#add-calendar
+{
+	cursor:pointer;
+	margin-right:10px;
+}
+
+
+#popup
+{
+	top:100px;
+	left:100px;
+	position:absolute;
+}
+
+#popup-arrow
+{
+	position:absolute;
+	background:transparent url('images/bubble_combined.png') -50px -22px no-repeat;
+	width:98px;
+	height:70px;
+	left:25px;
+	bottom:-67px;
+}
+
+#popup table.container
+{
+	border-collapse:collapse;
+}
+
+#popup table.container td.north-west, 
+#popup table.container td.north-east,
+#popup table.container td.south-west, 
+#popup table.container td.south-east
+{
+	width:25px;
+	height:25px;
+	background-color:transparent;
+   	background-image:url('images/bubble_combined.png');
+    background-repeat:no-repeat;
+}
+#popup table.container td.north-west { background-position: 0 0; }
+#popup table.container td.north-east { background-position: -25px 0; }
+#popup table.container td.south-west { background-position: 0 -25px; }
+#popup table.container td.south-east { background-position: -25px -25px; }
+
+#popup table.container td.north,
+#popup table.container td.west,
+#popup table.container td.east,
+#popup table.container td.south
+{
+	background:#fff;
+}
+
+#popup table.container td.north
+{
+	border-top:1px solid #ABABAB;
+}
+
+#popup table.container td.west
+{
+	border-left:1px solid #ABABAB;
+}
+#popup table.container td.middle
+{
+	background:#fff;
+}
+
+#popup table.container td.east
+{
+	border-right:1px solid #ABABAB;
+}
+
+#popup table.container td.south
+{
+	border-bottom:1px solid #ABABAB;
+}
+
+
+#popup-close
+{
+	position:absolute;
+	right:15px;
+	top:15px;
+	display:block;
+    background:transparent url('images/combined_v6.gif') 0px -50px no-repeat;
+	width:14px;
+	height:13px;
+	cursor:pointer;
+}
+
+
+.block-drag
+{
+	position:absolute;
+	background:#cc3366;
+	height:21px;
+	opacity:0.5;
+	filter:alpha(opacity=50);
+	color:#fff;
+}
+
 
