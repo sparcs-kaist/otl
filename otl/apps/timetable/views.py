@@ -282,25 +282,52 @@ def print_as_pdf(request):
             c.drawCentredString(margin_x + timelabels_width / 2.0, row_base - row_height + 4, u'%02d:00' % (8 + row / 2))
             c.line(margin_x, row_base, page_width - margin_x, row_base)
 
-    # Draw the actual timetable entries
     def get_box_position(day, time_begin, time_end):
         left = margin_x + timelabels_width + (column_width * day)
         bottom = page_height - (margin_y + header_height) - (row_height * ((time_end - 480) / 30.0))
         return left, bottom, column_width, row_height * ((time_end - time_begin) / 30.0)
 
+    def fit_text_width(text, max_width, font_name, font_size):
+        # A code snippet from http://two.pairlist.net/pipermail/reportlab-users/2009-April/008198.html
+        def locate_split(s, max_width, font_name='Times-Roman', font_size=12):
+            def width(i, L=(len(s) + 1) * [None]):
+                if L[i] is None:
+                    L[i] = pdfmetrics.stringWidth(s[:i], font_name, font_size)
+                return L[i]
+            def brak(lo, hi):
+                i = (lo + hi) >> 1
+                print lo, hi, i, width(i)
+                if lo == i:
+                    return lo
+                if width(i) >= max_width:
+                    return brak(lo, i)
+                else:
+                    return brak(i, hi)
+            i = brak(0, len(s))
+            if width(i) > max_width:
+                i -= 1
+            return i, width(i), width(i+1), s[:i+1]
+        pos, lw, rw, text_after = locate_split(text, max_width, font_name, font_size)
+        if text_after != text:
+            pos, lw, rw, text_after = locate_split(text, max_width - pdfmetrics.stringWidth(u'...', font_name, font_size), font_name, font_size)
+            return text_after + u'...'
+        return text
+
+    # Draw the actual timetable entries
     c.setDash([], 0)
-    c.setLineWidth(0.12)
+    c.setLineWidth(0.5)
     my_lectures = Lecture.objects.filter(year=settings.NEXT_YEAR, semester=settings.NEXT_SEMESTER, timetable__user=request.user, timetable__table_id=table_id)
     for lecture in my_lectures:
         for classtime in lecture.classtime_set.all():
             left, bottom, width, height = get_box_position(classtime.day, classtime.get_begin_numeric(), classtime.get_end_numeric())
             top = bottom + height
+            offset = height / 2.0
             c.setFillColorRGB(0.92, 0.92, 0.92)
             c.roundRect(left, bottom, width, height, 4.0, 1, 1)
             c.setFillColorRGB(0, 0, 0)
             c.setFont(sanserif_bold_name, 9)
-            offset = height / 2.0
-            c.drawCentredString(left + width / 2, bottom + offset + 4, lecture.title)
+            title = lecture.title.replace(u'   ', u'')  # normalize
+            c.drawCentredString(left + width / 2, bottom + offset + 4, fit_text_width(title, width - 5.0, sanserif_bold_name, 9))
             c.setFont(sanserif_name, 9)
             c.drawCentredString(left + width / 2, bottom + offset - row_height + 4, classtime.get_location())
 
