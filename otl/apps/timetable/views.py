@@ -10,6 +10,7 @@ from django.utils import simplejson as json
 from django.conf import settings
 from django.core.exceptions import *
 from django.core.cache import cache
+from django.contrib.auth.decorators import login_required
 from otl.utils import respond_as_attachment
 from otl.utils.decorators import login_required_ajax
 from otl.apps.accounts.models import Department
@@ -224,10 +225,22 @@ def _lectures_to_output(lectures, conv_to_json=True):
     else:
         return all
 
+@login_required
 def print_as_pdf(request):
     from reportlab.pdfgen import canvas
-    fd, temp_path = tempfile.mkstemp('otl-timetable')
+    from reportlab.pdfbase import pdfmetrics
+    from reportlab.pdfbase.ttfonts import TTFont
+    fd, temp_path = tempfile.mkstemp('otl-timetable.pdf')
+
+    sanserif_path = os.path.join(settings.MEDIA_ROOT, 'fonts/NanumGothic.ttf')
+    sanserif_name = 'NanumGothic'
+    serif_path = os.path.join(settings.MEDIA_ROOT, 'fonts/NanumMyeongjo.ttf')
+    serif_name = 'NanumMyeongjo'
+    pdfmetrics.registerFont(TTFont(sanserif_name, sanserif_path))
+    pdfmetrics.registerFont(TTFont(serif_name, serif_path))
+
     c = canvas.Canvas(temp_path)
+    c.setFont(sanserif_name, 16)
     c.drawString(100, 100, u'Test 한글 OK!')
     c.showPage()
     c.save()

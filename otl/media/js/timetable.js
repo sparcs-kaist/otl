@@ -585,11 +585,6 @@ var Timetable = {
 	registHandlers:function()
 	{
 		$('action-cleanTable').addEvent('click',this.deleteLecture.bindWithEvent(this,null));
-		$('action-print').addEvent('click',this.print.bindWithEvent(this));
-	},
-	print:function()
-	{
-		location.href = '/timetable/print/';
 	},
 	onMouseout:function()
 	{
