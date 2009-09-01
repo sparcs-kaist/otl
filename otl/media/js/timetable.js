@@ -734,8 +734,8 @@ var Timetable = {
 						var time = UDF.NumericTimeToReadable(item.start) + ' ~ ' + UDF.NumericTimeToReadable(item.end);
 						var name_and_time = obj.title+' '+time;
 						$('DS_'+key).set('text', UDF.days[item.day]+time);
-						if (is_adding)
-							$('add_examtime'+item.day).set('text', name_and_time);
+						//if (is_adding)
+						//	$('add_examtime'+item.day).set('text', name_and_time);
 						break;
 					case 'credit':
 						if (item > 0 && is_adding)
@@ -756,6 +756,8 @@ var Timetable = {
 				}
 			}
 		}
+		if (!obj['examtime'])
+			$('DS_examtime').set('text', '');
 	},
 	onMouseoverTemp: function(obj)
 	{
