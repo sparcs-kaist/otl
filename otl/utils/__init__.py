@@ -1,11 +1,14 @@
 # -*- coding: utf-8
+
+import os, mimetypes
+import urllib
+from datetime import date, timedelta
 from django.db import models
 from django import forms
 from django.utils import simplejson as json
 from django.http import HttpResponse
 from django.core.cache import cache
 from django.conf import settings
-from datetime import date, timedelta
 
 def get_choice_display(choices, key):
     for item in choices:
@@ -36,10 +39,36 @@ def cache_with_default(key, default, timeout=300):
         cache.set(key, value, timeout)
     return value
 
-def response_as_json(request, obj):
+def respond_as_json(request, obj):
     output = json.dumps(obj, ensure_ascii=False, indent=4 if settings.DEBUG else 0)
     type = 'application/json' if request.is_ajax() else 'text/plain'
     return HttpResponse(output, mimetype=type)
+
+def respond_as_attachment(request, file_path, original_filename):
+    fp = open(file_path, 'rb')
+    response = HttpResponse(fp.read())
+    fp.close()
+    type, encoding = mimetypes.guess_type(original_filename)
+    if type is None:
+        type = 'application/octet-stream'
+    response['Content-Type'] = type
+    response['Content-Length'] = str(os.stat(file_path).st_size)
+    if encoding is not None:
+        response['Content-Encoding'] = encoding
+
+    # To inspect details for the below code, see http://greenbytes.de/tech/tc2231/
+    if u'WebKit' in request.META['HTTP_USER_AGENT']:
+        # Safari 3.0 and Chrome 2.0 accepts UTF-8 encoded string directly.
+        filename_header = 'filename=%s' % original_filename.encode('utf-8')
+    elif u'MSIE' in request.META['HTTP_USER_AGENT']:
+        # IE does not support internationalized filename at all.
+        # It can only recognize internationalized URL, so we do the trick via routing rules.
+        filename_header = ''
+    else:
+        # For others like Firefox, we follow RFC2231 (encoding extension in HTTP headers).
+        filename_header = 'filename*=UTF-8\'\'%s' % urllib.quote(original_filename.encode('utf-8'))
+    response['Content-Disposition'] = 'attachment; ' + filename_header
+    return response
 
 def date_range(start, end):
     """

@@ -7,5 +7,6 @@ urlpatterns = patterns('',
     (ur'^view/$', views.view_timetable),
     (ur'^add/$', views.add_to_timetable),
     (ur'^delete/$', views.delete_from_timetable),
+    (ur'^print/$', views.print_as_pdf),
 )
 

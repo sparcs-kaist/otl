@@ -1,4 +1,6 @@
 # -*- coding: utf-8
+
+import os, tempfile
 from django.shortcuts import render_to_response
 from django.db.models import Count
 from django.db import IntegrityError
@@ -8,6 +10,7 @@ from django.utils import simplejson as json
 from django.conf import settings
 from django.core.exceptions import *
 from django.core.cache import cache
+from otl.utils import respond_as_attachment
 from otl.utils.decorators import login_required_ajax
 from otl.apps.accounts.models import Department
 from otl.apps.timetable.models import Lecture, ExamTime, ClassTime, Syllabus, Timetable, OverlappingTimeError
@@ -220,4 +223,15 @@ def _lectures_to_output(lectures, conv_to_json=True):
         return io.getvalue()
     else:
         return all
+
+def print_as_pdf(request):
+    from reportlab.pdfgen import canvas
+    fd, temp_path = tempfile.mkstemp('otl-timetable')
+    c = canvas.Canvas(temp_path)
+    c.drawString(100, 100, u'Test 한글 OK!')
+    c.showPage()
+    c.save()
+    response = respond_as_attachment(request, temp_path, 'Timetable.pdf')
+    os.remove(temp_path)
+    return response
 

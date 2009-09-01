@@ -589,7 +589,7 @@ var Timetable = {
 	},
 	print:function()
 	{
-		Notifier.setErrorMsg('아직 구현되지 않았습니다. =3');
+		location.href = '/timetable/print/';
 	},
 	onMouseout:function()
 	{

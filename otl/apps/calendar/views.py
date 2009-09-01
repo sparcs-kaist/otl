@@ -11,7 +11,7 @@ from otl.apps.calendar.models import Calendar, Schedule, fetch_assignments, fetc
 from otl.apps.calendar.models import is_in_current_semester, is_in_exam_periods, is_holiday
 from otl.apps.timetable.models import Lecture, ClassTime
 from otl.utils.decorators import login_required_ajax
-from otl.utils import response_as_json, date_range
+from otl.utils import respond_as_json, date_range
 from datetime import *
 
 def index(request):
@@ -59,7 +59,7 @@ def list_calendar(request):
             'color': item.color,
             'enabled': item.enabled,
         })
-    return response_as_json(request, result)
+    return respond_as_json(request, result)
 
 @login_required_ajax
 def modify_calendar(request):
@@ -94,7 +94,7 @@ def modify_calendar(request):
             result = {'result':'FAILED'}
     else:
         return HttpResponseBadRequest('Should be called with POST method')
-    return response_as_json(request, result)
+    return respond_as_json(request, result)
 
 @login_required_ajax
 def list_schedule(request):
@@ -174,7 +174,7 @@ def list_schedule(request):
                 'time_start': item.begin.hour * 60 + item.begin.minute,
                 'time_end': item.end.hour * 60 + item.end.minute,
             })
-        return response_as_json(request, result)
+        return respond_as_json(request, result)
     else:
         return HttpResponseBadRequest('Invalid parameters (date_start, date_end)')
 
@@ -211,7 +211,7 @@ def get_schedule(request):
         result = {'result':'NOT_FOUND'}
     except (KeyError, TypeError, ValueError):
         result = {'result':'FAILED'}
-    return response_as_json(request, result)
+    return respond_as_json(request, result)
 
 @login_required_ajax
 def add_schedule(request):
@@ -267,7 +267,7 @@ def add_schedule(request):
         #    result = {'result':'FAILED2'}
     else:
         return HttpResponseBadRequest('Should be called with POST method.')
-    return response_as_json(request, result)
+    return respond_as_json(request, result)
 
 @login_required_ajax
 def modify_schedule(request):
@@ -314,7 +314,7 @@ def modify_schedule(request):
             result = {'result':'FAILED'}
     else:
         return HttpResponseBadRequest('Should be called with POST method.')
-    return response_as_json(request, result)
+    return respond_as_json(request, result)
 
 @login_required_ajax
 def delete_schedule(request):
@@ -340,7 +340,7 @@ def delete_schedule(request):
             result = {'result':'FAILED'}
     else:
         return HttpResponseBadRequest('Should be called with POST method.')
-    return response_as_json(request, result)
+    return respond_as_json(request, result)
 
 @login_required_ajax
 def get_assignments(request):
@@ -386,5 +386,5 @@ def get_assignments(request):
     except DatabaseError, e:
         result = {'result': 'FAILED', 'error': e.message, 'assignments': []}
     
-    return response_as_json(request, result)
+    return respond_as_json(request, result)
 
