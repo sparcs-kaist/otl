@@ -71,6 +71,7 @@ var Mootabs = new Class({
 			$('total_au').set('html', Data.Timetables[this.activeKey].au);
 			$('total_credit').highlight('#FFFF00');
 			$('total_au').highlight('#FFFF00');
+			$('action-print').set('href', '/timetable/print/?id=' + this.activeKey);
 		}
 	},
 	activate: function(key)
