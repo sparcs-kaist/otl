@@ -6,6 +6,12 @@
  * depends on: Mootools 1.2
  */
 
+var suppress_ajax_errors = false;
+
+window.addEvent('beforeunload', function() {
+	suppress_ajax_errors = true;
+});
+
 var Notifier = {
 	/*
 	 * Requires at least 3 elements in this structure:

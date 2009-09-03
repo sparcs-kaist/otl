@@ -365,6 +365,8 @@ var LectureList = {
 			}.bind(this),
 			onFailure:function(xhr)
 			{
+				if (suppress_ajax_errors)
+					return;
 				Notifier.setErrorMsg('오류가 발생하였습니다. (요청 실패:'+xhr.status+')');
 				this.loading = false;
 			}.bind(this)
@@ -643,6 +645,8 @@ var Timetable = {
 				}
 			},
 			onFailure:function(xhr) {
+				if (suppress_ajax_errors)
+					return;
 				if (xhr.status == 403)
 					Notifier.setErrorMsg('로그인해야 합니다.');
 				else
@@ -698,6 +702,8 @@ var Timetable = {
 					}
 				},
 				onFailure:function(xhr) {
+					if (suppress_ajax_errors)
+						return;
 					Notifier.setErrorMsg('오류가 발생하였습니다. (요청 실패:'+xhr.status+')');
 				}
 			});
