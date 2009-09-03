@@ -62,8 +62,9 @@ class KAISTSSOBackend:
             # If this user already exists in our database, just pass or update his info.
             profile = UserProfile.objects.get(user=user)
             changed = False
-            if profile.department.name != kuser_info['department']:
-                profile.department = get_dept_from_deptname(kuser_info['department'])
+            new_dept = get_dept_from_deptname(kuser_info['department'])
+            if profile.department.name != new_dept.name:
+                profile.department = new_dept
                 changed = True
             if profile.student_id != kuser_info['student_id']:
                 profile.student_id = kuser_info['student_id']

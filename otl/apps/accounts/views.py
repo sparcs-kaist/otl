@@ -79,7 +79,6 @@ def login(request):
                     # Already existing user
                     if not user.is_superuser:
                         profile = UserProfile.objects.get(user=user)
-                        # TODO: update profile from portal account if needed
                     # Create user's default system calendars if not exists
                     color = 1
                     for key, value in SYSTEM_CALENDAR_NAMES.iteritems():
