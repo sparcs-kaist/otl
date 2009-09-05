@@ -41,7 +41,7 @@ def index(request):
         'title': u'모의시간표',
         'departments': Department.objects.filter(visible=True).order_by('name'),
         'my_lectures': my_lectures_output,
-        'lecture_list': _lectures_to_output(_search(dept=u'2044', type=u'전체보기'))
+        'lecture_list': [],
     }, context_instance=RequestContext(request))
 
 def search(request):
@@ -179,20 +179,20 @@ def _search(**conditions):
     except (TypeError, ValueError):
         raise ValidationError()
 
-    return lectures.filter(deleted=False).order_by('type', 'code').distinct()
+    return lectures.filter(deleted=False).order_by('type', 'code').distinct().select_related()
 
 def _lectures_to_output(lectures, conv_to_json=True):
     all = []
+    lectures = lectures.select_related()
     for lecture in lectures:
         try:
             exam = lecture.examtime_set.get() # 첫번째 항목만 가져옴
         except:
             exam = None
-        room = ClassTime.objects.filter(lecture=lecture, type__exact='l')
-        if room.count() > 0:
-            room = room[0].get_location()
-        else:
-            room = ''
+        classtimes = [{'day': schedule.day, 'start': schedule.get_begin_numeric(), 'end': schedule.get_end_numeric(), 'classroom': schedule.get_location(), 'type': schedule.get_type_display(), '_type': schedule.type} for schedule in lecture.classtime_set.all()]
+        room = ''
+        if len([item for item in classtimes if item['_type'] == 'l']) > 0:
+            room = classtimes[0]['classroom']
         item = {
             'id': lecture.id,
             'year': lecture.year,
@@ -211,7 +211,7 @@ def _lectures_to_output(lectures, conv_to_json=True):
             'classroom': room,
             'deleted': lecture.deleted,
             'prof': lecture.professor,
-            'times': [{'day': schedule.day, 'start': schedule.get_begin_numeric(), 'end': schedule.get_end_numeric(), 'classroom': schedule.room_ko, 'type': schedule.get_type_display()} for schedule in lecture.classtime_set.all()],
+            'times': classtimes,
             'remarks': u'영어강의' if lecture.is_english else u'',
             'examtime': {'day': exam.day, 'start': exam.get_begin_numeric(), 'end': exam.get_end_numeric()} if exam != None else None,
         }
@@ -316,7 +316,7 @@ def print_as_pdf(request):
     # Draw the actual timetable entries
     c.setDash([], 0)
     c.setLineWidth(0.5)
-    my_lectures = Lecture.objects.filter(year=settings.NEXT_YEAR, semester=settings.NEXT_SEMESTER, timetable__user=request.user, timetable__table_id=table_id)
+    my_lectures = Lecture.objects.filter(year=settings.NEXT_YEAR, semester=settings.NEXT_SEMESTER, timetable__user=request.user, timetable__table_id=table_id).select_related()
     for lecture in my_lectures:
         for classtime in lecture.classtime_set.all():
             left, bottom, width, height = get_box_position(classtime.day, classtime.get_begin_numeric(), classtime.get_end_numeric())

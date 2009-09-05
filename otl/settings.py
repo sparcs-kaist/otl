@@ -44,7 +44,7 @@ MEDIA_ROOT = os.path.join(PROJECT_PATH, 'media')
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
-MEDIA_URL = ''
+MEDIA_URL = '/media/'
 
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
@@ -58,7 +58,6 @@ SECRET_KEY = '9f-56+0#6j8e_pqc=wmlp_58$3q@s6bwe()(s4fb_6^3=x+8fo'
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.load_template_source',
     'django.template.loaders.app_directories.load_template_source',
-#     'django.template.loaders.eggs.load_template_source',
 )
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.auth',
@@ -69,12 +68,18 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'otl.utils.context_processors.myfavorites',
 )
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE_CLASSES = [
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'otl.utils.middleware.CachedAuthMiddleware',
     #'django.contrib.auth.middleware.AuthenticationMiddleware',
-)
+]
+if DEBUG:
+	try:
+	    import firepy
+	    MIDDLEWARE_CLASSES += ['firepy.django.middleware.FirePHPMiddleware']
+	except ImportError:
+	    pass
 
 ROOT_URLCONF = 'otl.urls'
 
