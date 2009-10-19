@@ -62,7 +62,7 @@ def list_ara(request):
 
 def read_ara(request, id):
     if not arara.login():
-        return HttpResponseServerError('Cannot connect to arara')
+        return HttpResponseServerError('Sorry, we could not connect to arara. Please check http://ara.kaist.ac.kr instead.')
     server = arara.get_server()
     session = arara.get_session_key()
 
