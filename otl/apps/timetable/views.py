@@ -33,8 +33,7 @@ def index(request):
     # Delete the timetable item if the corresponding lecture is marked as deleted.
     # However, we already added this item to my_lectures to notify the user at least once.
     if request.user.is_authenticated():
-        for lecture in Lecture.objects.filter(deleted=True, year=settings.NEXT_YEAR, semester=settings.NEXT_SEMESTER):
-            Timetable.objects.filter(user=request.user, lecture=lecture).delete()
+        Timetable.objects.filter(user=request.user, lecture__year__exact=settings.NEXT_YEAR, lecture__semester=settings.NEXT_SEMESTER, lecture__deleted=True).delete()
 
     return render_to_response('timetable/index.html', {
         'section': 'timetable',
@@ -183,7 +182,8 @@ def _search(**conditions):
 
 def _lectures_to_output(lectures, conv_to_json=True):
     all = []
-    lectures = lectures.select_related()
+    if not isinstance(lectures, list):
+        lectures = lectures.select_related()
     for lecture in lectures:
         try:
             exam = lecture.examtime_set.get() # 첫번째 항목만 가져옴
