@@ -65,8 +65,7 @@ function ShowModify(form)
 {% else %}
 	<p>로그인하지 않았습니다. :)</p>
 {% endif %}
-<a class="write-toggle" href="#" onClick="return ShowModify(writearticle)" >글쓰기</a>
-<div id="writearticle" style="display:none" >
+<div id="writearticle" >
 	<form id="write-form" method="post" action="/groups/list/write/{{current_group.id}}">
 		<p><label for="write-article">글쓰기 : <textarea id="write-article" name="article" cols="10" rows="5" onfocus="this.value=''">쓰고 싶은 말을 쓰세요.</textarea>
 			<input type="submit" value="쓰기" /></p>
