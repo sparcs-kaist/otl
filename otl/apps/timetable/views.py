@@ -40,7 +40,6 @@ def index(request):
         'title': u'모의시간표',
         'departments': Department.objects.filter(visible=True).order_by('name'),
         'my_lectures': my_lectures_output,
-        'lecture_list': [],
     }, context_instance=RequestContext(request))
 
 def search(request):
