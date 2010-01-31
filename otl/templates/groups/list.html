@@ -18,7 +18,11 @@ function ShowModify(form)
 
 {% endblock %}
 {% block content %}
-<h2>조모임 - {{current_group.group_name}}: {{current_group.comment}}</h2>
+<a href="/groups/list/?id={{group_id}}">
+<h2>조모임 : {{current_group.group_name}}: {{current_group.comment}}</h2>
+</a>
+
+
 {% if user.is_authenticated %}
 	{% if article_list %}
 <table id="article-list" class="article-list" style="table-layout:fixed">

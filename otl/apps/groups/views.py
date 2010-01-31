@@ -117,6 +117,7 @@ def list(request):
                 'current_group': group[0],
                 'article_list': current_page.object_list,
                 'current_page': current_page,
+		'group_id' : group_id,
             }, context_instance=RequestContext(request))
 
     return HttpResponseRedirect('/groups/');
