@@ -181,7 +181,8 @@ def _search(**conditions):
 
 def _lectures_to_output(lectures, conv_to_json=True):
     all = []
-    lectures = lectures.select_related()
+    if not isinstance(lectures, list):
+        lectures = lectures.select_related()
     for lecture in lectures:
         try:
             exam = lecture.examtime_set.get() # 첫번째 항목만 가져옴

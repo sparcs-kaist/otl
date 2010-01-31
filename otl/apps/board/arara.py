@@ -46,8 +46,9 @@ class Server(object):
     def _connect(self, name):
         host = settings.ARARA_HOST
         port = settings.ARARA_BASE_PORT + HANDLER_PORT[name]
-        transport = TSocket.TSocket(settings.ARARA_HOST, settings.ARARA_BASE_PORT + HANDLER_PORT[name])
-        transport = TTransport.TBufferedTransport(transport)
+        sock = TSocket.TSocket(settings.ARARA_HOST, settings.ARARA_BASE_PORT + HANDLER_PORT[name])
+        sock.setTimeout(5000)
+        transport = TTransport.TBufferedTransport(sock)
         protocol = TBinaryProtocol.TBinaryProtocolAccelerated(transport)
         client = dict(HANDLER_MAPPING)[name].Client(protocol)
         transport.open()
