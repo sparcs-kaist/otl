@@ -1,7 +1,7 @@
 {% extends 'layout.html' %}
 {% block headers %}
-<link rel="stylesheet" type="text/css" href="/media/appointment.css" />
-<script type="text/javascript" src="/media/js/appointment.js"></script>
+<link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}appointment.css" />
+<script type="text/javascript" src="{{MEDIA_URL}}js/appointment.js"></script>
 {% comment %}
 mode 변수는 'owner', 'participant', 'completed' 중 하나의 값을 가진다.
 
@@ -54,7 +54,7 @@ window.addEvent('domready', function() {
 {% endblock %}
 {% block content %}
 	<p style="text-align:center">
-		 <img src="/media/images/temp_appointment_prototype.png" alt="" />
+		 <img src="{{MEDIA_URL}}images/temp_appointment_prototype.png" alt="" />
 	</p>
 	<form id="appointmentForm" method="post" action="/appointment/change/">
 		<p>TODO: 일정관리 형태로 약속 잡기 User Interface 구현</p>

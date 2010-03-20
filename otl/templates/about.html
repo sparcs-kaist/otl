@@ -1,8 +1,8 @@
 {% extends 'layout.html' %}
 {% block headers %}
-<link rel="stylesheet" type="text/css" href="/media/about.css" />
-<link rel="stylesheet" type="text/css" href="/media/slideshow.css" />
-<script type="text/javascript" src="/media/js/slideshow/slideshow.js"></script>
+<link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}about.css" />
+<link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}slideshow.css" />
+<script type="text/javascript" src="{{MEDIA_URL}}js/slideshow/slideshow.js"></script>
 <script type="text/javascript">
 //<![CDATA[
 window.addEvent('domready', function() {
@@ -20,8 +20,8 @@ window.addEvent('domready', function() {
 		controller:false, captions:true, thumbnails:false,
 		width:400, height:300,
 		duration:1800,
-		hu:'/media/images/about/',
-		loader:{animate:['/media/images/slideshow/loader-#.png', 12]}
+		hu:'{{MEDIA_URL}}images/about/',
+		loader:{animate:['{{MEDIA_URL}}images/slideshow/loader-#.png', 12]}
 	});
 });
 //]]>
@@ -36,7 +36,7 @@ window.addEvent('domready', function() {
 	<div class="developer">
 		<h4>김민우 (Julingks)</h4>
 		<div class="member-photo">
-			<img src="/media/images/about/minwoo.jpg" alt="PHOTO" width="100" height="100" />
+			<img src="{{MEDIA_URL}}images/about/minwoo.jpg" alt="PHOTO" width="100" height="100" />
 		</div>
 		<ul>
 			<li>모의 시간표, 일정관리, 약속잡기 웹 프론트핸드</li>
@@ -53,7 +53,7 @@ window.addEvent('domready', function() {
 	<div class="developer">
 		<h4>김종균 (Truth0233)</h4>
 		<div class="member-photo">
-			<img src="/media/images/about/jongkyun.jpg" alt="PHOTO" width="100" height="100" />
+			<img src="{{MEDIA_URL}}images/about/jongkyun.jpg" alt="PHOTO" width="100" height="100" />
 		</div>
 		<ul>
 			<li>과목즐겨찾기</li>
@@ -69,7 +69,7 @@ window.addEvent('domready', function() {
 	<div class="developer">
 		<h4>김준기 (Daybreaker)</h4>
 		<div class="member-photo">
-			<img src="/media/images/about/joongi.jpg" alt="PHOTO" width="100" height="100" />
+			<img src="{{MEDIA_URL}}images/about/joongi.jpg" alt="PHOTO" width="100" height="100" />
 		</div>
 		<ul>
 			<li>Django 교육 담당 : <a href="http://blog.insightbook.co.kr/entry/%ED%8C%8C%EC%9D%B4%EC%8D%AC-%EA%B0%9C%EB%B0%9C%EC%9E%90%EB%9D%BC%EB%A9%B4-%EC%9E%A5%EA%B3%A0">쉽고 빠른 웹 개발 Django</a> 번역 리뷰 및 추천사</li>
@@ -86,7 +86,7 @@ window.addEvent('domready', function() {
 	<div class="developer">
 		<h4>유충국 (Majja)</h4>
 		<div class="member-photo">
-			<img src="/media/images/about/choonggook.jpg" alt="PHOTO" width="100" height="100" />
+			<img src="{{MEDIA_URL}}images/about/choonggook.jpg" alt="PHOTO" width="100" height="100" />
 		</div>
 		<ul>
 			<li>조모임 게시판</li>
@@ -100,7 +100,7 @@ window.addEvent('domready', function() {
 	<div class="contributor">
 		<h4>안병욱 (바퀴 짱)</h4>
 		<div class="member-photo">
-			<img src="/media/images/about/byeongwook.jpg" alt="PHOTO" width="100" height="100" />
+			<img src="{{MEDIA_URL}}images/about/byeongwook.jpg" alt="PHOTO" width="100" height="100" />
 		</div>
 		<ul>
 			<li>서비스 기계/OS 설치</li>
@@ -113,7 +113,7 @@ window.addEvent('domready', function() {
 	<div class="contributor">
 		<h4>강철 (회장님)</h4>
 		<div class="member-photo">
-			<img src="/media/images/about/cheol.jpg" alt="PHOTO" width="100" height="100" />
+			<img src="{{MEDIA_URL}}images/about/cheol.jpg" alt="PHOTO" width="100" height="100" />
 		</div>
 		<ul>
 			<li>우리의 정신적 지주?</li>
