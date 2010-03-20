@@ -8,6 +8,25 @@
 
 var suppress_ajax_errors = false;
 
+$.fn.highlight = function(color, options) {
+	var defaults = {
+		duration: 200,
+		delay: 300,
+		easing: 'swing'
+	};
+	var theOptions = $.extend({}, defaults, options);
+	this.each(function() {
+		var j = $(this);
+		var originalBackColor = j.css('background-color');
+		console.log(originalBackColor);
+		// TODO: resolve infinite recursion
+		j.animate({'background-color':color}, theOptions)
+		.delay(theOptions.delay)
+		.animate({'background-color':originalBackColor}, theOptions);
+	});
+	return this;
+};
+
 $(window).bind('beforeunload', function() {
 	suppress_ajax_errors = true;
 });
@@ -28,7 +47,7 @@ var Notifier = {
 			wrapper: $('#message-wrap'),
 			clear_timeout: 10000
 		};
-		$extend(my_options, options);
+		$.extend({}, my_options, options);
 		this.indicator = my_options.indicator;
 		this.message = my_options.message;
 		this.wrapper = my_options.wrapper;
@@ -44,33 +63,31 @@ var Notifier = {
 			window.clearTimeout(this.timeout);
 		this.indicator.addClass('waiting');
 		this.message.html(msg);
-		this.wrapper.fade('show');
+		this.wrapper.fadeIn();
 	},
 	setMsg: function(msg)
 	{
 		this.clearIndicator();
 		this.message.html(msg);
-		this.wrapper.fade('show');
-		this.wrapper.highlight('#FAD163');
+		this.wrapper.fadeIn().highlight('#FAD163');
 		if (this.timeout)
 			window.clearTimeout(this.timeout);
 		if (this.clear_timeout > 0)
-			this.timeout = window.setTimeout(function() {
-				this.wrapper.fade('out');
-			}, this.clear_timeout);
+			this.timeout = window.setTimeout($.proxy(function() {
+				this.wrapper.fadeOut();
+			}, this), this.clear_timeout);
 	},
 	setErrorMsg: function(msg)
 	{
 		this.clearIndicator();
 		this.message.html(msg);
-		this.wrapper.fade('show');
-		this.wrapper.highlight('#E55');
+		this.wrapper.fadeIn().highlight('#E55');
 		if (this.timeout)
 			window.clearTimeout(this.timeout);
 		if (this.clear_timeout > 0)
-			this.timeout = window.setTimeout(function() {
-				this.wrapper.fade('out');
-			}, this.clear_timeout);
+			this.timeout = window.setTimeout($.proxy(function() {
+				this.wrapper.fadeOut();
+			}, this), this.clear_timeout);
 	},
 	clearIndicator: function()
 	{
@@ -81,7 +98,7 @@ var Notifier = {
 		if (this.timeout)
 			window.clearTimeout(this.timeout);
 		this.clearIndicator();
-		this.wrapper.fade('hide');
+		this.wrapper.fadeOut().hide();
 	}
 };
 

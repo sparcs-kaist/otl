@@ -45,13 +45,13 @@ var Mootabs = function(tabContainer, contents, trigerEvent, useAsTimetable)
 		$.each(this.tabs, $.proxy(function(index, item) {
 			if (this.is_timetable)
 				Data.Timetables[index] = {credit:0, au:0};
-			item.bind(trigerEvent, $.proxy(function() {
+			$(item).bind(trigerEvent, $.proxy(function() {
 				this.activate(index);
 			}, this));
 		}, this));
 		$.each(this.contents, function(index, item)
 		{
-			item.addClass('none');
+			$(item).addClass('none');
 		});
 		this.activate(0);
 	};
@@ -64,8 +64,8 @@ Mootabs.prototype.updateData = function()
 		if (this.is_timetable) {
 			$('#total_credit').text(Data.Timetables[this.activeKey].credit);
 			$('#total_au').text(Data.Timetables[this.activeKey].au);
-			// TODO $('total_credit').highlight('#FFFF00');
-			// TODO$('total_au').highlight('#FFFF00');
+			$('total_credit').highlight('#FFFF00');
+			$('total_au').highlight('#FFFF00');
 			$('#action-print').attr('href', '/timetable/print/?id=' + this.activeKey);
 		}
 	};
@@ -88,7 +88,7 @@ Mootabs.prototype.activate = function(key)
 	};
 Mootabs.prototype.cleanActiveTab = function()
 	{
-		this.contents[this.activeKey].html('');
+		this.contents[this.activeKey].empty();
 	};
 Mootabs.prototype.getActiveTab = function()
 	{
@@ -119,24 +119,12 @@ var Utils = {
 		//index = Utils.modulecolors.length % index;
 		return index % Utils.modulecolors.length;
 	},
-	cumulativeOffset: function(el)
+	mousePos: function(ev, wrap)
 	{
-		var valueT = 0, valueL = 0;
-		do {
-			valueT += el.offsetTop  || 0;
-			valueL += el.offsetLeft || 0;
-			el = el.offsetParent;
-		} while (el);
-		return {x:valueL,y:valueT};
-	},
-	mousePos: function(e, wrap)
-	{
-		var event = new Event(e);
-		var pos= Utils.cumulativeOffset(wrap);
-		return { 
-			x:(event.page.x-pos.x),
-			y:(event.page.y-pos.y)
-		}
+		return {
+			x: ev.pageX - $(wrap).offset().left,
+			y: ev.pageY - $(wrap).offset().top
+		};
 	},
 	clickable: function(o)
 	{
@@ -171,28 +159,26 @@ var Map = {
 		this.dragmap.css('left',-258);
 		this.dragmap.css('top',-270);
 		this.registerHandlers();
+		// The below is Mootools extension.
+		Number.prototype.limit = function(min, max) {
+			if (this < min) return min;
+			else if (this > max) return max;
+			else return this;
+		};
 	},
 	registerHandlers:function()
 	{
-		/* TODO
-		this.fx = new Fx.Morph(this.dragmap, {
-			wait:false,
-			duration:250,
-			transition: Fx.Transitions.Quad.easeInOut
-			});
-		*/
-
 		this.dragHandler = $.proxy(this.onDrag, this);
 		this.dragEndHandler = $.proxy(this.onEnd, this);
 		$(this.dragmap).bind('mousedown',$.proxy(this.onMousedown, this));
 	},
-	onMousedown:function(e)
+	onMousedown:function(ev)
 	{
 		this.dragging=true;
 		$(document).bind('mousemove.map', this.dragHandler);
 		$(document).bind('mouseup.map', this.dragEndHandler);
-		this.clickPos = Utils.mousePos(e,this.dragmap);
-		e.stopPropagation();
+		this.clickPos = Utils.mousePos(ev, this.dragmap);
+		ev.stopPropagation();
 	},
 	onDrag:function(e)
 	{
@@ -205,8 +191,10 @@ var Map = {
 			var s = this.settings;
 			var left = (pos.x).limit((s.cW-s.dW+2), 0);
 			var top = (pos.y).limit((s.cH-s.dH+2), 0);
-			this.dragmap.style.left=left+'px';
-			this.dragmap.style.top=top+'px';
+			this.dragmap.css({
+				'left': left+'px',
+				'top': top+'px'
+			});
 			this.previous_target = null;
 
 			e.stopPropagation();
@@ -231,14 +219,14 @@ var Map = {
 
 		var left = (x).limit(0, s.dW-s.cW);
 		var top = (y).limit(0, s.dH-s.cH);
-		this.fx.start({
-				left : (-left),
-				top :(-top)
-			});
+		this.dragmap.stop(true).animate({
+			'left': (-left),
+			'top':(-top)
+		}, 250, 'easeInOutQuad');
 	},
 	find:function(name)
 	{
-		var arr = Data.Map.filter(function(item)
+		var arr = $.grep(Data.Map, function(item)
 		{
 			return item.name==name;
 		});
@@ -247,9 +235,8 @@ var Map = {
 		var item = arr[0];
 		var x = item.x;
 		var y = item.y;
-		this.maptext.style.left=(x-6)+'px';
-		this.maptext.style.top=(y-60)+'px';
-		$('#map-name').innerHTML=item.code+' '+item.name;
+		$(this.maptext).css({'left': (x-6)+'px', 'top':(y-60)+'px'});
+		$('#map-name').text(item.code+' '+item.name);
 		if (this.previous_target != item.name)
 			this.move(x,y);
 		this.previous_target = item.name;
@@ -272,13 +259,13 @@ var LectureList = {
 	},
 	registerHandles:function()
 	{
-		$(this.dept).bind('change', $.proxy(this.onChange));
-		$(this.classf).bind('change', $.proxy(this.onChange));
+		$(this.dept).bind('change', $.proxy(this.onChange, this));
+		$(this.classf).bind('change', $.proxy(this.onChange, this));
 	},
 	onChange:function()
 	{
-		var dept = this.dept.options[this.dept.selectedIndex].value;
-		var classification = this.classf.options[this.classf.selectedIndex].text;
+		var dept = $(this.dept).val();
+		var classification = $(this.classf).val();
 		if (dept == '-1' && classification == '전체보기')
 			Notifier.setErrorMsg('학과 전체보기는 과목 구분을 선택한 상태에서만 가능합니다.');
 		else
@@ -287,14 +274,15 @@ var LectureList = {
 	clearList:function()
 	{
 		LectureList.contents.empty(); 
-		LectureList.buildTabs(LectureList.contents.getChildren().length);
+		LectureList.buildTabs(LectureList.contents.children().length);
 	},
 	addToListMultiple:function(obj)
 	{
 		LectureList.contents.empty(); 
 		var max = NUM_ITEMS_PER_LIST;
 		var count=0;
-		var content = $('<div>', {'class', 'lecture_content'}).appendTo(LectureList.contents);
+		var content = $('<div>', {'class': 'lecture_content'});
+		content.appendTo(LectureList.contents);
 		var currCategory;
 		$.each(obj, function(index, item) {
 			var key = item.classification;
@@ -313,11 +301,11 @@ var LectureList = {
 			var el = $('<a>').text(item.title).appendTo(content);
 			Utils.clickable(el);
 			
-			el.bind('mousedown', $.proxy(Timetable.addLecture, Timetable,item));
-			el.bind('mouseover', $.proxy(Timetable.onMouseoverTemp, Timetable,item));
-			el.bind('mouseout', $.proxy(Timetable.onMouseout, Timetable,item));
+			el.bind('mousedown', $.proxy(function(ev) { this.addLecture(ev,item); }, Timetable));
+			el.bind('mouseover', $.proxy(function(ev) { this.onMouseoverTemp(ev,item); }, Timetable));
+			el.bind('mouseout', $.proxy(function(ev) { this.onMouseout(ev,item); }, Timetable));
 		});
-		LectureList.buildTabs(LectureList.contents.getChildren().length);
+		LectureList.buildTabs(LectureList.contents.children().length);
 		new Mootabs($('#lecture_tabs'), $('#lecture_contents'));
 	},
 	filter:function(conditions)
@@ -329,7 +317,7 @@ var LectureList = {
 		if (conditions.term == undefined)
 			conditions.term = Data.NextTerm;
 		$.ajax({
-			type: 'get',
+			type: 'GET',
 			url: '/timetable/search/',
 			data: conditions,
 			dataType: 'json',
@@ -371,30 +359,33 @@ var LectureList = {
 		for (var i=1;i<=n;i++) {
 			var tab = $('<div>',{'class':'lecture_tab'});
 			$('<div>').text(i).appendTo(tab);
-			tab.appendTo(this.tabs));
+			tab.appendTo(this.tabs);
 		}
 	},
 	getCategories:function(arr,category) // currently unused
 	{
 		var categories = [];
+		/*
 		$.each(arr, function(index, item) {
 			var key = item.category;
 			if (!categories.contains(key))
 				categories.push(key);
 		});
+		*/
 		return categories;
 	},
 	clustering:function(arr,category) // currently unused
 	{
 		var categories = this.getCategories(arr,category);
 		var ret = [];
-		// TODO: migrate
+		/*
 		categories.each(function(key)
 		{
 			arr.each(function(item){ 
 				if($H(item).get(category)==key) ret.push(item) 
 			});
 		});
+		*/
 		return ret;
 	}
 };
@@ -490,9 +481,9 @@ var RangeSearch = {
 			.text('학과/구분 검색으로 돌아가기')
 			.click(function() {
 				$('#lecturelist-filter').css('display','block');
-				$('#lecturelist-range').html('');
-				var dept = $(LectureList.dept).options[LectureList.dept.selectedIndex].value;
-				var classification = $(LectureList.classf).options[LectureList.classf.selectedIndex].text;
+				$('#lecturelist-range').empty();
+				var dept = $(LectureList.dept).val();
+				var classification = $(LectureList.classf).val();
 				LectureList.filter({dept:dept, type:classification});
 			})
 			.appendTo('#lecturelist-range');
@@ -548,11 +539,11 @@ var Timetable = {
 		var initData = Data.MyLectures;
 		var have_deleted = false;
 		var deleted_list = '';
-		$.each(initData, function(key, arr) {
+		$.each(initData, function(index, item) {
 			var credit=0,au=0;
-			var wrap = Timetable.tabs.getTabByKey(key);
+			var wrap = Timetable.tabs.getTabByKey(index);
 			var deleted_count = 0;
-			$.each(arr, function(index, item) {
+			$.each(item, function(key, item) {
 				credit += item.credit;
 				au += item.au;
 				var bgcolor = Utils.getColorByIndex(index);
@@ -563,7 +554,7 @@ var Timetable = {
 				} else
 					Timetable.buildlmodules(wrap,item,bgcolor,true);
 			});
-			Data.Timetables[key] = {credit:credit, au:au};
+			Data.Timetables[index] = {credit:credit, au:au};
 		});
 		Timetable.tabs.updateData();
 		if (have_deleted) {
@@ -576,8 +567,8 @@ var Timetable = {
 	},
 	onMouseout:function()
 	{
-		$('#add_credit').html('');
-		$('#add_au').html('');
+		$('#add_credit').empty();
+		$('#add_au').empty();
 		this.overlap.css('display','none');
 	},
 	addLecture:function(e,obj)
@@ -587,7 +578,7 @@ var Timetable = {
 		var lecture_id = obj.id;
 
 		$.ajax({
-			type: 'get', 
+			type: 'GET', 
 			url: '/timetable/add/',
 			data: {'table_id':table_id, 'lecture_id':lecture_id},
 			dataType: 'json',
@@ -656,7 +647,7 @@ var Timetable = {
 		if(confirm(confirmMsg))
 		{
 			$.ajax({
-				type: 'get', 
+				type: 'GET', 
 				url: '/timetable/delete/',
 				data: sendData,
 				dataType: 'json',
@@ -706,60 +697,62 @@ var Timetable = {
 	updateInfoPanel: function(obj, is_adding)
 	{
 		for (key in obj) {
-			if ($('DS_'+key)!=null || key=='au') {
+			if ($('#DS_'+key)!=null || key=='au') {
 				var item = obj[key];
 				if (item!=null) {
 					switch (key) {
 					case 'examtime':
 						var time = Utils.NumericTimeToReadable(item.start) + ' ~ ' + Utils.NumericTimeToReadable(item.end);
 						var name_and_time = obj.title+' '+time;
-						$('DS_'+key).set('text', Utils.days[item.day]+time);
+						$('#DS_'+key).text(Utils.days[item.day]+time);
 						//if (is_adding)
 						//	$('add_examtime'+item.day).set('text', name_and_time);
 						break;
 					case 'credit':
 						if (item > 0 && is_adding)
-							$('add_credit').set('text','(+'+item+')');
-						$('DS_'+key).set('text',item);
+							$('#add_credit').text('(+'+item+')');
+						$('#DS_'+key).text(item);
 						break;
 					case 'au':
 						if (item > 0 && is_adding)
-							$('add_au').set('text','(+'+item+')');
+							$('#add_au').text('(+'+item+')');
 						break;
 					case 'title':
 					case 'prof':
-						$('DS_'+key).set('html','<p>'+item+'</p>');
+						$('#DS_'+key).html('<p>'+item+'</p>');
 						break;
 					default:
-						$('DS_'+key).set('text',item);
+						$('#DS_'+key).text(item);
 					}
 				}
 			}
 		}
 		if (!obj['examtime'])
-			$('DS_examtime').set('text', '');
+			$('#DS_examtime').text('');
 	},
-	onMouseoverTemp: function(obj)
+	onMouseoverTemp: function(ev, obj)
 	{
-		this.onMouseover(obj, true);
+		this.onMouseover(ev, obj, true);
 
 		//TODO: this.fx_overlap.cancel();
-		this.overlap.html('');
+		this.overlap.empty();
 		this.overlap.css('display','block');
 		this.buildlmodules(this.overlap,obj,-1,false);
 		//TODO: this.fx_overlap.set(1);
 	},
-	onMouseover: function(obj, is_adding)
+	onMouseover: function(ev, obj, is_adding)
 	{
 		this.updateInfoPanel(obj, is_adding);
-		var tokens = obj.classroom.split(' ');
-		var classroom = tokens.slice(0, tokens.length-1).join(' ');
-		Map.find(classroom);
+		if (obj.classroom != undefined) {
+			var tokens = obj.classroom.split(' ');
+			var classroom = tokens.slice(0, tokens.length-1).join(' ');
+			Map.find(classroom);
+		}
 	},
 	buildlmodules:function(wrap,obj,bgcolor_index,enableDelete)
 	{
 		var is_first = true;
-		$.each(obj.times, function(index, time)
+		$.each(obj.times, $.proxy(function(index, time)
 		{
 			var lmodule = $('<div>',{'class':'lmodule', 'id':obj.code});
 			var bg = $('<div>',{'class':'bg'});
@@ -794,12 +787,12 @@ var Timetable = {
 				// 같은 과목의 여러 lmodule 중 하나에만 마우스를 올려도 다함께 highlight되도록 하는 처리
 				lmodule.bind('mouseover', function(ev) {
 					$.each($('#timetable-item-'+obj.course_no+obj['class']).data('mymodules'), function(index, item) {
-						item.getChildren('.bg').css('background',bgcolor_highlighted);
+						$(item).children('.bg').css('background',bgcolor_highlighted);
 					});
 				});
 				lmodule.bind('mouseout', function(ev) {
 					$.each($('#timetable-item-'+obj.course_no+obj['class']).data('mymodules'), function(index, item) {
-						item.getChildren('.bg').css('background',bgcolor);
+						$(item).children('.bg').css('background',bgcolor);
 					});
 				});
 				// 처음 추가되는 lmodule 항목은 고유 ID를 가지며, 여기서 element storage를 이용해 자신과 다른 lmodule들의 reference를 저장한다.
@@ -819,6 +812,6 @@ var Timetable = {
 				modules.push(lmodule);
 				$('#timetable-item-'+obj.course_no+obj['class']).data('mymodules', modules);
 			}
-		}.bind(this));
+		}, this));
 	}
 };
