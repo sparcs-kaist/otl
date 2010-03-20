@@ -3,7 +3,7 @@
  * 2009 Spring CS408 Capstone Project
  *
  * OTL Timetable Javascript Implementation
- * depends on: Mootools 1.2, OTL Javascript Common Library
+ * depends on: jQuery 1.4.2, OTL Javascript Common Library
  */
 
 /* Example of a lecture item.
@@ -34,99 +34,92 @@ Data.Lectures =
 
 var NUM_ITEMS_PER_LIST = 15;
 var Data = {};
-var Mootabs = new Class({
-	initialize: function(tabs, contents, trigerEvent, useAsTimetable)
+var Mootabs = function(tabContainer, contents, trigerEvent, useAsTimetable)
 	{
 		if (trigerEvent==undefined) trigerEvent = 'mouseover';
 		this.data = [];
 		this.is_timetable = useAsTimetable ? true : false;
 
-		this.tabs = $(tabs).getChildren();
-		this.contents = $(contents).getChildren();
-		this.tabs.each(function(item,key) 
-		{
+		this.tabs = $(tabContainer).children();
+		this.contents = $(contents).children();
+		$.each(this.tabs, $.proxy(function(index, item) {
 			if (this.is_timetable)
-				Data.Timetables[key] = {credit:0, au:0};
-			item.addEvent(trigerEvent, function()
-				{
-					this.activate(key);
-				}.bind(this)
-			);
-		}.bind(this));
-		this.contents.each(function(item)
+				Data.Timetables[index] = {credit:0, au:0};
+			item.bind(trigerEvent, $.proxy(function() {
+				this.activate(index);
+			}, this));
+		}, this));
+		$.each(this.contents, function(index, item)
 		{
 			item.addClass('none');
 		});
-
 		this.activate(0);
-	},
-	setData:function(index,data)
+	};
+Mootabs.prototype.setData = function(index,data)
 	{
 		this.data[index] = data;
-	},
-	updateData:function()
+	};
+Mootabs.prototype.updateData = function()
 	{
 		if (this.is_timetable) {
-			$('total_credit').set('html', Data.Timetables[this.activeKey].credit);
-			$('total_au').set('html', Data.Timetables[this.activeKey].au);
-			$('total_credit').highlight('#FFFF00');
-			$('total_au').highlight('#FFFF00');
-			$('action-print').set('href', '/timetable/print/?id=' + this.activeKey);
+			$('#total_credit').text(Data.Timetables[this.activeKey].credit);
+			$('#total_au').text(Data.Timetables[this.activeKey].au);
+			// TODO $('total_credit').highlight('#FFFF00');
+			// TODO$('total_au').highlight('#FFFF00');
+			$('#action-print').attr('href', '/timetable/print/?id=' + this.activeKey);
 		}
-	},
-	activate: function(key)
+	};
+Mootabs.prototype.activate = function(key)
 	{
-		this.tabs.each(function(item,index)
+		$.each(this.tabs, function(index, item)
 		{
 			if (index==key)
-				item.addClass('active');
+				$(item).addClass('active');
 			else
-				item.removeClass('active');
+				$(item).removeClass('active');
 		});
-		this.contents.each(function(item,index)
+		$.each(this.contents, function(index, item)
 		{
-			if (index==key) item.removeClass('none');
-			else item.addClass('none');
+			if (index==key) $(item).removeClass('none');
+			else $(item).addClass('none');
 		});
 		this.activeKey = key;
-
 		this.updateData();
-	},
-	cleanActiveTab:function()
+	};
+Mootabs.prototype.cleanActiveTab = function()
 	{
-		this.contents[this.activeKey].empty();
-	},
-	getActiveTab:function()
+		this.contents[this.activeKey].html('');
+	};
+Mootabs.prototype.getActiveTab = function()
 	{
 		return this.contents[this.activeKey];
-	},
-	getTabByKey:function(key)
+	};
+Mootabs.prototype.getTabByKey = function(key)
 	{
 		return this.contents[key];
-	},
-	getTableId:function()
+	};
+Mootabs.prototype.getTableId = function()
 	{
 		return this.activeKey;
-	}
-});
+	};
 
-var UDF = {
+var Utils = {
 	days: ['월','화','수','목','금'],
 	modulecolors:
 		['#FFC7FE','#FFCECE','#DFE8F3','#D1E9FF','#D2F1EE','#FFEAD1','#E1D1FF','#FAFFC1','#D4FFC1','#DEDEDE','#BDBDBD'],
 	modulecolors_highlighted:
 		['#feb1fd','#ffb5b5','#c9dcf2','#b7dbfd','#b5f1eb','#fbd8ae','#d4bdfd','#f1f89f','#b9f2a0','#cbc7c7','#aca6a6'],
-	getRandomColor:function()
+	getRandomColor: function()
 	{
-		return UDF.modulecolors[Math.floor(Math.random()*10)];
+		return Utils.modulecolors[Math.floor(Math.random()*10)];
 	},
-	getColorByIndex:function(index)
+	getColorByIndex: function(index)
 	{
 		//index =index*3;
-		//index = UDF.modulecolors.length % index;
-		return index % UDF.modulecolors.length;
+		//index = Utils.modulecolors.length % index;
+		return index % Utils.modulecolors.length;
 	},
-	cumulativeOffset : function(el)
+	cumulativeOffset: function(el)
 	{
 		var valueT = 0, valueL = 0;
 		do {
@@ -136,19 +129,19 @@ var UDF = {
 		} while (el);
 		return {x:valueL,y:valueT};
 	},
-	mousePos:function(e, wrap)
+	mousePos: function(e, wrap)
 	{
-		var event =new Event(e);
-		var pos= UDF.cumulativeOffset(wrap);
+		var event = new Event(e);
+		var pos= Utils.cumulativeOffset(wrap);
 		return { 
 			x:(event.page.x-pos.x),
 			y:(event.page.y-pos.y)
 		}
 	},
-	clickable : function(o)
+	clickable: function(o)
 	{
-		o.addEvent('mousedown',function(){ o.addClass('clicked') });
-		document.addEvent('mouseup',function(){ o.removeClass('clicked') });
+		$(o).bind('mousedown',function(){ $(o).addClass('clicked') });
+		$(document).bind('mouseup',function(){ $(o).removeClass('clicked') });
 	},
 	NumericTimeToReadable: function(t)
 	{
@@ -156,54 +149,56 @@ var UDF = {
 		var minute = t % 60;
 		return (hour < 10 ? '0':'') + hour + ':' + (minute < 10 ? '0':'') + minute;
 	}
-}
+};
 
 var Map = {
 	initialize:function()
 	{
-		this.container = $('map-drag-container');
-		this.dragmap = $('dragmap');
-		this.maptext= $('map-text');
+		this.container = $('#map-drag-container');
+		this.dragmap = $('#dragmap');
+		this.maptext= $('#map-text');
 		this.settings = 
 		{
-			cW:this.container.offsetWidth,
-			cH:this.container.offsetHeight,
-			dW:this.dragmap.offsetWidth,
-			dH:this.dragmap.offsetHeight
+			cW:$(this.container).innerWidth(),
+			cH:$(this.container).innerHeight(),
+			dW:$(this.dragmap).innerWidth(),
+			dH:$(this.dragmap).innerHeight()
 		}
 
 		this.dragging = false;
-		this.clickPos = null
+		this.clickPos = null;
 
-		this.dragmap.setStyle('left',-258);
-		this.dragmap.setStyle('top',-270);
-		this.registHandles();
+		this.dragmap.css('left',-258);
+		this.dragmap.css('top',-270);
+		this.registerHandlers();
 	},
-	registHandles:function()
+	registerHandlers:function()
 	{
+		/* TODO
 		this.fx = new Fx.Morph(this.dragmap, {
 			wait:false,
 			duration:250,
 			transition: Fx.Transitions.Quad.easeInOut
 			});
+		*/
 
-		this.dragHandler = this.onDrag.bindWithEvent(this);
-		this.dragEndHandler = this.onEnd.bindWithEvent(this);
-		this.dragmap.addEvent('mousedown',this.onMousedown.bindWithEvent(this));
+		this.dragHandler = $.proxy(this.onDrag, this);
+		this.dragEndHandler = $.proxy(this.onEnd, this);
+		$(this.dragmap).bind('mousedown',$.proxy(this.onMousedown, this));
 	},
 	onMousedown:function(e)
 	{
 		this.dragging=true;
-		document.addEvent('mousemove', this.dragHandler);
-		document.addEvent('mouseup', this.dragEndHandler);
-		this.clickPos = UDF.mousePos(e,this.dragmap);
-		e.stop();
+		$(document).bind('mousemove.map', this.dragHandler);
+		$(document).bind('mouseup.map', this.dragEndHandler);
+		this.clickPos = Utils.mousePos(e,this.dragmap);
+		e.stopPropagation();
 	},
 	onDrag:function(e)
 	{
 		if (this.dragging)
 		{
-			var pos = UDF.mousePos(e,this.container);
+			var pos = Utils.mousePos(e,this.container);
 			pos.x-=this.clickPos.x;
 			pos.y-=this.clickPos.y;
 
@@ -214,17 +209,17 @@ var Map = {
 			this.dragmap.style.top=top+'px';
 			this.previous_target = null;
 
-			e.stop();
+			e.stopPropagation();
 		}
 	},
 	onEnd:function(e)
 	{
-		document.removeEvent('mousemove', this.dragHandler);
-		document.removeEvent('mouseup', this.dragEndHandler);
+		$(document).unbind('mousemove.map');
+		$(document).unbind('mouseup.map');
 		if (this.dragging)
 		{
 			this.dragging=false;
-			e.stop();
+			e.stopPropagation();
 		}
 	},
 	move:function(x,y)
@@ -254,7 +249,7 @@ var Map = {
 		var y = item.y;
 		this.maptext.style.left=(x-6)+'px';
 		this.maptext.style.top=(y-60)+'px';
-		$('map-name').innerHTML=item.code+' '+item.name;
+		$('#map-name').innerHTML=item.code+' '+item.name;
 		if (this.previous_target != item.name)
 			this.move(x,y);
 		this.previous_target = item.name;
@@ -264,21 +259,21 @@ var Map = {
 var LectureList = {
 	initialize:function(tabs,contents)
 	{
-		this.tabs = $('lecture_tabs');
-		this.contents = $('lecture_contents');
-		this.data = $A(Data.Lectures);
-		this.dept = $('department');
-		this.classf= $('classification');
+		this.tabs = $('#lecture_tabs');
+		this.contents = $('#lecture_contents');
+		this.data = Data.Lectures;
+		this.dept = $('#department');
+		this.classf= $('#classification');
 
 		this.loading = true;
 		this.dept.selectedIndex = 0;
-		this.registHandles();
+		this.registerHandles();
 		this.onChange();
 	},
-	registHandles:function()
+	registerHandles:function()
 	{
-		this.dept.addEvent('change',this.onChange.bind(this,'dept'));
-		this.classf.addEvent('change',this.onChange.bind(this,'dept'));
+		$(this.dept).bind('change', $.proxy(this.onChange));
+		$(this.classf).bind('change', $.proxy(this.onChange));
 	},
 	onChange:function()
 	{
@@ -299,59 +294,58 @@ var LectureList = {
 		LectureList.contents.empty(); 
 		var max = NUM_ITEMS_PER_LIST;
 		var count=0;
-		var content = new Element('div',{'class':'lecture_content'}).inject(LectureList.contents);
+		var content = $('<div>', {'class', 'lecture_content'}).appendTo(LectureList.contents);
 		var currCategory;
-		obj.each(function(item)
-		{
+		$.each(obj, function(index, item) {
 			var key = item.classification;
 			if (currCategory != key) {
 				currCategory = key;
-				if(count<max) new Element('h4',{'html':currCategory}).inject(content);
+				if (count < max) $('<h4>').text(currCategory).appendTo(content);
 			}
 
 			if (count>=max) {
-				content = new Element('div',{'class':'lecture_content'}).inject(this.contents);
-				new Element('h4',{'html':currCategory}).inject(content);
+				content = $('<div>', {'class':'lecture_content'}).appendTo(LectureList.contents);
+				$('<h4>').text(currCategory).appendTo(content);
 				count=0;
 			} else
 				count++;
 
-			var el = new Element('a',{'html':item.title}).inject(content);
-			UDF.clickable(el);
+			var el = $('<a>').text(item.title).appendTo(content);
+			Utils.clickable(el);
 			
-			el.addEvent('mousedown',Timetable.addLecture.bindWithEvent(Timetable,item));
-			el.addEvent('mouseover',Timetable.onMouseoverTemp.bind(Timetable,item));
-			el.addEvent('mouseout',Timetable.onMouseout.bind(Timetable,item));
-		}.bind(LectureList));
+			el.bind('mousedown', $.proxy(Timetable.addLecture, Timetable,item));
+			el.bind('mouseover', $.proxy(Timetable.onMouseoverTemp, Timetable,item));
+			el.bind('mouseout', $.proxy(Timetable.onMouseout, Timetable,item));
+		});
 		LectureList.buildTabs(LectureList.contents.getChildren().length);
-		new Mootabs('lecture_tabs','lecture_contents');
+		new Mootabs($('#lecture_tabs'), $('#lecture_contents'));
 	},
 	filter:function(conditions)
 	{
 		if (conditions.type == undefined)
 			conditions.type = '전체보기';
-		var request = new Request({
-			method:'get',
-			url:'/timetable/search/',
-			onRequest:function()
-			{
+		if (conditions.year == undefined)
+			conditions.year = Data.NextYear;
+		if (conditions.term == undefined)
+			conditions.term = Data.NextTerm;
+		$.ajax({
+			type: 'get',
+			url: '/timetable/search/',
+			data: conditions,
+			dataType: 'json',
+			beforeSend: $.proxy(function() {
 				if (this.loading)
 					Notifier.showIndicator();
 				else
 					Notifier.setLoadingMsg('검색 중입니다...');
-			}.bind(this),
-			onSuccess:function(responseText)
-			{
+			}, this),
+			success: $.proxy(function(resObj) {
 				try {
-					var resObj = JSON.decode(responseText);
 					if (resObj.length == 0) {
-
 						LectureList.clearList();
 						if (!this.loading)
 							Notifier.setErrorMsg('과목 정보를 찾지 못했습니다.');
-
 					} else {
-
 						LectureList.addToListMultiple(resObj);
 						if (!this.loading)
 							Notifier.setMsg('검색 결과를 확인하세요.');
@@ -362,37 +356,29 @@ var LectureList = {
 				if (this.loading)
 					Notifier.clearIndicator();
 				this.loading = false;
-			}.bind(this),
-			onFailure:function(xhr)
-			{
+			}, this),
+			error: $.proxy(function(xhr) {
 				if (suppress_ajax_errors)
 					return;
 				Notifier.setErrorMsg('오류가 발생하였습니다. (요청 실패:'+xhr.status+')');
 				this.loading = false;
-			}.bind(this)
+			}, this)
 		});
-		query = '';
-		if (conditions.year == undefined)
-			conditions.year = Data.NextYear;
-		if (conditions.term == undefined)
-			conditions.term = Data.NextTerm;
-		for (key in conditions) {
-			query += key + '=' + encodeURIComponent(conditions[key]) + '&'
-		}
-		request.send(query);
 	},
 	buildTabs:function(n)
 	{
 		this.tabs.empty();
-		for (var i=1;i<=n;i++)
-			new Element('div',{'html':i}).inject(new Element('div',{'class':'lecture_tab'}).inject(this.tabs));
+		for (var i=1;i<=n;i++) {
+			var tab = $('<div>',{'class':'lecture_tab'});
+			$('<div>').text(i).appendTo(tab);
+			tab.appendTo(this.tabs));
+		}
 	},
 	getCategories:function(arr,category) // currently unused
 	{
 		var categories = [];
-		arr.each(function(item)
-		{
-			var key = $H(item).get(category);
+		$.each(arr, function(index, item) {
+			var key = item.category;
 			if (!categories.contains(key))
 				categories.push(key);
 		});
@@ -402,6 +388,7 @@ var LectureList = {
 	{
 		var categories = this.getCategories(arr,category);
 		var ret = [];
+		// TODO: migrate
 		categories.each(function(key)
 		{
 			arr.each(function(item){ 
@@ -415,40 +402,39 @@ var LectureList = {
 var RangeSearch = {
 	initialize:function()
 	{
-		this.grid = $('grid');
-		this.overlap = $('overlap_modules');
-		this.overlap.setStyle('display','none');
+		this.grid = $('#grid');
+		this.overlap = $('#overlap_modules');
+		this.overlap.css('display','none');
 
 		this.dragging=false;
 		this.startCell = {row:0,col:0};
 
-		this.options=
-		{
+		this.options = {
 			cellHeight:21,
 			cellWidth:100
-		}
-		this.selection=$('cellselected');
-		this.selection.setStyle('display','none');
+		};
+		this.selection=$('#cellselected');
+		this.selection.css('display','none');
 
-		this.registHandlers();
+		this.registerHandlers();
 	},
-	registHandlers:function()
+	registerHandlers:function()
 	{
-		this.dragHandler = this.onDrag.bindWithEvent(this);
-		this.dragEndHandler = this.onEnd.bindWithEvent(this);
-		this.grid.addEvent('mousedown',this.onMousedown.bindWithEvent(this));
+		this.dragHandler = $.proxy(this.onDrag, this);
+		this.dragEndHandler = $.proxy(this.onEnd, this);
+		this.grid.bind('mousedown', $.proxy(this.onMousedown, this));
 	},
 	onMousedown:function(e)
 	{
 		this.dragging=true;
-		document.addEvent('mousemove', this.dragHandler);
-		document.addEvent('mouseup', this.dragEndHandler);
-		var pos = UDF.mousePos(e,this.grid);
+		$(document).bind('mousemove.rangesearch', this.dragHandler);
+		$(document).bind('mouseup.rangesearch', this.dragEndHandler);
+		var pos = Utils.mousePos(e,this.grid);
 		this.startCell = this.getCell(pos);
 
 		var x = (this.startCell.col * this.options.cellWidth)+1;
 		var y = (this.startCell.row * this.options.cellHeight);
-		this.selection.setStyles(
+		$(this.selection).css(
 			{
 				display:'block',
 				left:x,
@@ -457,28 +443,28 @@ var RangeSearch = {
 				height:this.options.cellHeight
 			}
 		);
-		e.stop();
+		e.stopPropagation();
 	},
 	onDrag:function(e)
 	{
 		if(this.dragging)
 		{
-			var pos = UDF.mousePos(e,this.grid);
+			var pos = Utils.mousePos(e,this.grid);
 			var currentCell = this.getCell(pos);
 			var cell = this.modCell(this.startCell,currentCell);
 			this.draw(cell.c1,cell.r1,cell.c2,cell.r2);
-			e.stop();
+			e.stopPropagation();
 		}
 	},
 	onEnd:function(e)
 	{
-		document.removeEvent('mousemove',this.dragHandler);
-		document.removeEvent('mouseup',this.dragEndHandler);
+		$(document).unbind('mousemove.rangesearch');
+		$(document).unbind('mouseup.rangesearch');
 		if(this.dragging)
 		{
-			var pos = UDF.mousePos(e,this.grid);
+			var pos = Utils.mousePos(e,this.grid);
 			var endCell = this.getCell(pos);
-			this.selection.setStyle('display','none');
+			$(this.selection).css('display','none');
 			var cell = this.modCell(this.startCell,endCell);
 
 			var startDay = cell.c1;
@@ -491,24 +477,25 @@ var RangeSearch = {
 			}
 
 			this.dragging=false;
-			$('lecturelist-filter').setStyle('display','none');
+			$('#lecturelist-filter').css('display','none');
 			var dayRange = '';
 			if (startDay == endDay)
-				dayRange = UDF.days[startDay]+'요일';
+				dayRange = Utils.days[startDay]+'요일';
 			else
-				dayRange = UDF.days[startDay]+'요일부터 '+UDF.days[endDay]+'요일까지';
-			$('lecturelist-range').set('html', '<h4>범위 검색</h4><p>'+dayRange+'<br/>' + 
-				UDF.NumericTimeToReadable(startTime)+'부터 '+UDF.NumericTimeToReadable(endTime)+'까지</p>');
+				dayRange = Utils.days[startDay]+'요일부터 '+Utils.days[endDay]+'요일까지';
+			$('#lecturelist-range').html('<h4>범위 검색</h4><p>'+dayRange+'<br/>' + 
+				Utils.NumericTimeToReadable(startTime)+'부터 '+Utils.NumericTimeToReadable(endTime)+'까지</p>');
 
-			var return_button = new Element('button', {'text':'학과/구분 검색으로 돌아가기'});
-			return_button.addEvent('click', function() {
-				$('lecturelist-filter').setStyle('display','block');
-				$('lecturelist-range').set('html', '');
-				var dept = LectureList.dept.options[LectureList.dept.selectedIndex].value;
-				var classification = LectureList.classf.options[LectureList.classf.selectedIndex].text;
+			$('<button>')
+			.text('학과/구분 검색으로 돌아가기')
+			.click(function() {
+				$('#lecturelist-filter').css('display','block');
+				$('#lecturelist-range').html('');
+				var dept = $(LectureList.dept).options[LectureList.dept.selectedIndex].value;
+				var classification = $(LectureList.classf).options[LectureList.classf.selectedIndex].text;
 				LectureList.filter({dept:dept, type:classification});
-			});
-			$('lecturelist-range').appendChild(return_button);
+			})
+			.appendTo('#lecturelist-range');
 			LectureList.filter({start_day:startDay, end_day:endDay, start_time:startTime, end_time:endTime});
 		}
 	},
@@ -527,7 +514,7 @@ var RangeSearch = {
 		var y = row1 * this.options.cellHeight;
 		var width = (col2-col1+1) * this.options.cellWidth;
 		var height = (row2-row1+1) * this.options.cellHeight;
-		this.selection.setStyles(
+		this.selection.css(
 			{
 				left:x,
 				top:y,
@@ -548,79 +535,75 @@ var RangeSearch = {
 var Timetable = {
 	initialize:function()
 	{
-		this.grid = $('grid');
-		this.overlap = $('overlap_modules');
-		this.overlap.setStyle('display','none');
-		this.fx_overlap = new Fx.Tween(this.overlap, {property:'opacity', duration:200});
-		this.tabs = new Mootabs('timetable_tabs','timetable_contents','mousedown', true);
+		this.grid = $('#grid');
+		this.overlap = $('#overlap_modules');
+		this.overlap.css('display','none');
+		//TODO: this.fx_overlap = new Fx.Tween(this.overlap, {property:'opacity', duration:200});
+		this.tabs = new Mootabs($('#timetable_tabs'), $('#timetable_contents'), 'mousedown', true);
 		this.onLoad();
-		this.registHandlers();
+		this.registerHandlers();
 	},
 	onLoad:function()
 	{
 		var initData = Data.MyLectures;
 		var have_deleted = false;
 		var deleted_list = '';
-		initData.each(function(arr, key)
-		{
+		$.each(initData, function(key, arr) {
 			var credit=0,au=0;
 			var wrap = Timetable.tabs.getTabByKey(key);
 			var deleted_count = 0;
-			arr.each(function(obj, index)
-			{
-				credit += obj.credit;
-				au += obj.au;
-				var bgcolor = UDF.getColorByIndex(index);
-				if (obj.deleted) {
-					deleted_list += (deleted_count==0 ? '' : ', ')+obj.course_no+' '+obj.title;
+			$.each(arr, function(index, item) {
+				credit += item.credit;
+				au += item.au;
+				var bgcolor = Utils.getColorByIndex(index);
+				if (item.deleted) {
+					deleted_list += (deleted_count==0 ? '' : ', ')+item.course_no+' '+item.title;
 					have_deleted = true;
 					deleted_count++;
 				} else
-					Timetable.buildlmodules(wrap,obj,bgcolor,true);
+					Timetable.buildlmodules(wrap,item,bgcolor,true);
 			});
-			Data.Timetables[key] = {credit:credit,au:au};
+			Data.Timetables[key] = {credit:credit, au:au};
 		});
 		Timetable.tabs.updateData();
 		if (have_deleted) {
 			Notifier.setErrorMsg('추가하신 과목 중 <strong>'+deleted_list+'</strong>이(가) 폐강되었습니다.');
 		}
 	},
-	registHandlers:function()
+	registerHandlers:function()
 	{
-		$('action-cleanTable').addEvent('click',this.deleteLecture.bindWithEvent(this,null));
+		$('#action-cleanTable').click($.proxy(function(ev) { this.deleteLecture(ev, null) }, this)); // TODO: call with null?
 	},
 	onMouseout:function()
 	{
-		$('add_credit').empty();
-		$('add_au').empty();
-		this.overlap.setStyle('display','none');
+		$('#add_credit').html('');
+		$('#add_au').html('');
+		this.overlap.css('display','none');
 	},
 	addLecture:function(e,obj)
 	{
-		e.stop();
+		e.stopPropagation();
 		var table_id = Timetable.tabs.getTableId();
 		var lecture_id = obj.id;
 
-		var myRequest = new Request({
-			method: 'get', 
+		$.ajax({
+			type: 'get', 
 			url: '/timetable/add/',
-			onRequest:function()
+			data: {'table_id':table_id, 'lecture_id':lecture_id},
+			dataType: 'json',
+			beforeSend: function(xhr)
 			{
 				Notifier.setLoadingMsg('추가하는 중입니다...');
 			},
-			onSuccess:function(responseText)
+			sucess: function(resObj)
 			{
-				try{
-					var resObj = JSON.decode(responseText);
-					if (resObj.result=='OK')
-					{
+				try {
+					if (resObj.result=='OK') {
 						Timetable.update(resObj);
-						Timetable.fx_overlap.start(0);
+						// TODO: Timetable.fx_overlap.start(0);
 						
 						Notifier.setMsg('<strong>'+obj.title+'</strong> 추가 되었습니다');
-					}
-					else
-					{
+					} else {
 						var msg;
 						switch(resObj.result)
 						{
@@ -639,12 +622,11 @@ var Timetable = {
 						Notifier.setErrorMsg(msg);
 					}
 				}
-				catch(e)
-				{
+				catch(e) {
 					Notifier.setErrorMsg('오류가 발생하였습니다. ('+e.message+')');
 				}
 			},
-			onFailure:function(xhr) {
+			error: function(xhr) {
 				if (suppress_ajax_errors)
 					return;
 				if (xhr.status == 403)
@@ -653,37 +635,37 @@ var Timetable = {
 					Notifier.setErrorMsg('오류가 발생하였습니다. (요청 실패:'+xhr.status+')');
 			}
 		});
-		myRequest.send('table_id='+table_id+'&lecture_id='+lecture_id);
 	},
 	deleteLecture:function(e,obj)
 	{
-		e.stop();
-		var confirmMsg,sendMsg,successMsg, table_id = Timetable.tabs.getTableId();
+		e.stopPropagation();
+		var confirmMsg,sendData,successMsg, table_id = Timetable.tabs.getTableId();
 		if (obj==null) 
 		{
 			confirmMsg='현재 예비 시간표를 초기화 하겠습니까?';
-			sendMsg='table_id='+table_id;
+			sendData={'table_id':table_id};
 			successMsg = '예비 시간표가 <strong>초기화</strong> 되었습니다';
 		}
 		else
 		{
 			confirmMsg='"'+obj.title+'" 예비 시간표에서 삭제 하시겠습니까?';
-			sendMsg='table_id='+table_id+'&lecture_id='+obj.id;
+			sendData={'table_id':table_id, 'lecture_id':obj.id};
 			successMsg='<strong>'+obj.title+'</strong> 삭제 되었습니다';
 		}
 
 		if(confirm(confirmMsg))
 		{
-			var myRequest = new Request({
-				method: 'get', 
+			$.ajax({
+				type: 'get', 
 				url: '/timetable/delete/',
-				onRequest:function() {
+				data: sendData,
+				dataType: 'json',
+				beforeSend: function() {
 					Notifier.setLoadingMsg('삭제하는 중입니다...');
 				},
-				onSuccess:function(responseText)
+				success: function(resObj)
 				{
-					try{
-						var resObj = JSON.decode(responseText);
+					try {
 						switch (resObj.result) {
 						case 'OK':
 							Timetable.update(resObj);
@@ -695,31 +677,27 @@ var Timetable = {
 						default:
 							Notifier.setErrorMsg('기타 오류입니다.');
 						}
-					}
-					catch(e)
-					{
+					} catch(e) {
 						Notifier.setErrorMsg('오류가 발생하였습니다. ('+e.message+')');
 					}
 				},
-				onFailure:function(xhr) {
+				error: function(xhr) {
 					if (suppress_ajax_errors)
 						return;
 					Notifier.setErrorMsg('오류가 발생하였습니다. (요청 실패:'+xhr.status+')');
 				}
 			});
-			myRequest.send(sendMsg);
 		}
 	},
 	update:function(resObj)
 	{
 		var credit=0,au=0;
 		Timetable.tabs.cleanActiveTab();
-		resObj.data.each(function(obj,index)
-		{
-			credit+=obj.credit;
-			au+=obj.au;
-			var bgcolor = UDF.getColorByIndex(index);
-			Timetable.buildlmodules(Timetable.tabs.getActiveTab(),obj,bgcolor,true);
+		$.each(resObj.data, function(index,item) {
+			credit += item.credit;
+			au += item.au;
+			var bgcolor = Utils.getColorByIndex(index);
+			Timetable.buildlmodules(Timetable.tabs.getActiveTab(), item, bgcolor, true);
 		});
 		
 		Data.Timetables[Timetable.tabs.getTableId()] = {credit:credit,au:au};
@@ -733,9 +711,9 @@ var Timetable = {
 				if (item!=null) {
 					switch (key) {
 					case 'examtime':
-						var time = UDF.NumericTimeToReadable(item.start) + ' ~ ' + UDF.NumericTimeToReadable(item.end);
+						var time = Utils.NumericTimeToReadable(item.start) + ' ~ ' + Utils.NumericTimeToReadable(item.end);
 						var name_and_time = obj.title+' '+time;
-						$('DS_'+key).set('text', UDF.days[item.day]+time);
+						$('DS_'+key).set('text', Utils.days[item.day]+time);
 						//if (is_adding)
 						//	$('add_examtime'+item.day).set('text', name_and_time);
 						break;
@@ -765,11 +743,11 @@ var Timetable = {
 	{
 		this.onMouseover(obj, true);
 
-		this.fx_overlap.cancel();
-		this.overlap.empty();
-		this.overlap.setStyle('display','block');
+		//TODO: this.fx_overlap.cancel();
+		this.overlap.html('');
+		this.overlap.css('display','block');
 		this.buildlmodules(this.overlap,obj,-1,false);
-		this.fx_overlap.set(1);
+		//TODO: this.fx_overlap.set(1);
 	},
 	onMouseover: function(obj, is_adding)
 	{
@@ -781,66 +759,65 @@ var Timetable = {
 	buildlmodules:function(wrap,obj,bgcolor_index,enableDelete)
 	{
 		var is_first = true;
-		obj.times.each(function(time)
+		$.each(obj.times, function(index, time)
 		{
-			var lmodule=new Element('div',{'class':'lmodule', 'id':obj.code});
-			var bg=new Element('div',{'class':'bg'});
-			var textbody=new Element('div',{'class':'textbody'});
+			var lmodule = $('<div>',{'class':'lmodule', 'id':obj.code});
+			var bg = $('<div>',{'class':'bg'});
+			var textbody = $('<div>',{'class':'textbody'});
 			var bgcolor, bgcolor_highlighted;
 			if (bgcolor_index == -1) {
 				bgcolor = '#f93';
 				bgcolor_highlighted = '#f48c39';
 			} else {
-				bgcolor = UDF.modulecolors[bgcolor_index];
+				bgcolor = Utils.modulecolors[bgcolor_index];
 				bgcolor_highlighted = '#ffd02b';
 			}
-			bg.inject(lmodule);
-			textbody.inject(lmodule);
-			var html;
+			bg.appendTo(lmodule);
+			textbody.appendTo(lmodule);
 			if (enableDelete) {
-				textbody.set('html','<a class="cursor"><strong>'+obj.title+'</strong></a><br />'+obj.prof+'<br />'+obj.classroom+'<br />');
+				textbody.html('<a class="cursor"><strong>'+obj.title+'</strong></a><br />'+obj.prof+'<br />'+obj.classroom+'<br />');
 				var deletelink = textbody.getElements('a');
-				deletelink.addEvent('mousedown', function(ev) { ev.stopPropagation(); });
-				deletelink.addEvent('click',Timetable.deleteLecture.bindWithEvent(Timetable,obj)); 
+				deletelink.bind('mousedown', function(ev) { ev.stopPropagation(); });
+				deletelink.bind('click', $.proxy(function(ev) { this.deleteLecture(ev, obj); }, Timetable)); 
 			} else
-				textbody.set('html','<strong>'+obj.title+'</strong><br />'+obj.prof+'<br />'+obj.classroom+'<br />');
+				textbody.html('<strong>'+obj.title+'</strong><br />'+obj.prof+'<br />'+obj.classroom+'<br />');
 
 			var left = time.day*100+3;
 			var top = Math.floor((time.start-480)/30)*21;
-			var height =Math.floor((time.end-time.start)/30)*21 -2;
+			var height = Math.floor((time.end-time.start)/30)*21 - 2;
 
-			bg.set({'styles':{'background':bgcolor}});
+			bg.css({'background':bgcolor});
 
 			if (enableDelete) {
-				lmodule.addEvent('mouseover', Timetable.onMouseover.bind(Timetable, obj, false));
+				lmodule.bind('mouseover', $.proxy(function(ev) { this.onMouseover(ev, obj, false); }, Timetable));
 
 				// 같은 과목의 여러 lmodule 중 하나에만 마우스를 올려도 다함께 highlight되도록 하는 처리
-				lmodule.addEvent('mouseover', function(ev) {
-					$('timetable-item-'+obj.course_no+obj['class']).retrieve('mymodules').each(function(item, index) {
-						item.getChildren('.bg').setStyle('background',bgcolor_highlighted);
+				lmodule.bind('mouseover', function(ev) {
+					$.each($('#timetable-item-'+obj.course_no+obj['class']).data('mymodules'), function(index, item) {
+						item.getChildren('.bg').css('background',bgcolor_highlighted);
 					});
 				});
-				lmodule.addEvent('mouseout', function(ev) {
-					$('timetable-item-'+obj.course_no+obj['class']).retrieve('mymodules').each(function(item, index) {
-						item.getChildren('.bg').setStyle('background',bgcolor);
+				lmodule.bind('mouseout', function(ev) {
+					$.each($('#timetable-item-'+obj.course_no+obj['class']).data('mymodules'), function(index, item) {
+						item.getChildren('.bg').css('background',bgcolor);
 					});
 				});
 				// 처음 추가되는 lmodule 항목은 고유 ID를 가지며, 여기서 element storage를 이용해 자신과 다른 lmodule들의 reference를 저장한다.
 				if (is_first) {
-					lmodule.set('id', 'timetable-item-'+obj.course_no+obj['class']);
+					lmodule.attr('id', 'timetable-item-'+obj.course_no+obj['class']);
 					is_first = false;
 				}
 			}
 
 			// DOM에 lmodule 삽입
-			lmodule.set({'styles':{'left':left,'top':top,'height':height}});
-			lmodule.inject(wrap);
+			lmodule.css({'left':left,'top':top,'height':height});
+			lmodule.appendTo(wrap);
 
 			// 고유 ID를 가진 lmodule 항목에 reference 추가
 			if (enableDelete) {
-				var modules = $('timetable-item-'+obj.course_no+obj['class']).retrieve('mymodules', []);
+				var modules = $('#timetable-item-'+obj.course_no+obj['class']).data('mymodules') || [];
 				modules.push(lmodule);
-				$('timetable-item-'+obj.course_no+obj['class']).store('mymodules', modules);
+				$('#timetable-item-'+obj.course_no+obj['class']).data('mymodules', modules);
 			}
 		}.bind(this));
 	}
