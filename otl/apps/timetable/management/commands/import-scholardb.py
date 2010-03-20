@@ -62,7 +62,12 @@ class Command(BaseCommand):
                 myrow = []
                 for elem in row:
                     if isinstance(elem, str):
-                        elem = elem.decode(encoding)
+                        try:
+                            elem = elem.decode(encoding)
+                        except UnicodeDecodeError:
+                            eleme = u'%s (???)' % row[20]
+                            print>>sys.stderr, 'ERROR: parsing error on lecture %s' % row[20]
+                            print>>sys.stderr, '       cannot read "%s" in cp949.' % elem
                     myrow.append(elem)
 
                 # Extract department info.
@@ -90,7 +95,11 @@ class Command(BaseCommand):
                 prev_department = department_id
 
                 # Extract lecture info.
-                print u'Retreiving %s: %s [%s]...' % (lecture_code, myrow[7], lecture_class_no)
+                try:
+                    print u'Retreiving %s: %s [%s]...' % (lecture_code, myrow[7], lecture_class_no)
+                except UnicodeDecodeError:
+                    print u'Retreiving %s: ??? [%s]...' % (lecture_code, lecture_class_no)
+                    myrow[7] = u'???'
                 lecture_key = {
                     'code': lecture_no,
                     'year': int(myrow[0]),
