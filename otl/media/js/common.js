@@ -3,12 +3,12 @@
  * 2009 Spring CS408 Capstone Project
  *
  * OTL Javascript Common Library
- * depends on: Mootools 1.2
+ * depends on: jQuery 1.4
  */
 
 var suppress_ajax_errors = false;
 
-window.addEvent('beforeunload', function() {
+$(window).bind('beforeunload', function() {
 	suppress_ajax_errors = true;
 });
 
@@ -23,9 +23,9 @@ var Notifier = {
 	initialize: function(options)
 	{
 		var my_options = {
-			indicator: $('indicator'),
-			message: $('message'),
-			wrapper: $('message-wrap'),
+			indicator: $('#indicator'),
+			message: $('#message'),
+			wrapper: $('#message-wrap'),
 			clear_timeout: 10000
 		};
 		$extend(my_options, options);
@@ -43,13 +43,13 @@ var Notifier = {
 		if (this.timeout)
 			window.clearTimeout(this.timeout);
 		this.indicator.addClass('waiting');
-		this.message.set('html', msg);
+		this.message.html(msg);
 		this.wrapper.fade('show');
 	},
 	setMsg: function(msg)
 	{
 		this.clearIndicator();
-		this.message.set('html', msg);
+		this.message.html(msg);
 		this.wrapper.fade('show');
 		this.wrapper.highlight('#FAD163');
 		if (this.timeout)
@@ -62,7 +62,7 @@ var Notifier = {
 	setErrorMsg: function(msg)
 	{
 		this.clearIndicator();
-		this.message.set('html', msg);
+		this.message.html(msg);
 		this.wrapper.fade('show');
 		this.wrapper.highlight('#E55');
 		if (this.timeout)
@@ -87,24 +87,24 @@ var Notifier = {
 
 var MyFavorites = {
 	initialize: function() {
-		this.button = $('myfavorites');
-		this.menu = $('myfavorites-menu');
-		this.fx_hide = new Fx.Tween(this.menu, {duration:300});
-		this.button.addEvent('click', function(ev) {
+		this.button = $('#myfavorites');
+		this.menu = $('#myfavorites-menu');
+		// TODO: this.fx_hide = new Fx.Tween(this.menu, {duration:300});
+		this.button.click(function(ev) {
 			ev.preventDefault();
 			return false;
 		});
-		this.button.addEvent('mouseover', function(ev) {
-			var mypos = this.button.getCoordinates();
-			var ppos = $(this.button.getParent()).getCoordinates();
-			this.menu.setStyles({
+		this.button.mouseover($.proxy(function(ev) {
+			var mypos = this.button.position();
+			var ppos = $(this.button.parent()).position();
+			this.menu.css({
 				'left': (mypos.left - ppos.left) + 'px',
 				'top': (mypos.top - ppos.top) + 'px'
 			});
-			this.fx_hide.cancel();
-			this.fx_hide.set('opacity', 1);
-		}.bind(this));
-		this.menu.addEvent('mouseout', function(ev) {
+			//this.fx_hide.cancel();
+			//this.fx_hide.set('opacity', 1);
+		}, this));
+		this.menu.mouseout($.proxy(function(ev) {
 			var rel = (ev.relatedTarget) ? ev.relatedTarget : ev.toElement;
 			while (rel != ev.target && rel.nodeName != 'BODY') {
 				if (rel.id == this.menu.id)
@@ -113,7 +113,7 @@ var MyFavorites = {
 			}
 			if (rel == ev.target)
 				return;
-			this.fx_hide.start('opacity', 0);
-		}.bind(this));
+			//this.fx_hide.start('opacity', 0);
+		}, this));
 	}
 };
