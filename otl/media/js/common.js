@@ -19,6 +19,7 @@ var suppress_ajax_errors = false;
 		var theOptions = $.extend({}, defaults, options);
 		this.each(function() {
 			var j = $(this);
+			j.stop(true,true);
 			var originalBackColor = j.css('background-color');
 			j.css('background-color', color)
 			.animate({'background-color':originalBackColor}, theOptions);
