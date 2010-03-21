@@ -529,7 +529,6 @@ var Timetable = {
 		this.grid = $('#grid');
 		this.overlap = $('#overlap_modules');
 		this.overlap.css('display','none');
-		//TODO: this.fx_overlap = new Fx.Tween(this.overlap, {property:'opacity', duration:200});
 		this.tabs = new Mootabs($('#timetable_tabs'), $('#timetable_contents'), 'mousedown', true);
 		this.onLoad();
 		this.registerHandlers();
@@ -563,7 +562,7 @@ var Timetable = {
 	},
 	registerHandlers:function()
 	{
-		$('#action-cleanTable').click($.proxy(function(ev) { this.deleteLecture(ev, null) }, this)); // TODO: call with null?
+		$('#action-cleanTable').click($.proxy(function(ev) { this.deleteLecture(ev, null) }, this));
 	},
 	onMouseout:function()
 	{
@@ -591,7 +590,7 @@ var Timetable = {
 				try {
 					if (resObj.result=='OK') {
 						Timetable.update(resObj);
-						// TODO: Timetable.fx_overlap.start(0);
+						this.overlap.animate({'opacity':0}, 200);
 						
 						Notifier.setMsg('<strong>'+obj.title+'</strong> 추가 되었습니다');
 					} else {
@@ -734,11 +733,9 @@ var Timetable = {
 	{
 		this.onMouseover(ev, obj, true);
 
-		//TODO: this.fx_overlap.cancel();
-		this.overlap.empty();
-		this.overlap.css('display','block');
+		this.overlap.stop(true).empty().css('display','block');
 		this.buildlmodules(this.overlap,obj,-1,false);
-		//TODO: this.fx_overlap.set(1);
+		this.overlap.css('opacity', 1.0);
 	},
 	onMouseover: function(ev, obj, is_adding)
 	{

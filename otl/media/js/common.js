@@ -102,7 +102,6 @@ var MyFavorites = {
 	initialize: function() {
 		this.button = $('#myfavorites');
 		this.menu = $('#myfavorites-menu');
-		// TODO: this.fx_hide = new Fx.Tween(this.menu, {duration:300});
 		this.button.click(function(ev) {
 			ev.preventDefault();
 			return false;
@@ -113,9 +112,8 @@ var MyFavorites = {
 			this.menu.css({
 				'left': (mypos.left - ppos.left) + 'px',
 				'top': (mypos.top - ppos.top) + 'px'
-			});
-			//this.fx_hide.cancel();
-			//this.fx_hide.set('opacity', 1);
+			})
+			.stop(true).css('opacity', 1);
 		}, this));
 		this.menu.mouseout($.proxy(function(ev) {
 			var rel = (ev.relatedTarget) ? ev.relatedTarget : ev.toElement;
@@ -126,7 +124,7 @@ var MyFavorites = {
 			}
 			if (rel == ev.target)
 				return;
-			//this.fx_hide.start('opacity', 0);
+			this.menu.animate({'opacity':0}, 300);
 		}, this));
 	}
 };
