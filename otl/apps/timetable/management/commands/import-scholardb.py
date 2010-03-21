@@ -212,7 +212,7 @@ class Command(BaseCommand):
                 class_time.room_en = myrow[11]
                 try:
                     class_time.unit_time = int(myrow[13])
-                except ValueError:
+                except (ValueError, TypeError):
                     class_time.unit_time = 0
                 print u'Updating class time for %s' % lecture
                 class_time.save()
