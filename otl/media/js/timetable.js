@@ -301,9 +301,9 @@ var LectureList = {
 			var el = $('<a>').text(item.title).appendTo(content);
 			Utils.clickable(el);
 			
-			el.bind('mousedown', $.proxy(function(ev) { this.addLecture(ev,item); }, Timetable));
-			el.bind('mouseover', $.proxy(function(ev) { this.onMouseoverTemp(ev,item); }, Timetable));
-			el.bind('mouseout', $.proxy(function(ev) { this.onMouseout(ev,item); }, Timetable));
+			el.bind('mousedown', $.proxyWithArgs(Timetable.addLecture, Timetable, item));
+			el.bind('mouseover', $.proxyWithArgs(Timetable.onMouseoverTemp, Timetable, item));
+			el.bind('mouseout', $.proxyWithArgs(Timetable.onMouseout, Timetable, item));
 		});
 		LectureList.buildTabs(LectureList.contents.children().length);
 		new Mootabs($('#lecture_tabs'), $('#lecture_contents'));
@@ -562,7 +562,7 @@ var Timetable = {
 	},
 	registerHandlers:function()
 	{
-		$('#action-cleanTable').click($.proxy(function(ev) { this.deleteLecture(ev, null) }, this));
+		$('#action-cleanTable').click($.proxyWithArgs(this.deleteLecture, this, null));
 	},
 	onMouseout:function()
 	{
@@ -768,7 +768,7 @@ var Timetable = {
 				textbody.html('<a class="cursor"><strong>'+obj.title+'</strong></a><br />'+obj.prof+'<br />'+obj.classroom+'<br />');
 				var deletelink = textbody.getElements('a');
 				deletelink.bind('mousedown', function(ev) { ev.stopPropagation(); });
-				deletelink.bind('click', $.proxy(function(ev) { this.deleteLecture(ev, obj); }, Timetable)); 
+				deletelink.bind('click', $.proxyWithArgs(Timetable.deleteLecture, Timetable, obj)); 
 			} else
 				textbody.html('<strong>'+obj.title+'</strong><br />'+obj.prof+'<br />'+obj.classroom+'<br />');
 
@@ -779,7 +779,7 @@ var Timetable = {
 			bg.css({'background':bgcolor});
 
 			if (enableDelete) {
-				lmodule.bind('mouseover', $.proxy(function(ev) { this.onMouseover(ev, obj, false); }, Timetable));
+				lmodule.bind('mouseover', $.proxyWithArgs(Timetable.onMouseover, Timetable, obj, false));
 
 				// 같은 과목의 여러 lmodule 중 하나에만 마우스를 올려도 다함께 highlight되도록 하는 처리
 				lmodule.bind('mouseover', function(ev) {

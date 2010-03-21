@@ -4,62 +4,56 @@
 <link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}favorites.css" />
 <script type="text/javascript">
 //<!--
-LinkThumb=
-{
-	initialize:function(wrap,className)
-	   {
-		   	this.wrap=$(wrap);
-			this.anchors = $A(document.getElementsByClassName(className));
-			this.isOver=false;
-			this.onLoad();
-	   },
-	onLoad:function()
-	   {
-			this.thumb = new Element('div');
-			this.thumb.addClass('linkthumb');
-
-			this.img = new Element('img');
-			this.thumb.appendChild(this.img);
-
-			this.thumb.fade('hide');
-			document.body.appendChild(this.thumb);
-
-			this.registerHandlers();
-	   },
-	registerHandlers:function()
-		 {
-			document.addEvent('mousemove',this.onMove.bindWithEvent(this));
-			this.anchors.each(function(item) {
-				item.addEvent('mouseover',this.onOver.bindWithEvent(this,item));
-				item.addEvent('mouseout',this.onOut.bindWithEvent(this));
-			}.bind(this));
-		 },
-	onMove:function(e)
+var LinkThumb = {
+	initialize: function(wrap, anchors)
 		{
-			if(this.isOver)
-			{
-				var x=e.page.x + 20,y=e.page.y + 20;
-				this.thumb.style.left=x+'px';
-				this.thumb.style.top=y+'px';
+			this.wrap = $(wrap);
+			this.anchors = $(anchors);
+			this.isOver = false;
+			this.onLoad();
+		},
+	onLoad: function()
+		{
+			this.thumb = $('<div>', {'class':'linkthumb'});
+			this.img = $('<img>').appendTo(this.thumb);
+			this.thumb.hide().appendTo(document.body);
+			this.registerHandlers();
+		},
+	registerHandlers: function()
+		{
+			$(document).bind('mousemove.linkthumb', $.proxy(this.onMove, this));
+			$.each(this.anchors, $.proxy(function(index, item) {
+				$(item)
+				.bind('mouseover.linkthumb', $.proxyWithArgs(this.onOver, this, item))
+				.bind('mouseout.linkthumb', $.proxy(this.onOut, this));
+			}, this));
+		},
+	onMove: function(e)
+		{
+			if (this.isOver) {
+				this.thumb.css({
+					'left': e.pageX + 20,
+					'top': e.pageY + 20
+				});
 			}
 		},
-	onOver:function(e,item)
+	onOver:function(e, item)
 		{
-			this.img.src= 'http://open.thumbshots.org/image.aspx?url='+encodeURIComponent(item.href);
-			this.thumb.fade('show');
+			this.img.attr('src', 'http://open.thumbshots.org/image.aspx?url='+encodeURIComponent(item.href));
+			this.thumb.stop(true,true).fadeIn();
 			this.isOver=true;
 			this.onMove(e);
 		},
 	onOut:function(e)
-	  {
-			this.thumb.fade('hide');
-			this.img.src='';
+		{
+			this.thumb.stop(true,true).hide(0);
+			this.img.attr('src', '');
 			this.isOver=false;
-	  }
+		}
 };
-window.addEvent('domready', function () {
-	LinkThumb.initialize('publicFavorites','favorite-link');
-	LinkThumb.initialize('publicFavorites','search-link');
+$(document).ready(function () {
+	LinkThumb.initialize('#publicFavorites', '.favorite-link');
+	LinkThumb.initialize('#publicFavorites', '.search-link');
 });
 //-->
 </script>

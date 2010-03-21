@@ -8,20 +8,37 @@
 
 var suppress_ajax_errors = false;
 
-$.fn.highlight = function(color, options) {
-	var defaults = {
-		duration: 500,
-		easing: 'swing'
+(function($) {
+	$.fn.highlight = function(color, options) {
+		// jQuery's default highlight effect makes the background transparent,
+		// so we make our own effect.
+		var defaults = {
+			duration: 500,
+			easing: 'swing'
+		};
+		var theOptions = $.extend({}, defaults, options);
+		this.each(function() {
+			var j = $(this);
+			var originalBackColor = j.css('background-color');
+			j.css('background-color', color)
+			.animate({'background-color':originalBackColor}, theOptions);
+		});
+		return this;
 	};
-	var theOptions = $.extend({}, defaults, options);
-	this.each(function() {
-		var j = $(this);
-		var originalBackColor = j.css('background-color');
-		j.css('background-color', color)
-		.animate({'background-color':originalBackColor}, theOptions);
+	$.extend({
+		proxyWithArgs: function(fun, context) {
+			// Implements Mootools-style bind/bindWithEvent functions to pass extra arguments
+			var extra_arguments = Array.prototype.slice.apply(arguments, [2]);
+			var proxy = function() {
+				var args = [];
+				Array.prototype.push.apply(args, arguments);
+				Array.prototype.push.apply(args, extra_arguments);
+				return fun.apply(context, args);
+			};
+			return proxy;
+		}
 	});
-	return this;
-};
+})(jQuery);
 
 $(window).bind('beforeunload', function() {
 	suppress_ajax_errors = true;
