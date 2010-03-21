@@ -3,6 +3,7 @@
 {% block headers %}
 <link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}groups.css" />
 <script type="text/javascript">
+// <![CDATA[
 function CheckNull(form)
 {
 	if(form.gname.value.length==0)
@@ -25,21 +26,7 @@ function CheckNull(form)
 	}
 	else return true;
 }
-</script>
-<script type="text/javascript">
-function pwShow(form)
-{
-	if(form.style.display=="block")
-	{
-		form.style.display= "none";
-		return false;
-	}
-	else
-	{
-		form.style.display= "block";
-		return false;
-	}
-}
+// ]]>
 </script>
 
 {% endblock %}
@@ -82,7 +69,7 @@ function pwShow(form)
 		<li>
 		<h4><a href="/groups/list/?id={{item.id}}">{{item.group_name}}: {{item.comment}}</a></h4>
 		만든이 : <a href="/accounts/view/{{item.maker.username}}">{{item.maker.username}}</a>
-			<a class="control-join" href="#" onClick="return pwShow(joinform{{item.id}});" >Join</a>
+			<a class="control-join" href="#Join" onClick="$('#joinform{{item.id}}').toggle();">Join</a>
 			<form id="joinform{{item.id}}" method="post" style="display:none" action="/groups/join/{{item.id}}">
 				<div id="join_group" >
 					password : <input type="password" id="passwd" name="passwd" value="" size="5" maxlength="32"/>
@@ -111,7 +98,7 @@ function pwShow(form)
 				<h4>{{item.year}} {{item.semester}} {{item.group_name}}: {{item.comment}}</h4>
 					<a class="search-link" href="/group/list/?id={{item.id}}">{{item.group_name}}</a>
 					<span class="submitter">올린이 : <a href="/accounts/view/{{item.maker.username}}">{{item.maker.username}}</a></span>
-					<a class="search-join" href="#" onClick="return pwShow(searchjoinform{{item.id}});" >Join</a>
+					<a class="search-join" href="#" onClick="$('#searchjoinform{{item.id}}').toggle();" >Join</a>
 					<form id="searchjoinform{{item.id}}" method="post" style="display:none" action="/groups/join/{{item.id}}">
 						<div id="join_group" >
 							password : <input type="password" id="passwd" name="passwd" value="" size="5" maxlength="32"/>

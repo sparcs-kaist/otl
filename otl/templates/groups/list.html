@@ -1,21 +1,6 @@
 {% extends 'layout.html' %}
 {% block headers %}
 <link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}groups.css" />
-
-<script type="text/javascript">
-function ShowModify(form)
-{
-	if(form.style.display == "block"){
-		form.style.display= "none";
-		return false;
-	}
-	else{
-		form.style.display= "block";
-		return false;
-	}
-}
-</script>
-
 {% endblock %}
 {% block content %}
 <a href="/groups/list/?id={{group_id}}">
@@ -48,7 +33,7 @@ function ShowModify(form)
 			</td>
 			<td class="date" align="center">{{item.written|date:"Y/m/d"}}</td>
 			<td class="delete" align="center"><a class="control-delete" href="/groups/list/delete/?id={{item.group.id}}&num={{item.id}}">delete</a></td>
-			<td class="modify" align="center"><a class="control-modity" href="#" onClick="return ShowModify(modifyform{{item.id}})">modify</a></td></tr>
+			<td class="modify" align="center"><a class="control-modity" href="#" onClick="$('#modifyform{{item.id}}').toggle()">modify</a></td></tr>
 		{% endfor %}
 	</tbody>
 </table>
@@ -106,7 +91,7 @@ function ShowModify(form)
 					</td>
 					<td class = "date">{{item.written|date:"Y/m/d"}}</td>
 					<td class = "delete"><a class="control-delete" href="/groups/list/delete/?id={{item.group.id}}&num={{item.id}}">delete</a></td>
-					<td class = "modify"><a class="control-modity" href="#" onClick="return ShowModify(searchmodifyform{{item.id}})">modify</a></td>
+					<td class = "modify"><a class="control-modity" href="#" onClick="$('#searchmodifyform{{item.id}}').toggle()">modify</a></td>
 				</tr>
 				{% endfor%}
 		</tbody>
