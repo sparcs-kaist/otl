@@ -10,18 +10,14 @@ var suppress_ajax_errors = false;
 
 $.fn.highlight = function(color, options) {
 	var defaults = {
-		duration: 200,
-		delay: 300,
+		duration: 500,
 		easing: 'swing'
 	};
 	var theOptions = $.extend({}, defaults, options);
 	this.each(function() {
 		var j = $(this);
 		var originalBackColor = j.css('background-color');
-		console.log(originalBackColor);
-		// TODO: resolve infinite recursion
-		j.animate({'background-color':color}, theOptions)
-		.delay(theOptions.delay)
+		j.css('background-color', color)
 		.animate({'background-color':originalBackColor}, theOptions);
 	});
 	return this;
