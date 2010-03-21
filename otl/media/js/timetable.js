@@ -542,7 +542,7 @@ var Timetable = {
 			var credit=0,au=0;
 			var wrap = Timetable.tabs.getTabByKey(index);
 			var deleted_count = 0;
-			$.each(item, function(key, item) {
+			$.each(item, function(index, item) {
 				credit += item.credit;
 				au += item.au;
 				var bgcolor = Utils.getColorByIndex(index);
