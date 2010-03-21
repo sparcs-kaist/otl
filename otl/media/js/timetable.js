@@ -88,7 +88,7 @@ Mootabs.prototype.activate = function(key)
 	};
 Mootabs.prototype.cleanActiveTab = function()
 	{
-		this.contents[this.activeKey].empty();
+		$(this.contents[this.activeKey]).empty();
 	};
 Mootabs.prototype.getActiveTab = function()
 	{
@@ -585,12 +585,12 @@ var Timetable = {
 			{
 				Notifier.setLoadingMsg('추가하는 중입니다...');
 			},
-			sucess: function(resObj)
+			success: $.proxy(function(resObj)
 			{
 				try {
 					if (resObj.result=='OK') {
 						Timetable.update(resObj);
-						this.overlap.animate({'opacity':0}, 200);
+						this.overlap.stop(true,true).animate({'opacity':0}, 200, 'linear');
 						
 						Notifier.setMsg('<strong>'+obj.title+'</strong> 추가 되었습니다');
 					} else {
@@ -615,7 +615,7 @@ var Timetable = {
 				catch(e) {
 					Notifier.setErrorMsg('오류가 발생하였습니다. ('+e.message+')');
 				}
-			},
+			}, this),
 			error: function(xhr) {
 				if (suppress_ajax_errors)
 					return;
@@ -766,7 +766,7 @@ var Timetable = {
 			textbody.appendTo(lmodule);
 			if (enableDelete) {
 				textbody.html('<a class="cursor"><strong>'+obj.title+'</strong></a><br />'+obj.prof+'<br />'+obj.classroom+'<br />');
-				var deletelink = textbody.getElements('a');
+				var deletelink = textbody.children('a');
 				deletelink.bind('mousedown', function(ev) { ev.stopPropagation(); });
 				deletelink.bind('click', $.proxyWithArgs(Timetable.deleteLecture, Timetable, obj)); 
 			} else
