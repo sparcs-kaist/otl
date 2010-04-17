@@ -23,14 +23,14 @@ def index(request):
         'departments' : departments
     }, context_instance=RequestContext(request))
 
-def department(request, department_code):
-    dept = Department.objects.get(code=department_code)
-    lectures_from_dept = Lecture.objects.filter(department__code__exact=department_code)    
+def department(request, department_id):
+    dept = Department.objects.get(id=department_id)
+    courses = Course.objects.filter(department=dept)
     return render_to_response('dictionary/department.html', {
 	'section' : 'dictionary',
 	'title' : u'과목 사전',
 	'dept' : dept,
-	'lectures_from_dept' : lectures_from_dept }, context_instance=RequestContext(request))
+	'courses' : courses }, context_instance=RequestContext(request))
 
 def search(request):
     pass

@@ -82,9 +82,9 @@ function CheckNull(form)
 <h2>{{dept.name}} 과목 목록</h2>
 {{ lecture_from_dept }}
 <ul>
-    {% for lecture in lectures_from_dept %}
+    {% for course in courses %}
     <li>
-    <a class="lecture-link" href="/dictionary/view/{{lecture.code}}">{{lecture.code}} {{lecture.title}}</a> 
+    <a class="course-link" href="/dictionary/view/{{course.code}}">{{course.code}} {{course.title}}</a> 
     </li>
     {% endfor %}
 </ul>
