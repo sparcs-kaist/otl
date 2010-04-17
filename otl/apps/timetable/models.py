@@ -47,6 +47,9 @@ class Lecture(models.Model):
                     return True
         return False
 
+	def dictionary_url(self):
+		return 'dictionary/' + self.code
+
     class Meta:
         unique_together = ('code', 'year', 'semester', 'department', 'class_no')
 
