@@ -1,0 +1,91 @@
+{% extends 'layout.html' %}
+{% load yearterm %}
+{% block headers %}
+<link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}favorites.css" />
+<script type="text/javascript">
+//<!--
+var LinkThumb = {
+	initialize: function(wrap, anchors)
+		{
+			this.wrap = $(wrap);
+			this.anchors = $(anchors);
+			this.isOver = false;
+			this.onLoad();
+		},
+	onLoad: function()
+		{
+			this.thumb = $('<div>', {'class':'linkthumb'});
+			this.img = $('<img>').appendTo(this.thumb);
+			this.thumb.hide().appendTo(document.body);
+			this.registerHandlers();
+		},
+	registerHandlers: function()
+		{
+			$(document).bind('mousemove.linkthumb', $.proxy(this.onMove, this));
+			$.each(this.anchors, $.proxy(function(index, item) {
+				$(item)
+				.bind('mouseover.linkthumb', $.proxyWithArgs(this.onOver, this, item))
+				.bind('mouseout.linkthumb', $.proxy(this.onOut, this));
+			}, this));
+		},
+	onMove: function(e)
+		{
+			if (this.isOver) {
+				this.thumb.css({
+					'left': e.pageX + 20,
+					'top': e.pageY + 20
+				});
+			}
+		},
+	onOver:function(e, item)
+		{
+			this.img.attr('src', 'http://open.thumbshots.org/image.aspx?url='+encodeURIComponent(item.href));
+			this.thumb.stop(true,true).fadeIn();
+			this.isOver=true;
+			this.onMove(e);
+		},
+	onOut:function(e)
+		{
+			this.thumb.stop(true,true).hide(0);
+			this.img.attr('src', '');
+			this.isOver=false;
+		}
+};
+$(document).ready(function () {
+	LinkThumb.initialize('#publicFavorites', '.favorite-link');
+	LinkThumb.initialize('#publicFavorites', '.search-link');
+});
+//-->
+</script>
+<script type="text/javascript">
+function CheckNull(form)
+{
+	if(form.name.value.length==0)
+	{
+		alert("내용을 작성해주세요. ex) CS408 전산학 프로젝트");
+		form.name.focus();
+		return false;
+	}
+	else if(form.url.value.length==0)
+	{
+		alert("과목 홈페이지를 작성해주세요. ex) http://otl.kaist.ac.kr");
+		form.url.focus();
+		return false;
+	}
+	else return true;
+}
+</script>
+
+
+{% endblock %}
+{% block content %}
+<h2>{{dept.name}} 과목 목록</h2>
+{{ lecture_from_dept }}
+<ul>
+    {% for lecture in lectures_from_dept %}
+    <li>
+    <a class="lecture-link" href="/dictionary/view/{{lecture.code}}">{{lecture.code}} {{lecture.title}}</a> 
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}

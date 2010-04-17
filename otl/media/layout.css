@@ -259,6 +259,40 @@ a#myfavorites:hover
 	color: #555;
 }
 
+.dictionary_part
+{
+	margin: 20px;
+}
+.dictionary_part span
+{
+	font-size: 12pt;
+	font-weight: bold;
+}
+
+.dictionary_comment
+{
+	margin: 10px;
+	
+}
+
+.dictionary_comment_content
+{
+	font-size: 10pt;
+	font-color: black;
+	margin: 10px;
+}
+
+.dictionary_comment_eval
+{
+	font-size: 8pt;
+}
+
+.dictionary_comment_eval span
+{
+	font-size: 10pt;
+	font-color: #eee;
+}
+
 .clear
 {
 	clear:both;
