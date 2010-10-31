@@ -99,6 +99,7 @@ def login(request):
                     # If persistent login options is set, let the session expire after 2-weeks.
                     if request.POST.has_key('persistent_login'):
                         request.session.set_expiry(14*24*3600)
+                    request.session['django_language'] = user.userprofile.language[:2]
                     return HttpResponseRedirect(next_url)
         else:
             # Show privacy agreement form after confirming this is a valid user in KAIST.
@@ -167,6 +168,8 @@ def myinfo(request):
             profile.favorite_departments = f.cleaned_data['favorite_departments']
             profile.save()
             msg = u'사용자 정보가 변경되었습니다.'
+            request.session['django_language'] = profile.language[:2]
+            return HttpResponseRedirect('/accounts/myinfo/')
         else:
             msg = u'올바르지 않은 입력입니다.'
             error = True
