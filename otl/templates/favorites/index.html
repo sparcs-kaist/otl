@@ -62,13 +62,13 @@ function CheckNull(form)
 {
 	if(form.name.value.length==0)
 	{
-		alert("내용을 작성해주세요. ex) CS408 전산학 프로젝트");
+		alert("{% trans "내용을 작성해주세요. ex) CS408 전산학 프로젝트" %}");
 		form.name.focus();
 		return false;
 	}
 	else if(form.url.value.length==0)
 	{
-		alert("과목 홈페이지를 작성해주세요. ex) http://otl.kaist.ac.kr");
+		alert("{% trans "과목 홈페이지를 작성해주세요. ex) http://otl.kaist.ac.kr" %}");
 		form.url.focus();
 		return false;
 	}
@@ -79,47 +79,47 @@ function CheckNull(form)
 
 {% endblock %}
 {% block content %}
-<h2>과목 즐겨찾기 ({{current_year}}년 {{current_semester|term2str}}학기)</h2>
+<h2>{% trans "과목 즐겨찾기" %} ({{current_year}}{% trans "년" %} {{current_semester|term2str}}{% trans "학기" %})</h2>
 <div id="myFavorites">
-	<h3>내 즐겨찾기</h3>
+	<h3>{% trans "내 즐겨찾기" %}</h3>
 {% if user.is_authenticated %}
 <ul>
 	{% if myfavorites %}
 		{% for item in myfavorites %}
 		<li>
 			<a class="favorite-link" href="{{item.url}}" target="_blank" >	
-				<h4>{{item.course_name}} (등록수 : {{item.favored_count}})</h4>
+				<h4>{{item.course_name}} ({% trans "등록수" %} : {{item.favored_count}})</h4>
 				{{item.url}}
 			</a>
-			<a class="control-delete" href="/favorites/delete/{{item.id}}">Delete</a>:
+			<a class="control-delete" href="/favorites/delete/{{item.id}}">{% trans "삭제" %}</a>:
 		</li>
 		{% endfor %}
 	{% else %}
-		<p>등록한 즐겨찾기가 없습니다. </p>
+		<p>{% trans "등록한 즐겨찾기가 없습니다." %} </p>
 	{% endif %}
 </ul>
 {% else %}
-	<p>로그인하지 않았습니다. :)</p>
+	<p>{% trans "로그인하지 않았습니다. :)" %}</p>
 {% endif %}
 <div id="publicFavorites">
-	<h3>다른 사람들의 즐겨찾기</h3>
-	<a href="/favorites/morelist">더보기</a>
+	<h3>{% trans "다른 사람들의 즐겨찾기" %}</h3>
+	<a href="/favorites/morelist">{% trans "더보기" %}</a>
 	<form id="create-form" method="get" onSubmit="return CheckNull(this);" action="/favorites/create/">
 		<div id="add-public-favorite">
-			<strong>즐겨찾기 등록</strong>&nbsp;|&nbsp;
-			&nbsp;제목: <input type="text" id="create-form-name" name="name" value="" size="5" maxlength="60"/>	
-			&nbsp;주소: <input type="text" id="create-form-url" name="url" value="" size="5" maxlength="100"/>
-			<input id="create-form" type="submit" value="등록" />
+			<strong>{% trans "즐겨찾기 등록" %}</strong>&nbsp;|&nbsp;
+			&nbsp;{% trans "제목" %}: <input type="text" id="create-form-name" name="name" value="" size="5" maxlength="60"/>	
+			&nbsp;{% trans "주소" %}: <input type="text" id="create-form-url" name="url" value="" size="5" maxlength="100"/>
+			<input id="create-form" type="submit" value="{% trans "등록" %}" />
 		</div>
 	</form>
 	<ul>
 	{% for item in recently_added_list %}
 		<li>
 		<a class="favorite-link" href="{{item.url}}" target="_blank" >
-				<h4>{{item.course_name}} (등록수 : {{item.favored_count}})</h4>
+				<h4>{{item.course_name}} ({% trans "등록수" %} : {{item.favored_count}})</h4>
 				{{item.url}}
 			</a>
-			<span class="submitter">올린이 : <a href="/accounts/view/{{item.writer.username}}">{{item.writer.username}}</a></span>	
+			<span class="submitter">{% trans "올린이" %} : <a href="/accounts/view/{{item.writer.username}}">{{item.writer.username}}</a></span>	
 			<a class="control-add" href="/favorites/add/{{item.id}}">Add</a>
 		</li>
 	{% endfor %}
@@ -137,22 +137,22 @@ function CheckNull(form)
 	</div>
 </div>
 	<form id="search-form" method="get" action="/favorites/search/">
-		<p><label for="search-query">검색 : </label><input type="text" id="search-query" name="query" value="" maxlength="20"/><input type="submit" value="Find" /></p>
+		<p><label for="search-query">{% trans "검색" %} : </label><input type="text" id="search-query" name="query" value="" maxlength="20"/><input type="submit" value="Find" /></p>
 	</form>
 		<ul>
 			{% if search_list %}
 				{% for item in search_list %}
 				<li>
 					<a class="search-link" href="{{item.url}}" target="_blank">
-						<h4>{{item.year}} {{item.semester}} : {{item.course_name}} ( 등록수 : {{item.favored_count}} )</h4>
+						<h4>{{item.year}} {{item.semester}} : {{item.course_name}} ( {% trans "등록수" %} : {{item.favored_count}} )</h4>
 						{{item.url}}
 					</a>
-					<span class="submitter">올린이 : <a href="/accounts/view/{{item.writer.username}}">{{item.writer.username}}</a></span>
+					<span class="submitter">{% trans "올린이" %} : <a href="/accounts/view/{{item.writer.username}}">{{item.writer.username}}</a></span>
 					<a class="control-add" href="/favorites/add/{{item.id}}">Add</a>
 				</li>
 				{% endfor%}
 			{% else %}
-				<p>검색 결과가 없습니다.</p>
+				<p>{% trans "검색 결과가 없습니다." %}</p>
 			{% endif %}
 		</ul>
 		<div class="search-pages">
