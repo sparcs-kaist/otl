@@ -1,0 +1,800 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2010-11-01 00:33+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: templates/404.html:8
+msgid "존재하지 않는 주소입니다. 주소를 다시 확인해보세요."
+msgstr ""
+
+#: templates/500.html:9
+msgid ""
+"발생한 오류에 대한 정보가 개발팀에 전달되었습니다. 최대한 빨리 문제를 확인하"
+"여 고칠 수 있도록 하겠습니다. :)"
+msgstr ""
+
+#: templates/layout.html:37
+msgid "관리자"
+msgstr ""
+
+#: templates/layout.html:37
+msgid "내 계정"
+msgstr ""
+
+#: templates/layout.html:37
+msgid "로그아웃"
+msgstr ""
+
+#: templates/layout.html:39
+msgid "로그인"
+msgstr ""
+
+#: templates/layout.html:41
+msgid "English"
+msgstr "English"
+
+#: templates/layout.html:51
+msgid "일정 관리"
+msgstr ""
+
+#: templates/layout.html:52
+msgid "약속 잡기"
+msgstr ""
+
+#: templates/layout.html:53 templates/groups/index.html:34
+#: templates/groups/list.html:7
+msgid "조모임"
+msgstr ""
+
+#: templates/layout.html:54 templates/favorites/index.html:82
+msgid "과목 즐겨찾기"
+msgstr ""
+
+#: templates/layout.html:55
+msgid "과목 Q&amp;A"
+msgstr ""
+
+#: templates/layout.html:56
+msgid "과목 사전"
+msgstr ""
+
+#: templates/layout.html:57
+msgid "모의 시간표"
+msgstr ""
+
+#: templates/layout.html:58
+msgid "만든 사람들"
+msgstr ""
+
+#: templates/layout.html:60 templates/layout.html.py:62
+#: templates/favorites/index.html:84
+msgid "내 즐겨찾기"
+msgstr ""
+
+#: templates/layout.html:67
+msgid "즐겨찾기가 없습니다."
+msgstr ""
+
+#: templates/login.html:16
+msgid "은 "
+msgstr ""
+
+#: templates/login.html:16
+msgid "에서 제공하는 수강 지원 서비스입니다."
+msgstr ""
+
+#: templates/login.html:25
+msgid "KAIST Portal ID로 로그인하세요."
+msgstr ""
+
+#: templates/login.html:32
+msgid "OTL 서비스는"
+msgstr ""
+
+#: templates/login.html:34 templates/login.html.py:36 templates/login.html:37
+#: templates/login.html.py:38
+msgid "현재 "
+msgstr ""
+
+#: templates/login.html:34
+msgid "명의 사용자가 이용하고 있습니다."
+msgstr ""
+
+#: templates/login.html:35
+msgid "총 "
+msgstr ""
+
+#: templates/login.html:35
+msgid "개의 과목 정보를 제공하고 있습니다."
+msgstr ""
+
+#: templates/login.html:36
+msgid "개의 과목 즐겨찾기가 등록되어 있습니다."
+msgstr ""
+
+#: templates/login.html:37
+msgid "개의 일정을 관리하고 있습니다."
+msgstr ""
+
+#: templates/login.html:38
+msgid "개의 조모임 보드가 활동 중입니다."
+msgstr ""
+
+#: templates/login_agreement.html:9
+msgid "위 사항에 동의하셔야만 서비스를 이용할 수 있습니다."
+msgstr ""
+
+#: templates/login_agreement.html:52
+msgid "위 사항에 동의하여야 이 서비스를 이용하실 수 있습니다."
+msgstr ""
+
+#: templates/login_agreement.html:59
+msgid "예, 동의합니다."
+msgstr ""
+
+#: templates/login_agreement.html:60
+msgid "아니오, 동의하지 않습니다."
+msgstr ""
+
+#: templates/login_agreement.html:62
+msgid "추가로 다음의 정보가 필요합니다."
+msgstr ""
+
+#: templates/login_agreement.html:66
+msgid "전송하기"
+msgstr ""
+
+#: templates/accounts/myinfo.html:6
+msgid "내 계정 정보"
+msgstr ""
+
+#: templates/accounts/myinfo.html:9
+msgid "Portal ID"
+msgstr ""
+
+#: templates/accounts/myinfo.html:10
+msgid "학번"
+msgstr ""
+
+#: templates/accounts/myinfo.html:11 templates/accounts/view.html:9
+#: templates/dictionary/view.html:87 templates/timetable/index.html:54
+msgid "학과"
+msgstr ""
+
+#: templates/accounts/myinfo.html:14
+msgid "참고 : 비밀번호는 Portal에서 변경하셔야 합니다."
+msgstr ""
+
+#: templates/accounts/myinfo.html:23
+msgid "변경하기"
+msgstr ""
+
+#: templates/accounts/view.html:6
+msgid "다른 사람 계정 정보"
+msgstr ""
+
+#: templates/accounts/view.html:8
+msgid "이름"
+msgstr ""
+
+#: templates/dictionary/department.html:65 templates/dictionary/index.html:65
+#: templates/dictionary/view.html:65 templates/favorites/index.html:65
+msgid "내용을 작성해주세요. ex) CS408 전산학 프로젝트"
+msgstr ""
+
+#: templates/dictionary/department.html:71 templates/dictionary/index.html:71
+#: templates/dictionary/view.html:71 templates/favorites/index.html:71
+msgid "과목 홈페이지를 작성해주세요. ex) http://otl.kaist.ac.kr"
+msgstr ""
+
+#: templates/dictionary/department.html:82
+msgid "과목 목록"
+msgstr ""
+
+#: templates/dictionary/index.html:82 templates/dictionary/view.html:84
+msgid "과목 정보"
+msgstr ""
+
+#: templates/dictionary/view.html:86
+msgid "과목 코드"
+msgstr ""
+
+#: templates/dictionary/view.html:88
+msgid "과목 이름"
+msgstr ""
+
+#: templates/dictionary/view.html:89
+msgid "과목 구분"
+msgstr ""
+
+#: templates/dictionary/view.html:90
+msgid "학년 구분"
+msgstr ""
+
+#: templates/dictionary/view.html:91 templates/dictionary/view.html.py:137
+#: templates/dictionary/view.html:164 templates/timetable/index.html:146
+#: templates/timetable/index.html.py:248
+msgid "학점"
+msgstr ""
+
+#: templates/dictionary/view.html:92
+msgid "강의 시간"
+msgstr ""
+
+#: templates/dictionary/view.html:93
+msgid "실험 시간"
+msgstr ""
+
+#: templates/dictionary/view.html:94
+msgid "인원 제한"
+msgstr ""
+
+#: templates/dictionary/view.html:99
+msgid "과목 소개"
+msgstr ""
+
+#: templates/dictionary/view.html:105
+msgid "선수 과목"
+msgstr ""
+
+#: templates/dictionary/view.html:113
+msgid "역대 강의"
+msgstr ""
+
+#: templates/dictionary/view.html:119
+msgid "강의평가"
+msgstr ""
+
+#: templates/dictionary/view.html:120
+msgid "평균점수"
+msgstr ""
+
+#: templates/dictionary/view.html:120
+msgid "점"
+msgstr ""
+
+#: templates/dictionary/view.html:120
+msgid "표준편차"
+msgstr ""
+
+#: templates/dictionary/view.html:120
+msgid "응답자수"
+msgstr ""
+
+#: templates/dictionary/view.html:120
+msgid "응답율"
+msgstr ""
+
+#: templates/dictionary/view.html:126
+msgid "강의평가 자료는 학교에서 수강생들을 대상으로 강의 후 평가한 자료입니다."
+msgstr ""
+
+#: templates/dictionary/view.html:129
+msgid "코멘트들"
+msgstr ""
+
+#: templates/dictionary/view.html:137
+msgid "평가"
+msgstr ""
+
+#: templates/dictionary/view.html:137 templates/dictionary/view.html.py:158
+msgid "로드"
+msgstr ""
+
+#: templates/dictionary/view.html:137 templates/dictionary/view.html.py:170
+msgid "남는거"
+msgstr ""
+
+#: templates/dictionary/view.html:146
+msgid "코멘트 남기기"
+msgstr ""
+
+#: templates/dictionary/view.html:150
+msgid "평가를 내릴 강의"
+msgstr ""
+
+#: templates/dictionary/view.html:159
+msgid "쉬움"
+msgstr ""
+
+#: templates/dictionary/view.html:160 templates/dictionary/view.html.py:166
+msgid "무난"
+msgstr ""
+
+#: templates/dictionary/view.html:161
+msgid "힘듬"
+msgstr ""
+
+#: templates/dictionary/view.html:165
+msgid "박함"
+msgstr ""
+
+#: templates/dictionary/view.html:167
+msgid "후함"
+msgstr ""
+
+#: templates/dictionary/view.html:171
+msgid "없음"
+msgstr ""
+
+#: templates/dictionary/view.html:172
+msgid "있음"
+msgstr ""
+
+#: templates/dictionary/view.html:173
+msgid "많음"
+msgstr ""
+
+#: templates/dictionary/view.html:179
+msgid "남기기"
+msgstr ""
+
+#: templates/dictionary/view.html:184
+msgid "로그인을 하셔야 코멘트를 남길 수 있습니다."
+msgstr ""
+
+#: templates/favorites/index.html:82 templates/groups/index.html:34
+#: templates/timetable/index.html:174
+msgid "년"
+msgstr ""
+
+#: templates/favorites/index.html:82 templates/timetable/index.html:174
+msgid "학기"
+msgstr ""
+
+#: templates/favorites/index.html:91 templates/favorites/index.html.py:119
+#: templates/favorites/index.html:147
+msgid "등록수"
+msgstr ""
+
+#: templates/favorites/index.html:94 templates/groups/list.html:19
+#: templates/groups/list.html.py:77
+msgid "삭제"
+msgstr ""
+
+#: templates/favorites/index.html:98
+msgid "등록한 즐겨찾기가 없습니다."
+msgstr ""
+
+#: templates/favorites/index.html:102 templates/groups/index.html:52
+#: templates/groups/list.html:55
+msgid "로그인하지 않았습니다. :)"
+msgstr ""
+
+#: templates/favorites/index.html:105
+msgid "다른 사람들의 즐겨찾기"
+msgstr ""
+
+#: templates/favorites/index.html:106 templates/groups/index.html:57
+msgid "더보기"
+msgstr ""
+
+#: templates/favorites/index.html:109
+msgid "즐겨찾기 등록"
+msgstr ""
+
+#: templates/favorites/index.html:110
+msgid "제목"
+msgstr ""
+
+#: templates/favorites/index.html:111
+msgid "주소"
+msgstr ""
+
+#: templates/favorites/index.html:112
+msgid "등록"
+msgstr ""
+
+#: templates/favorites/index.html:122 templates/favorites/index.html.py:150
+#: templates/groups/index.html:100
+msgid "올린이"
+msgstr ""
+
+#: templates/favorites/index.html:140 templates/groups/index.html:94
+#: templates/groups/list.html:66 templates/groups/list.html.py:67
+msgid "검색"
+msgstr ""
+
+#: templates/favorites/index.html:155 templates/groups/index.html:111
+#: templates/groups/list.html:100
+msgid "검색 결과가 없습니다."
+msgstr ""
+
+#: templates/groups/index.html:11
+msgid "조 이름을 작성해주세요. EX) CS408 SPARCS OTL 팀"
+msgstr ""
+
+#: templates/groups/index.html:17
+msgid "암호를 작성해주세요."
+msgstr ""
+
+#: templates/groups/index.html:23
+msgid "comment를 작성해주세요. EX) OTL 많이 이용해주세요~"
+msgstr ""
+
+#: templates/groups/index.html:36
+msgid "내가 가입한 조모임"
+msgstr ""
+
+#: templates/groups/index.html:44
+msgid "탈퇴"
+msgstr ""
+
+#: templates/groups/index.html:49
+msgid "등록한 조모임이 없습니다."
+msgstr ""
+
+#: templates/groups/index.html:56
+msgid "다른 조모임"
+msgstr ""
+
+#: templates/groups/index.html:60
+msgid "조모임 생성"
+msgstr ""
+
+#: templates/groups/index.html:61
+msgid "조모임 이름"
+msgstr ""
+
+#: templates/groups/index.html:62
+msgid "비밀번호"
+msgstr ""
+
+#: templates/groups/index.html:63
+msgid "코멘트"
+msgstr ""
+
+#: templates/groups/index.html:64
+msgid "생성"
+msgstr ""
+
+#: templates/groups/index.html:71
+msgid "만든이"
+msgstr ""
+
+#: templates/groups/index.html:75 templates/groups/index.html.py:104
+msgid "패스워드"
+msgstr ""
+
+#: templates/groups/index.html:76
+msgid "{% trans "
+msgstr ""
+
+#: templates/groups/index.html:105
+msgid "가입"
+msgstr ""
+
+#: templates/groups/list.html:16 templates/groups/list.html.py:74
+msgid "작성자"
+msgstr ""
+
+#: templates/groups/list.html:17 templates/groups/list.html.py:75
+msgid "내용"
+msgstr ""
+
+#: templates/groups/list.html:18 templates/groups/list.html.py:76
+msgid "작성시간"
+msgstr ""
+
+#: templates/groups/list.html:20 templates/groups/list.html.py:30
+#: templates/groups/list.html:78 templates/groups/list.html.py:88
+msgid "수정"
+msgstr ""
+
+#: templates/groups/list.html:41
+msgid "글이 없습니다."
+msgstr ""
+
+#: templates/groups/list.html:59
+msgid "글쓰기"
+msgstr ""
+
+#: templates/groups/list.html:59
+msgid "쓰고 싶은 말을 쓰세요."
+msgstr ""
+
+#: templates/groups/list.html:60
+msgid "쓰기"
+msgstr ""
+
+#: templates/timetable/index.html:18
+msgid "기계공학동"
+msgstr ""
+
+#: templates/timetable/index.html:19
+msgid "응용공학동"
+msgstr ""
+
+#: templates/timetable/index.html:20
+msgid "창의학습관"
+msgstr ""
+
+#: templates/timetable/index.html:21
+msgid "대학 1호관"
+msgstr ""
+
+#: templates/timetable/index.html:22
+msgid "대학 2호관"
+msgstr ""
+
+#: templates/timetable/index.html:23
+msgid "대학 3호관"
+msgstr ""
+
+#: templates/timetable/index.html:24
+msgid "자연과학동"
+msgstr ""
+
+#: templates/timetable/index.html:25
+msgid "정문술빌딩"
+msgstr ""
+
+#: templates/timetable/index.html:26
+msgid "산업경영동"
+msgstr ""
+
+#: templates/timetable/index.html:27
+msgid "의과학연구센터"
+msgstr ""
+
+#: templates/timetable/index.html:28
+msgid "정보전자동"
+msgstr ""
+
+#: templates/timetable/index.html:29
+msgid "궁리실험관"
+msgstr ""
+
+#: templates/timetable/index.html:54
+msgid "관심학과 설정"
+msgstr ""
+
+#: templates/timetable/index.html:56
+msgid "소속학과/관심학과"
+msgstr ""
+
+#: templates/timetable/index.html:73
+msgid "인문사회과학부"
+msgstr ""
+
+#: templates/timetable/index.html:76
+msgid "전체 목록"
+msgstr ""
+
+#: templates/timetable/index.html:77 templates/timetable/index.html.py:86
+msgid "전체보기"
+msgstr ""
+
+#: templates/timetable/index.html:84
+msgid "과목구분"
+msgstr ""
+
+#: templates/timetable/index.html:87
+msgid "기초필수"
+msgstr ""
+
+#: templates/timetable/index.html:88
+msgid "기초선택"
+msgstr ""
+
+#: templates/timetable/index.html:89
+msgid "전공필수"
+msgstr ""
+
+#: templates/timetable/index.html:90
+msgid "전공선택"
+msgstr ""
+
+#: templates/timetable/index.html:91
+msgid "교양필수"
+msgstr ""
+
+#: templates/timetable/index.html:92
+msgid "교양필수(체육)"
+msgstr ""
+
+#: templates/timetable/index.html:93
+msgid "교양선택"
+msgstr ""
+
+#: templates/timetable/index.html:94
+msgid "자유선택"
+msgstr ""
+
+#: templates/timetable/index.html:95
+msgid "공통필수"
+msgstr ""
+
+#: templates/timetable/index.html:96
+msgid "인문사회선택"
+msgstr ""
+
+#: templates/timetable/index.html:97
+msgid "선택(석/박사)"
+msgstr ""
+
+#: templates/timetable/index.html:98
+msgid "개별연구"
+msgstr ""
+
+#: templates/timetable/index.html:99
+msgid "졸업연구"
+msgstr ""
+
+#: templates/timetable/index.html:100
+msgid "세미나"
+msgstr ""
+
+#: templates/timetable/index.html:101
+msgid "논문세미나"
+msgstr ""
+
+#: templates/timetable/index.html:102
+msgid "현장실습및연구"
+msgstr ""
+
+#: templates/timetable/index.html:105
+msgid "※ 강의시간이 없는 과목들은 제외됩니다. (예: 졸업연구, 논문연구)"
+msgstr ""
+
+#: templates/timetable/index.html:124
+msgid "강의장소"
+msgstr ""
+
+#: templates/timetable/index.html:125
+msgid "시험시간"
+msgstr ""
+
+#: templates/timetable/index.html:126
+msgid "기타"
+msgstr ""
+
+#: templates/timetable/index.html:140
+msgid "과목코드"
+msgstr ""
+
+#: templates/timetable/index.html:141
+msgid "분반"
+msgstr ""
+
+#: templates/timetable/index.html:142
+msgid "과목명"
+msgstr ""
+
+#: templates/timetable/index.html:143
+msgid "교수님"
+msgstr ""
+
+#: templates/timetable/index.html:144
+msgid "강의"
+msgstr ""
+
+#: templates/timetable/index.html:145
+msgid "실험"
+msgstr ""
+
+#: templates/timetable/index.html:166
+msgid "안녕하세요. 이 서비스는 <strong>SPARCS</strong>에서 제공하고 있습니다."
+msgstr ""
+
+#: templates/timetable/index.html:177 templates/timetable/index.html.py:178
+#: templates/timetable/index.html:179
+msgid "시간표"
+msgstr ""
+
+#: templates/timetable/index.html:183
+msgid "초기화"
+msgstr ""
+
+#: templates/timetable/index.html:184
+msgid "인쇄"
+msgstr ""
+
+#: templates/timetable/index.html:191 templates/timetable/index.html.py:275
+msgid "월"
+msgstr ""
+
+#: templates/timetable/index.html:192 templates/timetable/index.html.py:279
+msgid "화"
+msgstr ""
+
+#: templates/timetable/index.html:193 templates/timetable/index.html.py:286
+msgid "수"
+msgstr ""
+
+#: templates/timetable/index.html:194 templates/timetable/index.html.py:293
+msgid "목"
+msgstr ""
+
+#: templates/timetable/index.html:195 templates/timetable/index.html.py:300
+msgid "금"
+msgstr ""
+
+#: templates/timetable/index.html:200
+msgid "오전 8시"
+msgstr ""
+
+#: templates/timetable/index.html:201
+msgid "오전 9시"
+msgstr ""
+
+#: templates/timetable/index.html:202
+msgid "오전 10시"
+msgstr ""
+
+#: templates/timetable/index.html:203
+msgid "오전 11시"
+msgstr ""
+
+#: templates/timetable/index.html:204
+msgid "오전 12시"
+msgstr ""
+
+#: templates/timetable/index.html:205
+msgid "오후 1시"
+msgstr ""
+
+#: templates/timetable/index.html:206
+msgid "오후 2시"
+msgstr ""
+
+#: templates/timetable/index.html:207
+msgid "오후 3시"
+msgstr ""
+
+#: templates/timetable/index.html:208
+msgid "오후 4시"
+msgstr ""
+
+#: templates/timetable/index.html:209
+msgid "오후 5시"
+msgstr ""
+
+#: templates/timetable/index.html:210
+msgid "오후 6시"
+msgstr ""
+
+#: templates/timetable/index.html:211
+msgid "오후 7시"
+msgstr ""
+
+#: templates/timetable/index.html:212
+msgid "오후 8시"
+msgstr ""
+
+#: templates/timetable/index.html:213
+msgid "오후 9시"
+msgstr ""
+
+#: templates/timetable/index.html:214
+msgid "오후 10시"
+msgstr ""
+
+#: templates/timetable/index.html:215
+msgid "오후 11시"
+msgstr ""
+
+#: templates/timetable/index.html:236
+msgid "강의실 장소"
+msgstr ""
+
+#: templates/timetable/index.html:240
+msgid "지도 데이터 준비중 입니다."
+msgstr ""
+
+#: templates/timetable/index.html:272
+msgid "시험시간표"
+msgstr ""
