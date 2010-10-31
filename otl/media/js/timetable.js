@@ -105,6 +105,7 @@ Mootabs.prototype.getTableId = function()
 
 var Utils = {
 	days: ['월','화','수','목','금'],
+	days_en: ['Mon.','Tue.','Wed.','Thu.','Fri.'],
 	modulecolors:
 		['#FFC7FE','#FFCECE','#DFE8F3','#D1E9FF','#D2F1EE','#FFEAD1','#E1D1FF','#FAFFC1','#D4FFC1','#DEDEDE','#BDBDBD'],
 	modulecolors_highlighted:
@@ -266,8 +267,10 @@ var LectureList = {
 	{
 		var dept = $(this.dept).val();
 		var classification = $(this.classf).val();
-		if (dept == '-1' && classification == '전체보기')
+		if (dept == '-1' && USER_LANGUAGE == 'ko-KR' && classification == '전체보기')
 			Notifier.setErrorMsg('학과 전체보기는 과목 구분을 선택한 상태에서만 가능합니다.');
+		else if (dept == '-1' && USER_LANGUAGE == 'en' && classification == 'ALL')
+			Notifier.setErrorMsg('You must select a course type if you want to see \'ALL\' departments');
 		else
 			this.filter({'dept':dept,'type':classification});
 	},
@@ -310,8 +313,9 @@ var LectureList = {
 	},
 	filter:function(conditions)
 	{
-		if (conditions.type == undefined)
+		if (conditions.type == undefined){
 			conditions.type = '전체보기';
+		}
 		if (conditions.year == undefined)
 			conditions.year = Data.NextYear;
 		if (conditions.term == undefined)
@@ -324,6 +328,8 @@ var LectureList = {
 			beforeSend: $.proxy(function() {
 				if (this.loading)
 					Notifier.showIndicator();
+				else if (USER_LANGUAGE == 'en')
+					Notifier.setLoadingMsg('Searching...');
 				else
 					Notifier.setLoadingMsg('검색 중입니다...');
 			}, this),
@@ -331,15 +337,26 @@ var LectureList = {
 				try {
 					if (resObj.length == 0) {
 						LectureList.clearList();
-						if (!this.loading)
-							Notifier.setErrorMsg('과목 정보를 찾지 못했습니다.');
+						if (!this.loading){
+							if (USER_LANGUAGE == 'en')
+								Notifier.setErrorMsg('We can\'t find course information.');
+							else
+								Notifier.setErrorMsg('과목 정보를 찾지 못했습니다.');
+							}
 					} else {
 						LectureList.addToListMultiple(resObj);
-						if (!this.loading)
-							Notifier.setMsg('검색 결과를 확인하세요.');
+						if (!this.loading){
+							if (USER_LANGUAGE == 'en')
+								Notifier.setErrorMsg('Check search results.');
+							else
+								Notifier.setMsg('검색 결과를 확인하세요.');
+							}
 					}
 				} catch(e) {
-					Notifier.setErrorMsg('오류가 발생하였습니다. ('+e.message+')');
+					if (USER_LANGUAGE == 'en')
+						Notifier.setErrorMsg('Error occurs. ('+e.message+')');
+					else
+						Notifier.setErrorMsg('오류가 발생하였습니다. ('+e.message+')');
 				}
 				if (this.loading)
 					Notifier.clearIndicator();
@@ -348,7 +365,10 @@ var LectureList = {
 			error: $.proxy(function(xhr) {
 				if (suppress_ajax_errors)
 					return;
-				Notifier.setErrorMsg('오류가 발생하였습니다. (요청 실패:'+xhr.status+')');
+				if (USER_LANGUAGE == 'en')
+					Notifier.setErrorMsg('Error occurs. (Request fails:'+xhr.status+')');
+				else
+					Notifier.setErrorMsg('오류가 발생하였습니다. (요청 실패:'+xhr.status+')');
 				this.loading = false;
 			}, this)
 		});
@@ -463,22 +483,42 @@ var RangeSearch = {
 			var startTime = cell.r1*30+480;
 			var endTime = cell.r2*30+510;
 			if (endTime - startTime == 30) {
-				Notifier.setMsg('드래그해서 1시간 이상의 영역을 선택하시면 보다 정확한 범위 검색을 하실 수 있습니다.');
+				if (USER_LANGUAGE == 'en')
+					Notifier.setMsg('If you select more than 1 hours, you can do more exact search in that range.'); 
+				else
+					Notifier.setMsg('드래그해서 1시간 이상의 영역을 선택하시면 보다 정확한 범위 검색을 하실 수 있습니다.');
 				return;
 			}
 
 			this.dragging=false;
 			$('#lecturelist-filter').css('display','none');
 			var dayRange = '';
-			if (startDay == endDay)
-				dayRange = Utils.days[startDay]+'요일';
+			if (startDay == endDay){
+				if (USER_LANGUAGE == 'en')
+					dayRange = Utils.days_en[startDay];
+				else
+					dayRange = Utils.days[startDay]+'요일';
+			}
+			else{
+				if (USER_LANGUAGE == 'en')
+					dayRange = 'From '+Utils.days_en[startDay]+' to '+Utils.days_en[endDay];
+				else
+					dayRange = Utils.days[startDay]+'요일부터 '+Utils.days[endDay]+'요일까지';
+			}
+			if (USER_LANGUAGE == 'en')
+				$('#lecturelist-range').html('<h4>Range search</h4><p>'+dayRange+'<br/>' + 
+					'From '+Utils.NumericTimeToReadable(startTime)+' to '+Utils.NumericTimeToReadable(endTime)+'</p>');
 			else
-				dayRange = Utils.days[startDay]+'요일부터 '+Utils.days[endDay]+'요일까지';
-			$('#lecturelist-range').html('<h4>범위 검색</h4><p>'+dayRange+'<br/>' + 
-				Utils.NumericTimeToReadable(startTime)+'부터 '+Utils.NumericTimeToReadable(endTime)+'까지</p>');
+				$('#lecturelist-range').html('<h4>범위 검색</h4><p>'+dayRange+'<br/>' + 
+					Utils.NumericTimeToReadable(startTime)+'부터 '+Utils.NumericTimeToReadable(endTime)+'까지</p>');
 
+			var buttonMessage='';
+			if (USER_LANGUAGE == 'en')
+				buttonMessage = 'Return to dept./type search';
+			else
+				buttonMessage = '학과/구분 검색으로 돌아가기';
 			$('<button>')
-			.text('학과/구분 검색으로 돌아가기')
+			.text(buttonMessage)
 			.click(function() {
 				$('#lecturelist-filter').css('display','block');
 				$('#lecturelist-range').empty();
@@ -557,7 +597,10 @@ var Timetable = {
 		});
 		Timetable.tabs.updateData();
 		if (have_deleted) {
-			Notifier.setErrorMsg('추가하신 과목 중 <strong>'+deleted_list+'</strong>이(가) 폐강되었습니다.');
+			if (USER_LANGUAGE == 'en')
+				Notifier.setErrorMsg('<strong>'+deleted_list+'</strong>, enrolled in your list, is cancelled.');
+			else
+				Notifier.setErrorMsg('추가하신 과목 중 <strong>'+deleted_list+'</strong>이(가) 폐강되었습니다.');
 		}
 	},
 	registerHandlers:function()
@@ -583,7 +626,10 @@ var Timetable = {
 			dataType: 'json',
 			beforeSend: function(xhr)
 			{
-				Notifier.setLoadingMsg('추가하는 중입니다...');
+				if (USER_LANGUAGE == 'en')
+					Notifier.setLoadingMsg('Adding...');
+				else
+					Notifier.setLoadingMsg('추가하는 중입니다...');
 			},
 			success: $.proxy(function(resObj)
 			{
@@ -592,37 +638,60 @@ var Timetable = {
 						Timetable.update(resObj);
 						this.overlap.stop(true,true).animate({'opacity':0}, 200, 'linear');
 						
-						Notifier.setMsg('<strong>'+obj.title+'</strong> 추가 되었습니다');
+						if (USER_LANGUAGE == 'en')
+							Notifier.setMsg('<strong>'+obj.title+'</strong> has been added.');
+						else
+							Notifier.setMsg('<strong>'+obj.title+'</strong> 추가 되었습니다');
 					} else {
 						var msg;
 						switch(resObj.result)
 						{
 							case 'NOT_EXIST':
-								msg='강의가 존재하지 않습니다.' ;
+								if (USER_LANGUAGE == 'en')
+									msg='The course does NOT exist.';
+								else
+									msg='강의가 존재하지 않습니다.' ;
 								break;
 							case 'OVERLAPPED':
 							case 'DUPLICATED':
-								msg='강의 시간이 겹칩니다.';
+								if (USER_LANGUAGE == 'en')
+									msg='The class time is overlapped.';
+								else
+									msg='강의 시간이 겹칩니다.';
 								break;
 							case 'ERROR':
 							default:
-								msg = '기타 오류입니다.';
+								if (USER_LANGUAGE == 'en')
+									msg = 'Error';
+								else
+									msg = '기타 오류입니다.';
 								break;
 						}
 						Notifier.setErrorMsg(msg);
 					}
 				}
 				catch(e) {
-					Notifier.setErrorMsg('오류가 발생하였습니다. ('+e.message+')');
+					if (USER_LANGUAGE == 'en')
+						Notifier.setErrorMsg('Error occurs. ('+e.message+')');
+					else
+						Notifier.setErrorMsg('오류가 발생하였습니다. ('+e.message+')');
 				}
 			}, this),
 			error: function(xhr) {
 				if (suppress_ajax_errors)
 					return;
-				if (xhr.status == 403)
-					Notifier.setErrorMsg('로그인해야 합니다.');
-				else
-					Notifier.setErrorMsg('오류가 발생하였습니다. (요청 실패:'+xhr.status+')');
+				if (xhr.status == 403){
+					if (USER_LANGUAGE == 'en')
+						Notifier.setErrorMsg('You must get logged in.');
+					else
+						Notifier.setErrorMsg('로그인해야 합니다.');
+				}
+				else{
+					if (USER_LANGUAGE == 'en')
+						Notifier.setErrorMsg('Error occurs. (Request fails:'+xhr.status+')');
+					else
+						Notifier.setErrorMsg('오류가 발생하였습니다. (요청 실패:'+xhr.status+')');
+				}
 			}
 		});
 	},
@@ -632,15 +701,27 @@ var Timetable = {
 		var confirmMsg,sendData,successMsg, table_id = Timetable.tabs.getTableId();
 		if (obj==null) 
 		{
-			confirmMsg='현재 예비 시간표를 초기화 하겠습니까?';
+			if (USER_LANGUAGE == 'en')
+				confirmMsg='Do you want to initialize the current timetable?';
+			else
+				confirmMsg='현재 예비 시간표를 초기화 하겠습니까?';
 			sendData={'table_id':table_id};
-			successMsg = '예비 시간표가 <strong>초기화</strong> 되었습니다';
+			if (USER_LANGUAGE == 'en')
+				successMsg = 'The timetable has been <strong>initialized</strong>.'; 
+			else
+				successMsg = '예비 시간표가 <strong>초기화</strong> 되었습니다';
 		}
 		else
 		{
-			confirmMsg='"'+obj.title+'" 예비 시간표에서 삭제 하시겠습니까?';
+			if (USER_LANGUAGE == 'en')
+				confirmMsg='Do you want to delete "'+obj.title+'"?';
+			else
+				confirmMsg='"'+obj.title+'" 예비 시간표에서 삭제 하시겠습니까?';
 			sendData={'table_id':table_id, 'lecture_id':obj.id};
-			successMsg='<strong>'+obj.title+'</strong> 삭제 되었습니다';
+			if (USER_LANGUAGE == 'en')
+				successMsg='<strong>'+obj.title+'</strong> has been deleted.';
+			else
+				successMsg='<strong>'+obj.title+'</strong> 삭제 되었습니다';
 		}
 
 		if(confirm(confirmMsg))
@@ -651,7 +732,10 @@ var Timetable = {
 				data: sendData,
 				dataType: 'json',
 				beforeSend: function() {
-					Notifier.setLoadingMsg('삭제하는 중입니다...');
+					if (USER_LANGUAGE == 'en')
+						Notifier.setLoadingMsg('Deleting...');
+					else
+						Notifier.setLoadingMsg('삭제하는 중입니다...');
 				},
 				success: function(resObj)
 				{
@@ -662,19 +746,31 @@ var Timetable = {
 							Notifier.setMsg(successMsg);
 							break;
 						case 'NOT_EXIST':
-							Notifier.setErrorMsg('해당 강의가 추가되어 있지 않습니다.');
+							if (USER_LANGUAGE == 'en')
+								Notifier.setErrorMsg('That lecture is not in your list.');
+							else
+								Notifier.setErrorMsg('해당 강의가 추가되어 있지 않습니다.');
 							break;
 						default:
-							Notifier.setErrorMsg('기타 오류입니다.');
+							if (USER_LANGUAGE == 'en')
+								Notifier.setErrorMsg('Error.');
+							else
+								Notifier.setErrorMsg('기타 오류입니다.');
 						}
 					} catch(e) {
-						Notifier.setErrorMsg('오류가 발생하였습니다. ('+e.message+')');
+						if (USER_LANGUAGE == 'en')
+							Notifier.setErrorMsg('Error occurs. ('+e.message+')');
+						else 
+							Notifier.setErrorMsg('오류가 발생하였습니다. ('+e.message+')');
 					}
 				},
 				error: function(xhr) {
 					if (suppress_ajax_errors)
 						return;
-					Notifier.setErrorMsg('오류가 발생하였습니다. (요청 실패:'+xhr.status+')');
+					if (USER_LANGUAGE == 'en')
+						Notifier.setErrorMsg('Error occurs. (Request fails:'+xhr.status+')');
+					else
+						Notifier.setErrorMsg('오류가 발생하였습니다. (요청 실패:'+xhr.status+')');
 				}
 			});
 		}

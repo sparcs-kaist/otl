@@ -4,24 +4,29 @@
 	<link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}table.css" />
 	<link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}timetable.css" />
 	<!--[if lte IE 6]><link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}timetable.ie6.css" /><![endif]-->
+	<script type="text/javascript">
+	//<![CDATA[
+	var USER_LANGUAGE = "{{lang}}";
+	//]]>
+	</script>
 	<script type="text/javascript" src="{{MEDIA_URL}}js/timetable.js?v=1269108490"></script>
 	<script type="text/javascript">
 	//<![CDATA[
 	$(document).ready(function() {
 		Data.Map = 
 		[
-			{code:'N7',name:'기계공학동', x:227,y:247},
-			{code:'W1',name:'응용공학동', x:217,y:515},
-			{code:'E11',name:'창의학습관', x:368,y:356},
-			{code:'N4',name:'대학 1호관', x:432,y:251},
-			{code:'N5',name:'대학 2호관', x:517,y:243},
-			{code:'N8',name:'대학 3호관', x:435,y:231},
-			{code:'E6',name:'자연과학동', x:474,y:391},
-			{code:'E16',name:'정문술빌딩', x:367,y:313},
-			{code:'E2',name:'산업경영동', x:405,y:495},
-			{code:'E7',name:'의과학연구센터', x:529,y:369},
-			{code:'E3',name:'정보전자동', x:494,y:446},
-			{code:'E6-5',name:'궁리실험관', x:422,y:373}
+		{code:'N7',name:'{% trans "기계공학동" %}', x:227,y:247},
+		{code:'W1',name:'{% trans "응용공학동" %}', x:217,y:515},
+			{code:'E11',name:'{% trans "창의학습관" %}', x:368,y:356},
+			{code:'N4',name:'{% trans "대학 1호관" %}', x:432,y:251},
+			{code:'N5',name:'{% trans "대학 2호관" %}', x:517,y:243},
+			{code:'N8',name:'{% trans "대학 3호관" %}', x:435,y:231},
+			{code:'E6',name:'{% trans "자연과학동" %}', x:474,y:391},
+			{code:'E16',name:'{% trans "정문술빌딩" %}', x:367,y:313},
+			{code:'E2',name:'{% trans "산업경영동" %}', x:405,y:495},
+			{code:'E7',name:'{% trans "의과학연구센터" %}', x:529,y:369},
+			{code:'E3',name:'{% trans "정보전자동" %}', x:494,y:446},
+			{code:'E6-5',name:'{% trans "궁리실험관" %}', x:422,y:373}
 		];
 
 		Data.Lectures = []; // Initialized via ajax calls after page loading.
@@ -46,50 +51,58 @@
 		<div style="margin-bottom:10px">
 			<div id="lecturelist-range"></div>
 			<div id="lecturelist-filter">
-				<label>학과&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-size:11px">(<a href="/accounts/myinfo/">관심학과 설정</a>)</span></label>
+				<label>{% trans "학과" %}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-size:11px">(<a href="/accounts/myinfo/">{% trans "관심학과 설정"%}</a>)</span></label>
 				<select id="department" style="width:100%">
-					<optgroup label="소속학과/관심학과">
+					<optgroup label="{% trans "소속학과/관심학과" %}">
 						{% if user.is_authenticated and not user.is_superuser %}
 						{% ifnotequal user.userprofile.department.id 10000 %}
-						<option value="{{ user.userprofile.department.id }}">{{ user.userprofile.department.name }}</option>
+						{% ifequal lang "ko" %}
+							<option value="{{ user.userprofile.department.id }}">{{ user.userprofile.department.name }}</option>
+						{% else %}
+							<option value="{{ user.userprofile.department.id }}">{{ user.userprofile.department.name_en }}</option>
+						{% endifequal %}
 						{% endifnotequal %}
 						{% for item in user.userprofile.favorite_departments.all %}
-						<option value="{{ item.id }}">{{ item.name }}</option>
+							{% ifequal lang "ko" %}
+								<option value="{{ item.id }}">{{ item.name }}</option>
+							{% else %}
+								<option value="{{ item.id }}">{{ item.name_en }}</option>
+							{% endifequal %}
 						{% endfor %}
 						{% else %}
-						<option value="2044">인문사회과학부</option>
+						<option value="2044">{% trans "인문사회과학부" %}</option>
 						{% endif %}
 					</optgroup>
-					<optgroup label="전체 목록">
-						<option value="-1">전체보기</option>
+					<optgroup label="{% trans "전체 목록" %}">
+						<option value="-1">{% trans "전체보기" %}</option>
 						{% for item in departments %}{# Firefox에서는 사용자가 선택한 form 값을 자동 저장하여 새로고침했을 때 아래의 selected 속성이 무시되는 문제가 있음. #}
-						<option value="{{ item.id }}"{% ifequal item.id 2044 %} selected="selected"{% endifequal %}>{{ item.name }}</option>
+						<option value="{{ item.id }}"{% ifequal item.id 2044 %} selected="selected"{% endifequal %}>{% ifequal lang "ko" %}{{ item.name }}{% else %}{% ifequal item.name_en None %}{{ item.name }}{% else %}{{ item.name_en }}{% endifequal %}{% endifequal %}</option>
 						{% endfor %}
 					</optgroup>
 				</select>
 				<br />
-				<label>과목구분</label>
+				<label>{% trans "과목구분" %}</label>
 				<select id="classification" style="width:100%">
-					<option>전체보기</option>
-					<option>기초필수</option>
-					<option>기초선택</option>
-					<option>전공필수</option>
-					<option>전공선택</option>
-					<option>교양필수</option>
-					<option>교양필수(체육)</option>
-					<option>교양선택</option>
-					<option>자유선택</option>
-					<option>공통필수</option>
-					<option>인문사회선택</option>
-					<option>선택(석/박사)</option>
-					<option>개별연구</option>
-					<option>졸업연구</option>
-					<option>세미나</option>
-					<option>논문세미나</option>
-					<option>현장실습및연구</option>
+					<option value="전체보기">{% trans "전체보기" %}</option>
+					<option value="기초필수">{% trans "기초필수" %}</option>
+					<option value="기초선택">{% trans "기초선택" %}</option>
+					<option value="전공필수">{% trans "전공필수" %}</option>
+					<option value="전공선택">{% trans "전공선택" %}</option>
+					<option value="교양필수">{% trans "교양필수" %}</option>
+					<option value="교양필수(체육)">{% trans "교양필수(체육)" %}</option>
+					<option value="교양선택">{% trans "교양선택" %}</option>
+					<option value="자유선택">{% trans "자유선택" %}</option>
+					<option value="공통필수">{% trans "공통필수" %}</option>
+					<option value="인문사회선택">{% trans "인문사회선택" %}</option>
+					<option value="선택(석/박사)">{% trans "선택(석/박사)" %}</option>
+					<option value="개별연구">{% trans "개별연구" %}</option>
+					<option value="졸업연구">{% trans "졸업연구" %}</option>
+					<option value="세미나">{% trans "세미나" %}</option>
+					<option value="논문세미나">{% trans "논문세미나" %}</option>
+					<option value="현장실습및연구">{% trans "현장실습및연구" %}</option>
 				</select>
 			</div>
-			<div id="lecturelist-notice">※ 강의시간이 없는 과목들은 제외됩니다. (예: 졸업연구, 논문연구)</div>
+			<div id="lecturelist-notice">{% trans "※ 강의시간이 없는 과목들은 제외됩니다. (예: 졸업연구, 논문연구)" %}</div>
 		</div>
 		<div id="lecture_container">
 			<div class="left" style="width:15%;padding:0;margin:0;">
@@ -108,9 +121,9 @@
 			<table class="lecture-info">
 				<thead>
 					<tr>
-						<th>강의장소</th>
-						<th>시험시간</th>
-						<th class="end">기타</th>
+						<th>{% trans "강의장소" %}</th>
+						<th>{% trans "시험시간" %}</th>
+						<th class="end">{% trans "기타" %}</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -124,13 +137,13 @@
 			<table class="lecture-info">
 				<thead>
 					<tr>
-						<th>과목코드</th>
-						<th>분반</th>
-						<th>과목명</th>
-						<th>교수님</th>
-						<th>강의</th>
-						<th>실험</th>
-						<th class="end">학점</th>
+						<th>{% trans "과목코드" %}</th>
+						<th>{% trans "분반" %}</th>
+						<th>{% trans "과목명" %}</th>
+						<th>{% trans "교수님" %}</th>
+						<th>{% trans "강의" %}</th>
+						<th>{% trans "실험" %}</th>
+						<th class="end">{% trans "학점" %}</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -150,7 +163,7 @@
 			<div class="left" id="indicator"></div>
 			<div class="left" id="message-wrap">
 				<div class="br"><div class="bl">
-						<div id="message">안녕하세요. 이 서비스는 <strong>SPARCS</strong>에서 제공하고 있습니다.</div>
+						<div id="message">{% trans "안녕하세요. 이 서비스는 <strong>SPARCS</strong>에서 제공하고 있습니다." %}</div>
 				</div></div>
 			</div>
 			<div class="clear"></div>
@@ -158,48 +171,48 @@
 		<div id="timetable_menu">
 			<div class="left">
 				<div class="left">
-					{{next_year}}년 {{next_semester|term2str}}학기
+					{{next_year}}{% trans "년" %} {{next_semester|term2str}}{% trans "학기" %}
 				</div>
 				<div id="timetable_tabs">
-					<div class="timetable_tab active"><a>시간표 1</a></div>
-					<div class="timetable_tab"><a>시간표 2</a></div>
-					<div class="timetable_tab"><a>시간표 3</a></div>
+					<div class="timetable_tab active"><a>{% trans "시간표" %} 1</a></div>
+					<div class="timetable_tab"><a>{% trans "시간표" %} 2</a></div>
+					<div class="timetable_tab"><a>{% trans "시간표" %} 3</a></div>
 				</div>
 			</div>
 			<div class="right">
-				<a id="action-cleanTable" style="cursor:pointer">초기화</a> |
-				<a id="action-print" href="/timetable/print/">인쇄</a>
+				<a id="action-cleanTable" style="cursor:pointer">{% trans "초기화" %}</a> |
+				<a id="action-print" href="/timetable/print/">{% trans "인쇄" %}</a>
 			</div>
 			&nbsp;
 		</div>
 		<div id="timetable">
 		<div id="timetable-wrap">
 			<div id="colheaders">
-				<div class="chead"><span>월</span></div>
-				<div class="chead"><span>화</span></div>
-				<div class="chead"><span>수</span></div>
-				<div class="chead"><span>목</span></div>
-				<div class="chead"><span>금</span></div>
+				<div class="chead"><span>{% trans "월" %}</span></div>
+				<div class="chead"><span>{% trans "화" %}</span></div>
+				<div class="chead"><span>{% trans "수" %}</span></div>
+				<div class="chead"><span>{% trans "목" %}</span></div>
+				<div class="chead"><span>{% trans "금" %}</span></div>
 				<div id="col_hd_sel"></div>
 			</div>
 			<div id="tablebody">
 				<div id="rowheaders">
-					<div class="rhead"><span class="rheadtext">오전 8시</span></div>
-					<div class="rhead"><span class="rheadtext">오전 9시</span></div>
-					<div class="rhead"><span class="rheadtext">오전 10시</span></div>
-					<div class="rhead"><span class="rheadtext">오전 11시</span></div>
-					<div class="rhead"><span class="rheadtext">오전 12시</span></div>
-					<div class="rhead"><span class="rheadtext">오후 1시</span></div>
-					<div class="rhead"><span class="rheadtext">오후 2시</span></div>
-					<div class="rhead"><span class="rheadtext">오후 3시</span></div>
-					<div class="rhead"><span class="rheadtext">오후 4시</span></div>
-					<div class="rhead"><span class="rheadtext">오후 5시</span></div>
-					<div class="rhead"><span class="rheadtext">오후 6시</span></div>
-					<div class="rhead"><span class="rheadtext">오후 7시</span></div>
-					<div class="rhead"><span class="rheadtext">오후 8시</span></div>
-					<div class="rhead"><span class="rheadtext">오후 9시</span></div>
-					<div class="rhead"><span class="rheadtext">오후 10시</span></div>
-					<div class="rhead"><span class="rheadtext">오후 11시</span></div>
+					<div class="rhead"><span class="rheadtext">{% trans "오전 8시" %}</span></div>
+					<div class="rhead"><span class="rheadtext">{% trans "오전 9시" %}</span></div>
+					<div class="rhead"><span class="rheadtext">{% trans "오전 10시" %}</span></div>
+					<div class="rhead"><span class="rheadtext">{% trans "오전 11시" %}</span></div>
+					<div class="rhead"><span class="rheadtext">{% trans "오전 12시" %}</span></div>
+					<div class="rhead"><span class="rheadtext">{% trans "오후 1시" %}</span></div>
+					<div class="rhead"><span class="rheadtext">{% trans "오후 2시" %}</span></div>
+					<div class="rhead"><span class="rheadtext">{% trans "오후 3시" %}</span></div>
+					<div class="rhead"><span class="rheadtext">{% trans "오후 4시" %}</span></div>
+					<div class="rhead"><span class="rheadtext">{% trans "오후 5시" %}</span></div>
+					<div class="rhead"><span class="rheadtext">{% trans "오후 6시" %}</span></div>
+					<div class="rhead"><span class="rheadtext">{% trans "오후 7시" %}</span></div>
+					<div class="rhead"><span class="rheadtext">{% trans "오후 8시" %}</span></div>
+					<div class="rhead"><span class="rheadtext">{% trans "오후 9시" %}</span></div>
+					<div class="rhead"><span class="rheadtext">{% trans "오후 10시" %}</span></div>
+					<div class="rhead"><span class="rheadtext">{% trans "오후 11시" %}</span></div>
 					<div id="row_hd_sel"></div>
 				</div>
 				<div id="grid-wrap">
@@ -220,11 +233,11 @@
 	</div><!--center-->
 	<div id="right-side">
 		<div id="map" style="margin-bottom:10px"> 
-			<h4>강의실 장소</h4>
+			<h4>{% trans "강의실 장소" %}</h4>
 			<div id="map-wrap">
 				<div id="map-drag-container">
 					<div id="dragmap">
-						<div id="map-text"><span id="map-name">지도 데이터 준비중 입니다.</span><div id="map-arrow"></div></div>
+						<div id="map-text"><span id="map-name">{% trans "지도 데이터 준비중 입니다." %}</span><div id="map-arrow"></div></div>
 					</div>
 				</div>
 			</div>
@@ -232,7 +245,7 @@
 		<div id="info">
 			<table cellspacing="0" cellpadding="0" border="0">
 				<tr>
-					<th style="width:50%">학점</th>
+					<th style="width:50%">{% trans "학점" %}</th>
 					<th>AU</th>
 				</tr>
 				<tr>
@@ -256,35 +269,35 @@
 					<col class="examtime" />
 				</colgroup>
 				<tr>
-					<th colspan="2">시험시간표</th>
+					<th colspan="2">{% trans "시험시간표" %}</th>
 				</tr>
 				<tr>
-					<td>월</td>
+					<td>{% trans "월" %}</td>
 					<td class="end"><span id="examtime1"></span><span id="add_examtime1" class="blue"></span></td>
 				</tr>
 				<tr class="even">
-					<td>화</td>
+					<td>{% trans "화" %}</td>
 					<td class="end">
 						<span id="examtime2"></span>
 						<span id="add_examtime2" class="blue"></span>
 					</td>
 				</tr>
 				<tr>
-					<td>수</td>
+					<td>{% trans "수" %}</td>
 					<td class="end">
 						<span id="examtime3"></span>
 						<span id="add_examtime3" class="blue"></span>
 					</td>
 				</tr>
 				<tr class="even">
-					<td>목</td>
+					<td>{% trans "목" %}</td>
 					<td class="end">
 						<span id="examtime4"></span>
 						<span id="add_examtime4" class="blue"></span>
 					</td>
 				</tr>
 				<tr>
-					<td>금</td>
+					<td>{% trans "금" %}</td>
 					<td class="end">
 						<span id="examtime5"></span>
 						<span id="add_examtime5" class="blue"></span>

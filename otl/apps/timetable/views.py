@@ -25,7 +25,7 @@ def index(request):
 
     # Read the current user's timetable.
     if request.user.is_authenticated():
-        my_lectures = [_lectures_to_output(Lecture.objects.filter(year=settings.NEXT_YEAR, semester=settings.NEXT_SEMESTER, timetable__user=request.user, timetable__table_id=id), False) for id in xrange(0,3)]
+        my_lectures = [_lectures_to_output(Lecture.objects.filter(year=settings.NEXT_YEAR, semester=settings.NEXT_SEMESTER, timetable__user=request.user, timetable__table_id=id), False, request.session.get('django_language', 'ko')) for id in xrange(0,3)]
     else:
         my_lectures = [[], [], []]
     if settings.DEBUG:
@@ -43,6 +43,7 @@ def index(request):
         'title': u'모의시간표',
         'departments': Department.objects.filter(visible=True).order_by('name'),
         'my_lectures': my_lectures_output,
+        'lang' : request.session.get('django_language', 'ko'),
     }, context_instance=RequestContext(request))
 
 def search(request):
@@ -55,7 +56,7 @@ def search(request):
         cache_key = 'timetable-search-cache:' + ':'.join(['%s=%s' % (key, value) for key, value in q.iteritems()])
         output = cache.get(cache_key)
         if output is None:
-            output = _lectures_to_output(_search(**q))
+            output = _lectures_to_output(_search(**q), True, request.session.get('django_language', 'ko'))
             cache.set(cache_key, output, 3600)
         return HttpResponse(output)
     except ValidationError:
@@ -91,7 +92,7 @@ def add_to_timetable(request):
 
     return HttpResponse(json.dumps({
         'result': result,
-        'data': _lectures_to_output(lectures, False),
+        'data': _lectures_to_output(lectures, False, request.session.get('django_language', 'ko')),
     }, ensure_ascii=False, indent=4))
 
 @login_required_ajax
@@ -117,7 +118,7 @@ def delete_from_timetable(request):
 
     return HttpResponse(json.dumps({
         'result': result,
-        'data': _lectures_to_output(lectures, False),
+        'data': _lectures_to_output(lectures, False, request.session.get('django_language', 'ko')),
     }, ensure_ascii=False, indent=4))
 
 @login_required_ajax
@@ -136,11 +137,17 @@ def view_timetable(request):
 
     return HttpResponse(json.dumps({
         'result': result,
-        'data': _lectures_to_output(lectures, False),
+        'data': _lectures_to_output(lectures, False, request.session.get('django_language', 'ko')),
     }, ensure_ascii=False, indent=4))
 
 
 # -- Private functions --
+
+def _trans(ko_message, en_message, lang):
+    if en_message == None or lang == 'ko':
+        return ko_message
+    else:
+        return en_message
 
 def _search(**conditions):
     department = conditions.get('dept', None)
@@ -182,7 +189,7 @@ def _search(**conditions):
 
     return lectures.filter(deleted=False).order_by('type', 'code').distinct().select_related()
 
-def _lectures_to_output(lectures, conv_to_json=True):
+def _lectures_to_output(lectures, conv_to_json=True, lang='ko'):
     all = []
     if not isinstance(lectures, list):
         lectures = lectures.select_related()
@@ -199,12 +206,12 @@ def _lectures_to_output(lectures, conv_to_json=True):
             'id': lecture.id,
             'year': lecture.year,
             'term': lecture.semester,
-            'dept': lecture.department.name,
-            'classification': lecture.type,
+            'dept': _trans(lecture.department.name, lecture.department.name_en, lang),
+            'classification': _trans(lecture.type, lecture.type_en, lang),
             'course_no': lecture.old_code,
             'class': lecture.class_no,
             'code': lecture.code,
-            'title': lecture.title,
+            'title': _trans(lecture.title, lecture.title_en, lang),
             'lec_time': lecture.num_classes,
             'lab_time': lecture.num_labs,
             'credit': lecture.credit,
@@ -212,9 +219,9 @@ def _lectures_to_output(lectures, conv_to_json=True):
             'fixed_num': lecture.limit,
             'classroom': room,
             'deleted': lecture.deleted,
-            'prof': lecture.professor,
+            'prof': _trans(lecture.professor, lecture.professor_en, lang),
             'times': classtimes,
-            'remarks': u'영어강의' if lecture.is_english else u'',
+            'remarks': _trans(u'영어강의', 'English', lang) if lecture.is_english else u'',
             'examtime': {'day': exam.day, 'start': exam.get_begin_numeric(), 'end': exam.get_end_numeric()} if exam != None else None,
         }
         all.append(item)
