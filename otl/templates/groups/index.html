@@ -8,19 +8,19 @@ function CheckNull(form)
 {
 	if(form.gname.value.length==0)
 	{
-		alert("조 이름을 작성해주세요. EX) CS408 SPARCS OTL 팀");
+		alert("{% trans "조 이름을 작성해주세요. EX) CS408 SPARCS OTL 팀" %}");
 		form.gname.focus();
 		return false;
 	}
 	else if(form.passwd.value.length==0)
 	{
-		alert("암호를 작성해주세요.");
+		alert("{% trans "암호를 작성해주세요." %}");
 		form.passwd.focus();
 		return false;
 	}
 	else if(form.comment.value.length==0)
 	{
-		alert("comment를 작성해주세요. EX) OTL 많이 이용해주세요~");
+		alert("{% trans "comment를 작성해주세요. EX) OTL 많이 이용해주세요~" %});
 		form.comment.focus();
 		return false;
 	}
@@ -31,9 +31,9 @@ function CheckNull(form)
 
 {% endblock %}
 {% block content %}
-<h2>조모임 ({{current_year}}년 {{current_semester|term2str}}학기)</h2>
+<h2>{% trans "조모임" %} ({{current_year}}{% trans "년"} {{current_semester|term2str}}{% trans "학기" %})</h2>
 <div id="myGroups">
-	<h3>내가 가입한 조모임</h3>
+	<h3>{% trans "내가 가입한 조모임" %}</h3>
 	{% if user.is_authenticated %}
 		{% if group_list %}
 		<ul>
@@ -41,39 +41,39 @@ function CheckNull(form)
 			<li>
 			<h4>{{item.group_name}}: {{item.comment}}</h4>
 			<a class="group_link" href="/groups/list/?id={{item.id}}">{{item.group_name}}</a>
-			<a class="control-withdraw" href="/groups/withdraw/{{item.id}}">탈퇴</a>
+			<a class="control-withdraw" href="/groups/withdraw/{{item.id}}">{% trans "탈퇴" %}</a>
 			</li>
 		{% endfor %}
 		</ul>
 		{% else %}
-			<p>등록한 조모임이 없습니다. </p>
+			<p>{% trans "등록한 조모임이 없습니다." %}</p>
 		{% endif %}
 	{% else %}
-		<p>로그인하지 않았습니다. :)</p>
+		<p>{% trans "로그인하지 않았습니다. :)" %}</p>
 	{% endif %}
 </div>
 <div id="publicGroups">
-	<h3>다른 조모임</h3>
-	<a href="/groups/morelist">더보기</a>
+	<h3>{% trans "다른 조모임" %}</h3>
+	<a href="/groups/morelist">{% trans "더보기" %}</a>
 	<form id="create-form" method="post" onSubmit="return CheckNull(this);" action="/groups/create/">
 		<div id="create-group">
-			조모임 생성 : 
-			group name : <input type="text" id="groupname" name="gname" value="" size="15" maxlength="60"/>
-			password : <input type="password" id="passwd" name="passwd" value="" size="8" maxlength="32"/>
-			comment : <input type="text" id="comment" name="comment" value="" size="30" maxlength="100"/>
-			<input id="create-form" type="submit" value="생성" />
+			{% trans "조모임 생성" %} : 
+			{% trans "조모임 이름" %} : <input type="text" id="groupname" name="gname" value="" size="15" maxlength="60"/>
+			{% trans "비밀번호" %} : <input type="password" id="passwd" name="passwd" value="" size="8" maxlength="32"/>
+			{% trans "코멘트" %} : <input type="text" id="comment" name="comment" value="" size="30" maxlength="100"/>
+			<input id="create-form" type="submit" value="{% trans "생성" %}" />
 		</div>
 	</form>
 	<ul>
 		{% for item in recently_added_list %}
 		<li>
 		<h4><a href="/groups/list/?id={{item.id}}">{{item.group_name}}: {{item.comment}}</a></h4>
-		만든이 : <a href="/accounts/view/{{item.maker.username}}">{{item.maker.username}}</a>
+		{% trans "만든이" %} : <a href="/accounts/view/{{item.maker.username}}">{{item.maker.username}}</a>
 			<a class="control-join" href="#Join" onClick="$('#joinform{{item.id}}').toggle();">Join</a>
 			<form id="joinform{{item.id}}" method="post" style="display:none" action="/groups/join/{{item.id}}">
 				<div id="join_group" >
-					password : <input type="password" id="passwd" name="passwd" value="" size="5" maxlength="32"/>
-					<input id="join-form" type="submit" value="가입" />
+					{% trans "패스워드" %} : <input type="password" id="passwd" name="passwd" value="" size="5" maxlength="32"/>
+					<input id="join-form" type="submit" value="{% trans "{% trans "가입" %}" %}" />
 				</div>
 			</form>
 		</li>
@@ -91,24 +91,24 @@ function CheckNull(form)
 		{% endif %}
 	</div>
 	<form id="search-form" method="get" action="/groups/search/">
-	<p><label for="search-query">검색 : </label><input type="text" id="search-query" name="query" /><input type="submit" value="Find" /></p>
+	<p><label for="search-query">{% trans "검색" %} : </label><input type="text" id="search-query" name="query" /><input type="submit" value="Find" /></p>
 			{% if search_list %}
 				{% for item in search_list %}
 				<li>
 				<h4>{{item.year}} {{item.semester}} {{item.group_name}}: {{item.comment}}</h4>
 					<a class="search-link" href="/group/list/?id={{item.id}}">{{item.group_name}}</a>
-					<span class="submitter">올린이 : <a href="/accounts/view/{{item.maker.username}}">{{item.maker.username}}</a></span>
+					<span class="submitter">{% trans "올린이" %} : <a href="/accounts/view/{{item.maker.username}}">{{item.maker.username}}</a></span>
 					<a class="search-join" href="#" onClick="$('#searchjoinform{{item.id}}').toggle();" >Join</a>
 					<form id="searchjoinform{{item.id}}" method="post" style="display:none" action="/groups/join/{{item.id}}">
 						<div id="join_group" >
-							password : <input type="password" id="passwd" name="passwd" value="" size="5" maxlength="32"/>
-							<input id="join-form" type="submit" value="가입" />
+							{% trans "패스워드" %} : <input type="password" id="passwd" name="passwd" value="" size="5" maxlength="32"/>
+							<input id="join-form" type="submit" value="{% trans "가입" %}" />
 						</div>
 					</form>
 				</li>
 				{% endfor%}
 			{% else %}
-				<p>검색 결과가 없습니다.</p>
+				<p>{% trans "검색 결과가 없습니다." %}</p>
 			{% endif %}
 			<div class="search-pages">
 			{% if search_page.has_previous %}

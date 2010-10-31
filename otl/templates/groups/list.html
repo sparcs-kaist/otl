@@ -4,7 +4,7 @@
 {% endblock %}
 {% block content %}
 <a href="/groups/list/?id={{group_id}}">
-<h2>조모임 : {{current_group.group_name}}: {{current_group.comment}}</h2>
+<h2>{% trans "조모임" %} : {{current_group.group_name}}: {{current_group.comment}}</h2>
 </a>
 
 
@@ -13,11 +13,11 @@
 <table id="article-list" class="article-list" style="table-layout:fixed">
 	<thead>
 		<tr height=25px>
-			<th class ="author">작성자</th>
-			<th class ="tag">내용</th>
-			<th class ="date">작성시간</th>
-			<th class ="delete">삭제</th>
-			<th class ="modify">수정</th>
+			<th class ="author">{% trans "작성자" %}</th>
+			<th class ="tag">{% trans "내용" %}</th>
+			<th class ="date">{% trans "작성시간" %}</th>
+			<th class ="delete">{% trans "삭제" %}</th>
+			<th class ="modify">{% trans "수정" %}</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -27,7 +27,7 @@
 			<td class="tag" style="word-break:break-all">{{item.tag}}
 				<form id="modifyform{{item.id}}" method="post" style="display:none" action="/groups/list/modify/?id={{item.group.id}}&num={{item.id}}">
 					<div id="article-modify{{item.id}}" ><textarea id="modify" name="modify" cols="65" rows="5" >{{item.tag}}</textarea>
-						<input id ="article-modify" type="submit" value="수정"/>
+						<input id ="article-modify" type="submit" value="{% trans "수정" %}"/>
 					</div>
 				</form>
 			</td>
@@ -38,7 +38,7 @@
 	</tbody>
 </table>
 	{% else %}
-		<p>글이 없습니다. </p>
+		<p>{% trans "글이 없습니다." %}</p>
 	{% endif %}
 	<div class="list-pages">
 		{% if current_page.has_previous %}
@@ -52,30 +52,30 @@
 		{% endif %}
 	</div>
 {% else %}
-	<p>로그인하지 않았습니다. :)</p>
+	<p>{% trans "로그인하지 않았습니다. :)" %}</p>
 {% endif %}
 <div id="writearticle" >
 	<form id="write-form" method="post" action="/groups/list/write/{{current_group.id}}">
-		<p><label for="write-article">글쓰기 : <textarea id="write-article" name="article" cols="10" rows="5" onfocus="this.value=''">쓰고 싶은 말을 쓰세요.</textarea>
-			<input type="submit" value="쓰기" /></p>
+		<p><label for="write-article">{% trans "글쓰기" %} : <textarea id="write-article" name="article" cols="10" rows="5" onfocus="this.value=''">{% trans "쓰고 싶은 말을 쓰세요." %}</textarea>
+			<input type="submit" value="{% trans "쓰기" %}" /></p>
 
 	</form>
 </div>
 <div id ="search-form">
 	<form id="search-form" method="post" action="/groups/list/search/?id={{current_group.id}}">
-		<p><label for="search-query">검색 : </label><input type="text" id="search-query" name="query" />
-		<input type="submit" value="검색"/></p>
+		<p><label for="search-query">{% trans "검색" %} : </label><input type="text" id="search-query" name="query" />
+		<input type="submit" value="{% trans "검색" %}"/></p>
 	</form>
 </div>
 	{% if search_list %}
 	<table id="search" class="search-list">
 		<thead>
 			<tr>
-				<th class = "author">작성자</th>
-				<th class = "tag">내용</th>
-				<th class = "date">작성시간</th>
-				<th class = "delete">삭제</th>
-				<th class = "modify">수정</th>
+				<th class = "author">{% trans "작성자" %}</th>
+				<th class = "tag">{% trans "내용" %}</th>
+				<th class = "date">{% trans "작성시간" %}</th>
+				<th class = "delete">{% trans "삭제" %}</th>
+				<th class = "modify">{% trans "수정" %}</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -85,7 +85,7 @@
 					<td class = "tag">{{item.tag}}
 						<form id="searchmodifyform{{item.id}}" method="post" style="display:none" action="/groups/list/modify/?id={{item.group.id}}&num={{item.id}}">
 							<div id="article-modify{{item.id}}" ><input type="text" id="modify" name="modify" />
-								<input id ="article-modify" type="submit" value="수정"/>
+								<input id ="article-modify" type="submit" value="{% trans "수정" %}"/>
 							</div>
 						</form>
 					</td>
@@ -97,7 +97,7 @@
 		</tbody>
 	</table>
 	{% else %}
-		<p>검색 결과가 없습니다.</p>
+		<p>{% trans "검색 결과가 없습니다." %}</p>
 	{% endif %}
 			<div class="search-pages">
 			{% if search_page.has_previous %}
