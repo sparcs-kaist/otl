@@ -15,6 +15,9 @@ from otl.apps.accounts.models import Department
 from otl.apps.timetable.models import Lecture
 from otl.apps.dictionary.models import *
 
+from django import template
+template.add_to_builtins('django.templatetags.i18n')
+
 def index(request):
     departments = Department.objects.all()
     return render_to_response('dictionary/index.html', {

@@ -15,6 +15,9 @@ from otl.apps.accounts.forms import LoginForm, ProfileForm
 from otl.apps.common import *
 import base64, hashlib, time, random, urllib, re
 
+from django import template
+template.add_to_builtins('django.templatetags.i18n')
+
 def login(request):
 
     num_users = cache_with_default('stat.num_users', lambda: User.objects.count() - 1, 60)

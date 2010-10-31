@@ -13,6 +13,9 @@ from otl.apps.common import *
 import time
 import md5
 
+from django import template
+template.add_to_builtins('django.templatetags.i18n')
+
 NUM_PER_PAGE = 10
 RECENTLY_PER_PAGE = 3
 

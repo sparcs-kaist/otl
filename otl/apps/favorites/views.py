@@ -12,6 +12,9 @@ from otl.apps.common import *
 from otl.utils.decorators import login_required_ajax
 import time
 
+from django import template
+template.add_to_builtins('django.templatetags.i18n')
+
 NUM_PER_PAGE = 10
 RECENTLY_PER_PAGE=3
 

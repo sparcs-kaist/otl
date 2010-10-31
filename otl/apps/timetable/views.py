@@ -18,6 +18,9 @@ from otl.apps.accounts.models import Department
 from otl.apps.timetable.models import Lecture, ExamTime, ClassTime, Syllabus, Timetable, OverlappingTimeError
 from StringIO import StringIO
 
+from django import template
+template.add_to_builtins('django.templatetags.i18n')
+
 def index(request):
 
     # Read the current user's timetable.

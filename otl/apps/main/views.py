@@ -2,6 +2,9 @@
 from django.template import RequestContext
 from django.shortcuts import render_to_response
 
+from django import template
+template.add_to_builtins('django.templatetags.i18n')
+
 def home(request):
     return render_to_response('main.html', {
         'title': 'OTL Project',
