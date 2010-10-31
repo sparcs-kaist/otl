@@ -13,7 +13,7 @@ $(document).ready(function() {
 {% block content %}
 {% if msg %}<div class="msg{% if error %} error{% endif %}">{{ msg }}</div>{% endif %}
 <div id="login-form-container">
-<p><strong>OTL</strong>은 <a href="http://sparcs.kaist.ac.kr">SPARCS</a>에서 제공하는 수강 지원 서비스입니다.</p>
+	<p><strong>OTL</strong>{% trans "은 " %}<a href="http://sparcs.kaist.ac.kr">SPARCS</a>{% trans "에서 제공하는 수강 지원 서비스입니다." %}</p>
 <div style="float:right">
 	{% if error %}
 	<img src="{{MEDIA_URL}}images/bg_login_failed.jpg" width="300" height="323" alt="Don't Panic!" />
@@ -22,20 +22,20 @@ $(document).ready(function() {
 	{% endif %}
 </div>
 <form action="/login/{% if next %}?next={{next|iriencode}}{% endif %}" id="login-form" method="post">
-<p>KAIST Portal ID로 로그인하세요.</p>
+	<p>{% trans "KAIST Portal ID로 로그인하세요." %}</p>
 <table>
 	{% print_form_as_table form_login %}
 	<tr><td colspan="2"><input type="submit" value="Log In" /></td></tr>
 </table>
 </form>
 <div id="service-info">
-	<p>OTL 서비스는</p>
+	<p>{% trans "OTL 서비스는" %}</p>
 	<ul>
-		<li>현재 <strong>{{num_users}}</strong>명의 사용자가 이용하고 있습니다.</li>
-		<li>총 <strong>{{num_lectures}}</strong>개의 과목 정보를 제공하고 있습니다.</li>
-		<li>현재 <strong>{{num_favorites}}</strong>개의 과목 즐겨찾기가 등록되어 있습니다.</li>
-		<li>현재 <strong>{{num_schedules}}</strong>개의 일정을 관리하고 있습니다.</li>
-		<li>현재 <strong>{{num_groups}}</strong>개의 조모임 보드가 활동 중입니다.</li>
+		<li>{% trans "현재 " %}<strong>{{num_users}}</strong>{% trans "명의 사용자가 이용하고 있습니다." %}</li>
+		<li>{% trans "총 " %} <strong>{{num_lectures}}</strong>{% trans "개의 과목 정보를 제공하고 있습니다." %}</li>
+		<li>{% trans "현재 " %}<strong>{{num_favorites}}</strong>{% trans "개의 과목 즐겨찾기가 등록되어 있습니다." %}</li>
+		<li>{% trans "현재 " %}<strong>{{num_schedules}}</strong>{% trans "개의 일정을 관리하고 있습니다." %}</li>
+		<li>{% trans "현재 " %}<strong>{{num_groups}}</strong>{% trans "개의 조모임 보드가 활동 중입니다." %}</li>
 	</ul>
 </div>
 <div class="clear"></div>
