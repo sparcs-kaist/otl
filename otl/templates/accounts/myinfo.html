@@ -3,15 +3,15 @@
 <link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}accounts.css" />
 {% endblock %}
 {% block content %}
-	<h2>내 계정 정보</h2>
+	<h2>{% trans "내 계정 정보" %}</h2>
 	{% if msg %}<div class="msg{% if error %} error{% endif %}">{{msg}}</div>{% endif %}
 	<ul id="myinfo">
-		<li>Portal ID: {{user.username}}</li>
-		<li>학번: {{user_profile.student_id}}</li>
-		<li>학과: {{user_profile.department.name}}</li>
+		<li>{% trans "Portal ID" %}: {{user.username}}</li>
+		<li>{% trans "학번" %}: {{user_profile.student_id}}</li>
+		<li>{% trans "학과" %}: {{department}}</li>
 	</ul>
 	<form id="account-modify" method="post" action="/accounts/myinfo/">
-		<p><span class="help">참고 : 비밀번호는 Portal에서 변경하셔야 합니다.</span></p>
+		<p><span class="help">{% trans "참고 : 비밀번호는 Portal에서 변경하셔야 합니다." %}</span></p>
 		{% for field in form_profile %}
 		<p>
 			{{field.errors}}
@@ -20,8 +20,7 @@
 			{% if field.help_text %}<br/><span class="help">{{field.help_text}}{% endif %}</span>
 		</p>
 		{% endfor %}
-		<p>※ Multilingual service will be provided later. :)</p>
-		<p><input type="submit" value="변경하기" /></p>
+		<p><input type="submit" value="{% trans "변경하기" %}" /></p>
 	</form>
 	<div class="clear"></div>
 {% endblock %}

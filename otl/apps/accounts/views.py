@@ -184,8 +184,10 @@ def myinfo(request):
         'title': u'내 계정',
         'form_profile': f,
         'user_profile': profile,
+        'department': profile.department.name if profile.department.name_en == None or request.session.get('django_language', 'ko') == 'ko' else profile.department.name_en,
         'error': error,
         'msg': msg,
+        'lang' : request.session.get('django_language', 'ko'),
     }, context_instance=RequestContext(request))
 
 def view(request, user_id):
@@ -193,7 +195,7 @@ def view(request, user_id):
         search = UserProfile.objects.filter(user__username__exact = user_id)
         if search:
             search_user = search[0]
-            department = search_user.department.name
+            department = search_user.department.name if search_user.department.name_en == None or request.session.get('django_language', 'ko') == 'ko' else search_user.department.name_en
             first_name = search_user.user.first_name
             last_name = search_user.user.last_name
             return render_to_response('accounts/view.html', {
