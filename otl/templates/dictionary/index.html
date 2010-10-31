@@ -62,13 +62,13 @@ function CheckNull(form)
 {
 	if(form.name.value.length==0)
 	{
-		alert("내용을 작성해주세요. ex) CS408 전산학 프로젝트");
+		alert("{% trans "내용을 작성해주세요. ex) CS408 전산학 프로젝트" %}");
 		form.name.focus();
 		return false;
 	}
 	else if(form.url.value.length==0)
 	{
-		alert("과목 홈페이지를 작성해주세요. ex) http://otl.kaist.ac.kr");
+		alert("{% trans "과목 홈페이지를 작성해주세요. ex) http://otl.kaist.ac.kr" %}");
 		form.url.focus();
 		return false;
 	}
@@ -79,7 +79,7 @@ function CheckNull(form)
 
 {% endblock %}
 {% block content %}
-<h2>과목 정보</h2>
+<h2>{% trans "과목 정보" %}</h2>
 <ul>
     {% for dept in departments %}
     <li>
