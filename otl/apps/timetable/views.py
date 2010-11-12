@@ -21,6 +21,8 @@ from StringIO import StringIO
 from django import template
 template.add_to_builtins('django.templatetags.i18n')
 
+from django.utils.translation import ugettext
+
 def index(request):
 
     # Read the current user's timetable.
@@ -40,7 +42,7 @@ def index(request):
 
     return render_to_response('timetable/index.html', {
         'section': 'timetable',
-        'title': u'모의시간표',
+        'title': ugettext(u'모의시간표'),
         'departments': Department.objects.filter(visible=True).order_by('name'),
         'my_lectures': my_lectures_output,
         'lang' : request.session.get('django_language', 'ko'),
@@ -169,11 +171,11 @@ def _search(**conditions):
             if day_end < 6:
                 day_end += 1
             time_end = 0
-        if department == u'-1' and type == u'전체보기':
+        if department == u'-1' and type == ugettext(u'전체보기'):
             raise ValidationError()
         if department != None and department != u'-1':
             lectures = lectures.filter(department__id__exact=int(department))
-        if type != None and type != u'전체보기':
+        if type != None and type != ugettext(u'전체보기'):
             lectures = lectures.filter(type__exact=type)
         if day_begin != None and day_end != None and time_begin != None and time_end != None:
             if day_begin == day_end:
@@ -221,7 +223,7 @@ def _lectures_to_output(lectures, conv_to_json=True, lang='ko'):
             'deleted': lecture.deleted,
             'prof': _trans(lecture.professor, lecture.professor_en, lang),
             'times': classtimes,
-            'remarks': _trans(u'영어강의', 'English', lang) if lecture.is_english else u'',
+            'remarks': ugettext(u'영어강의') if lecture.is_english else u'',
             'examtime': {'day': exam.day, 'start': exam.get_begin_numeric(), 'end': exam.get_end_numeric()} if exam != None else None,
         }
         all.append(item)

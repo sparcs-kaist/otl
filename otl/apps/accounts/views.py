@@ -18,6 +18,8 @@ import base64, hashlib, time, random, urllib, re
 from django import template
 template.add_to_builtins('django.templatetags.i18n')
 
+from django.utils.translation import ugettext
+
 def login(request):
 
     num_users = cache_with_default('stat.num_users', lambda: User.objects.count() - 1, 60)
@@ -35,9 +37,9 @@ def login(request):
             if not f.is_valid():
                 return render_to_response('login.html', {
                     'form_login': f,
-                    'title': u'로그인',
+                    'title': ugettext(u'로그인'),
                     'error': True,
-                    'msg': u'아이디/비밀번호를 모두 적어야 합니다.',
+                    'msg': ugettext(u'아이디/비밀번호를 모두 적어야 합니다.'),
                     'next': next_url,
                     'num_users': num_users,
                     'num_lectures': num_lectures,
@@ -54,9 +56,9 @@ def login(request):
             if user is None: # Login Failed
                 return render_to_response('login.html', {
                     'form_login': f,
-                    'title': u'로그인',
+                    'title': ugettext(u'로그인'),
                     'error': True,
-                    'msg': u'로그인에 실패하였습니다.',
+                    'msg': ugettext(u'로그인에 실패하였습니다.'),
                     'next': next_url,
                     'num_users': num_users,
                     'num_lectures': num_lectures,
@@ -73,7 +75,7 @@ def login(request):
                     # First Login
                     return render_to_response('login_agreement.html', {
                         'username': user.username,
-                        'title': u'로그인',
+                        'title': ugettext(u'로그인'),
                         'kuser_info': user.kuser_info,
                         'form_profile': ProfileForm(),
                         'next': next_url,
@@ -137,12 +139,12 @@ def login(request):
                 auth.login(request, user)
                 return HttpResponseRedirect(next_url)
             else:
-                return HttpResponseNotAllowed(u'개인정보 활용에 동의하셔야 서비스를 이용하실 수 있습니다. 죄송합니다.')
+                return HttpResponseNotAllowed(ugettext(u'개인정보 활용에 동의하셔야 서비스를 이용하실 수 있습니다. 죄송합니다.'))
 
     else:
         # Show login form for GET requests
         return render_to_response('login.html', {
-            'title': u'로그인',
+            'title': ugettext(u'로그인'),
             'form_login': LoginForm(),
             'next': next_url,
             'num_users': num_users,
@@ -167,11 +169,11 @@ def myinfo(request):
             profile.language = f.cleaned_data['language']
             profile.favorite_departments = f.cleaned_data['favorite_departments']
             profile.save()
-            msg = u'사용자 정보가 변경되었습니다.'
+            msg = ugettext(u'사용자 정보가 변경되었습니다.')
             request.session['django_language'] = profile.language[:2]
             return HttpResponseRedirect('/accounts/myinfo/')
         else:
-            msg = u'올바르지 않은 입력입니다.'
+            msg = ugettext(u'올바르지 않은 입력입니다.')
             error = True
     else:
         # View my account information
@@ -181,7 +183,7 @@ def myinfo(request):
         })
         msg = u''
     return render_to_response('accounts/myinfo.html', {
-        'title': u'내 계정',
+        'title': ugettext(u'내 계정'),
         'form_profile': f,
         'user_profile': profile,
         'department': profile.department.name if profile.department.name_en == None or request.session.get('django_language', 'ko') == 'ko' else profile.department.name_en,
@@ -199,7 +201,7 @@ def view(request, user_id):
             first_name = search_user.user.first_name
             last_name = search_user.user.last_name
             return render_to_response('accounts/view.html', {
-                'title': u'다른 사람 정보 보기',
+                'title': ugettext(u'다른 사람 정보 보기'),
                 'department': department,
                 'fname': first_name,
                 'lname': last_name,

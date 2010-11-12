@@ -18,11 +18,13 @@ from otl.apps.dictionary.models import *
 from django import template
 template.add_to_builtins('django.templatetags.i18n')
 
+from django.utils.translation import ugettext
+
 def index(request):
     departments = Department.objects.all()
     return render_to_response('dictionary/index.html', {
         'section' : 'dictionary',
-        'title' : u'과목 사전',
+        'title' : ugettext(u'과목 사전'),
         'departments' : departments
     }, context_instance=RequestContext(request))
 
@@ -31,7 +33,7 @@ def department(request, department_id):
     courses = Course.objects.filter(department=dept)
     return render_to_response('dictionary/department.html', {
 	'section' : 'dictionary',
-	'title' : u'과목 사전',
+	'title' : ugettext(u'과목 사전'),
 	'dept' : dept,
 	'courses' : courses }, context_instance=RequestContext(request))
 
@@ -67,7 +69,7 @@ def view(request, course_code):
     comments = CourseComment.objects.filter(course=course)
     return render_to_response('dictionary/view.html', {
 	    'section' : 'dictionary',
-    	'title' : u'과목 사전',
+    	'title' : ugettext(u'과목 사전'),
     	'course' : course,
         'comments' : comments
     }, context_instance=RequestContext(request))

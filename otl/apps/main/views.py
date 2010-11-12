@@ -5,6 +5,8 @@ from django.shortcuts import render_to_response, HttpResponseRedirect
 from django import template
 template.add_to_builtins('django.templatetags.i18n')
 
+from django.utils.translation import ugettext
+
 def home(request):
     return render_to_response('main.html', {
         'title': 'OTL Project',
@@ -14,7 +16,7 @@ def home(request):
 
 def about(request):
     return render_to_response('about.html', {
-        'title': u'만든 사람들',
+        'title': ugettext(u'만든 사람들'),
         'section': u'info',
     }, context_instance=RequestContext(request))
 

@@ -15,6 +15,8 @@ import time
 from django import template
 template.add_to_builtins('django.templatetags.i18n')
 
+from django.utils.translation import ugettext
+
 NUM_PER_PAGE = 10
 RECENTLY_PER_PAGE=3
 
@@ -24,7 +26,7 @@ def index(request):
 
     return render_to_response('favorites/index.html', {
         'section': 'favorites',
-        'title': u'과목 즐겨찾기',
+        'title': ugettext(u'과목 즐겨찾기'),
         'recently_added_list': courselink_pages,
     }, context_instance=RequestContext(request))
 
@@ -41,7 +43,7 @@ def search(request):
     current_search_page = search_list.page(search_page)
     return render_to_response('favorites/index.html', {
         'section': 'favorites',
-        'title': u'과목 즐겨찾기',
+        'title': ugettext(u'과목 즐겨찾기'),
         'search_code': search_code,
         'favorite_list': favorite_list,
         'recently_added_list': courselink_pages,
@@ -93,7 +95,7 @@ def morelist(request):
     
     return render_to_response('favorites/index.html', {
         'section': 'favorites',
-        'title': u'과목 즐겨찾기',
+        'title': ugettext(u'과목 즐겨찾기'),
         'favorite_list': favorite_list,
         'recently_added_list': current_page.object_list,
         'current_page': current_page,
