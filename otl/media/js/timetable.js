@@ -267,6 +267,7 @@ var LectureList = {
 	{
 		var dept = $(this.dept).val();
 		var classification = $(this.classf).val();
+		//TODO: classification을 언어와 상관 없도록 고쳐야 함
 		if (dept == '-1' && USER_LANGUAGE == 'ko-KR' && classification == '전체보기')
 			Notifier.setErrorMsg('학과 전체보기는 과목 구분을 선택한 상태에서만 가능합니다.');
 		else if (dept == '-1' && USER_LANGUAGE == 'en' && classification == 'ALL')
@@ -313,6 +314,7 @@ var LectureList = {
 	},
 	filter:function(conditions)
 	{
+		//TODO: conditions.type와 상관 없도록 고쳐야 함
 		if (conditions.type == undefined){
 			conditions.type = '전체보기';
 		}
@@ -328,35 +330,22 @@ var LectureList = {
 			beforeSend: $.proxy(function() {
 				if (this.loading)
 					Notifier.showIndicator();
-				else if (USER_LANGUAGE == 'en')
-					Notifier.setLoadingMsg('Searching...');
 				else
-					Notifier.setLoadingMsg('검색 중입니다...');
+					Notifier.setLoadingMsg(gettext('검색 중입니다...'));
 			}, this),
 			success: $.proxy(function(resObj) {
 				try {
 					if (resObj.length == 0) {
 						LectureList.clearList();
-						if (!this.loading){
-							if (USER_LANGUAGE == 'en')
-								Notifier.setErrorMsg('We can\'t find course information.');
-							else
-								Notifier.setErrorMsg('과목 정보를 찾지 못했습니다.');
-							}
+						if (!this.loading)
+							Notifier.setErrorMsg(gettext('과목 정보를 찾지 못했습니다.'));
 					} else {
 						LectureList.addToListMultiple(resObj);
-						if (!this.loading){
-							if (USER_LANGUAGE == 'en')
-								Notifier.setErrorMsg('Check search results.');
-							else
-								Notifier.setMsg('검색 결과를 확인하세요.');
-							}
+						if (!this.loading)
+							Notifier.setMsg(gettext('검색 결과를 확인하세요.'));
 					}
 				} catch(e) {
-					if (USER_LANGUAGE == 'en')
-						Notifier.setErrorMsg('Error occurs. ('+e.message+')');
-					else
-						Notifier.setErrorMsg('오류가 발생하였습니다. ('+e.message+')');
+					Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+e.message+')');
 				}
 				if (this.loading)
 					Notifier.clearIndicator();
@@ -365,10 +354,7 @@ var LectureList = {
 			error: $.proxy(function(xhr) {
 				if (suppress_ajax_errors)
 					return;
-				if (USER_LANGUAGE == 'en')
-					Notifier.setErrorMsg('Error occurs. (Request fails:'+xhr.status+')');
-				else
-					Notifier.setErrorMsg('오류가 발생하였습니다. (요청 실패:'+xhr.status+')');
+				Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+gettext('요청 실패')+':'+xhr.status+')');
 				this.loading = false;
 			}, this)
 		});
@@ -483,10 +469,7 @@ var RangeSearch = {
 			var startTime = cell.r1*30+480;
 			var endTime = cell.r2*30+510;
 			if (endTime - startTime == 30) {
-				if (USER_LANGUAGE == 'en')
-					Notifier.setMsg('If you select more than 1 hours, you can do more exact search in that range.'); 
-				else
-					Notifier.setMsg('드래그해서 1시간 이상의 영역을 선택하시면 보다 정확한 범위 검색을 하실 수 있습니다.');
+				Notifier.setMsg(gettext('드래그해서 1시간 이상의 영역을 선택하시면 보다 정확한 범위 검색을 하실 수 있습니다.'));
 				return;
 			}
 
@@ -494,12 +477,14 @@ var RangeSearch = {
 			$('#lecturelist-filter').css('display','none');
 			var dayRange = '';
 			if (startDay == endDay){
+				//TODO: 요일표시를 어떻게 하면 좋을까... 부터 시작해서 여기가 지뢰밭이네
 				if (USER_LANGUAGE == 'en')
 					dayRange = Utils.days_en[startDay];
 				else
 					dayRange = Utils.days[startDay]+'요일';
 			}
 			else{
+				// TODO-check: js에서 맞는 문법인 지 잘 모르겠음
 				if (USER_LANGUAGE == 'en')
 					dayRange = 'From '+Utils.days_en[startDay]+' to '+Utils.days_en[endDay];
 				else
@@ -513,10 +498,7 @@ var RangeSearch = {
 					Utils.NumericTimeToReadable(startTime)+'부터 '+Utils.NumericTimeToReadable(endTime)+'까지</p>');
 
 			var buttonMessage='';
-			if (USER_LANGUAGE == 'en')
-				buttonMessage = 'Return to dept./type search';
-			else
-				buttonMessage = '학과/구분 검색으로 돌아가기';
+			buttonMessage = gettext('학과/구분 검색으로 돌아가기');
 			$('<button>')
 			.text(buttonMessage)
 			.click(function() {
@@ -626,10 +608,7 @@ var Timetable = {
 			dataType: 'json',
 			beforeSend: function(xhr)
 			{
-				if (USER_LANGUAGE == 'en')
-					Notifier.setLoadingMsg('Adding...');
-				else
-					Notifier.setLoadingMsg('추가하는 중입니다...');
+				Notifier.setLoadingMsg(gettext('추가하는 중입니다...'));
 			},
 			success: $.proxy(function(resObj)
 			{
@@ -638,59 +617,39 @@ var Timetable = {
 						Timetable.update(resObj);
 						this.overlap.stop(true,true).animate({'opacity':0}, 200, 'linear');
 						
-						if (USER_LANGUAGE == 'en')
-							Notifier.setMsg('<strong>'+obj.title+'</strong> has been added.');
-						else
-							Notifier.setMsg('<strong>'+obj.title+'</strong> 추가 되었습니다');
+
+						Notifier.setMsg('<strong>'+obj.title+'</strong> '+gettext('추가되었습니다.'));
 					} else {
 						var msg;
 						switch(resObj.result)
 						{
 							case 'NOT_EXIST':
-								if (USER_LANGUAGE == 'en')
-									msg='The course does NOT exist.';
-								else
-									msg='강의가 존재하지 않습니다.' ;
+								msg = gettext('강의가 존재하지 않습니다.');
 								break;
 							case 'OVERLAPPED':
 							case 'DUPLICATED':
-								if (USER_LANGUAGE == 'en')
-									msg='The class time is overlapped.';
-								else
-									msg='강의 시간이 겹칩니다.';
+								msg = gettext('강의 시간이 겹칩니다.');
 								break;
 							case 'ERROR':
 							default:
-								if (USER_LANGUAGE == 'en')
-									msg = 'Error';
-								else
-									msg = '기타 오류입니다.';
+								msg = gettext('기타 오류입니다.');
 								break;
 						}
 						Notifier.setErrorMsg(msg);
 					}
 				}
 				catch(e) {
-					if (USER_LANGUAGE == 'en')
-						Notifier.setErrorMsg('Error occurs. ('+e.message+')');
-					else
-						Notifier.setErrorMsg('오류가 발생하였습니다. ('+e.message+')');
+					Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+e.message+')');
 				}
 			}, this),
 			error: function(xhr) {
 				if (suppress_ajax_errors)
 					return;
 				if (xhr.status == 403){
-					if (USER_LANGUAGE == 'en')
-						Notifier.setErrorMsg('You must get logged in.');
-					else
-						Notifier.setErrorMsg('로그인해야 합니다.');
+					Notifier.setErrorMsg(gettext('로그인해야 합니다.'));
 				}
 				else{
-					if (USER_LANGUAGE == 'en')
-						Notifier.setErrorMsg('Error occurs. (Request fails:'+xhr.status+')');
-					else
-						Notifier.setErrorMsg('오류가 발생하였습니다. (요청 실패:'+xhr.status+')');
+					Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+gettext('요청 실패')+':'+xhr.status+')');
 				}
 			}
 		});
@@ -701,27 +660,19 @@ var Timetable = {
 		var confirmMsg,sendData,successMsg, table_id = Timetable.tabs.getTableId();
 		if (obj==null) 
 		{
-			if (USER_LANGUAGE == 'en')
-				confirmMsg='Do you want to initialize the current timetable?';
-			else
-				confirmMsg='현재 예비 시간표를 초기화 하겠습니까?';
+			confirmMsg = gettext('현재 예비 시간표를 초기화 하겠습니까?');
 			sendData={'table_id':table_id};
-			if (USER_LANGUAGE == 'en')
-				successMsg = 'The timetable has been <strong>initialized</strong>.'; 
-			else
-				successMsg = '예비 시간표가 <strong>초기화</strong> 되었습니다';
+			successMsg = gettext('예비 시간표가 <strong>초기화</strong> 되었습니다');
 		}
 		else
 		{
+			//TODO: interpolate 씌우기
 			if (USER_LANGUAGE == 'en')
 				confirmMsg='Do you want to delete "'+obj.title+'"?';
 			else
 				confirmMsg='"'+obj.title+'" 예비 시간표에서 삭제 하시겠습니까?';
 			sendData={'table_id':table_id, 'lecture_id':obj.id};
-			if (USER_LANGUAGE == 'en')
-				successMsg='<strong>'+obj.title+'</strong> has been deleted.';
-			else
-				successMsg='<strong>'+obj.title+'</strong> 삭제 되었습니다';
+			successMsg='<strong>'+obj.title+'</strong> '+gettext('삭제 되었습니다');
 		}
 
 		if(confirm(confirmMsg))
@@ -732,10 +683,7 @@ var Timetable = {
 				data: sendData,
 				dataType: 'json',
 				beforeSend: function() {
-					if (USER_LANGUAGE == 'en')
-						Notifier.setLoadingMsg('Deleting...');
-					else
-						Notifier.setLoadingMsg('삭제하는 중입니다...');
+					Notifier.setLoadingMsg(gettext('삭제하는 중입니다...'));
 				},
 				success: function(resObj)
 				{
@@ -746,31 +694,19 @@ var Timetable = {
 							Notifier.setMsg(successMsg);
 							break;
 						case 'NOT_EXIST':
-							if (USER_LANGUAGE == 'en')
-								Notifier.setErrorMsg('That lecture is not in your list.');
-							else
-								Notifier.setErrorMsg('해당 강의가 추가되어 있지 않습니다.');
+							Notifier.setErrorMsg(gettext('해당 강의가 추가되어 있지 않습니다.'));
 							break;
 						default:
-							if (USER_LANGUAGE == 'en')
-								Notifier.setErrorMsg('Error.');
-							else
-								Notifier.setErrorMsg('기타 오류입니다.');
+							Notifier.setErrorMsg(gettext('기타 오류입니다.'));
 						}
 					} catch(e) {
-						if (USER_LANGUAGE == 'en')
-							Notifier.setErrorMsg('Error occurs. ('+e.message+')');
-						else 
-							Notifier.setErrorMsg('오류가 발생하였습니다. ('+e.message+')');
+						Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+e.message+')');
 					}
 				},
 				error: function(xhr) {
 					if (suppress_ajax_errors)
 						return;
-					if (USER_LANGUAGE == 'en')
-						Notifier.setErrorMsg('Error occurs. (Request fails:'+xhr.status+')');
-					else
-						Notifier.setErrorMsg('오류가 발생하였습니다. (요청 실패:'+xhr.status+')');
+					Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+gettext('요청 실패')+':'+xhr.status+')');
 				}
 			});
 		}

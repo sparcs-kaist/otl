@@ -11,7 +11,7 @@ $(document).ready(function() {
 </script>
 {% endblock %}
 {% block content %}
-{% if msg %}<div class="msg{% if error %} error{% endif %}">{{ msg }}</div>{% endif %}
+{% if msg %}<div class="msg{% if error %} error{% endif %}">{% trans msg %}</div>{% endif %}
 <div id="login-form-container">
 	<p><strong>OTL</strong>{% trans "은 " %}<a href="http://sparcs.kaist.ac.kr">SPARCS</a>{% trans "에서 제공하는 수강 지원 서비스입니다." %}</p>
 <div style="float:right">

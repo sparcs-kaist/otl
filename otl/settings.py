@@ -97,6 +97,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.admin',
+    'otl',
     'otl.utils',
     'otl.apps.dictionary',
     'otl.apps.timetable',
@@ -126,7 +127,7 @@ SERVICE_STATUS = 'released'
 from datetime import date
 CURRENT_YEAR = 2009
 CURRENT_SEMESTER = 1
-NEXT_YEAR = 2010
+NEXT_YEAR = 2009
 NEXT_SEMESTER = 1
 SEMESTER_RANGES = {
     (2009,1): (date(2009,2,2), date(2009,5,22)),
