@@ -18,7 +18,7 @@ msgstr ""
 
 #: templates/404.html:8
 msgid "존재하지 않는 주소입니다. 주소를 다시 확인해보세요."
-msgstr ""
+msgstr "Non-existing address. Check the URL."
 
 #: templates/500.html:9
 msgid ""
@@ -143,11 +143,11 @@ msgstr ""
 
 #: templates/login_agreement.html:59
 msgid "예, 동의합니다."
-msgstr ""
+msgstr "Yes, I agree."
 
 #: templates/login_agreement.html:60
 msgid "아니오, 동의하지 않습니다."
-msgstr ""
+msgstr "No, I don't agree."
 
 #: templates/login_agreement.html:62
 msgid "추가로 다음의 정보가 필요합니다."
@@ -155,7 +155,7 @@ msgstr ""
 
 #: templates/login_agreement.html:66
 msgid "전송하기"
-msgstr ""
+msgstr "Send"
 
 #: templates/accounts/myinfo.html:6
 #, fuzzy
@@ -164,11 +164,11 @@ msgstr "My account"
 
 #: templates/accounts/myinfo.html:9
 msgid "Portal ID"
-msgstr ""
+msgstr "Portal ID"
 
 #: templates/accounts/myinfo.html:10
 msgid "학번"
-msgstr ""
+msgstr "Student No."
 
 #: templates/accounts/myinfo.html:11 templates/accounts/view.html:9
 #: templates/dictionary/view.html:87 templates/timetable/index.html:55
@@ -181,7 +181,7 @@ msgstr ""
 
 #: templates/accounts/myinfo.html:23
 msgid "변경하기"
-msgstr ""
+msgstr "Modify"
 
 #: templates/accounts/view.html:6
 msgid "다른 사람 계정 정보"
@@ -189,7 +189,7 @@ msgstr ""
 
 #: templates/accounts/view.html:8
 msgid "이름"
-msgstr ""
+msgstr "Name"
 
 #: templates/dictionary/department.html:65 templates/dictionary/index.html:65
 #: templates/dictionary/view.html:65 templates/favorites/index.html:65
@@ -357,11 +357,11 @@ msgstr ""
 #: templates/favorites/index.html:82 templates/groups/index.html:34
 #: templates/timetable/index.html:175
 msgid "년"
-msgstr ""
+msgstr "Year"
 
 #: templates/favorites/index.html:82 templates/timetable/index.html:175
 msgid "학기"
-msgstr ""
+msgstr "Semester"
 
 #: templates/favorites/index.html:91 templates/favorites/index.html.py:119
 #: templates/favorites/index.html:147
@@ -528,63 +528,63 @@ msgstr ""
 
 #: templates/timetable/index.html:19
 msgid "기계공학동"
-msgstr ""
+msgstr "Mechanical Engineering B/D"
 
 #: templates/timetable/index.html:20
 msgid "응용공학동"
-msgstr ""
+msgstr "Applied Engineering B/D"
 
 #: templates/timetable/index.html:21
 msgid "창의학습관"
-msgstr ""
+msgstr "Creative Learning B/D"
 
 #: templates/timetable/index.html:22
 msgid "대학 1호관"
-msgstr ""
+msgstr "School of Humanities & Social Science B/D"
 
 #: templates/timetable/index.html:23
 msgid "대학 2호관"
-msgstr ""
+msgstr "Basic Experiement & Research"
 
 #: templates/timetable/index.html:24
 msgid "대학 3호관"
-msgstr ""
+msgstr "Department of Industrial Design B/D"
 
 #: templates/timetable/index.html:25
 msgid "자연과학동"
-msgstr ""
+msgstr "Natural Science B/D"
 
 #: templates/timetable/index.html:26
 msgid "정문술빌딩"
-msgstr ""
+msgstr "ChungMoonsoul B/D"
 
 #: templates/timetable/index.html:27
 msgid "산업경영동"
-msgstr ""
+msgstr "Industral Engineering & Management B/D"
 
 #: templates/timetable/index.html:28
 msgid "의과학연구센터"
-msgstr ""
+msgstr "Biomedcal Research Center"
 
 #: templates/timetable/index.html:29
 msgid "정보전자동"
-msgstr ""
+msgstr "Information Science and Electronics B/D"
 
-#: templates/timetable/index.html:30
+#: templates/iimetable/index.html:30
 msgid "궁리실험관"
-msgstr ""
+msgstr "Gungri Silhumgwan"
 
 #: templates/timetable/index.html:55
 msgid "관심학과 설정"
-msgstr ""
+msgstr "Setting favorite depts."
 
 #: templates/timetable/index.html:57
 msgid "소속학과/관심학과"
-msgstr ""
+msgstr "My dept./favorite depts."
 
 #: templates/timetable/index.html:74
 msgid "인문사회과학부"
-msgstr ""
+msgstr "Department of Social Science"
 
 #: templates/timetable/index.html:77
 msgid "전체 목록"
@@ -668,31 +668,31 @@ msgstr ""
 
 #: templates/timetable/index.html:125
 msgid "강의장소"
-msgstr ""
+msgstr "Classroom"
 
 #: templates/timetable/index.html:126
 msgid "시험시간"
-msgstr ""
+msgstr "Exam Hours"
 
 #: templates/timetable/index.html:127
 msgid "기타"
-msgstr ""
+msgstr "etc."
 
 #: templates/timetable/index.html:141
 msgid "과목코드"
-msgstr ""
+msgstr "Course Nbr."
 
 #: templates/timetable/index.html:142
 msgid "분반"
-msgstr ""
+msgstr "Section"
 
 #: templates/timetable/index.html:143
 msgid "과목명"
-msgstr ""
+msgstr "Course Title"
 
 #: templates/timetable/index.html:144
 msgid "교수님"
-msgstr ""
+msgstr "Instruction"
 
 #: templates/timetable/index.html:145
 msgid "강의"
@@ -709,103 +709,103 @@ msgstr ""
 #: templates/timetable/index.html:178 templates/timetable/index.html.py:179
 #: templates/timetable/index.html:180
 msgid "시간표"
-msgstr ""
+msgstr "Timetable"
 
 #: templates/timetable/index.html:184
 msgid "초기화"
-msgstr ""
+msgstr "Init."
 
 #: templates/timetable/index.html:185
 msgid "인쇄"
-msgstr ""
+msgstr "Print"
 
 #: templates/timetable/index.html:192 templates/timetable/index.html.py:276
 msgid "월"
-msgstr ""
+msgstr "Mon."
 
 #: templates/timetable/index.html:193 templates/timetable/index.html.py:280
 msgid "화"
-msgstr ""
+msgstr "Tue."
 
 #: templates/timetable/index.html:194 templates/timetable/index.html.py:287
 msgid "수"
-msgstr ""
+msgstr "Wed."
 
 #: templates/timetable/index.html:195 templates/timetable/index.html.py:294
 msgid "목"
-msgstr ""
+msgstr "Thu."
 
 #: templates/timetable/index.html:196 templates/timetable/index.html.py:301
 msgid "금"
-msgstr ""
+msgstr "Fri."
 
 #: templates/timetable/index.html:201
 msgid "오전 8시"
-msgstr ""
+msgstr "8 AM"
 
 #: templates/timetable/index.html:202
 msgid "오전 9시"
-msgstr ""
+msgstr "9 AM"
 
 #: templates/timetable/index.html:203
 msgid "오전 10시"
-msgstr ""
+msgstr "10 AM"
 
 #: templates/timetable/index.html:204
 msgid "오전 11시"
-msgstr ""
+msgstr "11 AM"
 
 #: templates/timetable/index.html:205
-msgid "오전 12시"
-msgstr ""
+msgid "오후 12시"
+msgstr "12 PM"
 
 #: templates/timetable/index.html:206
 msgid "오후 1시"
-msgstr ""
+msgstr "1 PM"
 
 #: templates/timetable/index.html:207
 msgid "오후 2시"
-msgstr ""
+msgstr "2 PM"
 
 #: templates/timetable/index.html:208
 msgid "오후 3시"
-msgstr ""
+msgstr "3 PM"
 
 #: templates/timetable/index.html:209
 msgid "오후 4시"
-msgstr ""
+msgstr "4 PM"
 
 #: templates/timetable/index.html:210
 msgid "오후 5시"
-msgstr ""
+msgstr "5 PM"
 
 #: templates/timetable/index.html:211
 msgid "오후 6시"
-msgstr ""
+msgstr "6 PM"
 
 #: templates/timetable/index.html:212
 msgid "오후 7시"
-msgstr ""
+msgstr "7 PM"
 
 #: templates/timetable/index.html:213
 msgid "오후 8시"
-msgstr ""
+msgstr "8 PM"
 
 #: templates/timetable/index.html:214
 msgid "오후 9시"
-msgstr ""
+msgstr "9 PM"
 
 #: templates/timetable/index.html:215
 msgid "오후 10시"
-msgstr ""
+msgstr "10 PM"
 
 #: templates/timetable/index.html:216
 msgid "오후 11시"
-msgstr ""
+msgstr "11 PM"
 
 #: templates/timetable/index.html:237
 msgid "강의실 장소"
-msgstr ""
+msgstr "Classroom"
 
 #: templates/timetable/index.html:241
 msgid "지도 데이터 준비중 입니다."
@@ -813,7 +813,7 @@ msgstr ""
 
 #: templates/timetable/index.html:273
 msgid "시험시간표"
-msgstr ""
+msgstr "Exam timetable"
 
 #~ msgid "과목 정보를 찾지 못했습니다."
 #~ msgstr "Cannot find course information."

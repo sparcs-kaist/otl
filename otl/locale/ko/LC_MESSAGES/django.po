@@ -740,7 +740,7 @@ msgid "오전 11시"
 msgstr ""
 
 #: templates/timetable/index.html:204
-msgid "오전 12시"
+msgid "오후 12시"
 msgstr ""
 
 #: templates/timetable/index.html:205
