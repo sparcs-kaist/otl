@@ -33,6 +33,7 @@ Data.Lectures =
 */
 
 var NUM_ITEMS_PER_LIST = 15;
+var NUMBER_OF_TABS = 3;
 var Data = {};
 var Mootabs = function(tabContainer, contents, trigerEvent, useAsTimetable)
 	{
@@ -66,7 +67,7 @@ Mootabs.prototype.updateData = function()
 			$('#total_au').text(Data.Timetables[this.activeKey].au);
 			$('total_credit').highlight('#FFFF00');
 			$('total_au').highlight('#FFFF00');
-			$('#action-print').attr('href', '/timetable/print/?id=' + this.activeKey);
+			$('#action-print').attr('href', '/timetable/print/?id=' + this.activeKey + '&view_year=' + Data.ViewYear + '&view_semester=' + Data.ViewTerm);
 		}
 	};
 Mootabs.prototype.activate = function(key)
@@ -85,6 +86,10 @@ Mootabs.prototype.activate = function(key)
 		});
 		this.activeKey = key;
 		this.updateData();
+	};
+Mootabs.prototype.cleanTab = function(key)
+	{
+		$(this.contents[key]).empty();
 	};
 Mootabs.prototype.cleanActiveTab = function()
 	{
@@ -319,9 +324,9 @@ var LectureList = {
 			conditions.type = '전체보기';
 		}
 		if (conditions.year == undefined)
-			conditions.year = Data.NextYear;
+			conditions.year = Data.ViewYear;
 		if (conditions.term == undefined)
-			conditions.term = Data.NextTerm;
+			conditions.term = Data.ViewTerm;
 		$.ajax({
 			type: 'GET',
 			url: '/timetable/search/',
@@ -604,7 +609,7 @@ var Timetable = {
 		$.ajax({
 			type: 'GET', 
 			url: '/timetable/add/',
-			data: {'table_id':table_id, 'lecture_id':lecture_id},
+			data: {'table_id':table_id, 'lecture_id':lecture_id, 'view_year':Data.ViewYear, 'view_semester':Data.ViewTerm},
 			dataType: 'json',
 			beforeSend: function(xhr)
 			{
@@ -661,7 +666,7 @@ var Timetable = {
 		if (obj==null) 
 		{
 			confirmMsg = gettext('현재 예비 시간표를 초기화 하겠습니까?');
-			sendData={'table_id':table_id};
+			sendData={'table_id':table_id, 'view_year':Data.ViewYear, 'view_semester':Data.ViewTerm};
 			successMsg = gettext('예비 시간표가 <strong>초기화</strong> 되었습니다');
 		}
 		else
@@ -671,7 +676,7 @@ var Timetable = {
 				confirmMsg='Do you want to delete "'+obj.title+'"?';
 			else
 				confirmMsg='"'+obj.title+'" 예비 시간표에서 삭제 하시겠습니까?';
-			sendData={'table_id':table_id, 'lecture_id':obj.id};
+			sendData={'table_id':table_id, 'lecture_id':obj.id, 'view_year':Data.ViewYear, 'view_semester':Data.ViewTerm};
 			successMsg='<strong>'+obj.title+'</strong> '+gettext('삭제 되었습니다');
 		}
 
@@ -711,6 +716,33 @@ var Timetable = {
 			});
 		}
 	},
+	changeSemester:function()
+	{
+		$.ajax({
+			type: 'GET',
+			url: '/timetable/change/',
+			data: {'view_year': Data.ViewYear, 'view_semester': Data.ViewTerm},
+			dataType: 'json',
+			beforeSend: $.proxy(function() {
+				Notifier.showIndicatorSemester();
+			}, this),
+			success: $.proxy(function(resObj) {
+				try {
+					Data.MyLectures = resObj.data
+					var key;
+					for(key=0;key<NUMBER_OF_TABS;key++) {
+						Timetable.updateTab({'data': Data.MyLectures[key]}, key);
+					}
+				} catch(e) {
+				}
+				Notifier.clearIndicatorSemester();
+			}, this),
+			error: $.proxy(function(xhr) {
+				if (suppress_ajax_errors)
+					return;
+			}, this)
+		});
+	},
 	update:function(resObj)
 	{
 		var credit=0,au=0;
@@ -723,6 +755,20 @@ var Timetable = {
 		});
 		
 		Data.Timetables[Timetable.tabs.getTableId()] = {credit:credit,au:au};
+		Timetable.tabs.updateData();
+	},
+	updateTab:function(resObj, key)
+	{
+		var credit=0,au=0;
+		Timetable.tabs.cleanTab(key);
+		$.each(resObj.data, function(index,item) {
+			credit += item.credit;
+			au += item.au;
+			var bgcolor = Utils.getColorByIndex(index);
+			Timetable.buildlmodules(Timetable.tabs.getTabByKey(key), item, bgcolor, true);
+		});
+
+		Data.Timetables[key] = {credit:credit,au:au};
 		Timetable.tabs.updateData();
 	},
 	updateInfoPanel: function(obj, is_adding)

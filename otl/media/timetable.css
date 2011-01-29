@@ -205,6 +205,7 @@
 {
     background:#C3D9FF url('images/corner_bl.gif') left bottom no-repeat;
 }
+
 #lecture_contents_footer div
 {
     height:5px;
@@ -240,7 +241,6 @@
     background:transparent url('images/corner_tr.gif') right top no-repeat;
     cursor:pointer;
 }
-
 
 #container 
 {
@@ -389,6 +389,13 @@
 	width:16px;
 	height:16px;
 	margin-right:10px;
+}
+
+#indicator_semester
+{
+        width:16px;
+        height:16px;
+        margin-right:10px;
 }
 
 #examtable .day

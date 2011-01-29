@@ -129,6 +129,8 @@ CURRENT_YEAR = 2009
 CURRENT_SEMESTER = 1
 NEXT_YEAR = 2009
 NEXT_SEMESTER = 1
+START_YEAR = 2009
+START_SEMESTER = 3
 SEMESTER_RANGES = {
     (2009,1): (date(2009,2,2), date(2009,5,22)),
     (2009,3): (date(2009,9,1), date(2009,12,21)),
@@ -137,6 +139,8 @@ EXAM_PERIODS = {
     (2009,1): ((date(2009,3,23), date(2009,3,27)), (date(2009,5,18), date(2009,5,22))),
     (2009,3): ((date(2009,10,20), date(2009,10,26)), (date(2009,12,15), date(2009,12,21))),
 }
+
+NUMBER_OF_TABS = 3
 
 SCHOLARDB_HOST = ''
 SCHOLARDB_USER = ''

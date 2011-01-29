@@ -57,12 +57,14 @@ var Notifier = {
 	{
 		var my_options = {
 			indicator: $('#indicator'),
+			indicator_semester: $('#indicator_semester'),
 			message: $('#message'),
 			wrapper: $('#message-wrap'),
 			clear_timeout: 10000
 		};
 		$.extend({}, my_options, options);
 		this.indicator = my_options.indicator;
+		this.indicator_semester = my_options.indicator_semester;
 		this.message = my_options.message;
 		this.wrapper = my_options.wrapper;
 		this.clear_timeout = my_options.clear_timeout;
@@ -70,6 +72,10 @@ var Notifier = {
 	showIndicator: function()
 	{
 		this.indicator.addClass('waiting');
+	},
+	showIndicatorSemester: function()
+	{
+		this.indicator_semester.addClass('waiting');
 	},
 	setLoadingMsg: function(msg)
 	{
@@ -106,6 +112,10 @@ var Notifier = {
 	clearIndicator: function()
 	{
 		this.indicator.removeClass('waiting');
+	},
+	clearIndicatorSemester: function()
+	{
+		this.indicator_semester.removeClass('waiting');
 	},
 	clear: function()
 	{

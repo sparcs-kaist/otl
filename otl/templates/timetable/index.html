@@ -35,8 +35,8 @@
 		Data.MyLectures = {{my_lectures|safe}};
 		Data.CurrentYear = {{current_year}};
 		Data.CurrentTerm = {{current_semester}};
-		Data.NextYear = {{next_year}};
-		Data.NextTerm = {{next_semester}};
+		Data.ViewYear = {{next_year}};
+		Data.ViewTerm = {{next_semester}};
 
 		Notifier.initialize();
 		LectureList.initialize();
@@ -171,8 +171,25 @@
 		</div>
 		<div id="timetable_menu">
 			<div class="left">
+				<div class="left" id="indicator_semester"></div>
 				<div class="left">
-					{{next_year}}{% trans "년" %} {{next_semester|term2str}}{% trans "학기" %}
+					<script type="text/javascript">
+						function onChangeSemester(value)
+						{
+							Data.ViewYear = parseInt(value.substr(0,4));
+							Data.ViewTerm = parseInt(value.substr(4,1));
+							{% if user.is_authenticated %}
+							Timetable.changeSemester();
+							{% endif %}
+							LectureList.onChange();
+						}
+					</script>
+					<select onChange="onChangeSemester(this.value)">
+						{% for item in semester_info %}
+						<option value="{{item.year}}{{item.semester}}">{{item.year}}{% trans "년" %} {{item.semester|term2str}}{% trans "학기" %}</option>
+						{% endfor %}
+						<option value="{{next_year}}{{next_semester}}" selected="selected">{{next_year}}{% trans "년" %} {{next_semester|term2str}}{% trans "학기" %}</option>
+					</select>
 				</div>
 				<div id="timetable_tabs">
 					<div class="timetable_tab active"><a>{% trans "시간표" %} 1</a></div>

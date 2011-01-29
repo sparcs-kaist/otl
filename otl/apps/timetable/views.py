@@ -25,9 +25,18 @@ from django.utils.translation import ugettext
 
 def index(request):
 
+    #Make the semester info to make users select the semester which they want to view.
+    semester_info = []
+    semester_info.append({'year' : settings.START_YEAR, 'semester' : settings.START_SEMESTER})
+    for y in range(settings.START_YEAR+1,settings.NEXT_YEAR):
+        semester_info.append({'year' : y, 'semester' : 1})
+        semester_info.append({'year' : y, 'semester' : 3})
+    if settings.NEXT_SEMESTER == 3 and settings.NEXT_YEAR > settings.START_YEAR:
+        semester_info.append({'year' : settings.NEXT_YEAR, 'semester' : 1})
+
     # Read the current user's timetable.
     if request.user.is_authenticated():
-        my_lectures = [_lectures_to_output(Lecture.objects.filter(year=settings.NEXT_YEAR, semester=settings.NEXT_SEMESTER, timetable__user=request.user, timetable__table_id=id), False, request.session.get('django_language', 'ko')) for id in xrange(0,3)]
+        my_lectures = [_lectures_to_output(Lecture.objects.filter(year=settings.NEXT_YEAR, semester=settings.NEXT_SEMESTER, timetable__user=request.user, timetable__table_id=id), False, request.session.get('django_language', 'ko')) for id in xrange(0,settings.NUMBER_OF_TABS)]
     else:
         my_lectures = [[], [], []]
     if settings.DEBUG:
@@ -46,6 +55,7 @@ def index(request):
         'departments': Department.objects.filter(visible=True).order_by('name'),
         'my_lectures': my_lectures_output,
         'lang' : request.session.get('django_language', 'ko'),
+        'semester_info' : semester_info,
     }, context_instance=RequestContext(request))
 
 def search(request):
@@ -69,11 +79,13 @@ def add_to_timetable(request):
     user = request.user
     table_id = request.GET.get('table_id', None)
     lecture_id = request.GET.get('lecture_id', None)
+    view_year = request.GET.get('view_year', str(settings.NEXT_YEAR))
+    view_semester = request.GET.get('view_semester', str(settings.NEXT_SEMESTER))
     
     lectures = []
     try:
         lecture = Lecture.objects.get(pk=lecture_id)
-        lectures = Lecture.objects.filter(timetable__table_id=table_id, timetable__user=user, year=settings.NEXT_YEAR, semester=settings.NEXT_SEMESTER)
+        lectures = Lecture.objects.filter(timetable__table_id=table_id, timetable__user=user, year=view_year, semester=view_semester)
         for existing_lecture in lectures:
             if existing_lecture.check_classtime_overlapped(lecture):
                 raise OverlappingTimeError()
@@ -81,7 +93,7 @@ def add_to_timetable(request):
         timetable = Timetable(user=user, lecture=lecture, year=lecture.year, semester=lecture.semester, table_id=table_id)
         timetable.save()
 
-        lectures = Lecture.objects.filter(timetable__table_id=table_id, timetable__user=user, year=settings.NEXT_YEAR, semester=settings.NEXT_SEMESTER)
+        lectures = Lecture.objects.filter(timetable__table_id=table_id, timetable__user=user, year=view_year, semester=view_semester)
         result = 'OK'
     except ObjectDoesNotExist:
         result = 'NOT_EXIST'
@@ -102,16 +114,18 @@ def delete_from_timetable(request):
     user = request.user
     table_id = request.GET.get('table_id', None)
     lecture_id = request.GET.get('lecture_id', None)
+    view_year = request.GET.get('view_year', str(settings.NEXT_YEAR))
+    view_semester = request.GET.get('view_semester', str(settings.NEXT_SEMESTER))
 
     lectures = []
     try:
         if lecture_id is None:
-            Timetable.objects.filter(user=user, year=settings.NEXT_YEAR, semester=settings.NEXT_SEMESTER, table_id=table_id).delete()
+            Timetable.objects.filter(user=user, year=view_year, semester=view_semester, table_id=table_id).delete()
         else:
             lecture = Lecture.objects.get(pk=lecture_id)
             Timetable.objects.get(user=user, lecture=lecture, year=lecture.year, semester=lecture.semester, table_id=table_id).delete()
 
-        lectures = Lecture.objects.filter(timetable__table_id=table_id, timetable__user=user, year=settings.NEXT_YEAR, semester=settings.NEXT_SEMESTER)
+        lectures = Lecture.objects.filter(timetable__table_id=table_id, timetable__user=user, year=view_year, semester=view_semester)
         result = 'OK'
     except ObjectDoesNotExist:
         result = 'NOT_EXIST'
@@ -127,6 +141,8 @@ def delete_from_timetable(request):
 def view_timetable(request):
     user = request.user
     table_id = request.GET.get('table_id', None)
+    view_year = request.GET.get('view_year', None)
+    view_semester = request.GET.get('view_semester', None)
 
     lectures = []
     try:
@@ -140,6 +156,25 @@ def view_timetable(request):
     return HttpResponse(json.dumps({
         'result': result,
         'data': _lectures_to_output(lectures, False, request.session.get('django_language', 'ko')),
+    }, ensure_ascii=False, indent=4))
+
+@login_required_ajax
+def change_semester(request):
+    user = request.user
+    view_year = request.GET.get('view_year', str(settings.NEXT_YEAR))
+    view_semester = request.GET.get('view_semester', str(settings.NEXT_SEMESTER))
+
+    try:
+        my_lectures = [_lectures_to_output(Lecture.objects.filter(year=view_year, semester=view_semester, timetable__user=user, timetable__table_id=id), False, request.session.get('django_language', 'ko')) for id in xrange(0,settings.NUMBER_OF_TABS)]
+        result = 'OK'
+    except ObjectDoesNotExist:
+        result = 'OK'
+    except:
+        return HttpResponseServerError()
+
+    return HttpResponse(json.dumps({
+        'result': result,
+        'data': my_lectures,
     }, ensure_ascii=False, indent=4))
 
 
@@ -240,6 +275,8 @@ def _lectures_to_output(lectures, conv_to_json=True, lang='ko'):
 @login_required
 def print_as_pdf(request):
     table_id = request.GET.get('id', 0)
+    view_year = request.GET.get('view_year', settings.NEXT_YEAR)
+    view_semester = request.GET.get('view_semester', settings.NEXT_SEMESTER)
     from reportlab.pdfgen import canvas
     from reportlab.pdfbase import pdfmetrics
     from reportlab.pdfbase.ttfonts import TTFont
@@ -267,8 +304,8 @@ def print_as_pdf(request):
     # Draw the outer layout.
     c.setFont(sanserif_bold_name, 18)
     c.drawCentredString(page_width / 2, page_height - margin_y + 12, u'%(year)d년 %(semester)s학기 시간표' % {
-        'year': settings.NEXT_YEAR,
-        'semester': SEMESTER_TYPES[settings.NEXT_SEMESTER - 1][1],
+        'year': int(view_year),
+        'semester': SEMESTER_TYPES[int(view_semester) - 1][1],
     })
     c.setFont(sanserif_name, 9)
     c.drawCentredString(page_width / 2, margin_y - 15, u'Generated by OTL, a proud service of SPARCS')
@@ -327,7 +364,7 @@ def print_as_pdf(request):
     # Draw the actual timetable entries
     c.setDash([], 0)
     c.setLineWidth(0.5)
-    my_lectures = Lecture.objects.filter(year=settings.NEXT_YEAR, semester=settings.NEXT_SEMESTER, timetable__user=request.user, timetable__table_id=table_id).select_related()
+    my_lectures = Lecture.objects.filter(year=view_year, semester=view_semester, timetable__user=request.user, timetable__table_id=table_id).select_related()
     for lecture in my_lectures:
         for classtime in lecture.classtime_set.all():
             left, bottom, width, height = get_box_position(classtime.day, classtime.get_begin_numeric(), classtime.get_end_numeric())
