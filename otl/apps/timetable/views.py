@@ -303,7 +303,7 @@ def print_as_pdf(request):
 
     # Draw the outer layout.
     c.setFont(sanserif_bold_name, 18)
-    c.drawCentredString(page_width / 2, page_height - margin_y + 12, u'%(year)d년 %(semester)s학기 시간표' % {
+    c.drawCentredString(page_width / 2, page_height - margin_y + 12, u'%(year)d년 %(semester)s 시간표' % {
         'year': int(view_year),
         'semester': SEMESTER_TYPES[int(view_semester) - 1][1],
     })
