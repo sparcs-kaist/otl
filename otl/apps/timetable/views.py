@@ -28,6 +28,8 @@ def index(request):
     #Make the semester info to make users select the semester which they want to view.
     semester_info = []
     semester_info.append({'year' : settings.START_YEAR, 'semester' : settings.START_SEMESTER})
+    if settings.START_SEMESTER == 1 and settings.NEXT_YEAR > settings.START_YEAR:
+        semester_info.append({'year' : settings.START_YEAR, 'semester' : 3})
     for y in range(settings.START_YEAR+1,settings.NEXT_YEAR):
         semester_info.append({'year' : y, 'semester' : 1})
         semester_info.append({'year' : y, 'semester' : 3})
