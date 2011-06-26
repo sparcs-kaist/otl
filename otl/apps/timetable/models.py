@@ -36,6 +36,11 @@ class Lecture(models.Model):
 
     def __unicode__(self):
         return u'%s (%d:%s) %s' % (self.code, self.year, self.get_semester_display(), self.title)
+
+	def update_num_people(self):
+		self.num_people = len(set(self.timetable_relation.all()))
+		self.save()
+		return self.num_people
     
     def check_classtime_overlapped(self, another_lecture):
         """이 과목과 주어진 다른 과목의 강의 시간 중 겹치는 것이 있는지 검사한다."""
