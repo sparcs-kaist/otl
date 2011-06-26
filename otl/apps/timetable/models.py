@@ -25,6 +25,7 @@ class Lecture(models.Model):
     num_labs = models.IntegerField(default=0)               # 실험 시간
     credit_au = models.IntegerField(default=0)              # AU
     limit = models.IntegerField(default=0)                  # 인원제한
+	num_people = models.IntegerField(default=0, blank=True, null=True)	#신청인원
     professor = models.CharField(max_length=100)            # 교수님 이름 (한글)
     professor_en = models.CharField(max_length=100, blank=True, null=True)  # 교수님 이름 (영문)
     notice = models.CharField(max_length=200, blank=True, null=True)        # 비고
