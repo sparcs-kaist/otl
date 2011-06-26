@@ -6,6 +6,15 @@ from otl.apps.accounts.models import Department
 from otl.apps.common import *
 from datetime import date, time
 import re
+from django.db.models.signals import post_save, post_delete
+
+def on_change_relation(sender, **kwargs):
+	if sender == Timetable:
+		instance = kwargs['instance']
+		instance.lecture.update_num_people()
+
+post_save.connect(on_change_relation)
+post_delete.connect(on_change_relation)
 
 class Lecture(models.Model):
     """특정 년도·학기에 개설된 과목 instance를 가리키는 모델"""
