@@ -120,6 +120,7 @@ class Command(BaseCommand):
                     print u'Updating existing lecture...'
                 except Lecture.DoesNotExist:
                     lecture = Lecture(**lecture_key)
+                    lecture.num_people = 0
                     print u'Creating new lecture...'
 
                 # Update lecture info.
