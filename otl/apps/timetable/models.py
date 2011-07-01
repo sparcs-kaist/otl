@@ -9,9 +9,9 @@ import re
 from django.db.models.signals import post_save, post_delete
 
 def on_change_relation(sender, **kwargs):
-	if sender == Timetable:
-		instance = kwargs['instance']
-		instance.lecture.update_num_people()
+    if sender == Timetable:
+        instance = kwargs['instance']
+        instance.lecture.update_num_people()
 
 post_save.connect(on_change_relation)
 post_delete.connect(on_change_relation)
@@ -34,7 +34,7 @@ class Lecture(models.Model):
     num_labs = models.IntegerField(default=0)               # 실험 시간
     credit_au = models.IntegerField(default=0)              # AU
     limit = models.IntegerField(default=0)                  # 인원제한
-    num_people = models.IntegerField(default=0, blank=True, null=True)	#신청인원
+    num_people = models.IntegerField(default=0, blank=True, null=True)  #신청인원
     professor = models.CharField(max_length=100)            # 교수님 이름 (한글)
     professor_en = models.CharField(max_length=100, blank=True, null=True)  # 교수님 이름 (영문)
     notice = models.CharField(max_length=200, blank=True, null=True)        # 비고
@@ -46,10 +46,10 @@ class Lecture(models.Model):
     def __unicode__(self):
         return u'%s (%d:%s) %s' % (self.code, self.year, self.get_semester_display(), self.title)
 
-	def update_num_people(self):
-		self.num_people = len(set(self.timetable_relation.all()))
-		self.save()
-		return self.num_people
+    def update_num_people(self):
+        self.num_people = len(set(self.timetable_relation.all()))
+        self.save()
+        return self.num_people
     
     def check_classtime_overlapped(self, another_lecture):
         """이 과목과 주어진 다른 과목의 강의 시간 중 겹치는 것이 있는지 검사한다."""
@@ -62,8 +62,8 @@ class Lecture(models.Model):
                     return True
         return False
 
-	def dictionary_url(self):
-		return 'dictionary/' + self.code
+    def dictionary_url(self):
+        return 'dictionary/' + self.code
 
     class Meta:
         unique_together = ('code', 'year', 'semester', 'department', 'class_no')
@@ -198,4 +198,4 @@ admin.site.register(ExamTime, ExamTimeAdmin)
 admin.site.register(ClassTime, ClassTimeAdmin)
 admin.site.register(Syllabus, SyllabusAdmin)
 admin.site.register(Timetable, TimetableAdmin)
-# vim: set ts=4 sts=4 sw=4 noet:
+# vim: set ts=4 sts=4 sw=4 et:
