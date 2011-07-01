@@ -51,6 +51,11 @@
 {% block content %}
 	<div id="left-side">
 		<div style="margin-bottom:10px">
+			<div id="lecturelist-keyword" style="font-weight:bold; z-index:10;">
+				<label>과목 검색</label>
+				<input type="text" id="keyword" autocomplete="off" size="21">
+				<input type="button" id="keyword_submit" name="keyword_submit" value="검색">
+			</div>
 			<div id="lecturelist-range"></div>
 			<div id="lecturelist-filter">
 				<label>{% trans "학과" %}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-size:11px">(<a href="/accounts/myinfo/">{% trans "관심학과 설정"%}</a>)</span></label>
