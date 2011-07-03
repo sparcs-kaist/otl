@@ -76,6 +76,25 @@ def search(request):
     except ValidationError:
         return HttpResponseBadRequest()
 
+def get_autocomplete_list(request):
+    try:
+        view_year = request.GET.get('view_year', str(settings.NEXT_YEAR))
+        view_semester = request.GET.get('view_semester', str(settings.NEXT_SEMESTER))
+        lang = request.session.get('django_language', 'ko')
+
+        cache_key = 'autocomplete-list-cache:view_year=%s:view_semester=%s:lang=%s' % (view_year, view_semester, lang)
+        output = cache.get(cache_key)
+        if output is None:
+            if lang == 'ko':
+                func = lambda x:x.title
+            elif lang == 'en':
+                func = lambda x:x.title_en
+            output = json.dumps(map(func, Lecture.objects.filter(year=int(view_year), semester=int(view_semester))), ensure_ascii=False, indent=4)
+            cache.set(cache_key, output, 3600)
+        return HttpResponse(output)
+    except:
+        return HttpResponseBadRequest()
+
 @login_required_ajax
 def add_to_timetable(request):
     user = request.user

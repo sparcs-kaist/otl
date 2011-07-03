@@ -14,5 +14,6 @@ urlpatterns = patterns('',
     (ur'^change/$', views.change_semester),
     (ur'^print/$', views.print_as_pdf),
     (ur'^jsi18n/$', 'django.views.i18n.javascript_catalog', js_info_dict),
+    (ur'^autocomplete/$', views.get_autocomplete_list),
 )
 

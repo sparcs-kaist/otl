@@ -262,11 +262,36 @@ var LectureList = {
 		this.dept.selectedIndex = 0;
 		this.registerHandles();
 		this.onChange();
+		this.getAutocompleteList();
 	},
 	registerHandles:function()
 	{
 		$(this.dept).bind('change', $.proxy(this.onChange, this));
 		$(this.classf).bind('change', $.proxy(this.onChange, this));
+	},
+	getAutocompleteList:function()
+	{
+		$.ajax({
+			type: 'GET',
+			url: '/timetable/autocomplete/',
+			data: {'view_year': Data.ViewYear, 'view_semester': Data.ViewTerm},
+			dataType: 'json',
+			success: $.proxy(function(resObj) {
+				try {
+					$('#keyword').flushCache();
+					$('#keyword').autocomplete(resObj, {
+						matchContains: true,
+						scroll: true,
+						width: 161,
+					});
+				} catch(e) {
+				}
+			}, this),
+			error: $.proxy(function(xhr) {
+				if (suppress_ajax_errors)
+					return;
+			}, this)
+		});
 	},
 	onChange:function()
 	{
