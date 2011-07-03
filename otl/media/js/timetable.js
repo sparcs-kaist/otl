@@ -300,10 +300,10 @@ var LectureList = {
 		//TODO: classification을 언어와 상관 없도록 고쳐야 함
 		if (dept == '-1' && USER_LANGUAGE == 'ko-KR' && classification == '전체보기')
 			Notifier.setErrorMsg('학과 전체보기는 과목 구분을 선택한 상태에서만 가능합니다.');
-		else if (dept == '-1' && USER_LANGUAGE == 'en' && classification == 'ALL')
+		else if (dept == '-1' && USER_LANGUAGE == 'en-US' && classification == 'ALL')
 			Notifier.setErrorMsg('You must select a course type if you want to see \'ALL\' departments');
 		else
-			this.filter({'dept':dept,'type':classification});
+			this.filter({'dept':dept,'type':classification,'lang':USER_LANGUAGE});
 	},
 	clearList:function()
 	{
