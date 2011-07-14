@@ -32,10 +32,10 @@ def department(request, department_id):
     dept = Department.objects.get(id=department_id)
     courses = Course.objects.filter(department=dept)
     return render_to_response('dictionary/department.html', {
-	'section' : 'dictionary',
-	'title' : ugettext(u'과목 사전'),
-	'dept' : dept,
-	'courses' : courses }, context_instance=RequestContext(request))
+        'section' : 'dictionary',
+        'title' : ugettext(u'과목 사전'),
+        'dept' : dept,
+        'courses' : courses }, context_instance=RequestContext(request))
 
 def search(request):
     pass
@@ -66,55 +66,57 @@ def view(request, course_code):
         course.save()
     else:
         course = Course.objects.get(code=course_code)
-    comments = CourseComment.objects.filter(course=course)
+    comments = Comment.objects.filter(course=course)
     return render_to_response('dictionary/view.html', {
-	    'section' : 'dictionary',
-    	'title' : ugettext(u'과목 사전'),
-    	'course' : course,
+        'section' : 'dictionary',
+        'title' : ugettext(u'과목 사전'),
+        'course' : course,
         'comments' : comments
     }, context_instance=RequestContext(request))
 
 @login_required
 def add_comment(request, course_id):
     new_course = Course.objects.get(id=course_id)
-    new_lecture = Lecture.objects.get(id=int(request.POST['lecture_id']))
+    #TODO : new_lecture 는 코드는 복잡하나 교수님 정보밖에 불러오지 않으므로 최후에 더 필요하지 않을 경우 제거한다.
+    new_lecture = Lecture.objects.filter(code = new_course.code, professor=request.POST['lecture_professor'], year=int(request.POST['lecture_semester'])/10, semester=int(request.POST['lecture_semester'])%10)
     new_comment = escape(strip_tags(request.POST['comment']))
-    if request.POST['load'] == 'True':
-        new_load = True
-    elif request.POST['load'] == 'False':
-        new_load = False
+    if request.POST['load'] == '1':
+        new_load = 1
+    elif request.POST['load'] == '2':
+        new_load = 2
     else:
-        new_load = None
-    if request.POST['score'] == 'True':
-        new_score = True
-    elif request.POST['score'] == 'False':
-        new_score = False
+        new_load = 3
+    if request.POST['score'] == '1':
+        new_score = 1
+    elif request.POST['score'] == '2':
+        new_score = 2
     else:
-        new_score = None
-    if request.POST['gain'] == 'True':
-        new_gain = True
-    elif request.POST['gain'] == 'False':
-        new_gain = False
+        new_score = 3
+    if request.POST['gain'] == '1':
+        new_gain = 1
+    elif request.POST['gain'] == '2':
+        new_gain = 2
     else:
-        new_gain = None
-
-    comment = CourseComment.objects.create(\
+        new_gain = 3
+    new_professor = new_lecture[0].professor
+    new_semester = int(request.POST['lecture_semester'])
+    comment = Comment.objects.create(\
         writer = request.user,\
+        professor = new_professor,\
         course = new_course,\
-        lecture = new_lecture,\
         comment = new_comment,\
         load = new_load,\
         score = new_score,\
-        gain = new_gain\
+        gain = new_gain,\
+        semester = new_semester\
     )
     comment.save()
     return HttpResponseRedirect('/dictionary/view/' + new_course.code)
 
 @login_required
 def delete_comment(request, comment_id):
-    comment = CourseComment.objects.get(id=comment_id)
+    comment = Comment.objects.get(id=comment_id)
     if comment.User == request.user:
         comment.delete()
     return HttpResponseRedirect('/dictionary/view/' + comment.course.code)
-
 

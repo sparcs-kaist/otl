@@ -117,7 +117,7 @@ function CheckNull(form)
             <div>{{lecture.year}} {{lecture.semester}} {{lecture.department.name}} {{lecture.class_no}} {{lecture.title}} {{lecture.type}} 교수: {{lecture.professor}}</div>
             <div>
                 {% trans "강의평가" %} : {% for lectureRating in lecture.lecturerating_set.all %}
-                {% trans "평균점수" %} {{lectureRating.rating}}{% trans "점" %}, {% trans "표준편차" %} {{lectureRating.standard_deviation}}, {% trans "응답자수"} {{lectureRating.number_of_respondents}}, {% trans "수강생수" %} {{lectureRating.number_of_students}}, {% trans "응답율" %} {{lectureRating.rate_of_responds}}
+                {% trans "평균점수" %} {{lectureRating.rating}}{% trans "점" %}, {% trans "표준편차" %} {{lectureRating.standard_deviation}}, {% trans "응답자수" %} {{lectureRating.number_of_respondents}}, {% trans "수강생수" %} {{lectureRating.number_of_students}}, {% trans "응답율" %} {{lectureRating.rate_of_responds}}
                 {% endfor %}
             </div>
         </li>
@@ -131,11 +131,11 @@ function CheckNull(form)
         {% for comment in comments %}
         <div class="dictionary_comment">
             <div class="dictionary_comment_content">
-                {{comment.comment}}
+                {{comment.comment}}<br>
             </div>
             <div class="dictionary_comment_eval">
-                {% trans "평가" %} - {% trans "로드" %} : <span>{{comment.load_str}}</span>, {% trans "학점" %} : <span>{{comment.score_str}}</span>, {% trans "남는거" %} : <span>{{comment.gain_str}}</span>
-                , By {{comment.writer}} ({{comment.written|date:"Y/m/d"}})
+                {% trans "평가" %} - {% trans "로드" %} : <span>{{comment.get_load_display}}</span>, {% trans "학점" %} : <span>{{comment.get_score_display}}</span>, {% trans "남는거" %} : <span>{{comment.get_gain_display}}</span>
+                , By {{comment.writer}} ({{comment.written_date|date:"Y/m/d"}})
             </div>
         </div>
         {% endfor %}
@@ -148,29 +148,38 @@ function CheckNull(form)
     <form action="/dictionary/add_comment/{{course.id}}" method="post">
         <div class="course_comment_lectures">
             {% trans "평가를 내릴 강의" %} :
-            {% for lecture in course.lectures.all %}
             <div>
-                <input type="radio" name="lecture_id" value="{{lecture.id}}"/> {{lecture}} {{lecture.professor}}
-            </div>
+            <select name="lecture_semester">
+            {% for lecture in course.lectures.all %}
+                <option value="{{lecture.year}}{{lecture.semester}}"> {{lecture.year}} {{lecture.get_semester_display}} </option>
             {% endfor %}
+            </select>
+            </div>
+            <div>
+            <select name="lecture_professor">
+            {% for lecture in course.lectures.all %}
+                <option value="{{lecture.professor}}"> {{lecture.class_no}} : {{lecture.professor}} </option>
+            {% endfor %}
+            </select>
+            </div>
         </div>
         <div class="course_comment_form_load">
             {% trans "로드" %} : 
-            <input type="radio" name="load" value="False"/> {% trans "쉬움" %}
-            <input type="radio" name="load" value="None/"/> {% trans "무난" %}
-            <input type="radio" name="load" value="True"/> {% trans "힘듬" %}
+            <input type="radio" name="load" value="1"/> {% trans "쉬움" %}
+            <input type="radio" name="load" value="2"/> {% trans "무난" %}
+            <input type="radio" name="load" value="3"/> {% trans "힘듬" %}
         </div>
         <div class="course_comment_form_score">
             {% trans "학점" %} :
-            <input type="radio" name="score" value="False"/> {% trans "박함" %}
-            <input type="radio" name="score" value="None"/> {% trans "무난" %}
-            <input type="radio" name="score" value="True"/> {% trans "후함" %}
+            <input type="radio" name="score" value="1"/> {% trans "박함" %}
+            <input type="radio" name="score" value="2"/> {% trans "무난" %}
+            <input type="radio" name="score" value="3"/> {% trans "후함" %}
         </div>
         <div class="course_comment_form_gain">
             {% trans "남는거" %} :
-            <input type="radio" name="gain" value="False"/> {% trans "없음" %}
-            <input type="radio" name="gain" value="None"/> {% trans "있음" %}
-        <input type="radio" name="gain" value="True"/> {% trans "많음" %}
+            <input type="radio" name="gain" value="1"/> {% trans "없음" %}
+            <input type="radio" name="gain" value="2"/> {% trans "있음" %}
+            <input type="radio" name="gain" value="3"/> {% trans "많음" %}
         </div>
         <div>
             <textarea name="comment" cols="50" rows="5"></textarea>

@@ -6,6 +6,13 @@ from otl.apps.common import *
 from otl.apps.accounts.models import Department
 from otl.apps.timetable.models import *
 
+class Professor(models.Model):
+    professor = models.CharField(max_length=100)            # 교수님 이름 (한글)
+    professor_en = models.CharField(max_length=100, blank=True, null=True)  # 교수님 이름 (영문)
+    # TODO : IT개발팀에 동명의 교수님을 식별하는 코드가 있는 지 여쭈어보고 학과랑 코드에 대한 접근권한 열어달라 부탁하기
+    #department = models.ForeignKey(Department)              # 학과
+    #code = models.CharField(max_length=10)                 # 교수님코드
+
 class Course(models.Model):
     code = models.CharField(max_length=10)                  # 과목코드 (12.123 형식)
     department = models.ForeignKey(Department)              # 학과
@@ -13,68 +20,43 @@ class Course(models.Model):
     title_en = models.CharField(max_length=200)             # 과목이름(영문)
     type = models.CharField(max_length=12)                  # 과목구분( 한글; '전필', '전선', '기필', ...)
     type_en = models.CharField(max_length=36)               # 과목구분(영문; 'Major Required', 'Major Selective', ...)
-    audience = models.IntegerField(choices=AUDIENCE_TYPES)  # 학년구분
-    credit = models.IntegerField(default=3)                 # 학점
-    num_classes = models.IntegerField(default=3)            # 강의 시간
-    num_labs = models.IntegerField(default=0)               # 실험 시간
-    credit_au = models.IntegerField(default=0)              # AU
-    limit = models.IntegerField(default=0)                  # 인원제한
-    is_english = models.BooleanField()                      # 영어강의 여부
-    deleted = models.BooleanField(default=False)            # 과목이 닫혔는지 여부
-    summary = models.CharField(max_length=65536)                            # 과목요약
-    prerequisite_courses = models.ManyToManyField('self')    # 선수과목
+    professors = models.ManyToManyField(Professor)          # 교수님 (과목을 담당했던 교수님들)
     lectures = models.ManyToManyField(Lecture)              # 개강 과목목록 (학기별 과목 연동)
-    
+
+    summary = models.CharField(max_length=65536)            # 과목요약
+    #prerequisite_courses = models.ManyToManyField('self')   # 선수과목
+    #editor = models.ForeignKey(User, related_name='course_set') # 수정한 사람
+    #edited_date = models.DateTimeField(auto_now=True)       # 마지막 수정일
+
+class Comment(models.Model):
+    course = models.ForeignKey(Course)                      # 과목
+    #professor = models.ForeignKey(Professor)               # 교수님
+    professor = models.CharField(max_length=100)            # 교수님
+    professor_en = models.CharField(max_length=100, blank=True, null=True) # 교수님 이름(영문)
+    semester = models.IntegerField()                        # 학기 (5자리, 앞의 4자리는 개설년도, 뒤의 1자리는 개설학기)
+
+    writer = models.ForeignKey(User, related_name='comment_set') # 수정한 사람
+    written_date = models.DateTimeField(auto_now=True)       # 마지막 수정일
+    comment = models.CharField(max_length=65536)            # 코멘트
+    load = models.SmallIntegerField(choices=LOAD_TYPES)                       # 로드
+    score = models.SmallIntegerField(choices=SCORE_TYPES)                      # 학점
+    gain = models.SmallIntegerField(choices=GAIN_TYPES)                       # 남는 거
+
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ('course', 'professor', 'semester', 'comment', 'load', 'score', 'gain')
+    ordering = ('-written_date',)
+
+admin.site.register(Comment, CommentAdmin)
+
 class LectureRating(models.Model):
-    course = models.ForeignKey(Course, related_name='rating_set')
-    lecture = models.ForeignKey(Lecture)
-    number_of_students = models.IntegerField()
-    number_of_respondents = models.IntegerField()
-    rating = models.FloatField()
-    standard_deviation = models.FloatField()
+    course = models.ForeignKey(Course, related_name='rating_set')   # 과목
+    lecture = models.ForeignKey(Lecture)                            # 과목 (분반 포함)
+    number_of_students = models.IntegerField()                      # 평가자 수
+    number_of_respondents = models.IntegerField()                   # 응답자 수
+    rating = models.FloatField()                                    # 점수
+    standard_deviation = models.FloatField()                        # 표준편
+    # rated_contents =                                              # 평가 항목
+    # rated_score =                                                 # 구체 점수
 
     def rate_of_responds(self):
         return str(100.0 * self.number_of_respondents / self.number_of_students) + "%"
-
-class CourseComment(models.Model):
-    writer = models.ForeignKey(User, related_name='comment_set')
-    written = models.DateTimeField(auto_now_add=True)
-    course = models.ForeignKey(Course)
-    lecture = models.ForeignKey(Lecture)
-    comment = models.CharField(max_length=4096)
-    load = models.NullBooleanField()
-    score = models.NullBooleanField()
-    gain = models.NullBooleanField()
-
-    def load_str(self):
-        if self.load == False:
-            return '쉬움'
-        elif self.load == None:
-            return '무난'
-        else:
-            return '힘듬'
-
-    def score_str(self):
-        if self.score == False:
-            return '박함'
-        elif self.score == None:
-            return '무난'
-        else:
-            return '후함'
-
-    def gain_str(self):
-        if self.gain == False:
-            return '없음'
-        elif self.gain == None:
-            return '있음'
-        else:
-            return '많음'
-
-
-    
-class CourseCommentAdmin(admin.ModelAdmin):
-    list_display = ('writer', 'written', 'load', 'score', 'gain', 'lecture', 'comment')
-    ordering = ('-written',)
-
-admin.site.register(CourseComment, CourseCommentAdmin)
-
