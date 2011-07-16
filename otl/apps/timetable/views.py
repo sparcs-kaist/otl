@@ -249,17 +249,14 @@ def _search(**conditions):
                 lectures = _search_by_ysdt(year, semester, department, type)
             else:
                 words = keyword.split()
-                counts = {}
+                lectures = None
                 for word in words:
-                    courses = _search_by_ysdtlw(year, semester, department, type, lang, unicode(word))
-                    for course in courses:
-                        if course in counts:
-                            counts[course] += 1
-                        else:
-                            counts[course] = 1
-                result = counts.items()
-                result.sort(lambda x,y:cmp(y[1],x[1]))
-                lectures = map(lambda x:x[0], result)
+                    result = _search_by_ysdtlw(year, semester, department, type, lang, unicode(word))
+                    if lectures is None:
+                        lectures = result
+                    else:
+                        lectures = lectures | result
+                lectures = lectures.order_by('type', 'code').distinct().select_related()
         else:
             raise ValidationError()
     except (TypeError, ValueError):
