@@ -19,13 +19,13 @@ post_delete.connect(on_change_relation)
 class Lecture(models.Model):
     """특정 년도·학기에 개설된 과목 instance를 가리키는 모델"""
     code = models.CharField(max_length=10)                  # 과목코드 (12.123 형식)
-    old_code = models.CharField(max_length=10)              # 과목코드 (ABC123 형식)
+    old_code = models.CharField(max_length=10, db_index=True)              # 과목코드 (ABC123 형식)
     year = models.IntegerField()                            # 개설년도 (4자리 숫자)
     semester = models.SmallIntegerField(choices=SEMESTER_TYPES) # 개설학기 (1=봄, 2=여름, 3=가을, 4=겨울)
     department = models.ForeignKey(Department)              # 학과
     class_no = models.CharField(max_length=4, blank=True)   # 분반
-    title = models.CharField(max_length=100)                # 과목이름 (한글)
-    title_en = models.CharField(max_length=200)             # 과목이름 (영문)
+    title = models.CharField(max_length=100, db_index=True)                # 과목이름 (한글)
+    title_en = models.CharField(max_length=200, db_index=True)             # 과목이름 (영문)
     type = models.CharField(max_length=12)                  # 과목구분 (한글; '전필', '전선', '기필', ...)
     type_en = models.CharField(max_length=36)               # 과목구분 (영문; 'Major Required', 'Major Elective', ...)
     audience = models.IntegerField(choices=AUDIENCE_TYPES)  # 학년구분
@@ -35,8 +35,8 @@ class Lecture(models.Model):
     credit_au = models.IntegerField(default=0)              # AU
     limit = models.IntegerField(default=0)                  # 인원제한
     num_people = models.IntegerField(default=0, blank=True, null=True)  #신청인원
-    professor = models.CharField(max_length=100)            # 교수님 이름 (한글)
-    professor_en = models.CharField(max_length=100, blank=True, null=True)  # 교수님 이름 (영문)
+    professor = models.CharField(max_length=100, db_index=True)            # 교수님 이름 (한글)
+    professor_en = models.CharField(max_length=100, blank=True, null=True, db_index=True)  # 교수님 이름 (영문)
     notice = models.CharField(max_length=200, blank=True, null=True)        # 비고
     is_english = models.BooleanField()                      # 영어강의 여부
     deleted = models.BooleanField(default=False)            # 과목이 닫혔는지 여부
