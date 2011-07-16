@@ -256,33 +256,39 @@ var LectureList = {
 		this.contents = $('#lecture_contents');
 		this.data = Data.Lectures;
 		this.dept = $('#department');
-		this.classf= $('#classification');
+		this.classf = $('#classification');
+		this.keyword = $('#keyword');
+		this.apply = $('#apply');
 
 		this.loading = true;
 		this.dept.selectedIndex = 0;
 		this.registerHandles();
-		this.onChange();
-		this.getAutocompleteList();
+		this.onClassChange();
 	},
 	registerHandles:function()
 	{
-		$(this.dept).bind('change', $.proxy(this.onChange, this));
-		$(this.classf).bind('change', $.proxy(this.onChange, this));
+		$(this.dept).bind('change', $.proxy(this.onClassChange, this));
+		$(this.classf).bind('change', $.proxy(this.onClassChange, this));
+		$(this.apply).bind('click', $.proxy(this.onChange, this));
+		$(this.keyword).bind('keypress', $.proxy(function(e) { if(e.keyCode == 13) { this.onChange(); }}, this));
 	},
 	getAutocompleteList:function()
 	{
+		var dept = $(this.dept).val();
+		var classification = $(this.classf).val();
 		$.ajax({
 			type: 'GET',
 			url: '/timetable/autocomplete/',
-			data: {'view_year': Data.ViewYear, 'view_semester': Data.ViewTerm},
+			data: {'year': Data.ViewYear, 'term': Data.ViewTerm, 'dept': dept, 'type': classification, 'lang': USER_LANGUAGE},
 			dataType: 'json',
 			success: $.proxy(function(resObj) {
 				try {
-					$('#keyword').flushCache();
-					$('#keyword').autocomplete(resObj, {
+					this.keyword.flushCache();
+					this.keyword.autocomplete(resObj, {
 						matchContains: true,
 						scroll: true,
-						width: 161,
+						width: 197,
+						selectFirst: false
 					});
 				} catch(e) {
 				}
@@ -293,17 +299,23 @@ var LectureList = {
 			}, this)
 		});
 	},
+	onClassChange:function()
+	{
+		this.getAutocompleteList();
+		this.onChange();
+	},
 	onChange:function()
 	{
 		var dept = $(this.dept).val();
 		var classification = $(this.classf).val();
+		var keyword = $(this.keyword).val().replace(/^\s+|\s+$/g, '');
 		//TODO: classification을 언어와 상관 없도록 고쳐야 함
-		if (dept == '-1' && USER_LANGUAGE == 'ko-KR' && classification == '전체보기')
-			Notifier.setErrorMsg('학과 전체보기는 과목 구분을 선택한 상태에서만 가능합니다.');
-		else if (dept == '-1' && USER_LANGUAGE == 'en-US' && classification == 'ALL')
-			Notifier.setErrorMsg('You must select a course type if you want to see \'ALL\' departments');
+		if (dept == '-1' && USER_LANGUAGE == 'ko' && classification == '전체보기' && keyword == '')
+			Notifier.setErrorMsg('키워드 없이 학과 전체보기는 과목 구분을 선택한 상태에서만 가능합니다.');
+		else if (dept == '-1' && USER_LANGUAGE == 'en' && classification == '전체보기' && keyword == '')
+			Notifier.setErrorMsg('You must select a course type if you want to see \'ALL\' departments without keywords.');
 		else
-			this.filter({'dept':dept,'type':classification,'lang':USER_LANGUAGE});
+			this.filter({'dept':dept,'type':classification,'lang':USER_LANGUAGE,'keyword':keyword});
 	},
 	clearList:function()
 	{
@@ -528,17 +540,16 @@ var RangeSearch = {
 					Utils.NumericTimeToReadable(startTime)+'부터 '+Utils.NumericTimeToReadable(endTime)+'까지</p>');
 
 			var buttonMessage='';
-			buttonMessage = gettext('학과/구분 검색으로 돌아가기');
+			buttonMessage = gettext('학과/구분/키워드 검색으로 돌아가기');
 			$('<button>')
 			.text(buttonMessage)
 			.click(function() {
 				$('#lecturelist-filter').css('display','block');
 				$('#lecturelist-range').empty();
-				var dept = $(LectureList.dept).val();
-				var classification = $(LectureList.classf).val();
-				LectureList.filter({dept:dept, type:classification});
+				LectureList.onChange();
 			})
-			.appendTo('#lecturelist-range');
+			.appendTo('#lecturelist-range')
+			.attr('id', 'back_to_search');
 			LectureList.filter({start_day:startDay, end_day:endDay, start_time:startTime, end_time:endTime});
 		}
 	},

@@ -53,11 +53,6 @@
 {% block content %}
 	<div id="left-side">
 		<div style="margin-bottom:10px">
-			<div id="lecturelist-keyword" style="font-weight:bold; z-index:10; margin-bottom:10px;">
-				<label>과목 검색</label>
-				<input type="text" id="keyword" autocomplete="off" size="21">
-				<input type="button" id="keyword_submit" name="keyword_submit" value="검색">
-			</div>
 			<div id="lecturelist-range"></div>
 			<div id="lecturelist-filter">
 				<label>{% trans "학과" %}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-size:11px">(<a href="/accounts/myinfo/">{% trans "관심학과 설정"%}</a>)</span></label>
@@ -110,6 +105,13 @@
 					<option value="논문세미나">{% trans "논문세미나" %}</option>
 					<option value="현장실습및연구">{% trans "현장실습및연구" %}</option>
 				</select>
+				<br />
+				<label>{% trans "키워드" %}</label>
+				<input type="text" id="keyword" autocomplete="off" style="width:97%">
+				<br />
+				<div style="text-align:right; margin-top:10px;">
+					<input type="button" id="apply" name="apply" value="{% trans "적용" %}" style="text-align:right;">
+				</div>
 			</div>
 			<div id="lecturelist-notice">{% trans "※ 강의시간이 없는 과목들은 제외됩니다. (예: 졸업연구, 논문연구)" %}</div>
 		</div>
@@ -189,8 +191,11 @@
 							{% if user.is_authenticated %}
 							Timetable.changeSemester();
 							{% endif %}
-							LectureList.onChange();
-							LectureList.getAutocompleteList();
+							if($('#back_to_search').length > 0) {
+								$('#lecturelist-filter').css('display','block');
+								$('#lecturelist-range').empty();
+							}
+							LectureList.onClassChange();
 						}
 					</script>
 					<select onChange="onChangeSemester(this.value)">

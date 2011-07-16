@@ -75,18 +75,22 @@ def search(request):
 
 def get_autocomplete_list(request):
     try:
-        view_year = request.GET.get('view_year', str(settings.NEXT_YEAR))
-        view_semester = request.GET.get('view_semester', str(settings.NEXT_SEMESTER))
+        def reduce(list):
+            return [item for sublist in list for item in sublist]
+        year = request.GET.get('year', unicode(settings.NEXT_YEAR))
+        semester = request.GET.get('term', unicode(settings.NEXT_SEMESTER))
+        department = request.GET.get('dept', None)
+        type = request.GET.get('type', None)
         lang = request.session.get('django_language', 'ko')
 
-        cache_key = 'autocomplete-list-cache:view_year=%s:view_semester=%s:lang=%s' % (view_year, view_semester, lang)
+        cache_key = 'autocomplete-list-cache:year=%s:semester=%s:department=%s:type=%s:lang=%s' % (year, semester, department, type, lang)
         output = cache.get(cache_key)
         if output is None:
             if lang == 'ko':
-                func = lambda x:x.title
+                func = lambda x:[x.title, x.professor, x.old_code]
             elif lang == 'en':
-                func = lambda x:x.title_en
-            output = json.dumps(map(func, Lecture.objects.filter(year=int(view_year), semester=int(view_semester))), ensure_ascii=False, indent=4)
+                func = lambda x:[x.title_en, x.professor_en, x.old_code]
+            output = json.dumps(reduce(map(func, _search_by_ysdt(year, semester, department, type))), ensure_ascii=False, indent=4)
             cache.set(cache_key, output, 3600)
         return HttpResponse(output)
     except:
@@ -97,8 +101,8 @@ def add_to_timetable(request):
     user = request.user
     table_id = request.GET.get('table_id', None)
     lecture_id = request.GET.get('lecture_id', None)
-    view_year = request.GET.get('view_year', str(settings.NEXT_YEAR))
-    view_semester = request.GET.get('view_semester', str(settings.NEXT_SEMESTER))
+    view_year = request.GET.get('view_year', unicode(settings.NEXT_YEAR))
+    view_semester = request.GET.get('view_semester', unicode(settings.NEXT_SEMESTER))
     
     lectures = []
     try:
@@ -132,8 +136,8 @@ def delete_from_timetable(request):
     user = request.user
     table_id = request.GET.get('table_id', None)
     lecture_id = request.GET.get('lecture_id', None)
-    view_year = request.GET.get('view_year', str(settings.NEXT_YEAR))
-    view_semester = request.GET.get('view_semester', str(settings.NEXT_SEMESTER))
+    view_year = request.GET.get('view_year', unicode(settings.NEXT_YEAR))
+    view_semester = request.GET.get('view_semester', unicode(settings.NEXT_SEMESTER))
 
     lectures = []
     try:
@@ -179,8 +183,8 @@ def view_timetable(request):
 @login_required_ajax
 def change_semester(request):
     user = request.user
-    view_year = request.GET.get('view_year', str(settings.NEXT_YEAR))
-    view_semester = request.GET.get('view_semester', str(settings.NEXT_SEMESTER))
+    view_year = request.GET.get('view_year', unicode(settings.NEXT_YEAR))
+    view_semester = request.GET.get('view_semester', unicode(settings.NEXT_SEMESTER))
 
     try:
         my_lectures = [_lectures_to_output(Lecture.objects.filter(year=view_year, semester=view_semester, timetable__user=user, timetable__table_id=id), False, request.session.get('django_language', 'ko')) for id in xrange(0,settings.NUMBER_OF_TABS)]
@@ -209,6 +213,7 @@ def _search(**conditions):
     semester = conditions.get('term', unicode(settings.NEXT_SEMESTER))
     department = conditions.get('dept', None)
     type = conditions.get('type', None)
+    lang = conditions.get('lang', 'ko')
     keyword = conditions.get('keyword', None)
     day_begin = conditions.get('start_day', None)
     day_end = conditions.get('end_day', None)
@@ -239,14 +244,14 @@ def _search(**conditions):
         elif department != None and type != None and keyword != None:
             keyword = keyword.strip()
             if keyword == u'':
-                if department == u'-1' and type == ugettext(u'전체보기'):
+                if department == u'-1' and type == u'전체보기':
                     raise ValidationError()
                 lectures = _search_by_ysdt(year, semester, department, type)
             else:
                 words = keyword.split()
                 counts = {}
                 for word in words:
-                    courses = _search_by_ysdtw(year, semester, department, type, word)
+                    courses = _search_by_ysdtlw(year, semester, department, type, lang, unicode(word))
                     for course in courses:
                         if course in counts:
                             counts[course] += 1
@@ -266,7 +271,7 @@ def _search_by_ys(year, semester):
     cache_key = 'timetable-search-cache:year=%s:semester=%s' % (year, semester)
     output = cache.get(cache_key)
     if output is None:
-        output = Lecture.objects.annotate(num_classtimes=Count('classtime')).filter(year=int(year), semester=int(semester), num_classtime__gt=0, deleted=False)
+        output = Lecture.objects.annotate(num_classtimes=Count('classtime')).filter(year=int(year), semester=int(semester), num_classtimes__gt=0, deleted=False)
         cache.set(cache_key, output, 3600)
     return output
 
@@ -277,18 +282,21 @@ def _search_by_ysdt(year, semester, department, type):
         output = _search_by_ys(year, semester)
         if department != u'-1':
             output = output.filter(department__id__exact=int(department))
-        if type != ugettext(u'전체보기'):
-            output = output.filter(type_exact=type)
+        if type != u'전체보기':
+            output = output.filter(type__exact=type)
         output = output.order_by('type', 'code').distinct().select_related()
         cache.set(cache_key, output, 3600)
     return output
 
-def _search_by_ysdtw(year, semester, department, type, word):
-    cache_key = 'timetable-search-cache:year=%s:semester=%s:department=%s:type=%s:word=%s' % (year, semester, department, type, word)
+def _search_by_ysdtlw(year, semester, department, type, lang, word):
+    cache_key = 'timetable-search-cache:year=%s:semester=%s:department=%s:type=%s:lang=%s:word=%s' % (year, semester, department, type, lang, word)
     output = cache.get(cache_key)
     if output is None:
         output = _search_by_ysdt(year, semester, department, type)
-        output = output.filter(Q(old_code__icontains=word) | Q(title__icontains=word) | Q(professor__icontains=word)).distinct()
+        if lang == 'ko':
+            output = output.filter(Q(old_code__icontains=word) | Q(title__icontains=word) | Q(professor__icontains=word)).distinct()
+        else:
+            output = output.filter(Q(old_code__icontains=word) | Q(title_en__icontains=word) | Q(professor_en__icontains=word)).distinct()
         cache.set(cache_key, output, 3600)
     return output
 
@@ -432,7 +440,8 @@ def print_as_pdf(request):
     c.setLineWidth(0.5)
     my_lectures = Lecture.objects.filter(year=view_year, semester=view_semester, timetable__user=request.user, timetable__table_id=table_id).select_related()
     for lecture in my_lectures:
-        for classtime in lecture.classtime_set.all():
+        classtimes = ClassTime.objects.filter(lecture=lecture)
+        for classtime in classtimes:
             left, bottom, width, height = get_box_position(classtime.day, classtime.get_begin_numeric(), classtime.get_end_numeric())
             top = bottom + height
             offset = height / 2.0
