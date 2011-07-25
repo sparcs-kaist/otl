@@ -11,9 +11,7 @@ Data.Lectures =
 [
 	{
 		id:'1',
-		year:'2008',
-		term:'3',
-		dept:'전산학전공',
+		dept_id:'3847',
 		classification:'기초필수',
 		course_no:'CS202',
 		class:'A',
@@ -26,6 +24,7 @@ Data.Lectures =
 		times:[{day:'화',start:480,end:600},{day:'수',start:480,end:600}],
 		classroom:'창의학습관 304',
 		fixed_num:'200',
+		num_people:'47',
 		remarks:'영어강의',
 		examtime:{day:'화,start:480,end:630}
 	}
@@ -831,6 +830,9 @@ var Timetable = {
 							$('#add_au').text('(+'+item+')');
 						break;
 					case 'title':
+						link_url = 'https://cais.kaist.ac.kr/syllabusStud?year='+Data.ViewYear+'&term='+Data.ViewTerm+'&subject_no='+obj['code']+'&lecture_class='+obj['class']+'&dept_id='+obj['dept_id'];
+						$('#DS_'+key).html('<p><a href="'+link_url+'" target="_blank"><img src="'+Data.MediaUrl+'images/syllabus.png" id="syllabus" title="'+gettext('실라버스')+'" alt="'+gettext('실라버스')+'" /></a> '+item+'</p>');
+						break;
 					case 'prof':
 						$('#DS_'+key).html('<p>'+item+'</p>');
 						break;
