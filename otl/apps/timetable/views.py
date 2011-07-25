@@ -312,9 +312,7 @@ def _lectures_to_output(lectures, conv_to_json=True, lang='ko'):
             room = classtimes[0]['classroom']
         item = {
             'id': lecture.id,
-            'year': lecture.year,
-            'term': lecture.semester,
-            'dept': _trans(lecture.department.name, lecture.department.name_en, lang),
+            'dept_id': lecture.department.id,
             'classification': _trans(lecture.type, lecture.type_en, lang),
             'course_no': lecture.old_code,
             'class': lecture.class_no,
@@ -325,6 +323,7 @@ def _lectures_to_output(lectures, conv_to_json=True, lang='ko'):
             'credit': lecture.credit,
             'au': lecture.credit_au,
             'fixed_num': lecture.limit,
+            'num_people': lecture.num_people,
             'classroom': room,
             'deleted': lecture.deleted,
             'prof': _trans(lecture.professor, lecture.professor_en, lang),
