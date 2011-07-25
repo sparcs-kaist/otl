@@ -30,6 +30,12 @@ Data.Lectures =
 	}
 ];
 */
+function roundD(n, digits) {
+	if (digits >= 0) return parseFloat(n.toFixed(digits));
+	digits = Math.pow(10, digits);
+	var t = Math.round(n * digits) / digits;
+	return parseFloat(t.toFixed(0));
+}
 
 var NUM_ITEMS_PER_LIST = 15;
 var NUMBER_OF_TABS = 3;
@@ -835,6 +841,9 @@ var Timetable = {
 						break;
 					case 'prof':
 						$('#DS_'+key).html('<p>'+item+'</p>');
+						break;
+					case 'num_people':
+						$('#DS_comp_rate').html(roundD(obj['num_people']/obj['fixed_num'], 2)+' ( '+obj['num_people']+'/'+obj['fixed_num']+' )');
 						break;
 					default:
 						$('#DS_'+key).text(item);
