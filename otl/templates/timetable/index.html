@@ -134,14 +134,16 @@
 					<tr>
 						<th>{% trans "강의장소" %}</th>
 						<th>{% trans "시험시간" %}</th>
-						<th class="end">{% trans "기타" %}</th>
+						<th>{% trans "기타" %}</th>
+						<th class="end"><img src="{{MEDIA_URL}}images/refresh.png" id="refresh" title="{% trans "새로고침" %}" alt="{% trans "새로고침" %}"> {% trans "경쟁률" %} <img src="{{MEDIA_URL}}images/blank.png" id="blank"></th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr>
 						<td id="DS_classroom">&nbsp;</td>
 						<td id="DS_examtime">&nbsp;</td>
-						<td id="DS_remarks" class="end">&nbsp;</td>
+						<td id="DS_remarks">&nbsp;</td>
+						<td id="DS_comp_rate" class="end">&nbsp;</td>
 					</tr>
 				</tbody>
 			</table>
@@ -161,7 +163,7 @@
 					<tr>
 						<td id="DS_course_no">&nbsp;</td>
 						<td id="DS_class">&nbsp;</td>
-						<td id="DS_title"><p>&nbsp;</p></td>
+						<td id="DS_title"><p>&nbsp;</td>
 						<td id="DS_prof"><p>&nbsp;</p></td>
 						<td id="DS_lec_time">0</td>
 						<td id="DS_lab_time">0</td>
