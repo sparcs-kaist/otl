@@ -81,7 +81,7 @@ def get_autocomplete_list(request):
         semester = request.GET.get('term', unicode(settings.NEXT_SEMESTER))
         department = request.GET.get('dept', None)
         type = request.GET.get('type', None)
-        lang = request.session.get('django_language', 'ko')
+        lang = request.GET.get('lang', 'ko')
 
         cache_key = 'autocomplete-list-cache:year=%s:semester=%s:department=%s:type=%s:lang=%s' % (year, semester, department, type, lang)
         output = cache.get(cache_key)
@@ -90,7 +90,10 @@ def get_autocomplete_list(request):
                 func = lambda x:[x.title, x.professor, x.old_code]
             elif lang == 'en':
                 func = lambda x:[x.title_en, x.professor_en, x.old_code]
-            output = json.dumps(list(set(reduce(map(func, _search_by_ysdt(year, semester, department, type))))), ensure_ascii=False, indent=4)
+            result = list(set(reduce(map(func, _search_by_ysdt(year, semester, department, type)))))
+            while None in result:
+                result[result.index(None)] = 'None'
+            output = json.dumps(result, ensure_ascii=False, indent=4)
             cache.set(cache_key, output, 3600)
         return HttpResponse(output)
     except:

@@ -700,13 +700,12 @@ msgid "현장실습및연구"
 msgstr "Field Practice"
 
 #: templates/timetable/index.html:111
-#, fuzzy
 msgid "키워드"
-msgstr "Password"
+msgstr "Keyword"
 
 #: templates/timetable/index.html:115
 msgid "적용"
-msgstr ""
+msgstr "Apply"
 
 #: templates/timetable/index.html:118
 msgid "※ 강의시간이 없는 과목들은 제외됩니다. (예: 졸업연구, 논문연구)"
@@ -732,7 +731,7 @@ msgstr "Refresh"
 
 #: templates/timetable/index.html:146
 msgid "경쟁률"
-msgstr "Compet.rate"
+msgstr "Comp.rate"
 
 #: templates/timetable/index.html:161
 msgid "과목코드"
