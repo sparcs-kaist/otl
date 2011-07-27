@@ -23,7 +23,7 @@ Data.Lectures =
 		prof:'김민우',
 		times:[{day:'화',start:480,end:600},{day:'수',start:480,end:600}],
 		classroom:'창의학습관 304',
-		fixed_num:'200',
+		limit:'200',
 		num_people:'47',
 		remarks:'영어강의',
 		examtime:{day:'화,start:480,end:630}
@@ -351,6 +351,8 @@ var LectureList = {
 
 			var el = $('<a>').text(item.title).appendTo(content);
 			Utils.clickable(el);
+
+			Data.CompRates[''+Data.ViewYear+Data.ViewTerm+item.course_no+item.class] = roundD(item.num_people / item.limit, 2)+' ( '+item.num_people+'/'+item.limit+' )';
 			
 			el.bind('mousedown', $.proxyWithArgs(Timetable.addLecture, Timetable, item));
 			el.bind('mouseover', $.proxyWithArgs(Timetable.onMouseoverTemp, Timetable, item));
@@ -618,8 +620,10 @@ var Timetable = {
 					deleted_list += (deleted_count==0 ? '' : ', ')+item.course_no+' '+item.title;
 					have_deleted = true;
 					deleted_count++;
-				} else
+				} else {
+					Data.CompRates[''+Data.ViewYear+Data.ViewTerm+item.course_no+item.class] = roundD(item.num_people / item.limit, 2)+' ( '+item.num_people+'/'+item.limit+' )';
 					Timetable.buildlmodules(wrap,item,bgcolor,true);
+				}
 			});
 			Data.Timetables[index] = {credit:credit, au:au};
 		});
@@ -792,6 +796,7 @@ var Timetable = {
 			credit += item.credit;
 			au += item.au;
 			var bgcolor = Utils.getColorByIndex(index);
+			Data.CompRates[''+Data.ViewYear+Data.ViewTerm+item.course_no+item.class] = roundD(item.num_people / item.limit, 2)+' ( '+item.num_people+'/'+item.limit+' )';
 			Timetable.buildlmodules(Timetable.tabs.getActiveTab(), item, bgcolor, true);
 		});
 		
@@ -806,11 +811,38 @@ var Timetable = {
 			credit += item.credit;
 			au += item.au;
 			var bgcolor = Utils.getColorByIndex(index);
+			Data.CompRates[''+Data.ViewYear+Data.ViewTerm+item.course_no+item.class] = roundD(item.num_people / item.limit, 2)+' ( '+item.num_people+'/'+item.limit+' )';
 			Timetable.buildlmodules(Timetable.tabs.getTabByKey(key), item, bgcolor, true);
 		});
 
 		Data.Timetables[key] = {credit:credit,au:au};
 		Timetable.tabs.updateData();
+	},
+	getCompRate:function(obj)
+	{
+		var registerCompRateTmp = function(year, term, course_no, class) {
+			var registerCompRate = function(resObj) {
+				try {
+					Data.CompRates[''+year+term+course_no+class] = roundD(resObj.num_people/resObj.limit, 2)+' ( '+resObj.num_people+'/'+resObj.limit+' )';
+					if( year == Data.ViewYear && term == Data.ViewTerm && course_no == $('#DS_course_no').html() && class == $('#DS_class').html() ) {
+						$('#DS_comp_rate').html(Data.CompRates[''+year+term+course_no+class]);
+					}
+				} catch(e) {
+				}
+			};
+			return registerCompRate;
+		};
+		$.ajax({
+			type: 'GET',
+			url: '/timetable/comp_rate/',
+			data: {'year': Data.ViewYear, 'term': Data.ViewTerm, 'course_no': obj['course_no'], 'class': obj['class']},
+			dataType: 'json',
+			success: registerCompRateTmp(Data.ViewYear, Data.ViewTerm, obj['course_no'], obj['class']),
+			error: $.proxy(function(xhr) {
+				if (suppress_ajax_errors)
+					return;
+			}, this)
+		});
 	},
 	updateInfoPanel: function(obj, is_adding)
 	{
@@ -843,7 +875,14 @@ var Timetable = {
 						$('#DS_'+key).html('<p>'+item+'</p>');
 						break;
 					case 'num_people':
-						$('#DS_comp_rate').html(roundD(obj['num_people']/obj['fixed_num'], 2)+' ( '+obj['num_people']+'/'+obj['fixed_num']+' )');
+						if( ''+Data.ViewYear+Data.ViewTerm+obj['course_no']+obj['class'] in Data.CompRates ) {
+							$('#DS_comp_rate').html(Data.CompRates[''+Data.ViewYear+Data.ViewTerm+obj['course_no']+obj['class']]);
+						}
+						else {
+							this.getCompRate(obj);
+						}
+						break;
+					case 'limit':
 						break;
 					default:
 						$('#DS_'+key).text(item);
@@ -874,6 +913,7 @@ var Timetable = {
 	buildlmodules:function(wrap,obj,bgcolor_index,enableDelete)
 	{
 		var is_first = true;
+
 		$.each(obj.times, $.proxy(function(index, time)
 		{
 			var lmodule = $('<div>',{'class':'lmodule', 'id':obj.code});

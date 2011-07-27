@@ -96,6 +96,24 @@ def get_autocomplete_list(request):
     except:
         return HttpResponseBadRequest()
 
+def get_comp_rate(request):
+    year = request.GET.get('year', unicode(settings.NEXT_YEAR))
+    semester = request.GET.get('term', unicode(settings.NEXT_SEMESTER))
+    old_code = request.GET.get('course_no', None)
+    class_no = request.GET.get('class', None)
+
+    try:
+        lecture = Lecture.objects.get(year=int(year), semester=int(semester), old_code=old_code, class_no=class_no)
+        result = {'limit': lecture.limit, 'num_people': lecture.num_people}
+        io = StringIO()
+        if settings.DEBUG:
+            json.dump(result, io, ensure_ascii=False, indent=4)
+        else:
+            json.dump(result, io, ensure_ascii=False, sort_keys=False, separators=(',',':'))
+        return HttpResponse(io.getvalue())
+    except:
+        raise ValidationError()
+
 @login_required_ajax
 def add_to_timetable(request):
     user = request.user
@@ -322,7 +340,7 @@ def _lectures_to_output(lectures, conv_to_json=True, lang='ko'):
             'lab_time': lecture.num_labs,
             'credit': lecture.credit,
             'au': lecture.credit_au,
-            'fixed_num': lecture.limit,
+            'limit': lecture.limit,
             'num_people': lecture.num_people,
             'classroom': room,
             'deleted': lecture.deleted,

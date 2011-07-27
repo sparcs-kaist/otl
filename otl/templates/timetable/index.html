@@ -41,6 +41,7 @@
 		Data.ViewYear = {{next_year}};
 		Data.ViewTerm = {{next_semester}};
 		Data.MediaUrl = {{MEDIA_URL}};
+		Data.CompRates = {};
 
 		Notifier.initialize();
 		LectureList.initialize();
@@ -130,13 +131,19 @@
 	</div>
 	<div id="center">
 		<div id="center-top">
+			<script type="text/javascript">
+				function onRefreshCompRates() {
+					Data.CompRates = {};
+					Timetable.getCompRate({'course_no': $('#DS_course_no').html(), 'class': $('#DS_class').html()});
+				}
+			</script>
 			<table class="lecture-info">
 				<thead>
 					<tr>
 						<th>{% trans "강의장소" %}</th>
 						<th>{% trans "시험시간" %}</th>
 						<th>{% trans "기타" %}</th>
-						<th class="end"><img src="{{MEDIA_URL}}images/refresh.png" id="refresh" title="{% trans "새로고침" %}" alt="{% trans "새로고침" %}"> {% trans "경쟁률" %} <img src="{{MEDIA_URL}}images/blank.png" id="blank"></th>
+						<th class="end"><img src="{{MEDIA_URL}}images/refresh.png" id="refresh" title="{% trans "새로고침" %}" alt="{% trans "새로고침" %}" onclick="onRefreshCompRates();"> {% trans "경쟁률" %} <img src="{{MEDIA_URL}}images/blank.png" id="blank"></th>
 					</tr>
 				</thead>
 				<tbody>
