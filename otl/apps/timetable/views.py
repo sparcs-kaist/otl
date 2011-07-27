@@ -90,7 +90,7 @@ def get_autocomplete_list(request):
                 func = lambda x:[x.title, x.professor, x.old_code]
             elif lang == 'en':
                 func = lambda x:[x.title_en, x.professor_en, x.old_code]
-            output = json.dumps(reduce(map(func, _search_by_ysdt(year, semester, department, type))), ensure_ascii=False, indent=4)
+            output = json.dumps(list(set(reduce(map(func, _search_by_ysdt(year, semester, department, type))))), ensure_ascii=False, indent=4)
             cache.set(cache_key, output, 3600)
         return HttpResponse(output)
     except:
@@ -100,7 +100,7 @@ def get_comp_rate(request):
     year = request.GET.get('year', unicode(settings.NEXT_YEAR))
     semester = request.GET.get('term', unicode(settings.NEXT_SEMESTER))
     old_code = request.GET.get('course_no', None)
-    class_no = request.GET.get('class', None)
+    class_no = request.GET.get('class_no', None)
 
     try:
         lecture = Lecture.objects.get(year=int(year), semester=int(semester), old_code=old_code, class_no=class_no)
@@ -333,7 +333,7 @@ def _lectures_to_output(lectures, conv_to_json=True, lang='ko'):
             'dept_id': lecture.department.id,
             'classification': _trans(lecture.type, lecture.type_en, lang),
             'course_no': lecture.old_code,
-            'class': lecture.class_no,
+            'class_no': lecture.class_no,
             'code': lecture.code,
             'title': _trans(lecture.title, lecture.title_en, lang),
             'lec_time': lecture.num_classes,

@@ -11,7 +11,7 @@
 	//]]>
 	</script>
 	<script type="text/javascript" src="{% url django.views.i18n.javascript_catalog %}"></script>
-	<script type="text/javascript" src="{{MEDIA_URL}}js/timetable.js?v=1269108490"></script>
+	<script type="text/javascript" src="{{MEDIA_URL}}js/timetable.js?v=1269108500"></script>
 	<script type="text/javascript" src="{{MEDIA_URL}}js/jquery.autocomplete.js"></script>
 	<script type="text/javascript">
 	//<![CDATA[
@@ -76,13 +76,13 @@
 							{% endifequal %}
 						{% endfor %}
 						{% else %}
-						<option value="2044">{% trans "인문사회과학부" %}</option>
+						<option value="3894">{% trans "인문.사회과학과" %}</option>
 						{% endif %}
 					</optgroup>
 					<optgroup label="{% trans "전체 목록" %}">
 						<option value="-1">{% trans "전체보기" %}</option>
 						{% for item in departments %}{# Firefox에서는 사용자가 선택한 form 값을 자동 저장하여 새로고침했을 때 아래의 selected 속성이 무시되는 문제가 있음. #}
-						<option value="{{ item.id }}"{% ifequal item.id 2044 %} selected="selected"{% endifequal %}>{% ifequal lang "ko" %}{{ item.name }}{% else %}{% ifequal item.name_en None %}{{ item.name }}{% else %}{{ item.name_en }}{% endifequal %}{% endifequal %}</option>
+						<option value="{{ item.id }}"{% ifequal item.id 3894 %} selected="selected"{% endifequal %}>{% ifequal lang "ko" %}{{ item.name }}{% else %}{% ifequal item.name_en None %}{{ item.name }}{% else %}{{ item.name_en }}{% endifequal %}{% endifequal %}</option>
 						{% endfor %}
 					</optgroup>
 				</select>
@@ -134,7 +134,7 @@
 			<script type="text/javascript">
 				function onRefreshCompRates() {
 					Data.CompRates = {};
-					Timetable.getCompRate({'course_no': $('#DS_course_no').html(), 'class': $('#DS_class').html()});
+					Timetable.getCompRate({'course_no': $('#DS_course_no').html(), 'class_no': $('#DS_class_no').html()});
 				}
 			</script>
 			<table class="lecture-info">
@@ -170,7 +170,7 @@
 				<tbody>
 					<tr>
 						<td id="DS_course_no">&nbsp;</td>
-						<td id="DS_class">&nbsp;</td>
+						<td id="DS_class_no">&nbsp;</td>
 						<td id="DS_title"><p>&nbsp;</td>
 						<td id="DS_prof"><p>&nbsp;</p></td>
 						<td id="DS_lec_time">0</td>

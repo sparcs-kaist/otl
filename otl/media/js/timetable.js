@@ -14,7 +14,7 @@ Data.Lectures =
 		dept_id:'3847',
 		classification:'기초필수',
 		course_no:'CS202',
-		class:'A',
+		class_no:'A',
 		code:'37.231',
 		title:'데이타구조',
 		lec_time:'2',
@@ -352,7 +352,7 @@ var LectureList = {
 			var el = $('<a>').text(item.title).appendTo(content);
 			Utils.clickable(el);
 
-			Data.CompRates[''+Data.ViewYear+Data.ViewTerm+item.course_no+item.class] = roundD(item.num_people / item.limit, 2)+' ( '+item.num_people+'/'+item.limit+' )';
+			Data.CompRates[''+Data.ViewYear+Data.ViewTerm+item.course_no+item.class_no] = roundD(item.num_people / item.limit, 2)+' ('+item.num_people+'/'+item.limit+')';
 			
 			el.bind('mousedown', $.proxyWithArgs(Timetable.addLecture, Timetable, item));
 			el.bind('mouseover', $.proxyWithArgs(Timetable.onMouseoverTemp, Timetable, item));
@@ -621,7 +621,7 @@ var Timetable = {
 					have_deleted = true;
 					deleted_count++;
 				} else {
-					Data.CompRates[''+Data.ViewYear+Data.ViewTerm+item.course_no+item.class] = roundD(item.num_people / item.limit, 2)+' ( '+item.num_people+'/'+item.limit+' )';
+					Data.CompRates[''+Data.ViewYear+Data.ViewTerm+item.course_no+item.class_no] = roundD(item.num_people / item.limit, 2)+' ('+item.num_people+'/'+item.limit+')';
 					Timetable.buildlmodules(wrap,item,bgcolor,true);
 				}
 			});
@@ -796,7 +796,7 @@ var Timetable = {
 			credit += item.credit;
 			au += item.au;
 			var bgcolor = Utils.getColorByIndex(index);
-			Data.CompRates[''+Data.ViewYear+Data.ViewTerm+item.course_no+item.class] = roundD(item.num_people / item.limit, 2)+' ( '+item.num_people+'/'+item.limit+' )';
+			Data.CompRates[''+Data.ViewYear+Data.ViewTerm+item.course_no+item.class_no] = roundD(item.num_people / item.limit, 2)+' ('+item.num_people+'/'+item.limit+')';
 			Timetable.buildlmodules(Timetable.tabs.getActiveTab(), item, bgcolor, true);
 		});
 		
@@ -811,7 +811,7 @@ var Timetable = {
 			credit += item.credit;
 			au += item.au;
 			var bgcolor = Utils.getColorByIndex(index);
-			Data.CompRates[''+Data.ViewYear+Data.ViewTerm+item.course_no+item.class] = roundD(item.num_people / item.limit, 2)+' ( '+item.num_people+'/'+item.limit+' )';
+			Data.CompRates[''+Data.ViewYear+Data.ViewTerm+item.course_no+item.class_no] = roundD(item.num_people / item.limit, 2)+' ('+item.num_people+'/'+item.limit+')';
 			Timetable.buildlmodules(Timetable.tabs.getTabByKey(key), item, bgcolor, true);
 		});
 
@@ -820,12 +820,12 @@ var Timetable = {
 	},
 	getCompRate:function(obj)
 	{
-		var registerCompRateTmp = function(year, term, course_no, class) {
+		var registerCompRateTmp = function(year, term, course_no, class_no) {
 			var registerCompRate = function(resObj) {
 				try {
-					Data.CompRates[''+year+term+course_no+class] = roundD(resObj.num_people/resObj.limit, 2)+' ( '+resObj.num_people+'/'+resObj.limit+' )';
-					if( year == Data.ViewYear && term == Data.ViewTerm && course_no == $('#DS_course_no').html() && class == $('#DS_class').html() ) {
-						$('#DS_comp_rate').html(Data.CompRates[''+year+term+course_no+class]);
+					Data.CompRates[''+year+term+course_no+class_no] = roundD(resObj.num_people/resObj.limit, 2)+' ('+resObj.num_people+'/'+resObj.limit+')';
+					if( year == Data.ViewYear && term == Data.ViewTerm && course_no == $('#DS_course_no').html() && class_no == $('#DS_class_no').html() ) {
+						$('#DS_comp_rate').html(Data.CompRates[''+year+term+course_no+class_no]);
 					}
 				} catch(e) {
 				}
@@ -835,9 +835,9 @@ var Timetable = {
 		$.ajax({
 			type: 'GET',
 			url: '/timetable/comp_rate/',
-			data: {'year': Data.ViewYear, 'term': Data.ViewTerm, 'course_no': obj['course_no'], 'class': obj['class']},
+			data: {'year': Data.ViewYear, 'term': Data.ViewTerm, 'course_no': obj['course_no'], 'class_no': obj['class_no']},
 			dataType: 'json',
-			success: registerCompRateTmp(Data.ViewYear, Data.ViewTerm, obj['course_no'], obj['class']),
+			success: registerCompRateTmp(Data.ViewYear, Data.ViewTerm, obj['course_no'], obj['class_no']),
 			error: $.proxy(function(xhr) {
 				if (suppress_ajax_errors)
 					return;
@@ -868,15 +868,15 @@ var Timetable = {
 							$('#add_au').text('(+'+item+')');
 						break;
 					case 'title':
-						link_url = 'https://cais.kaist.ac.kr/syllabusStud?year='+Data.ViewYear+'&term='+Data.ViewTerm+'&subject_no='+obj['code']+'&lecture_class='+obj['class']+'&dept_id='+obj['dept_id'];
+						link_url = 'https://cais.kaist.ac.kr/syllabusStud?year='+Data.ViewYear+'&term='+Data.ViewTerm+'&subject_no='+obj['code']+'&lecture_class='+obj['class_no']+'&dept_id='+obj['dept_id'];
 						$('#DS_'+key).html('<p><a href="'+link_url+'" target="_blank"><img src="'+Data.MediaUrl+'images/syllabus.png" id="syllabus" title="'+gettext('실라버스')+'" alt="'+gettext('실라버스')+'" /></a> '+item+'</p>');
 						break;
 					case 'prof':
 						$('#DS_'+key).html('<p>'+item+'</p>');
 						break;
 					case 'num_people':
-						if( ''+Data.ViewYear+Data.ViewTerm+obj['course_no']+obj['class'] in Data.CompRates ) {
-							$('#DS_comp_rate').html(Data.CompRates[''+Data.ViewYear+Data.ViewTerm+obj['course_no']+obj['class']]);
+						if( ''+Data.ViewYear+Data.ViewTerm+obj['course_no']+obj['class_no'] in Data.CompRates ) {
+							$('#DS_comp_rate').html(Data.CompRates[''+Data.ViewYear+Data.ViewTerm+obj['course_no']+obj['class_no']]);
 						}
 						else {
 							this.getCompRate(obj);
@@ -948,18 +948,18 @@ var Timetable = {
 
 				// 같은 과목의 여러 lmodule 중 하나에만 마우스를 올려도 다함께 highlight되도록 하는 처리
 				lmodule.bind('mouseover', function(ev) {
-					$.each($('#timetable-item-'+obj.course_no+obj['class']).data('mymodules'), function(index, item) {
+					$.each($('#timetable-item-'+obj.course_no+obj['class_no']).data('mymodules'), function(index, item) {
 						$(item).children('.bg').css('background',bgcolor_highlighted);
 					});
 				});
 				lmodule.bind('mouseout', function(ev) {
-					$.each($('#timetable-item-'+obj.course_no+obj['class']).data('mymodules'), function(index, item) {
+					$.each($('#timetable-item-'+obj.course_no+obj['class_no']).data('mymodules'), function(index, item) {
 						$(item).children('.bg').css('background',bgcolor);
 					});
 				});
 				// 처음 추가되는 lmodule 항목은 고유 ID를 가지며, 여기서 element storage를 이용해 자신과 다른 lmodule들의 reference를 저장한다.
 				if (is_first) {
-					lmodule.attr('id', 'timetable-item-'+obj.course_no+obj['class']);
+					lmodule.attr('id', 'timetable-item-'+obj.course_no+obj['class_no']);
 					is_first = false;
 				}
 			}
@@ -970,9 +970,9 @@ var Timetable = {
 
 			// 고유 ID를 가진 lmodule 항목에 reference 추가
 			if (enableDelete) {
-				var modules = $('#timetable-item-'+obj.course_no+obj['class']).data('mymodules') || [];
+				var modules = $('#timetable-item-'+obj.course_no+obj['class_no']).data('mymodules') || [];
 				modules.push(lmodule);
-				$('#timetable-item-'+obj.course_no+obj['class']).data('mymodules', modules);
+				$('#timetable-item-'+obj.course_no+obj['class_no']).data('mymodules', modules);
 			}
 		}, this));
 	}
