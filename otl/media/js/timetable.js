@@ -11,9 +11,7 @@ Data.Lectures =
 [
 	{
 		id:'1',
-		year:'2008',
-		term:'3',
-		dept:'전산학전공',
+		dept_id:'3847',
 		classification:'기초필수',
 		course_no:'CS202',
 		class:'A',
@@ -25,12 +23,19 @@ Data.Lectures =
 		prof:'김민우',
 		times:[{day:'화',start:480,end:600},{day:'수',start:480,end:600}],
 		classroom:'창의학습관 304',
-		fixed_num:'200',
+		limit:'200',
+		num_people:'47',
 		remarks:'영어강의',
 		examtime:{day:'화,start:480,end:630}
 	}
 ];
 */
+function roundD(n, digits) {
+	if (digits >= 0) return parseFloat(n.toFixed(digits));
+	digits = Math.pow(10, digits);
+	var t = Math.round(n * digits) / digits;
+	return parseFloat(t.toFixed(0));
+}
 
 var NUM_ITEMS_PER_LIST = 15;
 var NUMBER_OF_TABS = 3;
@@ -256,29 +261,66 @@ var LectureList = {
 		this.contents = $('#lecture_contents');
 		this.data = Data.Lectures;
 		this.dept = $('#department');
-		this.classf= $('#classification');
+		this.classf = $('#classification');
+		this.keyword = $('#keyword');
+		this.apply = $('#apply');
 
 		this.loading = true;
 		this.dept.selectedIndex = 0;
 		this.registerHandles();
-		this.onChange();
+		this.onClassChange();
 	},
 	registerHandles:function()
 	{
-		$(this.dept).bind('change', $.proxy(this.onChange, this));
-		$(this.classf).bind('change', $.proxy(this.onChange, this));
+		$(this.dept).bind('change', $.proxy(this.onClassChange, this));
+		$(this.classf).bind('change', $.proxy(this.onClassChange, this));
+		$(this.apply).bind('click', $.proxy(this.onChange, this));
+		$(this.keyword).bind('keypress', $.proxy(function(e) { if(e.keyCode == 13) { this.onChange(); }}, this));
+	},
+	getAutocompleteList:function()
+	{
+		var dept = $(this.dept).val();
+		var classification = $(this.classf).val();
+		$.ajax({
+			type: 'GET',
+			url: '/timetable/autocomplete/',
+			data: {'year': Data.ViewYear, 'term': Data.ViewTerm, 'dept': dept, 'type': classification, 'lang': USER_LANGUAGE},
+			dataType: 'json',
+			success: $.proxy(function(resObj) {
+				try {
+					this.keyword.flushCache();
+					this.keyword.autocomplete(resObj, {
+						matchContains: true,
+						scroll: true,
+						width: 197,
+						selectFirst: false
+					});
+				} catch(e) {
+				}
+			}, this),
+			error: $.proxy(function(xhr) {
+				if (suppress_ajax_errors)
+					return;
+			}, this)
+		});
+	},
+	onClassChange:function()
+	{
+		this.getAutocompleteList();
+		this.onChange();
 	},
 	onChange:function()
 	{
 		var dept = $(this.dept).val();
 		var classification = $(this.classf).val();
+		var keyword = $(this.keyword).val().replace(/^\s+|\s+$/g, '');
 		//TODO: classification을 언어와 상관 없도록 고쳐야 함
-		if (dept == '-1' && USER_LANGUAGE == 'ko-KR' && classification == '전체보기')
-			Notifier.setErrorMsg('학과 전체보기는 과목 구분을 선택한 상태에서만 가능합니다.');
-		else if (dept == '-1' && USER_LANGUAGE == 'en' && classification == 'ALL')
-			Notifier.setErrorMsg('You must select a course type if you want to see \'ALL\' departments');
+		if (dept == '-1' && USER_LANGUAGE == 'ko' && classification == '전체보기' && keyword == '')
+			Notifier.setErrorMsg('키워드 없이 학과 전체보기는 과목 구분을 선택한 상태에서만 가능합니다.');
+		else if (dept == '-1' && USER_LANGUAGE == 'en' && classification == '전체보기' && keyword == '')
+			Notifier.setErrorMsg('You must select a course type if you want to see \'ALL\' departments without keywords.');
 		else
-			this.filter({'dept':dept,'type':classification});
+			this.filter({'dept':dept,'type':classification,'lang':USER_LANGUAGE,'keyword':keyword});
 	},
 	clearList:function()
 	{
@@ -309,6 +351,8 @@ var LectureList = {
 
 			var el = $('<a>').text(item.title).appendTo(content);
 			Utils.clickable(el);
+
+			Data.CompRates[''+Data.ViewYear+Data.ViewTerm+item.course_no+item.class] = roundD(item.num_people / item.limit, 2)+' ( '+item.num_people+'/'+item.limit+' )';
 			
 			el.bind('mousedown', $.proxyWithArgs(Timetable.addLecture, Timetable, item));
 			el.bind('mouseover', $.proxyWithArgs(Timetable.onMouseoverTemp, Timetable, item));
@@ -503,17 +547,16 @@ var RangeSearch = {
 					Utils.NumericTimeToReadable(startTime)+'부터 '+Utils.NumericTimeToReadable(endTime)+'까지</p>');
 
 			var buttonMessage='';
-			buttonMessage = gettext('학과/구분 검색으로 돌아가기');
+			buttonMessage = gettext('학과/구분/키워드 검색으로 돌아가기');
 			$('<button>')
 			.text(buttonMessage)
 			.click(function() {
 				$('#lecturelist-filter').css('display','block');
 				$('#lecturelist-range').empty();
-				var dept = $(LectureList.dept).val();
-				var classification = $(LectureList.classf).val();
-				LectureList.filter({dept:dept, type:classification});
+				LectureList.onChange();
 			})
-			.appendTo('#lecturelist-range');
+			.appendTo('#lecturelist-range')
+			.attr('id', 'back_to_search');
 			LectureList.filter({start_day:startDay, end_day:endDay, start_time:startTime, end_time:endTime});
 		}
 	},
@@ -577,8 +620,10 @@ var Timetable = {
 					deleted_list += (deleted_count==0 ? '' : ', ')+item.course_no+' '+item.title;
 					have_deleted = true;
 					deleted_count++;
-				} else
+				} else {
+					Data.CompRates[''+Data.ViewYear+Data.ViewTerm+item.course_no+item.class] = roundD(item.num_people / item.limit, 2)+' ( '+item.num_people+'/'+item.limit+' )';
 					Timetable.buildlmodules(wrap,item,bgcolor,true);
+				}
 			});
 			Data.Timetables[index] = {credit:credit, au:au};
 		});
@@ -751,6 +796,7 @@ var Timetable = {
 			credit += item.credit;
 			au += item.au;
 			var bgcolor = Utils.getColorByIndex(index);
+			Data.CompRates[''+Data.ViewYear+Data.ViewTerm+item.course_no+item.class] = roundD(item.num_people / item.limit, 2)+' ( '+item.num_people+'/'+item.limit+' )';
 			Timetable.buildlmodules(Timetable.tabs.getActiveTab(), item, bgcolor, true);
 		});
 		
@@ -765,11 +811,38 @@ var Timetable = {
 			credit += item.credit;
 			au += item.au;
 			var bgcolor = Utils.getColorByIndex(index);
+			Data.CompRates[''+Data.ViewYear+Data.ViewTerm+item.course_no+item.class] = roundD(item.num_people / item.limit, 2)+' ( '+item.num_people+'/'+item.limit+' )';
 			Timetable.buildlmodules(Timetable.tabs.getTabByKey(key), item, bgcolor, true);
 		});
 
 		Data.Timetables[key] = {credit:credit,au:au};
 		Timetable.tabs.updateData();
+	},
+	getCompRate:function(obj)
+	{
+		var registerCompRateTmp = function(year, term, course_no, class) {
+			var registerCompRate = function(resObj) {
+				try {
+					Data.CompRates[''+year+term+course_no+class] = roundD(resObj.num_people/resObj.limit, 2)+' ( '+resObj.num_people+'/'+resObj.limit+' )';
+					if( year == Data.ViewYear && term == Data.ViewTerm && course_no == $('#DS_course_no').html() && class == $('#DS_class').html() ) {
+						$('#DS_comp_rate').html(Data.CompRates[''+year+term+course_no+class]);
+					}
+				} catch(e) {
+				}
+			};
+			return registerCompRate;
+		};
+		$.ajax({
+			type: 'GET',
+			url: '/timetable/comp_rate/',
+			data: {'year': Data.ViewYear, 'term': Data.ViewTerm, 'course_no': obj['course_no'], 'class': obj['class']},
+			dataType: 'json',
+			success: registerCompRateTmp(Data.ViewYear, Data.ViewTerm, obj['course_no'], obj['class']),
+			error: $.proxy(function(xhr) {
+				if (suppress_ajax_errors)
+					return;
+			}, this)
+		});
 	},
 	updateInfoPanel: function(obj, is_adding)
 	{
@@ -795,8 +868,21 @@ var Timetable = {
 							$('#add_au').text('(+'+item+')');
 						break;
 					case 'title':
+						link_url = 'https://cais.kaist.ac.kr/syllabusStud?year='+Data.ViewYear+'&term='+Data.ViewTerm+'&subject_no='+obj['code']+'&lecture_class='+obj['class']+'&dept_id='+obj['dept_id'];
+						$('#DS_'+key).html('<p><a href="'+link_url+'" target="_blank"><img src="'+Data.MediaUrl+'images/syllabus.png" id="syllabus" title="'+gettext('실라버스')+'" alt="'+gettext('실라버스')+'" /></a> '+item+'</p>');
+						break;
 					case 'prof':
 						$('#DS_'+key).html('<p>'+item+'</p>');
+						break;
+					case 'num_people':
+						if( ''+Data.ViewYear+Data.ViewTerm+obj['course_no']+obj['class'] in Data.CompRates ) {
+							$('#DS_comp_rate').html(Data.CompRates[''+Data.ViewYear+Data.ViewTerm+obj['course_no']+obj['class']]);
+						}
+						else {
+							this.getCompRate(obj);
+						}
+						break;
+					case 'limit':
 						break;
 					default:
 						$('#DS_'+key).text(item);
@@ -827,6 +913,7 @@ var Timetable = {
 	buildlmodules:function(wrap,obj,bgcolor_index,enableDelete)
 	{
 		var is_first = true;
+
 		$.each(obj.times, $.proxy(function(index, time)
 		{
 			var lmodule = $('<div>',{'class':'lmodule', 'id':obj.code});

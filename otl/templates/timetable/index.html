@@ -3,6 +3,7 @@
 {% block headers %}
 	<link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}table.css" />
 	<link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}timetable.css" />
+	<link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}jquery.autocomplete.css" />
 	<!--[if lte IE 6]><link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}timetable.ie6.css" /><![endif]-->
 	<script type="text/javascript">
 	//<![CDATA[
@@ -11,6 +12,7 @@
 	</script>
 	<script type="text/javascript" src="{% url django.views.i18n.javascript_catalog %}"></script>
 	<script type="text/javascript" src="{{MEDIA_URL}}js/timetable.js?v=1269108490"></script>
+	<script type="text/javascript" src="{{MEDIA_URL}}js/jquery.autocomplete.js"></script>
 	<script type="text/javascript">
 	//<![CDATA[
 	$(document).ready(function() {
@@ -38,6 +40,8 @@
 		Data.CurrentTerm = {{current_semester}};
 		Data.ViewYear = {{next_year}};
 		Data.ViewTerm = {{next_semester}};
+		Data.MediaUrl = {{MEDIA_URL}};
+		Data.CompRates = {};
 
 		Notifier.initialize();
 		LectureList.initialize();
@@ -103,6 +107,13 @@
 					<option value="논문세미나">{% trans "논문세미나" %}</option>
 					<option value="현장실습및연구">{% trans "현장실습및연구" %}</option>
 				</select>
+				<br />
+				<label>{% trans "키워드" %}</label>
+				<input type="text" id="keyword" autocomplete="off" style="width:97%">
+				<br />
+				<div style="text-align:right; margin-top:10px;">
+					<input type="button" id="apply" name="apply" value="{% trans "적용" %}" style="text-align:right;">
+				</div>
 			</div>
 			<div id="lecturelist-notice">{% trans "※ 강의시간이 없는 과목들은 제외됩니다. (예: 졸업연구, 논문연구)" %}</div>
 		</div>
@@ -120,19 +131,27 @@
 	</div>
 	<div id="center">
 		<div id="center-top">
+			<script type="text/javascript">
+				function onRefreshCompRates() {
+					Data.CompRates = {};
+					Timetable.getCompRate({'course_no': $('#DS_course_no').html(), 'class': $('#DS_class').html()});
+				}
+			</script>
 			<table class="lecture-info">
 				<thead>
 					<tr>
 						<th>{% trans "강의장소" %}</th>
 						<th>{% trans "시험시간" %}</th>
-						<th class="end">{% trans "기타" %}</th>
+						<th>{% trans "기타" %}</th>
+						<th class="end"><img src="{{MEDIA_URL}}images/refresh.png" id="refresh" title="{% trans "새로고침" %}" alt="{% trans "새로고침" %}" onclick="onRefreshCompRates();"> {% trans "경쟁률" %} <img src="{{MEDIA_URL}}images/blank.png" id="blank"></th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr>
 						<td id="DS_classroom">&nbsp;</td>
 						<td id="DS_examtime">&nbsp;</td>
-						<td id="DS_remarks" class="end">&nbsp;</td>
+						<td id="DS_remarks">&nbsp;</td>
+						<td id="DS_comp_rate" class="end">&nbsp;</td>
 					</tr>
 				</tbody>
 			</table>
@@ -152,7 +171,7 @@
 					<tr>
 						<td id="DS_course_no">&nbsp;</td>
 						<td id="DS_class">&nbsp;</td>
-						<td id="DS_title"><p>&nbsp;</p></td>
+						<td id="DS_title"><p>&nbsp;</td>
 						<td id="DS_prof"><p>&nbsp;</p></td>
 						<td id="DS_lec_time">0</td>
 						<td id="DS_lab_time">0</td>
@@ -182,7 +201,11 @@
 							{% if user.is_authenticated %}
 							Timetable.changeSemester();
 							{% endif %}
-							LectureList.onChange();
+							if($('#back_to_search').length > 0) {
+								$('#lecturelist-filter').css('display','block');
+								$('#lecturelist-range').empty();
+							}
+							LectureList.onClassChange();
 						}
 					</script>
 					<select onChange="onChangeSemester(this.value)">

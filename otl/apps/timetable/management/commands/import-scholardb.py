@@ -3,7 +3,7 @@ from django.core.management.base import BaseCommand
 from django.conf import settings
 from django.core.exceptions import *
 from otl.apps.accounts.models import Department
-from otl.apps.timetable.models import Lecture, ClassTime, ExamTime
+from otl.apps.timetable.models import Lecture, ClassTime, ExamTime, Syllabus
 from optparse import make_option
 from datetime import time
 import sys, getpass, re
@@ -120,6 +120,7 @@ class Command(BaseCommand):
                     print u'Updating existing lecture...'
                 except Lecture.DoesNotExist:
                     lecture = Lecture(**lecture_key)
+                    lecture.num_people = 0
                     print u'Creating new lecture...'
 
                 # Update lecture info.
@@ -218,6 +219,47 @@ class Command(BaseCommand):
                 class_time.save()
             except Lecture.DoesNotExist:
                 print u'Class-time for non-existing lecture %s; skip it...' % myrow[2]
+
+        c = db.cursor()
+        c.execute('SELECT * FROM view_OTL_syllabus WHERE lecture_year = %d AND lecture_term = %d' % (settings.NEXT_YEAR, settings.NEXT_SEMESTER))
+        syllabuses = c.fetchall()
+        c.close()
+        Syllabus.objects.filter(lecture__year__exact=settings.NEXT_YEAR, lecture__semester=settings.NEXT_SEMESTER).delete()
+
+        for row in syllabuses:
+            myrow = []
+            for elem in row:
+                if isinstance(elem, str):
+                    try:
+                        elem = elem.decode(encoding)
+                    except UnicodeDecodeError:
+                        eleme = u'%s (???)' % row[2]
+                        print>>sys.stderr, 'ERROR: parsing error on lecture %s' % row[2]
+                        print>>sys.stderr, '       cannot read "%s" in cp949.' % elem
+                myrow.append(elem)
+            lecture_key = {
+                'code': myrow[2],
+                'year': int(myrow[0]),
+                'semester': int(myrow[1]),
+                'department': Department.objects.filter(id = int(myrow[4]))[0],
+                'class_no': myrow[3].strip(),
+            }
+            try:
+                lecture = Lecture.objects.get(**lecture_key)
+                syllabus = Syllabus(lecture=lecture)
+                syllabus.professor_info = myrow[5]
+                syllabus.abstract = myrow[6]
+                syllabus.evluation = myrow[7]
+                syllabus.materials = myrow[8]
+                syllabus.plan = myrow[9]
+                syllabus.etc = myrow[10]
+                syllabus.url = myrow[11]
+                syllabus.attachment = myrow[12]
+
+                print u'Updating syllabus information for %s' % lecture
+                syllabus.save()
+            except Lecture.DoesNotExist:
+                print u'Syllabus information for non-existing lecture %s; skip it...' % myrow[2]
 
         if not exclude_lecture:
             # Mark deleted lectures to notify users.

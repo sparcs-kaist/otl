@@ -1,0 +1,109 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-07-27 18:20+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: media/js/appointment.js:27
+msgid ""
+"January February March April May June July August September October November "
+"December"
+msgstr ""
+
+#: media/js/appointment.js:28
+msgid "S M T W T F S"
+msgstr ""
+
+#: media/js/timetable.js:383
+msgid "검색 중입니다..."
+msgstr ""
+
+#: media/js/timetable.js:390
+msgid "과목 정보를 찾지 못했습니다."
+msgstr ""
+
+#: media/js/timetable.js:394
+msgid "검색 결과를 확인하세요."
+msgstr ""
+
+#: media/js/timetable.js:397 media/js/timetable.js.py:406
+#: media/js/timetable.js:692 media/js/timetable.js.py:702
+#: media/js/timetable.js:753 media/js/timetable.js.py:759
+msgid "오류가 발생하였습니다."
+msgstr ""
+
+#: media/js/timetable.js:406 media/js/timetable.js.py:702
+#: media/js/timetable.js:759
+msgid "요청 실패"
+msgstr ""
+
+#: media/js/timetable.js:521
+msgid ""
+"드래그해서 1시간 이상의 영역을 선택하시면 보다 정확한 범위 검색을 하실 수 있"
+"습니다."
+msgstr ""
+
+#: media/js/timetable.js:550
+msgid "학과/구분/키워드 검색으로 돌아가기"
+msgstr ""
+
+#: media/js/timetable.js:661
+msgid "추가하는 중입니다..."
+msgstr ""
+
+#: media/js/timetable.js:671
+msgid "추가되었습니다."
+msgstr ""
+
+#: media/js/timetable.js:677
+msgid "강의가 존재하지 않습니다."
+msgstr ""
+
+#: media/js/timetable.js:681
+msgid "강의 시간이 겹칩니다."
+msgstr ""
+
+#: media/js/timetable.js:685 media/js/timetable.js.py:750
+msgid "기타 오류입니다."
+msgstr ""
+
+#: media/js/timetable.js:699
+msgid "로그인해야 합니다."
+msgstr ""
+
+#: media/js/timetable.js:713
+msgid "현재 예비 시간표를 초기화 하겠습니까?"
+msgstr ""
+
+#: media/js/timetable.js:715
+msgid "예비 시간표가 <strong>초기화</strong> 되었습니다"
+msgstr ""
+
+#: media/js/timetable.js:725
+msgid "삭제 되었습니다"
+msgstr ""
+
+#: media/js/timetable.js:736
+msgid "삭제하는 중입니다..."
+msgstr ""
+
+#: media/js/timetable.js:747
+msgid "해당 강의가 추가되어 있지 않습니다."
+msgstr ""
+
+#: media/js/timetable.js:872
+msgid "실라버스"
+msgstr ""

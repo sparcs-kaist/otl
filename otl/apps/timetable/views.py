@@ -17,6 +17,7 @@ from otl.apps.common import *
 from otl.apps.accounts.models import Department
 from otl.apps.timetable.models import Lecture, ExamTime, ClassTime, Syllabus, Timetable, OverlappingTimeError
 from StringIO import StringIO
+from django.db.models import Q
 
 from django import template
 template.add_to_builtins('django.templatetags.i18n')
@@ -28,6 +29,8 @@ def index(request):
     #Make the semester info to make users select the semester which they want to view.
     semester_info = []
     semester_info.append({'year' : settings.START_YEAR, 'semester' : settings.START_SEMESTER})
+    if settings.START_SEMESTER == 1 and settings.NEXT_YEAR > settings.START_YEAR:
+        semester_info.append({'year' : settings.START_YEAR, 'semester' : 3})
     for y in range(settings.START_YEAR+1,settings.NEXT_YEAR):
         semester_info.append({'year' : y, 'semester' : 1})
         semester_info.append({'year' : y, 'semester' : 3})
@@ -64,23 +67,60 @@ def search(request):
         q = {}
         for key, value in request.GET.iteritems():
             q[str(key)] = value
-        # Cache using search parameters
-        cache_key = 'timetable-search-cache:' + ':'.join(['%s=%s' % (key, value) for key, value in q.iteritems()])
-        output = cache.get(cache_key)
-        if output is None:
-            output = _lectures_to_output(_search(**q), True, request.session.get('django_language', 'ko'))
-            cache.set(cache_key, output, 3600)
+
+        output = _lectures_to_output(_search(**q), True, request.session.get('django_language', 'ko'))
         return HttpResponse(output)
     except ValidationError:
         return HttpResponseBadRequest()
+
+def get_autocomplete_list(request):
+    try:
+        def reduce(list):
+            return [item for sublist in list for item in sublist]
+        year = request.GET.get('year', unicode(settings.NEXT_YEAR))
+        semester = request.GET.get('term', unicode(settings.NEXT_SEMESTER))
+        department = request.GET.get('dept', None)
+        type = request.GET.get('type', None)
+        lang = request.session.get('django_language', 'ko')
+
+        cache_key = 'autocomplete-list-cache:year=%s:semester=%s:department=%s:type=%s:lang=%s' % (year, semester, department, type, lang)
+        output = cache.get(cache_key)
+        if output is None:
+            if lang == 'ko':
+                func = lambda x:[x.title, x.professor, x.old_code]
+            elif lang == 'en':
+                func = lambda x:[x.title_en, x.professor_en, x.old_code]
+            output = json.dumps(reduce(map(func, _search_by_ysdt(year, semester, department, type))), ensure_ascii=False, indent=4)
+            cache.set(cache_key, output, 3600)
+        return HttpResponse(output)
+    except:
+        return HttpResponseBadRequest()
+
+def get_comp_rate(request):
+    year = request.GET.get('year', unicode(settings.NEXT_YEAR))
+    semester = request.GET.get('term', unicode(settings.NEXT_SEMESTER))
+    old_code = request.GET.get('course_no', None)
+    class_no = request.GET.get('class', None)
+
+    try:
+        lecture = Lecture.objects.get(year=int(year), semester=int(semester), old_code=old_code, class_no=class_no)
+        result = {'limit': lecture.limit, 'num_people': lecture.num_people}
+        io = StringIO()
+        if settings.DEBUG:
+            json.dump(result, io, ensure_ascii=False, indent=4)
+        else:
+            json.dump(result, io, ensure_ascii=False, sort_keys=False, separators=(',',':'))
+        return HttpResponse(io.getvalue())
+    except:
+        raise ValidationError()
 
 @login_required_ajax
 def add_to_timetable(request):
     user = request.user
     table_id = request.GET.get('table_id', None)
     lecture_id = request.GET.get('lecture_id', None)
-    view_year = request.GET.get('view_year', str(settings.NEXT_YEAR))
-    view_semester = request.GET.get('view_semester', str(settings.NEXT_SEMESTER))
+    view_year = request.GET.get('view_year', unicode(settings.NEXT_YEAR))
+    view_semester = request.GET.get('view_semester', unicode(settings.NEXT_SEMESTER))
     
     lectures = []
     try:
@@ -114,8 +154,8 @@ def delete_from_timetable(request):
     user = request.user
     table_id = request.GET.get('table_id', None)
     lecture_id = request.GET.get('lecture_id', None)
-    view_year = request.GET.get('view_year', str(settings.NEXT_YEAR))
-    view_semester = request.GET.get('view_semester', str(settings.NEXT_SEMESTER))
+    view_year = request.GET.get('view_year', unicode(settings.NEXT_YEAR))
+    view_semester = request.GET.get('view_semester', unicode(settings.NEXT_SEMESTER))
 
     lectures = []
     try:
@@ -161,8 +201,8 @@ def view_timetable(request):
 @login_required_ajax
 def change_semester(request):
     user = request.user
-    view_year = request.GET.get('view_year', str(settings.NEXT_YEAR))
-    view_semester = request.GET.get('view_semester', str(settings.NEXT_SEMESTER))
+    view_year = request.GET.get('view_year', unicode(settings.NEXT_YEAR))
+    view_semester = request.GET.get('view_semester', unicode(settings.NEXT_SEMESTER))
 
     try:
         my_lectures = [_lectures_to_output(Lecture.objects.filter(year=view_year, semester=view_semester, timetable__user=user, timetable__table_id=id), False, request.session.get('django_language', 'ko')) for id in xrange(0,settings.NUMBER_OF_TABS)]
@@ -187,32 +227,30 @@ def _trans(ko_message, en_message, lang):
         return en_message
 
 def _search(**conditions):
+    year = conditions.get('year', unicode(settings.NEXT_YEAR))
+    semester = conditions.get('term', unicode(settings.NEXT_SEMESTER))
     department = conditions.get('dept', None)
-    year = conditions.get('year', settings.NEXT_YEAR)
-    semester = conditions.get('term', settings.NEXT_SEMESTER)
     type = conditions.get('type', None)
+    lang = conditions.get('lang', 'ko')
+    keyword = conditions.get('keyword', None)
     day_begin = conditions.get('start_day', None)
     day_end = conditions.get('end_day', None)
     time_begin = conditions.get('start_time', None)
     time_end = conditions.get('end_time', None)
 
     # This query requires Django 1.1 or newer.
-    lectures = Lecture.objects.annotate(num_classtimes=Count('classtime')).filter(year=year, semester=semester, num_classtimes__gt=0)
-    
+    lectures = _search_by_ys(year, semester)
+
     try:
-        if time_end != None and day_end != None and int(time_end) == 24*60:
-            # 24:00가 종료시간인 경우 처리
-            day_end = int(day_end)
-            if day_end < 6:
-                day_end += 1
-            time_end = 0
-        if department == u'-1' and type == ugettext(u'전체보기'):
+        if year == None or semester == None:
             raise ValidationError()
-        if department != None and department != u'-1':
-            lectures = lectures.filter(department__id__exact=int(department))
-        if type != None and type != ugettext(u'전체보기'):
-            lectures = lectures.filter(type__exact=type)
         if day_begin != None and day_end != None and time_begin != None and time_end != None:
+            if int(time_end) == 24*60:
+                # 24:00가 종료시간인 경우 처리
+                day_end = int(day_end)
+                if day_end < 6:
+                    day_end += 1
+                time_end = 0
             if day_begin == day_end:
                 lectures = lectures.filter(classtime__day__exact=int(day_begin),
                                            classtime__begin__gte=ClassTime.numeric_time_to_obj(int(time_begin)),
@@ -221,10 +259,61 @@ def _search(**conditions):
                 lectures = lectures.filter(classtime__day__gte=int(day_begin), classtime__day__lte=int(day_end),
                                            classtime__begin__gte=ClassTime.numeric_time_to_obj(int(time_begin)),
                                            classtime__end__lte=ClassTime.numeric_time_to_obj(int(time_end)))
+        elif department != None and type != None and keyword != None:
+            keyword = keyword.strip()
+            if keyword == u'':
+                if department == u'-1' and type == u'전체보기':
+                    raise ValidationError()
+                lectures = _search_by_ysdt(year, semester, department, type)
+            else:
+                words = keyword.split()
+                lectures = None
+                for word in words:
+                    result = _search_by_ysdtlw(year, semester, department, type, lang, unicode(word))
+                    if lectures is None:
+                        lectures = result
+                    else:
+                        lectures = lectures | result
+                lectures = lectures.order_by('type', 'code').distinct().select_related()
+        else:
+            raise ValidationError()
     except (TypeError, ValueError):
         raise ValidationError()
 
-    return lectures.filter(deleted=False).order_by('type', 'code').distinct().select_related()
+    return lectures
+
+def _search_by_ys(year, semester):
+    cache_key = 'timetable-search-cache:year=%s:semester=%s' % (year, semester)
+    output = cache.get(cache_key)
+    if output is None:
+        output = Lecture.objects.annotate(num_classtimes=Count('classtime')).filter(year=int(year), semester=int(semester), num_classtimes__gt=0, deleted=False)
+        cache.set(cache_key, output, 3600)
+    return output
+
+def _search_by_ysdt(year, semester, department, type):
+    cache_key = 'timetable-search-cache:year=%s:semester=%s:department=%s:type=%s' % (year, semester, department, type)
+    output = cache.get(cache_key)
+    if output is None:
+        output = _search_by_ys(year, semester)
+        if department != u'-1':
+            output = output.filter(department__id__exact=int(department))
+        if type != u'전체보기':
+            output = output.filter(type__exact=type)
+        output = output.order_by('type', 'code').distinct().select_related()
+        cache.set(cache_key, output, 3600)
+    return output
+
+def _search_by_ysdtlw(year, semester, department, type, lang, word):
+    cache_key = 'timetable-search-cache:year=%s:semester=%s:department=%s:type=%s:lang=%s:word=%s' % (year, semester, department, type, lang, word)
+    output = cache.get(cache_key)
+    if output is None:
+        output = _search_by_ysdt(year, semester, department, type)
+        if lang == 'ko':
+            output = output.filter(Q(old_code__icontains=word) | Q(title__icontains=word) | Q(professor__icontains=word)).distinct()
+        else:
+            output = output.filter(Q(old_code__icontains=word) | Q(title_en__icontains=word) | Q(professor_en__icontains=word)).distinct()
+        cache.set(cache_key, output, 3600)
+    return output
 
 def _lectures_to_output(lectures, conv_to_json=True, lang='ko'):
     all = []
@@ -241,9 +330,7 @@ def _lectures_to_output(lectures, conv_to_json=True, lang='ko'):
             room = classtimes[0]['classroom']
         item = {
             'id': lecture.id,
-            'year': lecture.year,
-            'term': lecture.semester,
-            'dept': _trans(lecture.department.name, lecture.department.name_en, lang),
+            'dept_id': lecture.department.id,
             'classification': _trans(lecture.type, lecture.type_en, lang),
             'course_no': lecture.old_code,
             'class': lecture.class_no,
@@ -253,7 +340,8 @@ def _lectures_to_output(lectures, conv_to_json=True, lang='ko'):
             'lab_time': lecture.num_labs,
             'credit': lecture.credit,
             'au': lecture.credit_au,
-            'fixed_num': lecture.limit,
+            'limit': lecture.limit,
+            'num_people': lecture.num_people,
             'classroom': room,
             'deleted': lecture.deleted,
             'prof': _trans(lecture.professor, lecture.professor_en, lang),
@@ -366,7 +454,8 @@ def print_as_pdf(request):
     c.setLineWidth(0.5)
     my_lectures = Lecture.objects.filter(year=view_year, semester=view_semester, timetable__user=request.user, timetable__table_id=table_id).select_related()
     for lecture in my_lectures:
-        for classtime in lecture.classtime_set.all():
+        classtimes = ClassTime.objects.filter(lecture=lecture)
+        for classtime in classtimes:
             left, bottom, width, height = get_box_position(classtime.day, classtime.get_begin_numeric(), classtime.get_end_numeric())
             top = bottom + height
             offset = height / 2.0

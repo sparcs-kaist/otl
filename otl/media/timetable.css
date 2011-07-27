@@ -410,10 +410,15 @@
 
 #DS_examtime
 {
-	width: 40%;
+	width: 25%;
 }
 
 #DS_remarks
+{
+	width: 15%;
+}
+
+#DS_comp_rate
 {
 	width: 20%;
 }
@@ -449,6 +454,17 @@
 #DS_lec_time, #DS_lab_time, #DS_credit
 {
 	width: 7%;
+}
+
+#refresh, #blank, #syllabus
+{
+	width: 14px;
+	height: 14px;
+}
+
+#refresh, #syllabus
+{
+	cursor: pointer;
 }
 
 .waiting
