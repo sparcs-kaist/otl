@@ -272,27 +272,36 @@ var LectureList = {
 		this.classf = $('#classification');
 		this.keyword = $('#keyword');
 		this.apply = $('#apply');
+		this.in_category = $('#in_category');
 
 		this.loading = true;
 		this.dept.selectedIndex = 0;
 		this.registerHandles();
-		this.onClassChange();
+		this.getAutocompleteList();
+		this.onChange();
 	},
 	registerHandles:function()
 	{
 		$(this.dept).bind('change', $.proxy(this.onClassChange, this));
 		$(this.classf).bind('change', $.proxy(this.onClassChange, this));
 		$(this.apply).bind('click', $.proxy(this.onChange, this));
+		$(this.in_category).bind('change', $.proxy(this.onInCategoryChange, this));
 		$(this.keyword).bind('keypress', $.proxy(function(e) { if(e.keyCode == 13) { this.onChange(); }}, this));
 	},
 	getAutocompleteList:function()
 	{
 		var dept = $(this.dept).val();
 		var classification = $(this.classf).val();
+		var in_category = $(this.in_category).is(':checked');
+		var conditions = {};
+		if( in_category )
+			conditions = {'year': Data.ViewYear, 'term': Data.ViewTerm, 'dept': dept, 'type': classification, 'lang': USER_LANGUAGE};
+		else
+			conditions = {'year': Data.ViewYear, 'term': Data.ViewTerm, 'dept': -1, 'type': '전체보기', 'lang': USER_LANGUAGE};
 		$.ajax({
 			type: 'GET',
 			url: '/timetable/autocomplete/',
-			data: {'year': Data.ViewYear, 'term': Data.ViewTerm, 'dept': dept, 'type': classification, 'lang': USER_LANGUAGE},
+			data: conditions,
 			dataType: 'json',
 			success: $.proxy(function(resObj) {
 				try {
@@ -312,23 +321,39 @@ var LectureList = {
 			}, this)
 		});
 	},
-	onClassChange:function()
+	onInCategoryChange:function()
 	{
 		this.getAutocompleteList();
-		this.onChange();
+		var keyword = $(this.keyword).val().replace(/^\s+|\s+$/g, '');
+		if( keyword != '' )
+			this.onChange();
+	},
+	onClassChange:function()
+	{
+		var in_category = $(this.in_category).is(':checked');
+		var keyword = $(this.keyword).val().replace(/^\s+|\s+$/g, '');
+		if( in_category )
+			this.getAutocompleteList();
+		if( in_category || keyword == '')
+			this.onChange();
 	},
 	onChange:function()
 	{
 		var dept = $(this.dept).val();
 		var classification = $(this.classf).val();
 		var keyword = $(this.keyword).val().replace(/^\s+|\s+$/g, '');
+		var in_category = $(this.in_category).is(':checked');
 		//TODO: classification을 언어와 상관 없도록 고쳐야 함
 		if (dept == '-1' && USER_LANGUAGE == 'ko' && classification == '전체보기' && keyword == '')
 			Notifier.setErrorMsg('키워드 없이 학과 전체보기는 과목 구분을 선택한 상태에서만 가능합니다.');
 		else if (dept == '-1' && USER_LANGUAGE == 'en' && classification == '전체보기' && keyword == '')
 			Notifier.setErrorMsg('You must select a course type if you want to see \'ALL\' departments without keywords.');
-		else
-			this.filter({'dept':dept,'type':classification,'lang':USER_LANGUAGE,'keyword':keyword});
+		else {
+			if( in_category || keyword == '')
+				this.filter({'dept':dept,'type':classification,'lang':USER_LANGUAGE,'keyword':keyword});
+			else
+				this.filter({'dept':-1,'type':'전체보기','lang':USER_LANGUAGE,'keyword':keyword});
+		}
 	},
 	clearList:function()
 	{

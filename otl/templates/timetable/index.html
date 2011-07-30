@@ -112,6 +112,7 @@
 				<input type="text" id="keyword" autocomplete="off" style="width:97%">
 				<br />
 				<div style="text-align:right; margin-top:10px;">
+					<input type="checkbox" id="in_category" name="in_category" value="in_category" />&nbsp;{% trans "카테고리 내 검색" %} &nbsp;&nbsp;
 					<input type="button" id="apply" name="apply" value="{% trans "적용" %}" style="text-align:right;">
 				</div>
 			</div>
@@ -205,7 +206,8 @@
 								$('#lecturelist-filter').css('display','block');
 								$('#lecturelist-range').empty();
 							}
-							LectureList.onClassChange();
+							LectureList.getAutocompleteList();
+							LectureList.onChange();
 						}
 					</script>
 					<select onChange="onChangeSemester(this.value)">
