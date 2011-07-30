@@ -254,6 +254,14 @@ var Map = {
 	}
 };
 
+function buildCompRate(num_people, limit)
+{
+	if( limit == 0 )
+		return '0 ('+num_people+'/∞)';
+	else
+		return roundD(num_people / limit, 2)+' ('+num_people+'/'+limit+')';
+}
+
 var LectureList = {
 	initialize:function(tabs,contents)
 	{
@@ -352,7 +360,7 @@ var LectureList = {
 			var el = $('<a>').text(item.title).appendTo(content);
 			Utils.clickable(el);
 
-			Data.CompRates[''+Data.ViewYear+Data.ViewTerm+item.course_no+item.class_no] = roundD(item.num_people / item.limit, 2)+' ('+item.num_people+'/'+item.limit+')';
+			Data.CompRates[''+Data.ViewYear+Data.ViewTerm+item.course_no+item.class_no] = buildCompRate(item.num_people, item.limit);
 			
 			el.bind('mousedown', $.proxyWithArgs(Timetable.addLecture, Timetable, item));
 			el.bind('mouseover', $.proxyWithArgs(Timetable.onMouseoverTemp, Timetable, item));
@@ -621,7 +629,7 @@ var Timetable = {
 					have_deleted = true;
 					deleted_count++;
 				} else {
-					Data.CompRates[''+Data.ViewYear+Data.ViewTerm+item.course_no+item.class_no] = roundD(item.num_people / item.limit, 2)+' ('+item.num_people+'/'+item.limit+')';
+					Data.CompRates[''+Data.ViewYear+Data.ViewTerm+item.course_no+item.class_no] = buildCompRate(item.num_people, item.limit);
 					Timetable.buildlmodules(wrap,item,bgcolor,true);
 				}
 			});
@@ -796,7 +804,7 @@ var Timetable = {
 			credit += item.credit;
 			au += item.au;
 			var bgcolor = Utils.getColorByIndex(index);
-			Data.CompRates[''+Data.ViewYear+Data.ViewTerm+item.course_no+item.class_no] = roundD(item.num_people / item.limit, 2)+' ('+item.num_people+'/'+item.limit+')';
+			Data.CompRates[''+Data.ViewYear+Data.ViewTerm+item.course_no+item.class_no] = buildCompRate(item.num_people, item.limit);
 			Timetable.buildlmodules(Timetable.tabs.getActiveTab(), item, bgcolor, true);
 		});
 		
@@ -811,7 +819,7 @@ var Timetable = {
 			credit += item.credit;
 			au += item.au;
 			var bgcolor = Utils.getColorByIndex(index);
-			Data.CompRates[''+Data.ViewYear+Data.ViewTerm+item.course_no+item.class_no] = roundD(item.num_people / item.limit, 2)+' ('+item.num_people+'/'+item.limit+')';
+			Data.CompRates[''+Data.ViewYear+Data.ViewTerm+item.course_no+item.class_no] = buildCompRate(item.num_people, item.limit);
 			Timetable.buildlmodules(Timetable.tabs.getTabByKey(key), item, bgcolor, true);
 		});
 
@@ -823,7 +831,7 @@ var Timetable = {
 		var registerCompRateTmp = function(year, term, course_no, class_no) {
 			var registerCompRate = function(resObj) {
 				try {
-					Data.CompRates[''+year+term+course_no+class_no] = roundD(resObj.num_people/resObj.limit, 2)+' ('+resObj.num_people+'/'+resObj.limit+')';
+					Data.CompRates[''+year+term+course_no+class_no] = buildCompRate(resObj.num_people, resObj.limit);
 					if( year == Data.ViewYear && term == Data.ViewTerm && course_no == $('#DS_course_no').html() && class_no == $('#DS_class_no').html() ) {
 						$('#DS_comp_rate').html(Data.CompRates[''+year+term+course_no+class_no]);
 					}
