@@ -23,6 +23,8 @@ $(document).ready(function() {
 </div>
 <form action="/login/{% if next %}?next={{next|iriencode}}{% endif %}" id="login-form" method="post">
 	<p>{% trans "KAIST Portal ID로 로그인하세요." %}</p>
+	<p><font color="red">※ {% trans "2011년 6월 이전 비밀번호로 로그인해 주세요." %} ※</font>
+	</p>
 <table>
 	{% print_form_as_table form_login %}
 	<tr><td colspan="2"><input type="submit" value="Log In" /></td></tr>
@@ -38,6 +40,14 @@ $(document).ready(function() {
 		<li>{% trans "현재 " %}<strong>{{num_groups}}</strong>{% trans "개의 조모임 보드가 활동 중입니다." %}</li>
 	</ul>
 </div>
-<div class="clear"></div>
+<div class="clear">
+	<center>
+	<font color="red">
+		{% trans "포탈 리뉴얼과 관련하여 계정 인증 과정에 변화가 있어 관련 사항을 개발 중입니다." %} </br>
+		{% trans "빠른 시일 내에 개발을 완료하도록 하겠습니다. 불편을 끼쳐 죄송합니다." %} </br>
+		{% trans "- OTL SYSOP -" %}
+	</font>
+</center>
+</div>
 </div>
 {% endblock %}
