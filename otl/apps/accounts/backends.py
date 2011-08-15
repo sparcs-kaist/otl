@@ -30,13 +30,17 @@ class KAISTSSOBackend:
     
     def authenticate(self, username=None, password=None):
 
-        myHTTPTransport.set_authentication(settings.PORTAL_SSO_ADMIN_ID, settings.PORTAL_SSO_ADMIN_PASSWORD)
-        server = WSDL.Proxy(settings.PORTAL_SSO_WSDL_ADDRESS, transport=myHTTPTransport)
-        #print server.authentication(username.encode('base64').strip(), password.encode('base64').strip(), PORTAL_SSO_TOKEN)
-        user_info = server.authentication(username.encode('base64').strip(), password.encode('base64').strip(), settings.PORTAL_SSO_TOKEN)
+        try:
+            myHTTPTransport.set_authentication(settings.PORTAL_SSO_ADMIN_ID, settings.PORTAL_SSO_ADMIN_PASSWORD)
+            server = WSDL.Proxy(settings.PORTAL_SSO_WSDL_ADDRESS, transport=myHTTPTransport)
+            #print server.authentication(username.encode('base64').strip(), password.encode('base64').strip(), PORTAL_SSO_TOKEN)
+            user_info = server.authentication(username.encode('base64').strip(), password.encode('base64').strip(), settings.PORTAL_SSO_TOKEN)
 
-        if user_info['pw_success'] != '1':
+            if user_info['pw_success'] != '1':
+                return None
+        except:
             return None
+        
 
         kuser_info = {}
         kuser_info['student_id'] = user_info['ku_std_no']
