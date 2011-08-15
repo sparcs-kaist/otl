@@ -160,6 +160,11 @@ ARARA_SESSION_TIMEOUT = 3600
 
 CACHE_BACKEND = 'dummy:///'
 
+PORTAL_SSO_ADMIN_ID = ''
+PORTAL_SSO_ADMIN_PASSWORD = ''
+PORTAL_SSO_TOKEN = ''
+PORTAL_SSO_WSDL_ADDRESS = 'https://ksso.kaist.ac.kr/kstsso/services/simpleAuthSrv?wsdl'
+
 try:
     from otl.settings_local import *
 except ImportError:

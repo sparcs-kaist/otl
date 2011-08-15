@@ -1,73 +1,60 @@
 # -*- coding: utf-8
 from django.contrib import auth
 from django.contrib.auth.models import User
+from django.conf import settings
 from otl.apps.accounts.models import UserProfile, Department, get_dept_from_deptname
+from SOAPpy import Config, HTTPTransport, SOAPAddress, WSDL
+
 import urllib, urllib2
 import base64
 import re
 
-_rx_name_val = re.compile(r"name=([^ ]*) value='([^']*)'")
+class myHTTPTransport(HTTPTransport):
+    username = None
+    password = None
+
+    @classmethod
+    def set_authentication(cls, u, p):
+        cls.username = u
+        cls.password = p
+
+    def call(self, addr, data, namespace, soapaction=None, encoding=None, http_proxy=None, config=Config):
+        if not isinstance(addr, SOAPAddress):
+            addr = SOAPAddress(addr, config)
+        if self.username != None:
+            addr.user = self.username + ":" + self.password
+
+        return HTTPTransport.call(self, addr, data, namespace, soapaction, encoding, http_proxy, config)
 
 class KAISTSSOBackend:
     
     def authenticate(self, username=None, password=None):
 
-        request_info = [
-            ('isenc', 't'),
-            ('b001', base64.b64encode(username)),
-            ('b002', base64.b64encode(password)),
-            ('b003', 'givenname'),
-            ('b003', 'sn'),
-            ('b003', 'uid'),
-            ('b003', 'mail'),
-            ('b003', 'ku_where'),
-            ('b003', 'ku_departmentname'),
-            ('b003', 'ku_socialName'),
-            ('b003', 'ku_regno1'),
-            #('b003', 'ku_regno2'), # We don't need the civil registration number.
-            ('b003', 'ku_dutyName'),
-            ('b003', 'ku_dutyCode'),
-            ('b003', 'ku_socialName'),
-            ('b003', 'ku_socialcode'),
-            ('b003', 'ku_titleCode'),
-            ('b003', 'ku_status'),
-        ]
+        myHTTPTransport.set_authentication(settings.PORTAL_SSO_ADMIN_ID, settings.PORTAL_SSO_ADMIN_PASSWORD)
+        server = WSDL.Proxy(settings.PORTAL_SSO_WSDL_ADDRESS, transport=myHTTPTransport)
+        #print server.authentication(username.encode('base64').strip(), password.encode('base64').strip(), PORTAL_SSO_TOKEN)
+        user_info = server.authentication(username.encode('base64').strip(), password.encode('base64').strip(), settings.PORTAL_SSO_TOKEN)
 
-        request = urllib2.Request('http://addr.kaist.ac.kr/auth/authenticator')
-        username_enc = base64.b64encode(username)
-        password_enc = base64.b64encode(password)
-
-        # TODO: register otl.kaist.ac.kr to IT service department.
-        request.add_header('Referer', 'http://moodle.kaist.ac.kr')
-        request.add_data(urllib.urlencode(request_info))
-
-        try:
-            ret = urllib2.urlopen(request).read()
-            ret = urllib.unquote_plus(ret)
-        except urllib2.HTTPError: # Login failed
+        if user_info['pw_success'] != '1':
             return None
-        
-        matches = _rx_name_val.findall(ret);
-        kuser_info = dict(map(lambda item: (item[0], item[1].decode('cp949')), matches))
-        kuser_info['student_id'] = kuser_info['ku_status'].split('=')[0]
-        if ';:' in kuser_info['ku_departmentname']: # users merged from ICU
-            kuser_info['department'] = kuser_info['ku_departmentname'].split('=')[1].split(';')[0]
-        else: # original KAIST users
-            kuser_info['department'] = kuser_info['ku_departmentname'].split('=')[1][:-1]
+
+        kuser_info = {}
+        kuser_info['student_id'] = user_info['ku_std_no']
+        kuser_info['department'] = user_info['ou']
 
         try:
-            user = User.objects.get(username__exact=kuser_info['uid'])
+            user = User.objects.get(username__exact=user_info['uid'])
             user.first_login = False
 
             # If this user already exists in our database, just pass or update his info.
             profile = UserProfile.objects.get(user=user)
             changed = False
-            new_dept = get_dept_from_deptname(kuser_info['department'])
+            new_dept = get_dept_from_deptname(user_info['ou'])
             if profile.department.name != new_dept.name:
                 profile.department = new_dept
                 changed = True
-            if profile.student_id != kuser_info['student_id']:
-                profile.student_id = kuser_info['student_id']
+            if profile.student_id != user_info['ku_std_no']:
+                profile.student_id = user_info['ku_std_no']
                 changed = True
 
             if changed:
@@ -84,10 +71,10 @@ class KAISTSSOBackend:
         except User.DoesNotExist:
 
             # If this user doesn't exist yet, make records for him.
-            user = User(username=kuser_info['uid'])
-            user.first_name = kuser_info['givenname']
-            user.last_name = kuser_info['sn']
-            user.email = kuser_info['mail']
+            user = User(username=user_info['uid'])
+            user.first_name = user_info['givenname']
+            user.last_name = user_info['sn']
+            user.email = user_info['mail']
             user.set_unusable_password() # We don't save the password.
             user.save()
 
@@ -95,7 +82,7 @@ class KAISTSSOBackend:
             user.kuser_info = kuser_info
             user.first_login = True
             return user
-    
+
     def get_user(self, user_id):
         try:
             return User.objects.get(pk=user_id)
