@@ -4,7 +4,7 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
-    ('OTL-Project Team', 'otl@server.daybreaker.info'),
+    ('OTL-Project Team', 'otlsysop@sparcs.kaist.ac.kr'),
 )
 
 MANAGERS = ADMINS

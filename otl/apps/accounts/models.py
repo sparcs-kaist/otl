@@ -45,7 +45,7 @@ def get_dept_from_deptname(name):
     # Special cases (department migration)
     if name in (u'전산학과', u'전산학전공'):
         return Department.objects.get(id__exact=3847)
-    elif name in (u'전기 및 전자공학과', u'전기및전자공학전공'):
+    elif name in (u'전기 및 전자공학과', u'전기및전자공학전공', u'전기및전자공학과'):
         return Department.objects.get(id__exact=3845)
     # Try normally
     try:
