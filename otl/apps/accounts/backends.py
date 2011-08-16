@@ -2,7 +2,7 @@
 from django.contrib import auth
 from django.contrib.auth.models import User
 from django.conf import settings
-from otl.apps.accounts.models import UserProfile, Department, get_dept_from_deptname
+from otl.apps.accounts.models import UserProfile, Department
 from SOAPpy import Config, HTTPTransport, SOAPAddress, WSDL
 
 import urllib, urllib2
@@ -41,10 +41,10 @@ class KAISTSSOBackend:
         except:
             return None
         
-
         kuser_info = {}
         kuser_info['student_id'] = user_info['ku_std_no']
         kuser_info['department'] = user_info['ou']
+        kuser_info['department_no'] = user_info['ku_kaist_org_id']
 
         try:
             user = User.objects.get(username__exact=user_info['uid'])
@@ -53,7 +53,12 @@ class KAISTSSOBackend:
             # If this user already exists in our database, just pass or update his info.
             profile = UserProfile.objects.get(user=user)
             changed = False
-            new_dept = get_dept_from_deptname(user_info['ou'])
+
+            try:
+                new_dept = Department.objects.get(id__exact=int(user_info['ku_kaist_org_id']))
+            except:
+                new_dept = Department.objects.get(id__exact=0) #무학과
+
             if profile.department.name != new_dept.name:
                 profile.department = new_dept
                 changed = True

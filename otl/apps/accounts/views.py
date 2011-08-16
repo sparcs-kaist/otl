@@ -10,7 +10,7 @@ from otl.apps.timetable.models import Lecture
 from otl.apps.favorites.models import CourseLink
 from otl.apps.groups.models import GroupBoard
 from otl.apps.calendar.models import Calendar, RepeatedSchedule, Schedule
-from otl.apps.accounts.models import UserProfile, Department, get_dept_from_deptname
+from otl.apps.accounts.models import UserProfile, Department
 from otl.apps.accounts.forms import LoginForm, ProfileForm
 from otl.apps.common import *
 import base64, hashlib, time, random, urllib, re
@@ -116,7 +116,10 @@ def login(request):
                     profile = UserProfile()
                 profile.user = user
                 profile.language = request.POST['language']
-                profile.department = get_dept_from_deptname(request.POST['department'])
+                try:
+                    profile.department = Department.objects.get(id__exact=int(request.POST['department_no']))
+                except:
+                    profile.department = Department.objects.get(id__exact=0) # 찾을 수 없는 학과 사람은 일단 무학과로 등록
                 profile.student_id = request.POST['student_id']
                 profile.save()
                 profile.favorite_departments.add(Department.objects.get(id=2044)) # 인문사회과학부는 기본으로 추가

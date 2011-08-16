@@ -37,31 +37,3 @@ class UserAdmin(admin.ModelAdmin):
 
 admin.site.register(UserProfile, UserProfileAdmin)
 admin.site.register(User, UserAdmin)
-
-def get_dept_from_deptname(name):
-    """
-    A mapping function from string names to department objects with handling some exceptional cases.
-    """
-    # Special cases (department migration)
-    if name in (u'전산학과', u'전산학전공'):
-        return Department.objects.get(id__exact=3847)
-    elif name in (u'전기 및 전자공학과', u'전기및전자공학전공', u'전기및전자공학과'):
-        return Department.objects.get(id__exact=3845)
-    # Try normally
-    try:
-        return Department.objects.get(name__exact=name)
-    except Department.DoesNotExist:
-        if name == u'기계공학전공':
-            return Department.objects.get(id__exact=210) # 기계공학과
-        elif name == u'한국정보통신대학':
-            return Department.objects.get(id__exact=3723) # 정보통신공학과
-        elif name == u'해양시스템공학과':
-            return Department.objects.get(id__exact=3693) # 해양시스템공학전공
-        elif name == u'산업공학과':
-            return Department.objects.get(id__exact=331) # 산업및시스템공학과
-        elif name == u'나노과학기술학과':
-            return Department.objects.get(id__exact=3689) # 나노과학기술대학원
-        elif name == u'학과없음':
-            return Department.objects.get(id__exact=0) # 무학과
-    
-    raise Department.DoesNotExist('Cannot match the department name (%s)' % name.encode('utf8').encode('hex'))
