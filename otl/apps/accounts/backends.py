@@ -35,10 +35,10 @@ class KAISTSSOBackend:
             server = WSDL.Proxy(settings.PORTAL_SSO_WSDL_ADDRESS, transport=myHTTPTransport)
             #print server.authentication(username.encode('base64').strip(), password.encode('base64').strip(), PORTAL_SSO_TOKEN)
             user_info = server.authentication(username.encode('base64').strip(), password.encode('base64').strip(), settings.PORTAL_SSO_TOKEN)
-
-            if user_info['pw_success'] != '1':
+            if user_info['uid'] == None: # Login Failed
                 return None
         except:
+            # Failed to access portal page
             return None
         
         kuser_info = {}
