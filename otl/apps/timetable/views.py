@@ -262,6 +262,7 @@ def _search(**conditions):
                 lectures = lectures.filter(classtime__day__gte=int(day_begin), classtime__day__lte=int(day_end),
                                            classtime__begin__gte=ClassTime.numeric_time_to_obj(int(time_begin)),
                                            classtime__end__lte=ClassTime.numeric_time_to_obj(int(time_end)))
+            lectures = lectures.order_by('type', 'code').distinct().select_related()
         elif department != None and type != None and keyword != None:
             keyword = keyword.strip()
             if keyword == u'':
