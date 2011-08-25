@@ -277,7 +277,7 @@ def _search(**conditions):
                     if lectures is None:
                         lectures = result
                     else:
-                        lectures = lectures | result
+                        lectures = lectures & result
                 lectures = lectures.order_by('type', 'code').distinct().select_related()
         else:
             raise ValidationError()
