@@ -858,3 +858,19 @@ msgstr ""
 #: templates/timetable/index.html:314
 msgid "시험시간표"
 msgstr ""
+
+#: utils/templatetags/yearterm.py:12
+msgid "봄"
+msgstr ""
+
+#: utils/templatetags/yearterm.py:12
+msgid "여름"
+msgstr ""
+
+#: utils/templatetags/yearterm.py:12
+msgid "가을"
+msgstr ""
+
+#: utils/templatetags/yearterm.py:12
+msgid "겨울"
+msgstr ""

@@ -212,9 +212,9 @@
 					</script>
 					<select onChange="onChangeSemester(this.value)">
 						{% for item in semester_info %}
-						<option value="{{item.year}}{{item.semester}}">{{item.year}}{% trans "년" %} {{item.semester|term2str}}{% trans "학기" %}</option>
+						<option value="{{item.year}}{{item.semester}}">{{item.year}} {{item.semester|term2str}}</option>
 						{% endfor %}
-						<option value="{{next_year}}{{next_semester}}" selected="selected">{{next_year}}{% trans "년" %} {{next_semester|term2str}}{% trans "학기" %}</option>
+						<option value="{{next_year}}{{next_semester}}" selected="selected">{{next_year}} {{next_semester|term2str}}</option>
 					</select>
 				</div>
 				<div id="timetable_tabs">

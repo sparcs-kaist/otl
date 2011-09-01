@@ -328,7 +328,10 @@ def _lectures_to_output(lectures, conv_to_json=True, lang='ko'):
             exam = lecture.examtime_set.get() # 첫번째 항목만 가져옴
         except:
             exam = None
-        classtimes = [{'day': schedule.day, 'start': schedule.get_begin_numeric(), 'end': schedule.get_end_numeric(), 'classroom': schedule.get_location(), 'type': schedule.get_type_display(), '_type': schedule.type} for schedule in lecture.classtime_set.all()]
+        if lang == 'ko':
+            classtimes = [{'day': schedule.day, 'start': schedule.get_begin_numeric(), 'end': schedule.get_end_numeric(), 'classroom': schedule.get_location(), 'type': schedule.get_type_display(), '_type': schedule.type} for schedule in lecture.classtime_set.all()]
+	else:
+            classtimes = [{'day': schedule.day, 'start': schedule.get_begin_numeric(), 'end': schedule.get_end_numeric(), 'classroom': schedule.get_location_en(), 'type': schedule.get_type_display(), '_type': schedule.type} for schedule in lecture.classtime_set.all()]
         room = ''
         if len([item for item in classtimes if item['_type'] == 'l']) > 0:
             room = classtimes[0]['classroom']

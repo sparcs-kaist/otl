@@ -210,9 +210,9 @@ class Command(BaseCommand):
                 class_time.building = myrow[9]
                 class_time.room = myrow[10]
                 class_time.room_ko = myrow[12]
-                class_time.room_en = myrow[11]
+                class_time.room_en = myrow[13]
                 try:
-                    class_time.unit_time = int(myrow[13])
+                    class_time.unit_time = int(myrow[11])
                 except (ValueError, TypeError):
                     class_time.unit_time = 0
                 print u'Updating class time for %s' % lecture

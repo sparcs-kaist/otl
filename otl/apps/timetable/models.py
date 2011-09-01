@@ -136,6 +136,15 @@ class ClassTime(models.Model):
         except ValueError:
             return u'%s %s' % (self.room_ko, self.room)
     
+    def get_location_en(self):
+        if self.room is None:
+            return u'%s' % (self.room_en)
+        try:
+            int(self.room)
+            return u'%s %s' % (self.room_en, self.room)
+        except ValueError:
+            return u'%s %s' % (self.room_en, self.room)
+
     @staticmethod
     def numeric_time_to_str(numeric_time):
         return u'%s:%s' % (numeric_time // 60, numeric_time % 60)

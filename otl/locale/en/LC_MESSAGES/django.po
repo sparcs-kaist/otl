@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-07-30 19:13+0900\n"
+"POT-Creation-Date: 2011-08-31 21:29+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: apps/accounts/views.py:40 apps/accounts/views.py:59
-#: apps/accounts/views.py:78 apps/accounts/views.py:147
+#: apps/accounts/views.py:78 apps/accounts/views.py:150
 #: templates/layout.html:39
 msgid "로그인"
 msgstr "Login"
@@ -31,23 +31,23 @@ msgstr "You must fill in id and password fields."
 msgid "로그인에 실패하였습니다."
 msgstr "Login failed."
 
-#: apps/accounts/views.py:142
+#: apps/accounts/views.py:145
 msgid "개인정보 활용에 동의하셔야 서비스를 이용하실 수 있습니다. 죄송합니다."
 msgstr "Without agreeing, you can't use this serivce. Sorry."
 
-#: apps/accounts/views.py:172
+#: apps/accounts/views.py:175
 msgid "사용자 정보가 변경되었습니다."
 msgstr "Changed."
 
-#: apps/accounts/views.py:176
+#: apps/accounts/views.py:179
 msgid "올바르지 않은 입력입니다."
 msgstr "Invalid input."
 
-#: apps/accounts/views.py:186 templates/layout.html:37
+#: apps/accounts/views.py:189 templates/layout.html:37
 msgid "내 계정"
 msgstr "My account"
 
-#: apps/accounts/views.py:204
+#: apps/accounts/views.py:207
 msgid "다른 사람 정보 보기"
 msgstr "Another user"
 
@@ -76,7 +76,7 @@ msgstr "Developers"
 msgid "모의시간표"
 msgstr "Timetable"
 
-#: apps/timetable/views.py:352
+#: apps/timetable/views.py:353
 msgid "영어강의"
 msgstr "Lec."
 
@@ -187,19 +187,19 @@ msgstr "You should accpet the above statement to use this service."
 msgid "위 사항에 동의하여야 이 서비스를 이용하실 수 있습니다."
 msgstr "You should accept this statement to use this service."
 
-#: templates/login_agreement.html:59
+#: templates/login_agreement.html:60
 msgid "예, 동의합니다."
 msgstr "Yes, I agree."
 
-#: templates/login_agreement.html:60
+#: templates/login_agreement.html:61
 msgid "아니오, 동의하지 않습니다."
 msgstr "No, I don't agree."
 
-#: templates/login_agreement.html:62
+#: templates/login_agreement.html:63
 msgid "추가로 다음의 정보가 필요합니다."
 msgstr "Please set your language:"
 
-#: templates/login_agreement.html:66
+#: templates/login_agreement.html:67
 msgid "전송하기"
 msgstr "Send"
 
@@ -397,12 +397,10 @@ msgid "로그인을 하셔야 코멘트를 남길 수 있습니다."
 msgstr ""
 
 #: templates/favorites/index.html:82 templates/groups/index.html:34
-#: templates/timetable/index.html:215 templates/timetable/index.html.py:217
 msgid "년"
 msgstr "Year"
 
-#: templates/favorites/index.html:82 templates/timetable/index.html:215
-#: templates/timetable/index.html.py:217
+#: templates/favorites/index.html:82
 msgid "학기"
 msgstr "Semester"
 
@@ -563,56 +561,55 @@ msgstr ""
 
 #: templates/timetable/index.html:21
 msgid "기계공학동"
-msgstr "Mechanical Engineering B/D"
+msgstr "BLDG. of Mechanics Engineering"
 
 #: templates/timetable/index.html:22
 msgid "응용공학동"
-msgstr "Applied Engineering B/D"
+msgstr "BLDG. of Applied Engineering"
 
 #: templates/timetable/index.html:23
 msgid "창의학습관"
-msgstr "Creative Learning B/D"
+msgstr "Create Lecture BLDG."
 
 #: templates/timetable/index.html:24
 msgid "대학 1호관"
-msgstr "School of Humanities & Social Science B/D"
+msgstr "Batchelor Building #1"
 
 #: templates/timetable/index.html:25
-#, fuzzy
 msgid "인문사회과학부동"
-msgstr "Department of Social Science"
+msgstr "Schoolo f Humanities&Social ScienceB/D"
 
 #: templates/timetable/index.html:26
 msgid "대학 2호관"
-msgstr "Basic Experiement & Research"
+msgstr "Batchelor Building #2"
 
 #: templates/timetable/index.html:27
 msgid "대학 3호관"
-msgstr "Department of Industrial Design B/D"
+msgstr "Batchelor Building #3"
 
 #: templates/timetable/index.html:28
 msgid "자연과학동"
-msgstr "Natural Science B/D"
+msgstr "BLDG. of Natural Science"
 
 #: templates/timetable/index.html:29
 msgid "정문술빌딩"
-msgstr "ChungMoonsoul B/D"
+msgstr "ChungMoonSul BLDG."
 
 #: templates/timetable/index.html:30
 msgid "산업경영동"
-msgstr "Industral Engineering & Management B/D"
+msgstr "BLDG. of Industry Management"
 
 #: templates/timetable/index.html:31
 msgid "의과학연구센터"
-msgstr "Biomedcal Research Center"
+msgstr "Biomedical Rseearch Center"
 
 #: templates/timetable/index.html:32
 msgid "정보전자동"
-msgstr "Information Science and Electronics B/D"
+msgstr "BLDG. of Information Science and Electronics"
 
 #: templates/timetable/index.html:33
 msgid "궁리실험관"
-msgstr "Gungri Silhumgwan"
+msgstr "Kungri BLDG"
 
 #: templates/timetable/index.html:60
 msgid "관심학과 설정"
@@ -876,6 +873,22 @@ msgstr "We are preparing to provide map information."
 #: templates/timetable/index.html:316
 msgid "시험시간표"
 msgstr "Exam timetable"
+
+#: utils/templatetags/yearterm.py:12
+msgid "봄"
+msgstr "Spring"
+
+#: utils/templatetags/yearterm.py:12
+msgid "여름"
+msgstr "Summer"
+
+#: utils/templatetags/yearterm.py:12
+msgid "가을"
+msgstr "Fall"
+
+#: utils/templatetags/yearterm.py:12
+msgid "겨울"
+msgstr "Winter"
 
 #, fuzzy
 #~ msgid "인문사회과학부"
