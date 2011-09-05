@@ -57,19 +57,6 @@
 						<a class="left{% ifequal section 'timetable' %} selected{% endifequal %}" href="/timetable/">{% trans "모의 시간표" %}</a>
 						<a class="right{% ifequal section 'help' %} selected{% endifequal %}" href="/help/">{% trans "도움말" %}</a>
 						<a class="right{% ifequal section 'info' %} selected{% endifequal %}" href="/about/">{% trans "만든 사람들" %}</a>
-						{% if user.is_authenticated %}
-						<a class="right" id="myfavorites" href="#myfavorites">{% trans "내 즐겨찾기" %}</a>
-						<div id="myfavorites-menu">
-							<p>{% trans "내 즐겨찾기" %}</p>
-							<ul>
-							{% for item in myfavorites %}
-								<li><a href="{{item.url}}">{{item.course_name}}</a></li>
-							{% empty %}
-							<li><span>{% trans "즐겨찾기가 없습니다." %}</span></li>
-							{% endfor %}
-							</ul>
-						</div>
-						{% endif %}
 						<div class="clear"></div>
 					</div>
 				</div>
