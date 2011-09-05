@@ -67,9 +67,8 @@ msgid "추가하는 중입니다..."
 msgstr "Searching..."
 
 #: media/js/timetable.js:671
-#, fuzzy
 msgid "추가되었습니다."
-msgstr "An error occured."
+msgstr "Added."
 
 #: media/js/timetable.js:677
 #, fuzzy

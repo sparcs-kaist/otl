@@ -20,6 +20,12 @@ def about(request):
         'section': u'info',
     }, context_instance=RequestContext(request))
 
+def help(request):
+    return render_to_response(ugettext(u'help.html'), {
+        'title': ugettext(u'도움말'),
+        'section': u'help',
+    }, context_instance=RequestContext(request))
+
 def changelanguage(request):
     if (not 'django_language' in request.session) or request.session['django_language'] == 'ko':
         request.session['django_language'] = 'en'

@@ -55,6 +55,7 @@
 						<a class="left{% ifequal section 'board' %} selected{% endifequal %}" href="/board/lecture/">{% trans "과목 Q&amp;A" %}</a>
 						<a class="left{% ifequal section 'dictionary' %} selected{% endifequal %}" href="/dictionary/">{% trans "과목 사전" %}</a>
 						<a class="left{% ifequal section 'timetable' %} selected{% endifequal %}" href="/timetable/">{% trans "모의 시간표" %}</a>
+						<a class="right{% ifequal section 'help' %} selected{% endifequal %}" href="/help/">{% trans "도움말" %}</a>
 						<a class="right{% ifequal section 'info' %} selected{% endifequal %}" href="/about/">{% trans "만든 사람들" %}</a>
 						{% if user.is_authenticated %}
 						<a class="right" id="myfavorites" href="#myfavorites">{% trans "내 즐겨찾기" %}</a>

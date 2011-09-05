@@ -20,6 +20,7 @@ urlpatterns = patterns('',
     #(ur'^board/', include('otl.apps.board.urls')),
     (ur'^accounts/', include('otl.apps.accounts.urls')),
     (ur'^about/', 'otl.apps.main.views.about'),
+    (ur'^help/', 'otl.apps.main.views.help'),
     (ur'^dictionary/', include('otl.apps.dictionary.urls')),
     (ur'^favicon.ico$', lambda request: HttpResponseNotFound()),
 
