@@ -1,0 +1,36 @@
+@charset "utf-8";
+
+#content li {
+	margin-left: 2em;
+}
+
+ul {
+}
+
+hr {
+	color:#ccc
+}
+
+h3, h4 {
+	clear: left;
+}
+h3 {
+	margin-left: 0px;
+	padding-bottom: 2px;
+	border-bottom: 1px solid #ccc;
+	color: green;
+}
+h4 {
+	margin-top: 1em;
+	font-size: 1.1em;
+	color: green;
+}
+
+.help-photo {
+	border-style:solid;
+	border-width:1px;
+	color:black;
+	margin:1em;
+}
+
+
