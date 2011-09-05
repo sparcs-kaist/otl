@@ -1,0 +1,128 @@
+{% extends 'layout.html' %}
+{% block headers %}
+<link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}help.css" />
+<link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}slideshow.css" />
+<script type="text/javascript" src="{{MEDIA_URL}}js/slideshow/slideshow.js"></script>
+<script type="text/javascript">
+//<![CDATA[
+window.addEvent('domready', function() {
+	var slideshow_data = {
+		'meeting-whiteboard1.jpg': {caption: '가장 처음 아이디어 회의 때 화이트보드 의논 내용'},
+		'meeting-sparcsroom.jpg': {caption: '조모임 보드 회의 때... (사실은 설정샷?)'},
+		'meeting-sparcsroom2.jpg': {caption: '회의 장면. 서로 간의 생각 차이를 좁히기 위한 무한 토론의 시간.'},
+		'joongi-timeline.png': {caption: '새벽 6시까지 달린 commit log...'},
+		'stay-all-night.jpg': {caption: '...그리고 보는 교양분관 뒷편의 일출. orz'},
+		'dualmonitor.jpg': {caption: '개발하고 있는 모니터 화면'},
+		'two-guys.jpg': {caption: '스팍스 회장님께 지적(?)당하는 모습 -_-'},
+		'serverroom.jpg': {caption: '서버실과 우리의 바퀴 짱'}
+	};
+	var slideshow = new Slideshow('photoflow', slideshow_data, {
+		controller:false, captions:true, thumbnails:false,
+		width:400, height:300,
+		duration:1800,
+		hu:'{{MEDIA_URL}}images/about/',
+		loader:{animate:['{{MEDIA_URL}}images/slideshow/loader-#.png', 12]}
+	});
+});
+//]]>
+</script>
+{% endblock %}
+{% block content %}
+	<a name="help_top"></a><h2>Help</h2>
+	<ul>
+		<a href="#help1"><li>Adding a course</li></a>
+		<a href="#help2"><li>Deleting a course</li></a>
+		<a href="#help3"><li>Finding a course</li></a>
+		<ul type="circle">
+			<a href="#help3-1"><li>Searching by department</li></a>
+			<a href="#help3-2"><li>Searching by course type</li></a>
+			<a href="#help3-3"><li>Searching by course time</li></a>
+			<a href="#help3-4"><li>Searching by course name</li></a>
+		</ul>
+		<a href="#help4"><li>Using multiple timetables</li></a>
+		<a href="#help5"><li>Resetting/Printing a timetable</li></a>
+		<a href="#help6"><li>Checking classroom location</li></a>
+		<a href="#help7"><li>Checking past timetables</li></a>
+		<a href="#help8"><li>Downloading syllabus</li></a>
+		<a href="#help9"><li>Checking competition rate</li></a>
+	</ul>
+	<div style="margin-right:20px; margin-left:20px">
+		<a name="help1"></a>
+		<h3>Adding a course <a href="#help_top">^</a></h3>
+		<img class="help-photo" src="{{MEDIA_URL}}images/help/en/addcourse.png" alt="PHOTO" width="800" /><br>
+		1. Click one of the courses on the list on the left.<br>
+		2. If the course is successfully added, following message will appear: "Course added"<br>
+	</div><br>
+	<div style="margin-right:20px; margin-left:20px">
+		<a name="help2"></a>
+		<h3>Deleting a course <a href="#help_top">^</a></h3>
+		<img class="help-photo" src="{{MEDIA_URL}}images/help/en/deletecourse1.png" alt="PHOTO" width="800" /><br>
+		1. Click the course that you want to delete from the timetable.<br>
+		<img class="help-photo" src="{{MEDIA_URL}}images/help/en/deletecourse2.png" alt="PHOTO"/><br>
+		2. To delete course, click OK button at the popup window.<br>
+	</div><br>
+	<div style="margin-right:20px; margin-left:20px">
+		<a name="help3"></a>
+		<h3>Finding a course <a href="#help_top">^</a></h3>
+		<a name="help3-1"></a>
+		<h4>Searching by department</h4>
+		<img class="help-photo" src="{{MEDIA_URL}}images/help/en/findcourse1.png" alt="PHOTO" width="800" /><br>
+		Choose a desired department you wish to search at the top left "Department" drop-down menu.<br>
+		<a name="help3-2"></a>
+		<h4>Searching by course type</h4>
+		<img class="help-photo" src="{{MEDIA_URL}}images/help/en/findcourse2.png" alt="PHOTO" width="800" /><br>
+		Choose a desired course you wish to search at the top left "Course Type" drop-down menu.<br>
+		<a name="help3-3"></a>
+		<h4>Searching by course time</h4>
+		<img class="help-photo" src="{{MEDIA_URL}}images/help/en/findcourse3.png" alt="PHOTO" width="800" /><br>
+		To search by desired time, drag the mouse on the timetable.<br>
+		<a name="help3-4"></a>
+		<h4>Searching by course name</h4>
+		<img class="help-photo" src="{{MEDIA_URL}}images/help/en/findcourse4.png" alt="PHOTO" width="800" /><br>
+		Input ired keyword to the top left box, and press enter or click "Apply".<br>
+		<img class="help-photo" src="{{MEDIA_URL}}images/help/en/findcourse5.png" alt="PHOTO" width="800" /><br>
+		By checking "Search in categories" box and select department and course type, you can search within those categories.<br>
+	</div><br>
+	<div style="margin-right:20px; margin-left:20px">
+		<a name="help4"></a>
+		<h3>Using multiple timetables <a href="#help_top">^</a></h3>
+		<img class="help-photo" src="{{MEDIA_URL}}images/help/en/manytables.png" alt="PHOTO" width="800" /><br>
+		To use multiple timetables, click the tabs on the top of timetable.<br>
+	</div><br>
+	<div style="margin-right:20px; margin-left:20px">
+		<a name="help5"></a>
+		<h3>Resetting/Printing a timetable <a href="#help_top">^</a></h3>
+		<img class="help-photo" src="{{MEDIA_URL}}images/help/en/clearnprint.png" alt="PHOTO" width="800" /><br>
+		To reset or print timetable, click the text on the timetable located on the right-hand side.<br>
+	</div><br>
+	<div style="margin-right:20px; margin-left:20px">
+		<a name="help6"></a>
+		<h3>Checking classroom location <a href="#help_top">^</a></h3>
+		<img class="help-photo" src="{{MEDIA_URL}}images/help/en/checklocation1.png" alt="PHOTO" width="800" /><br>
+		1. Locate your mouse cursor on one of the courses on the list, or on the timetable.<br>
+		<img class="help-photo" src="{{MEDIA_URL}}images/help/en/checklocation2.png" alt="PHOTO" width="800" /><br>
+		2. You can check classroom location in the campus map which is located on the right top side.<br>
+	</div><br>
+	<div style="margin-right:20px; margin-left:20px">
+		<a name="help7"></a>
+		<h3>Checking past timetables <a href="#help_top">^</a></h3>
+		<img class="help-photo" src="{{MEDIA_URL}}images/help/en/thinkofthepast.png" alt="PHOTO" width="800" /><br>
+		To check your past timetables, use drop-down menu on the top left side of timetable.<br>
+	</div>
+	<div style="margin-right:20px; margin-left:20px">
+		<a name="help8"></a>
+		<h3>Downloading syllabus <a href="#help_top">^</a></h3>
+		<img class="help-photo" src="{{MEDIA_URL}}images/help/en/viewsyllabus.png" alt="PHOTO" width="800" /><br>
+		To open course syllabus, click the icon located on the left-hand side of course name on the course information table.<br>
+	</div>
+	<div style="margin-right:20px; margin-left:20px">
+		<a name="help9"></a>
+		<h3>Checking competition rate <a href="#help_top">^</a></h3>
+		<img class="help-photo" src="{{MEDIA_URL}}images/help/en/checkcompetition.png" alt="PHOTO" width="800" /><br>
+		The competition rate of a course can be found on the course information table.<br>
+		Clicking the icon will refresh the competition rate.<br>
+		※The course capacity given by CAIS is used to calculate competition rates.<br>
+		※The number of the people who added certain course in at least on of the three timetables is treated as numerator.<br>
+	</div>
+	<div class="clear"></div>
+{% endblock %}

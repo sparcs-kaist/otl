@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-31 21:29+0900\n"
+"POT-Creation-Date: 2011-09-05 21:05+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -68,15 +68,23 @@ msgstr "Favorites"
 msgid "조모임"
 msgstr "Group"
 
-#: apps/main/views.py:19 templates/layout.html:58
+#: apps/main/views.py:19 templates/layout.html:59
 msgid "만든 사람들"
 msgstr "Developers"
+
+#: apps/main/views.py:24
+msgid "help.html"
+msgstr "help_en.html"
+
+#: apps/main/views.py:25 templates/layout.html:58
+msgid "도움말"
+msgstr "Help"
 
 #: apps/timetable/views.py:57
 msgid "모의시간표"
 msgstr "Timetable"
 
-#: apps/timetable/views.py:353
+#: apps/timetable/views.py:356
 msgid "영어강의"
 msgstr "Lec."
 
@@ -118,12 +126,12 @@ msgstr "Ara QnA"
 msgid "모의 시간표"
 msgstr "Timetable"
 
-#: templates/layout.html:60 templates/layout.html.py:62
+#: templates/layout.html:61 templates/layout.html.py:63
 #: templates/favorites/index.html:84
 msgid "내 즐겨찾기"
 msgstr "My favorites"
 
-#: templates/layout.html:67
+#: templates/layout.html:68
 #, fuzzy
 msgid "즐겨찾기가 없습니다."
 msgstr "No favorites."
