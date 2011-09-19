@@ -901,7 +901,7 @@ var Timetable = {
 							$('#add_au').text('(+'+item+')');
 						break;
 					case 'title':
-						link_url = 'https://cais.kaist.ac.kr/syllabusStud?year='+Data.ViewYear+'&term='+Data.ViewTerm+'&subject_no='+obj['code']+'&lecture_class='+obj['class_no']+'&dept_id='+obj['dept_id'];
+						link_url = 'https://cais.kaist.ac.kr/syllabusInfo?year='+Data.ViewYear+'&term='+Data.ViewTerm+'&subject_no='+obj['code']+'&lecture_class='+obj['class_no']+'&dept_id='+obj['dept_id'];
 						$('#DS_'+key).html('<p><a href="'+link_url+'" target="_blank"><img src="'+Data.MediaUrl+'images/syllabus.png" id="syllabus" title="'+gettext('실라버스')+'" alt="'+gettext('실라버스')+'" /></a> '+item+'</p>');
 						break;
 					case 'prof':
