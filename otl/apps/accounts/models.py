@@ -2,6 +2,7 @@
 from django.db import models
 from django.contrib import admin
 from django.contrib.auth.models import User
+#from otl.apps.dictionary.models import Comment
 
 class Department(models.Model):
     id = models.IntegerField(primary_key=True, help_text=u'세자리 또는 네자리의 숫자로 된 고유 ID')
@@ -26,8 +27,8 @@ class UserProfile(models.Model):
     department = models.ForeignKey('Department')
     favorite_departments = models.ManyToManyField('Department', related_name='favoredby_set')
     score = models.IntegerField()
-    nickname = models.CharField(max_lenth=10)
-    like_list = models.ManyToManyField(Comment)
+    nickname = models.CharField(max_length=15)
+    like_list = models.ManyToManyField('dictionary.Comment')
 
     def __unicode__(self):
         return u'%s %s (%s)' % (self.user.username, self.student_id, self.department.code)
@@ -40,3 +41,4 @@ class UserAdmin(admin.ModelAdmin):
 
 admin.site.register(UserProfile, UserProfileAdmin)
 admin.site.register(User, UserAdmin)
+

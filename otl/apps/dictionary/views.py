@@ -120,3 +120,9 @@ def delete_comment(request, comment_id):
         comment.delete()
     return HttpResponseRedirect('/dictionary/view/' + comment.course.code)
 
+@login_required
+def like_commnet(request, comment_id):
+
+@login_required
+def add_summary(request, course_id):
+

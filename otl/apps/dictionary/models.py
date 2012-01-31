@@ -3,8 +3,7 @@ from django.db import models
 from django.contrib import admin
 from django.contrib.auth.models import User
 from otl.apps.common import *
-from otl.apps.accounts.models import Department
-from otl.apps.timetable.models import *
+from otl.apps.timetable.models import Lecture
 
 class Professor(models.Model):
     professor = models.CharField(max_length=100)            # 교수님 이름 (한글)
@@ -56,7 +55,7 @@ class Comment(models.Model):
     like = models.IntegerField(default=0)
 
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ('course', 'professor', 'semester', 'comment', 'load', 'score', 'gain')
+    list_display = ('course', 'comment', 'load', 'score', 'gain')
     ordering = ('-written_date',)
 
 admin.site.register(Comment, CommentAdmin)
