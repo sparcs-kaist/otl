@@ -25,6 +25,9 @@ class UserProfile(models.Model):
     language = models.CharField(max_length=15)
     department = models.ForeignKey('Department')
     favorite_departments = models.ManyToManyField('Department', related_name='favoredby_set')
+    score = models.IntegerField()
+    nickname = models.CharField(max_lenth=10)
+    like_list = models.ManyToManyField(Comment)
 
     def __unicode__(self):
         return u'%s %s (%s)' % (self.user.username, self.student_id, self.department.code)
