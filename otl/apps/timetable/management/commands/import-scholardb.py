@@ -95,11 +95,11 @@ class Command(BaseCommand):
                 prev_department = department_id
 
                 # Extract lecture info.
-                try:
-                    print 'Retreiving %s: %s [%s]...' % (lecture_code, myrow[7].encode('utf-8'), lecture_class_no)
-                except UnicodeDecodeError:
-                    print 'Retreiving %s: ??? [%s]...' % (lecture_code, lecture_class_no)
-                    myrow[7] = u'???'
+                #try:
+                    #print 'Retreiving %s: %s [%s]...' % (lecture_code, myrow[7].encode('utf-8'), lecture_class_no)
+                #except UnicodeDecodeError:
+                    #print 'Retreiving %s: ??? [%s]...' % (lecture_code, lecture_class_no)
+                    #myrow[7] = u'???'
                 lecture_key = {
                     'code': lecture_no,
                     'year': int(myrow[0]),
