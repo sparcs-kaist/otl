@@ -40,7 +40,8 @@ class Lecture(models.Model):
     notice = models.CharField(max_length=200, blank=True, null=True)        # 비고
     is_english = models.BooleanField()                      # 영어강의 여부
     deleted = models.BooleanField(default=False)            # 과목이 닫혔는지 여부
-    rating = models.ForeignKey('dictionary.LectureRating', related_name='lecture_rating')
+    rating = models.ForeignKey('dictionary.LectureRating', related_name='lecture_rating', null=True, blank=True) 
+    #''' lecture에서 rating찾아갈때 null인경우 고려 '''
 
     timetable_relation = models.ManyToManyField(User, through='Timetable', null=True, blank=True)
 

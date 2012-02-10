@@ -33,7 +33,7 @@ class UserProfile(models.Model):
         return u'%s %s (%s)' % (self.user.username, self.student_id, self.department.code)
 
 class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'student_id', 'department', 'favorite_departments', 'score', 'nickname', 'like_list')
+    list_display = ('user', 'student_id', 'department', 'score', 'nickname')
 
 class UserAdmin(admin.ModelAdmin):
     list_display = ('username', 'email', 'first_name', 'last_name')
