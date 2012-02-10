@@ -38,7 +38,7 @@ class Command(BaseCommand):
         try:
             db = Sybase.connect(host, user, password, 'scholar')
         except Sybase.DatabaseError:
-            print>>sys.stderr, u'Connection failed. Check username and password.'
+            print>>sys.stderr, 'Connection failed. Check username and password.'
             return
         c = db.cursor()
 
@@ -82,10 +82,10 @@ class Command(BaseCommand):
                 if prev_department != department_id:
                     try:
                         department = Department.objects.get(id = department_id)
-                        print u'Updating department: %s' % department
+                        print 'Updating department: %s' % department
                     except Department.DoesNotExist:
                         department = Department(id = department_id)
-                        print u'Adding department: %s(%d)...' % (department_code, department_id)
+                        print 'Adding department: %s(%d)...' % (department_code, department_id)
                     department.num_id = department_no
                     department.code = department_code
                     department.name = myrow[5]
@@ -95,11 +95,11 @@ class Command(BaseCommand):
                 prev_department = department_id
 
                 # Extract lecture info.
-                try:
-                    print u'Retreiving %s: %s [%s]...' % (lecture_code, myrow[7], lecture_class_no)
-                except UnicodeDecodeError:
-                    print u'Retreiving %s: ??? [%s]...' % (lecture_code, lecture_class_no)
-                    myrow[7] = u'???'
+                #try:
+                    #print 'Retreiving %s: %s [%s]...' % (lecture_code, myrow[7].encode('utf-8'), lecture_class_no)
+                #except UnicodeDecodeError:
+                    #print 'Retreiving %s: ??? [%s]...' % (lecture_code, lecture_class_no)
+                    #myrow[7] = u'???'
                 lecture_key = {
                     'code': lecture_no,
                     'year': int(myrow[0]),
@@ -117,11 +117,11 @@ class Command(BaseCommand):
                 )
                 try:
                     lecture = Lecture.objects.get(**lecture_key)
-                    print u'Updating existing lecture...'
+                    print 'Updating existing lecture...'
                 except Lecture.DoesNotExist:
                     lecture = Lecture(**lecture_key)
                     lecture.num_people = 0
-                    print u'Creating new lecture...'
+                    print 'Creating new lecture...'
 
                 # Update lecture info.
                 lecture.old_code = myrow[20]
@@ -151,7 +151,7 @@ class Command(BaseCommand):
             c.close()
         
         # Extract exam-time, class-time info.
-        print u'Extracting exam time information...'
+        print 'Extracting exam time information...'
         c = db.cursor()
         c.execute('SELECT * FROM view_OTL_exam_time WHERE lecture_year = %d AND lecture_term = %d' % (settings.NEXT_YEAR, settings.NEXT_SEMESTER))
         exam_times = c.fetchall()
@@ -176,12 +176,12 @@ class Command(BaseCommand):
                 exam_time.day = int(myrow[5]) - 1
                 exam_time.begin = time(hour=myrow[6].hour, minute=myrow[6].minute)
                 exam_time.end = time(hour=myrow[7].hour, minute=myrow[7].minute)
-                print u'Updating exam time for %s' % lecture
+                print 'Updating exam time for %s' % lecture
                 exam_time.save()
             except Lecture.DoesNotExist:
-                print u'Exam-time for non-existing lecture %s; skip it...' % myrow[2]
+                print 'Exam-time for non-existing lecture %s; skip it...' % myrow[2]
 
-        print u'Extracting class time information...'
+        print 'Extracting class time information...'
         c = db.cursor()
         c.execute('SELECT * FROM view_OTL_time WHERE lecture_year = %d AND lecture_term = %d' % (settings.NEXT_YEAR, settings.NEXT_SEMESTER))
         class_times = c.fetchall()
@@ -215,10 +215,10 @@ class Command(BaseCommand):
                     class_time.unit_time = int(myrow[11])
                 except (ValueError, TypeError):
                     class_time.unit_time = 0
-                print u'Updating class time for %s' % lecture
+                print 'Updating class time for %s' % lecture
                 class_time.save()
             except Lecture.DoesNotExist:
-                print u'Class-time for non-existing lecture %s; skip it...' % myrow[2]
+                print 'Class-time for non-existing lecture %s; skip it...' % myrow[2]
 
         c = db.cursor()
         c.execute('SELECT * FROM view_OTL_syllabus WHERE lecture_year = %d AND lecture_term = %d' % (settings.NEXT_YEAR, settings.NEXT_SEMESTER))
@@ -256,14 +256,14 @@ class Command(BaseCommand):
                 syllabus.url = myrow[11]
                 syllabus.attachment = myrow[12]
 
-                print u'Updating syllabus information for %s' % lecture
+                print 'Updating syllabus information for %s' % lecture
                 syllabus.save()
             except Lecture.DoesNotExist:
-                print u'Syllabus information for non-existing lecture %s; skip it...' % myrow[2]
+                print 'Syllabus information for non-existing lecture %s; skip it...' % myrow[2]
 
         if not exclude_lecture:
             # Mark deleted lectures to notify users.
-            print u'Marking deleted lectures...'
+            print 'Marking deleted lectures...'
             for key in lectures_not_updated:
                 lecture_key = {
                     'code': key[0],
@@ -274,10 +274,10 @@ class Command(BaseCommand):
                 }
                 lecture = Lecture.objects.get(**lecture_key)
                 lecture.deleted = True
-                print u'%s is marked as deleted...' % lecture
+                print '%s is marked as deleted...' % lecture
                 lecture.save()
 
         db.close()
 
-        print u'\nTotal number of departments : %d' % Department.objects.count()
-        print u'Total number of lectures newly added : %d' % lecture_count
+        print '\nTotal number of departments : %d' % Department.objects.count()
+        print 'Total number of lectures newly added : %d' % lecture_count
