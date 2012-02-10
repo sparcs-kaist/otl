@@ -40,6 +40,8 @@ def department(request, department_id):
 def search(request):
     pass
 
+# -- private function --
+
 def view(request, course_code):
     course = None
     if Course.objects.filter(code=course_code).count() == 0:
@@ -121,7 +123,7 @@ def delete_comment(request, comment_id):
     return HttpResponseRedirect('/dictionary/view/' + comment.course.code)
 
 @login_required
-def like_commnet(request, comment_id):
+def like_comment(request, comment_id):
     return 
 
 @login_required
