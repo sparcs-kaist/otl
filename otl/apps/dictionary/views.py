@@ -8,12 +8,15 @@ from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.utils.html import strip_tags, escape
+from django.utils import simplejson as json
 from otl.apps.favorites.models import CourseLink
 from otl.apps.common import *
+from otl.utils import respond_as_attachment
 from otl.utils.decorators import login_required_ajax
 from otl.apps.accounts.models import Department
 from otl.apps.timetable.models import Lecture
 from otl.apps.dictionary.models import *
+from otl.apps.timetable.views import _lectures_to_output
 
 from django import template
 template.add_to_builtins('django.templatetags.i18n')
@@ -21,11 +24,51 @@ template.add_to_builtins('django.templatetags.i18n')
 from django.utils.translation import ugettext
 
 def index(request):
-    departments = Department.objects.all()
+
+    #Make the semester info to make users select the semester which they want to view.
+    semester_info = []
+    semester_info.append({'year' : settings.START_YEAR, 'semester' : settings.START_SEMESTER})
+    if settings.START_SEMESTER == 1 and settings.NEXT_YEAR > settings.START_YEAR:
+        semester_info.append({'year' : settings.START_YEAR, 'semester' : 3})
+    for y in range(settings.START_YEAR+1,settings.NEXT_YEAR):
+        semester_info.append({'year' : y, 'semester' : 1})
+        semester_info.append({'year' : y, 'semester' : 3})
+    if settings.NEXT_SEMESTER == 3 and settings.NEXT_YEAR > settings.START_YEAR:
+        semester_info.append({'year' : settings.NEXT_YEAR, 'semester' : 1})
+
+    # Read the current user's timetable.
+    if request.user.is_authenticated():
+        my_lectures = [_lectures_to_output(Lecture.objects.filter(year=settings.NEXT_YEAR, semester=settings.NEXT_SEMESTER, timetable__user=request.user, timetable__table_id=id), False, request.session.get('django_language', 'ko')) for id in xrange(0,settings.NUMBER_OF_TABS)]
+    else:
+        my_lectures = [[], [], []]
+    if settings.DEBUG:
+        my_lectures_output = json.dumps(my_lectures, indent=4, ensure_ascii=False)
+    else:
+        my_lectures_output = json.dumps(my_lectures, ensure_ascii=False, sort_keys=False, separators=(',',':'))
+
+    rank_list = [{'rank':0, 'ID':'noname', 'score':u'넘겨줘'}]*10
+    monthly_rank_list = [{'rank':0, 'ID':'noname', 'score':u'넘겨줘'}]*10
+    todo_comment_list = [{'semester':u'0000ㅁ학기', 'code':'XX000', 'lecture_name':'넘겨', 'prof':'넘겨', 'url':'/넘겨야할/주소/줘'}]*10
     return render_to_response('dictionary/index.html', {
-        'section' : 'dictionary',
-        'title' : ugettext(u'과목 사전'),
-        'departments' : departments
+        'section': 'dictionary',
+        'title': ugettext(u'과목 사전'),
+        'departments': Department.objects.filter(visible=True).order_by('name'),
+        'my_lectures': my_lectures_output,
+        'lang' : request.session.get('django_language', 'ko'),
+        'semester_info' : semester_info,
+        'username' : u'넘겨줘',
+        'nickname' : u'넘겨줘',
+        'studentno' : u'넘겨줘',
+        'department' : u'넘겨줘',
+        'score' : u'넘겨줘',
+        'rank' : u'넘겨줘',
+        'rank_list' : rank_list,
+        'taken_credits' : u'넘겨줘',
+        'taken_AU' : u'넘겨줘',
+        'planned_credits' : u'넘겨줘',
+        'planned_AU' : u'넘겨줘',
+        'monthly_rank_list' : monthly_rank_list,
+        'todo_comment_list' : todo_comment_list,
     }, context_instance=RequestContext(request))
 
 def department(request, department_id):
@@ -124,7 +167,7 @@ def delete_comment(request, comment_id):
 
 @login_required
 def like_comment(request, comment_id):
-    return 
+    return
 
 @login_required
 def add_summary(request, course_id):
