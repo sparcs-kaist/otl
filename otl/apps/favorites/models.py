@@ -7,6 +7,7 @@ from otl.apps.common import *
 
 class CourseLink(models.Model):
     course_name = models.CharField(max_length=60)
+    course_code = models.CharField(max_length=10)
     year = models.IntegerField(default=settings.CURRENT_YEAR)
     semester = models.SmallIntegerField(default=settings.CURRENT_SEMESTER, choices=SEMESTER_TYPES)
     url = models.URLField()
