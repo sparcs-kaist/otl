@@ -15,7 +15,7 @@ class ProfessorAdmin(admin.ModelAdmin):
 
 class Course(models.Model):
     code = models.CharField(max_length=10)                  # 과목코드 (12.123 형식)
-    recent_lecture = models.ForeignKey(Lecture)
+    recent_lecture = models.ForeignKey(Lecture, related_name='course_lecture')
     recent_summary = models.ForeignKey('dictionary.Summary', related_name='course_summary')
     score_average = models.SmallIntegerField(choices=SCORE_TYPES)
     load_average = models.SmallIntegerField(choices=LOAD_TYPES)
@@ -35,7 +35,7 @@ class SummaryAdmin(admin.ModelAdmin):
 
 class Comment(models.Model):
     course = models.ForeignKey(Course)                      # 과목
-    lecture = models.ForeignKey(Lecture)                    # 시기+과목
+    lecture = models.ForeignKey(Lecture, null=True, blank=True)  # 시기+과목
 
     writer = models.ForeignKey(User, related_name='comment_set') # 수정한 사람
     written_datetime = models.DateTimeField(auto_now=True)       # 마지막 수정일
