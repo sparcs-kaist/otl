@@ -77,50 +77,39 @@ def view(request, course_code):
     }, context_instance=RequestContext(request))
 
 @login_required
-def add_comment(request, course_id):
-    new_course = Course.objects.get(id=course_id)
-    #TODO : new_lecture 는 코드는 복잡하나 교수님 정보밖에 불러오지 않으므로 최후에 더 필요하지 않을 경우 제거한다.
-    new_lecture = Lecture.objects.filter(code = new_course.code, professor=request.POST['lecture_professor'], year=int(request.POST['lecture_semester'])/10, semester=int(request.POST['lecture_semester'])%10)
-    new_comment = escape(strip_tags(request.POST['comment']))
-    if request.POST['load'] == '1':
-        new_load = 1
-    elif request.POST['load'] == '2':
-        new_load = 2
-    else:
-        new_load = 3
-    if request.POST['score'] == '1':
-        new_score = 1
-    elif request.POST['score'] == '2':
-        new_score = 2
-    else:
-        new_score = 3
-    if request.POST['gain'] == '1':
-        new_gain = 1
-    elif request.POST['gain'] == '2':
-        new_gain = 2
-    else:
-        new_gain = 3
-    new_professor = new_lecture[0].professor
-    new_semester = int(request.POST['lecture_semester'])
-    comment = Comment.objects.create(\
-        writer = request.user,\
-        professor = new_professor,\
-        course = new_course,\
-        comment = new_comment,\
-        load = new_load,\
-        score = new_score,\
-        gain = new_gain,\
-        semester = new_semester\
-    )
-    comment.save()
-    return HttpResponseRedirect('/dictionary/view/' + new_course.code)
+def add_comment(request):
+    try:
+        lecture_id = int(request.POST.get('lecture_id', -1))
+        if lecture_id >= 0:
+            lecture = Lecture.objests.get(id=lecture_id)
+            course = lecture.course
+        else:
+            lecture = None
+            course_id = int(request.POST.get('course_id', -1))
+            if course_id >= 0:
+                course = Course.objects.get(id=course_id)
+            else:
+                raise ValidationError()
+        comment = request.POST.get('comment', None)
+        load = int(request.POST.get('load', -1))
+        gain = int(request.POST.get('gain', -1))
+        score = int(request.POST.get('gain', -1))
+        writer = request.user
 
+        if load < 0 or gain < 0 or score < 0:
+            raise ValidationError()
+
+        new_comment = Comment(course=course, lecture=lecture, writer=writer, comment=comment, load=load, score=score, gain=gain)
+        new_comment.save()
+
+        return HttpResponse(_comment_to_output(new_comment)) # AJAX로 실시간 업데이트를 위해 comment를 리턴
+    except ValidationError:
+        return HttpResponseBadRequest()
+
+            
 @login_required
 def delete_comment(request, comment_id):
-    comment = Comment.objects.get(id=comment_id)
-    if comment.User == request.user:
-        comment.delete()
-    return HttpResponseRedirect('/dictionary/view/' + comment.course.code)
+    return
 
 @login_required
 def like_comment(request, comment_id):
@@ -128,4 +117,7 @@ def like_comment(request, comment_id):
 
 @login_required
 def add_summary(request, course_id):
+    return
+
+def _comment_to_output(comment):
     return
