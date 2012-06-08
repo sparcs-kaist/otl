@@ -101,11 +101,16 @@ def add_comment(request):
 
         new_comment = Comment(course=course, lecture=lecture, writer=writer, comment=comment, load=load, score=score, gain=gain)
         new_comment.save()
+        result = 'ADD'
 
-        return HttpResponse(_comment_to_output(new_comment)) # AJAX로 실시간 업데이트를 위해 comment를 리턴
     except ValidationError:
         return HttpResponseBadRequest()
+    except:
+        return HttpResponseServerError()
 
+    return HttpResponse(json.dumps({
+        'result': result,
+        'comment': _comment_to_output(new_comment)}))
             
 @login_required
 def delete_comment(request):
@@ -117,7 +122,7 @@ def delete_comment(request):
             raise ValidationError()
         comment = Comment.objects.get(pk=comment_id, writer=user)
         comment.delete()
-        result = 'OK'
+        result = 'DELETE'
     except ObjectDoesNotExist:
         result = 'REMOVE_NOT_EXIST'
     except ValidationError:
