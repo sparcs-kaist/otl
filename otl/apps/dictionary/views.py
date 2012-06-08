@@ -108,8 +108,25 @@ def add_comment(request):
 
             
 @login_required
-def delete_comment(request, comment_id):
-    return
+def delete_comment(request):
+    try:
+        user = request.user
+        comment_id = int(request.POST.get('comment_id', -1))
+
+        if comment_id < 0:
+            raise ValidationError()
+        comment = Comment.objects.get(pk=comment_id, writer=user)
+        comment.delete()
+        result = 'OK'
+    except ObjectDoesNotExist:
+        result = 'REMOVE_NOT_EXIST'
+    except ValidationError:
+        return HttpResponseBadReqeust()
+    except:
+        return HttpResponseServerError()
+
+    return HttpResponse(json.dumps({
+        'result': result})) # TODO: 삭제를 위해서는 무엇을 리턴해야 하는가?
 
 @login_required
 def like_comment(request, comment_id):
