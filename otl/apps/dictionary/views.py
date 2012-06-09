@@ -40,8 +40,6 @@ def department(request, department_id):
 def search(request):
     pass
 
-# -- private function --
-
 def view(request, course_code):
     course = None
     if Course.objects.filter(code=course_code).count() == 0:
@@ -76,7 +74,7 @@ def view(request, course_code):
         'comments' : comments
     }, context_instance=RequestContext(request))
 
-@login_required
+@login_required_ajax
 def add_comment(request):
     try:
         lecture_id = int(request.POST.get('lecture_id', -1))
@@ -112,7 +110,7 @@ def add_comment(request):
         'result': result,
         'comment': _comment_to_output(new_comment)}))
             
-@login_required
+@login_required_ajax
 def delete_comment(request):
     try:
         user = request.user
