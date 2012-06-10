@@ -87,9 +87,9 @@ def get_autocomplete_list(request):
         output = cache.get(cache_key)
         if output is None:
             if lang == 'ko':
-                func = lambda x:[x.title, x.professor, x.old_code]
+                func = lambda x:[x.title, x.professor.professor_name, x.old_code]
             elif lang == 'en':
-                func = lambda x:[x.title_en, x.professor_en, x.old_code]
+                func = lambda x:[x.title_en, x.professor.professor_name_en, x.old_code]
             result = list(set(reduce(map(func, _search_by_ysdt(year, semester, department, type)))))
             while None in result:
                 result[result.index(None)] = 'None'
@@ -313,9 +313,9 @@ def _search_by_ysdtlw(year, semester, department, type, lang, word):
     if output is None:
         output = _search_by_ysdt(year, semester, department, type)
         if lang == 'ko':
-            output = output.filter(Q(old_code__icontains=word) | Q(title__icontains=word) | Q(professor__icontains=word)).distinct()
+            output = output.filter(Q(old_code__icontains=word) | Q(title__icontains=word)).distinct() # XXX 2012.06.10(Kuss) :  | Q(professor.professor_en__icontains=word) 삭제
         else:
-            output = output.filter(Q(old_code__icontains=word) | Q(title_en__icontains=word) | Q(professor_en__icontains=word)).distinct()
+            output = output.filter(Q(old_code__icontains=word) | Q(title_en__icontains=word)).distinct() # XXX 2012.06.10(Kuss) :  | Q(professor.professor_en__icontains=word) 삭제
         cache.set(cache_key, output, 3600)
     return output
 
@@ -335,6 +335,9 @@ def _lectures_to_output(lectures, conv_to_json=True, lang='ko'):
         room = ''
         if len([item for item in classtimes if item['_type'] == 'l']) > 0:
             room = classtimes[0]['classroom']
+        professors = lecture.professor.all()
+        for professor in professors:
+            name = _trans(professor.professor_name, professor.professor_name_en, lang) # TODO : 일단 이런식으로 구현해놓았는데, professor가 여러명일 때 list로 return하여야한다.
         item = {
             'id': lecture.id,
             'dept_id': lecture.department.id,
@@ -351,7 +354,7 @@ def _lectures_to_output(lectures, conv_to_json=True, lang='ko'):
             'num_people': lecture.num_people,
             'classroom': room,
             'deleted': lecture.deleted,
-            'prof': _trans(lecture.professor, lecture.professor_en, lang),
+            'prof': name,
             'times': classtimes,
             'remarks': ugettext(u'영어강의') if lecture.is_english else u'',
             'examtime': {'day': exam.day, 'start': exam.get_begin_numeric(), 'end': exam.get_end_numeric()} if exam != None else None,
