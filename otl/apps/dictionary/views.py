@@ -57,6 +57,27 @@ def view(request, course_code):
         'comment' : comment
     }, context_instance=RequestContext(request))
 
+def view_comment_by_professor(request):
+    try:
+        professor_id = int(request.GET.get('professor_id', -1))
+        course_id = int(request.GET.get('course_id', -1))
+        if professor_id < 0 or course_id < 0:
+            raise ValidationError()
+        professor = Professor.objects.get(professor_id=professor_id)
+        course = Course.objects.get(id=course_id)
+        lecture = Lecture.objects.filter(professor=professor, course=course) 
+        if not lecture.count() == 1:
+            raise ValidationError()
+        comment = Comment.objects.filter(course=course, lecture=lecture)
+        reulst = 'OK'
+    except ValidationError:
+        result = 'ERROR'
+    except ObjectDoesNotExist:
+        result = 'NOT_EXIST'
+    return HttpResponse(json.dumps{
+        'result': result,
+        'comment': _comment_to_output(comment)})
+
 @login_required_ajax
 def add_comment(request):
     try:
