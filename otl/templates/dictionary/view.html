@@ -79,103 +79,38 @@ function CheckNull(form)
 
 {% endblock %}
 {% block content %}
-<h2>{{course.code}} {{course.title}}</h2>
 <div class="dictionary_part">
-    <span>{% trans "과목 정보" %}</span>
-    <ul class="course_description">
-        <li>{% trans "과목 코드" %} : {{course.code}}</li>
-        <li>{% trans "학과" %} : {{course.department.name}}</li>
-        <li>{% trans "과목 이름" %} : {{course.title}}</li>
-        <li>{% trans "과목 구분" %} : {{course.type}}</li>
-        <li>{% trans "학년 구분" %} : {{course.audience}}</li>
-        <li>{% trans "학점" %} : {{course.credit}}</li>
-        <li>{% trans "강의 시간" %} : {{course.num_classes}}</li>
-        <li>{% trans "실험 시간" %} : {{course.num_labs}}</li>
-        <li>{% trans "인원 제한" %} : {{course.limit}}</li>
-        <!--      <li>영어 강의 : {{course.is_english}}</li>-->
-    </ul>
+	<span>{{course.old_code}}</span>
 </div>
 <div class="dictionary_part">
     <span>{% trans "과목 소개" %}</span>
     <div>
-        {{course.summary}}
+        {{summary.summary}}
     </div>
 </div>
 <div class="dictionary_part">
     <span>{% trans "선수 과목" %}</span>
     <div>
-        {% for course in course.requiste_courses %}
-            {{course.title}} 
-        {% endfor %}
+		{{summary.prerequisite}}
     </div>
 </div>
-<div class="dictionary_part">
-    <span>{% trans "역대 강의" %}</span>
-    <ol>
-        {% for lecture in course.lectures.all %}
-        <li>
-            <div>{{lecture.year}} {{lecture.semester}} {{lecture.department.name}} {{lecture.class_no}} {{lecture.title}} {{lecture.type}} 교수: {{lecture.professor}}</div>
-            <div>
-                {% trans "강의평가" %} : {% for lectureRating in lecture.lecturerating_set.all %}
-                {% trans "평균점수" %} {{lectureRating.rating}}{% trans "점" %}, {% trans "표준편차" %} {{lectureRating.standard_deviation}}, {% trans "응답자수" %} {{lectureRating.number_of_respondents}}, {% trans "수강생수" %} {{lectureRating.number_of_students}}, {% trans "응답율" %} {{lectureRating.rate_of_responds}}
-                {% endfor %}
-            </div>
-        </li>
-        {% endfor %}
-    </ol>
-    <div><br/>{% trans "강의평가 자료는 학교에서 수강생들을 대상으로 강의 후 평가한 자료입니다." %}</div>
-</div>
-<div class="dictionary_part">
-    <span>{% trans "코멘트들" %}</span>
-    <div class="course_comments">
-        {% for comment in comments %}
-        <div class="dictionary_comment">
-            <div class="dictionary_comment_content">
-                {{comment.comment}}<br>
-            </div>
-            <div class="dictionary_comment_eval">
-                {% trans "평가" %} - {% trans "로드" %} : <span>{{comment.get_load_display}}</span>, {% trans "학점" %} : <span>{{comment.get_score_display}}</span>, {% trans "남는거" %} : <span>{{comment.get_gain_display}}</span>
-                , By {{comment.writer}} ({{comment.written_date|date:"Y/m/d"}})
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-</div>
-
 <div class="dictionary_part">
     <span>{% trans "코멘트 남기기" %}</span>
     {% if user.is_authenticated %}
-    <form action="/dictionary/add_comment/{{course.id}}" method="post">
-        <div class="course_comment_lectures">
-            {% trans "평가를 내릴 강의" %} :
-            <div>
-            <select name="lecture_semester">
-            {% for lecture in course.lectures.all %}
-                <option value="{{lecture.year}}{{lecture.semester}}"> {{lecture.year}} {{lecture.get_semester_display}} </option>
-            {% endfor %}
-            </select>
-            </div>
-            <div>
-            <select name="lecture_professor">
-            {% for lecture in course.lectures.all %}
-                <option value="{{lecture.professor}}"> {{lecture.class_no}} : {{lecture.professor}} </option>
-            {% endfor %}
-            </select>
-            </div>
-        </div>
-        <div class="course_comment_form_load">
+    <form action="/dictionary/add_comment/{{course.old_code}}" method="post">
+        <div class="course_comment_form">
             {% trans "로드" %} : 
             <input type="radio" name="load" value="1"/> {% trans "쉬움" %}
             <input type="radio" name="load" value="2"/> {% trans "무난" %}
             <input type="radio" name="load" value="3"/> {% trans "힘듬" %}
         </div>
-        <div class="course_comment_form_score">
+        <div class="course_comment_form">
             {% trans "학점" %} :
             <input type="radio" name="score" value="1"/> {% trans "박함" %}
             <input type="radio" name="score" value="2"/> {% trans "무난" %}
             <input type="radio" name="score" value="3"/> {% trans "후함" %}
         </div>
-        <div class="course_comment_form_gain">
+        <div class="course_comment_form">
             {% trans "남는거" %} :
             <input type="radio" name="gain" value="1"/> {% trans "없음" %}
             <input type="radio" name="gain" value="2"/> {% trans "있음" %}
@@ -194,4 +129,21 @@ function CheckNull(form)
     </div>
     {% endif %}
 </div>
+<div class="dictionary_part">
+    <span>{% trans "코멘트들" %}</span>
+    <div class="course_comments">
+        {% for comment in comments %}
+        <div class="dictionary_comment">
+            <div class="dictionary_comment_content">
+                {{comment.comment}}<br>
+            </div>
+            <div class="dictionary_comment_eval">
+                {% trans "평가" %} - {% trans "로드" %} : <span>{{comment.load}}</span>, {% trans "학점" %} : <span>{{comment.score}}</span>, {% trans "남는거" %} : <span>{{comment.gain}}</span>
+                , By {{comment.writer}} ({{comment.written_datetime|date:"Y/m/d"}})
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
 {% endblock %}
