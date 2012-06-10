@@ -57,9 +57,9 @@ def view(request, course_code):
     return render_to_response('dictionary/view.html', {
         'result' : result,
         'course' : course,
-        'professor' : Professor.objects.filter(course=course).order_by('professor_name'),
+        'professors' : Professor.objects.filter(course=course).order_by('professor_name'),
         'summary' : recent_summary,
-        'comment' : Comment.objects.filter(course=course).order_by('-written_datetime')
+        'comments' : Comment.objects.filter(course=course).order_by('-written_datetime')
     }, context_instance=RequestContext(request))
 
 def view_comment_by_professor(request):
@@ -73,7 +73,7 @@ def view_comment_by_professor(request):
         lecture = Lecture.objects.filter(professor=professor, course=course) 
         if not lecture.count() == 1:
             raise ValidationError()
-        comment = Comment.objects.filter(course=course, lecture=lecture)
+        comments = Comment.objects.filter(course=course, lecture=lecture)
         result = 'OK'
     except ValidationError:
         result = 'ERROR'
@@ -81,7 +81,7 @@ def view_comment_by_professor(request):
         result = 'NOT_EXIST'
     return HttpResponse(json.dumps({
         'result': result,
-        'comment': _comment_to_output(comment)}, ensure_ascii=False, indent=4))
+        'comments': _comments_to_output(comments)}, ensure_ascii=False, indent=4))
 
 @login_required_ajax
 def add_comment(request):
@@ -117,7 +117,7 @@ def add_comment(request):
 
     return HttpResponse(json.dumps({
         'result': result,
-        'comment': _comment_to_output(new_comment)}, ensure_ascii=False, indent=4))
+        'comment': _comments_to_output([new_comment])}, ensure_ascii=False, indent=4))
             
 @login_required_ajax
 def delete_comment(request):
@@ -163,13 +163,40 @@ def add_summary(request):
     
     return HttpResponse(json.dumps({
         'result': result,
-        'summary': _summary_to_output(new_summary)}, ensure_ascii=False, indent=4))
+        'summary': _summary_to_output([new_summary])}, ensure_ascii=False, indent=4))
 
-def _comment_to_output(comment):
-    return
+def _comments_to_output(comments):
+    all = []
+    if not isinstance(comments, list):
+        comments = comments.select_related()
+    for comment in comments:
+        writer = comment.writer
+        item = {
+            'course_id': comment.course.id,
+            'lecture_id': comment.lecture.id,
+            'writer_id': writer.id,
+            'writer_nickname': writer.nickname,
+            'written_datetime': comment.written_datetime,
+            'content': comment.comment,
+            'score': comment.score,
+            'gain': comment.gain,
+            'like': comment.like
+        }
+        all.append(item)
+    return all
 
-def _summary_to_output(comment):
-    return
+def _summary_to_output(summaries):
+    all = []
+    if not isintance(summaries, list):
+        summaries = summaries.select_related()
+    for summary in summaries:
+        item = {
+            'summary': summary.summary,
+            'writer_id': summary.writer.id,
+            'written_datetime': summary.written_datetime,
+            'course_id': summary.course.id
+            }
+    return item
 
 def _get_lecture_by_course(course):
     return
