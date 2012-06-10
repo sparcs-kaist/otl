@@ -92,7 +92,7 @@ def view(request, course_code):
 
     try:
         course = Course.objects.get(old_code=course_code)
-        summary = Summary.objects.filter(course=course).orber_by('-written_datetime')
+        summary = Summary.objects.filter(course=course).order_by('-written_datetime')
         if summary.count() > 0:
             recent_summary = summary[0]
         else:
@@ -100,7 +100,7 @@ def view(request, course_code):
     
         lectures = Lecture.objects.filter(course=course)
         for lecture in lectures:
-            prefessors.append(lecture.professor.id)
+            professors.append(lecture.professor.get().id)
 
         result = 'OK'
     except ObjectDoesNotExist:
