@@ -43,8 +43,6 @@ def search(request):
 def view(request, course_code):
     try:
         course = Course.objects.get(code=course_code)
-        comment = Comment.objects.filter(course=course).order_by('-written_datetime')
-        summary = Summary.objects.filter(course=course).order_by('-written_datetime')
         result = 'OK'
     except ObjectDoesNotExist:
         result = 'NOT_EXIST'
@@ -53,8 +51,9 @@ def view(request, course_code):
     return render_to_response('dictionary/view.html', {
         'result' : result,
         'course' : course,
-        'summary' : summary,
-        'comment' : comment
+        'professor' : Professor.objects.filter(course=course).order_by('professor_name'),
+        'summary' : Comemnt.objects.filter(course=course).order_by('-written_datetime'),
+        'comment' : Summary.objects.filter(course=course).order_by('-written_datetime')
     }, context_instance=RequestContext(request))
 
 def view_comment_by_professor(request):
@@ -69,14 +68,14 @@ def view_comment_by_professor(request):
         if not lecture.count() == 1:
             raise ValidationError()
         comment = Comment.objects.filter(course=course, lecture=lecture)
-        reulst = 'OK'
+        result = 'OK'
     except ValidationError:
         result = 'ERROR'
     except ObjectDoesNotExist:
         result = 'NOT_EXIST'
-    return HttpResponse(json.dumps{
+    return HttpResponse(json.dumps({
         'result': result,
-        'comment': _comment_to_output(comment)})
+        'comment': _comment_to_output(comment)}, ensure_ascii=False, indent=4))
 
 @login_required_ajax
 def add_comment(request):
@@ -112,7 +111,7 @@ def add_comment(request):
 
     return HttpResponse(json.dumps({
         'result': result,
-        'comment': _comment_to_output(new_comment)}))
+        'comment': _comment_to_output(new_comment)}, ensure_ascii=False, indent=4))
             
 @login_required_ajax
 def delete_comment(request):
@@ -133,7 +132,7 @@ def delete_comment(request):
         return HttpResponseServerError()
 
     return HttpResponse(json.dumps({
-        'result': result})) # TODO: 삭제를 위해서는 무엇을 리턴해야 하는가?
+        'result': result}, ensure_ascii=False, indent=4)) # TODO: 삭제를 위해서는 무엇을 리턴해야 하는가?
 
 @login_required
 def like_comment(request, comment_id):

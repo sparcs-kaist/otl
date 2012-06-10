@@ -6,8 +6,8 @@ from otl.apps.common import *
 from otl.apps.timetable.models import Lecture
 
 class Professor(models.Model):
-    professor = models.CharField(max_length=100)            # 교수님 이름 (한글)
-    professor_en = models.CharField(max_length=100, blank=True, null=True)  # 교수님 이름 (영문)
+    professor_name = models.CharField(max_length=100)            # 교수님 이름 (한글)
+    professor_name_en = models.CharField(max_length=100, blank=True, null=True)  # 교수님 이름 (영문)
     professor_id = models.IntegerField()
 
 class ProfessorAdmin(admin.ModelAdmin):
