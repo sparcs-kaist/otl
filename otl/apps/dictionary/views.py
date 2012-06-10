@@ -43,6 +43,11 @@ def search(request):
 def view(request, course_code):
     try:
         course = Course.objects.get(code=course_code)
+        summary = Summary.objects.filter(course=course).orber_by('-written_datetime')
+        if summary.count() > 0:
+            recent_summary = summary[0]
+        else:
+            recent_summary = None
         result = 'OK'
     except ObjectDoesNotExist:
         result = 'NOT_EXIST'
@@ -52,8 +57,8 @@ def view(request, course_code):
         'result' : result,
         'course' : course,
         'professor' : Professor.objects.filter(course=course).order_by('professor_name'),
-        'summary' : Comemnt.objects.filter(course=course).order_by('-written_datetime'),
-        'comment' : Summary.objects.filter(course=course).order_by('-written_datetime')
+        'summary' : recent_summary,
+        'comment' : Comment.objects.filter(course=course).order_by('-written_datetime')
     }, context_instance=RequestContext(request))
 
 def view_comment_by_professor(request):
@@ -143,6 +148,9 @@ def add_summary(request, course_id):
     return
 
 def _comment_to_output(comment):
+    return
+
+def _summary_to_output(comment):
     return
 
 def _get_lecture_by_course(course):
