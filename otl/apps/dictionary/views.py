@@ -22,6 +22,7 @@ from django import template
 template.add_to_builtins('django.templatetags.i18n')
 
 from django.utils.translation import ugettext
+import datetime
 
 def index(request):
 
@@ -83,92 +84,162 @@ def department(request, department_id):
 def search(request):
     pass
 
-# -- private function --
-
 def view(request, course_code):
-    course = None
-    if Course.objects.filter(code=course_code).count() == 0:
-        lecture = Lecture.objects.get(code=course_code)
-        course = Course.objects.create(\
-            code = course_code,\
-            department = lecture.department,\
-            title = lecture.title,\
-            title_en = lecture.title_en,\
-            type = lecture.type,\
-            type_en = lecture.type_en,\
-            audience = lecture.audience,\
-            credit = lecture.credit,\
-            num_classes = lecture.num_classes,\
-            num_labs = lecture.num_labs,\
-            credit_au = lecture.credit_au,\
-            limit = lecture.limit,\
-            is_english = lecture.is_english,\
-            deleted = lecture.deleted,\
-            summary = ''
-        )
-        for lecture in Lecture.objects.filter(code=course_code):
-            course.lectures.add(lecture)
-        course.save()
-    else:
+    try:
         course = Course.objects.get(code=course_code)
-    comments = Comment.objects.filter(course=course)
+        summary = Summary.objects.filter(course=course).orber_by('-written_datetime')
+        if summary.count() > 0:
+            recent_summary = summary[0]
+        else:
+            recent_summary = None
+        result = 'OK'
+    except ObjectDoesNotExist:
+        result = 'NOT_EXIST'
+    except:
+        return HttpResponseServerError()
     return render_to_response('dictionary/view.html', {
-        'section' : 'dictionary',
-        'title' : ugettext(u'과목 사전'),
+        'result' : result,
         'course' : course,
-        'comments' : comments
+        'professors' : Professor.objects.filter(course=course).order_by('professor_name'),
+        'summary' : recent_summary,
+        'comments' : Comment.objects.filter(course=course).order_by('-written_datetime')
     }, context_instance=RequestContext(request))
 
-@login_required
-def add_comment(request, course_id):
-    new_course = Course.objects.get(id=course_id)
-    #TODO : new_lecture 는 코드는 복잡하나 교수님 정보밖에 불러오지 않으므로 최후에 더 필요하지 않을 경우 제거한다.
-    new_lecture = Lecture.objects.filter(code = new_course.code, professor=request.POST['lecture_professor'], year=int(request.POST['lecture_semester'])/10, semester=int(request.POST['lecture_semester'])%10)
-    new_comment = escape(strip_tags(request.POST['comment']))
-    if request.POST['load'] == '1':
-        new_load = 1
-    elif request.POST['load'] == '2':
-        new_load = 2
-    else:
-        new_load = 3
-    if request.POST['score'] == '1':
-        new_score = 1
-    elif request.POST['score'] == '2':
-        new_score = 2
-    else:
-        new_score = 3
-    if request.POST['gain'] == '1':
-        new_gain = 1
-    elif request.POST['gain'] == '2':
-        new_gain = 2
-    else:
-        new_gain = 3
-    new_professor = new_lecture[0].professor
-    new_semester = int(request.POST['lecture_semester'])
-    comment = Comment.objects.create(\
-        writer = request.user,\
-        professor = new_professor,\
-        course = new_course,\
-        comment = new_comment,\
-        load = new_load,\
-        score = new_score,\
-        gain = new_gain,\
-        semester = new_semester\
-    )
-    comment.save()
-    return HttpResponseRedirect('/dictionary/view/' + new_course.code)
+def view_comment_by_professor(request):
+    try:
+        professor_id = int(request.GET.get('professor_id', -1))
+        course_id = int(request.GET.get('course_id', -1))
+        if professor_id < 0 or course_id < 0:
+            raise ValidationError()
+        professor = Professor.objects.get(professor_id=professor_id)
+        course = Course.objects.get(id=course_id)
+        lecture = Lecture.objects.filter(professor=professor, course=course) 
+        if not lecture.count() == 1:
+            raise ValidationError()
+        comments = Comment.objects.filter(course=course, lecture=lecture)
+        result = 'OK'
+    except ValidationError:
+        result = 'ERROR'
+    except ObjectDoesNotExist:
+        result = 'NOT_EXIST'
+    return HttpResponse(json.dumps({
+        'result': result,
+        'comments': _comments_to_output(comments)}, ensure_ascii=False, indent=4))
 
-@login_required
-def delete_comment(request, comment_id):
-    comment = Comment.objects.get(id=comment_id)
-    if comment.User == request.user:
+@login_required_ajax
+def add_comment(request):
+    try:
+        lecture_id = int(request.POST.get('lecture_id', -1))
+        if lecture_id >= 0:
+            lecture = Lecture.objests.get(id=lecture_id)
+            course = lecture.course
+        else:
+            lecture = None
+            course_id = int(request.POST.get('course_id', -1))
+            if course_id >= 0:
+                course = Course.objects.get(id=course_id)
+            else:
+                raise ValidationError()
+        comment = request.POST.get('comment', None)
+        load = int(request.POST.get('load', -1))
+        gain = int(request.POST.get('gain', -1))
+        score = int(request.POST.get('gain', -1))
+        writer = request.user
+
+        if load < 0 or gain < 0 or score < 0:
+            raise ValidationError()
+
+        new_comment = Comment(course=course, lecture=lecture, writer=writer, comment=comment, load=load, score=score, gain=gain)
+        new_comment.save()
+        result = 'ADD'
+
+    except ValidationError:
+        return HttpResponseBadRequest()
+    except:
+        return HttpResponseServerError()
+
+    return HttpResponse(json.dumps({
+        'result': result,
+        'comment': _comments_to_output([new_comment])}, ensure_ascii=False, indent=4))
+            
+@login_required_ajax
+def delete_comment(request):
+    try:
+        user = request.user
+        comment_id = int(request.POST.get('comment_id', -1))
+
+        if comment_id < 0:
+            raise ValidationError()
+        comment = Comment.objects.get(pk=comment_id, writer=user)
         comment.delete()
-    return HttpResponseRedirect('/dictionary/view/' + comment.course.code)
+        result = 'DELETE'
+    except ObjectDoesNotExist:
+        result = 'REMOVE_NOT_EXIST'
+    except ValidationError:
+        return HttpResponseBadReqeust()
+    except:
+        return HttpResponseServerError()
+
+    return HttpResponse(json.dumps({
+        'result': result}, ensure_ascii=False, indent=4)) # TODO: 삭제를 위해서는 무엇을 리턴해야 하는가?
 
 @login_required
 def like_comment(request, comment_id):
     return
 
 @login_required
-def add_summary(request, course_id):
+def add_summary(request):
+    try:
+        content = request.POST.get('content', None)
+        course_id = int(request.POST.get('course_id', -1))
+        course = Course.objects.get(id=course_id)
+        if content == None or course_id < 0:
+            raise ValidationError()
+        writer = request.user
+        written_datetime = datetime.now()
+        new_summary = Summary(summary=content, writer=writer, written_datetime=writte_datetime, course=course)
+        result = 'OK'
+    except ValidationError:
+        return HttpResponseBadReqeust()
+    except:
+        return HttpResponseServerError()
+    
+    return HttpResponse(json.dumps({
+        'result': result,
+        'summary': _summary_to_output([new_summary])}, ensure_ascii=False, indent=4))
+
+def _comments_to_output(comments):
+    all = []
+    if not isinstance(comments, list):
+        comments = comments.select_related()
+    for comment in comments:
+        writer = comment.writer
+        item = {
+            'course_id': comment.course.id,
+            'lecture_id': comment.lecture.id,
+            'writer_id': writer.id,
+            'writer_nickname': writer.nickname,
+            'written_datetime': comment.written_datetime,
+            'content': comment.comment,
+            'score': comment.score,
+            'gain': comment.gain,
+            'like': comment.like
+        }
+        all.append(item)
+    return all
+
+def _summary_to_output(summaries):
+    all = []
+    if not isintance(summaries, list):
+        summaries = summaries.select_related()
+    for summary in summaries:
+        item = {
+            'summary': summary.summary,
+            'writer_id': summary.writer.id,
+            'written_datetime': summary.written_datetime,
+            'course_id': summary.course.id
+            }
+    return item
+
+def _get_lecture_by_course(course):
     return

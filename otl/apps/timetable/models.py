@@ -35,13 +35,13 @@ class Lecture(models.Model):
     credit_au = models.IntegerField(default=0)              # AU
     limit = models.IntegerField(default=0)                  # 인원제한
     num_people = models.IntegerField(default=0, blank=True, null=True)  #신청인원
-    professor = models.CharField(max_length=100, db_index=True)            # 교수님 이름 (한글)
-    professor_en = models.CharField(max_length=100, blank=True, null=True, db_index=True)  # 교수님 이름 (영문)
+    professor = models.ManyToManyField('dictionary.Professor', related_name='lecture_professor', null=True) # 교수님
     notice = models.CharField(max_length=200, blank=True, null=True)        # 비고
     is_english = models.BooleanField()                      # 영어강의 여부
     deleted = models.BooleanField(default=False)            # 과목이 닫혔는지 여부
     rating = models.ForeignKey('dictionary.LectureRating', related_name='lecture_rating', null=True, blank=True) 
     #''' lecture에서 rating찾아갈때 null인경우 고려 '''
+    course = models.ForeignKey('dictionary.Course', related_name='lecture_course')
 
     timetable_relation = models.ManyToManyField(User, through='Timetable', null=True, blank=True)
 
@@ -71,7 +71,7 @@ class Lecture(models.Model):
         unique_together = ('code', 'year', 'semester', 'department', 'class_no')
 
 class LectureAdmin(admin.ModelAdmin):
-    list_display = ('code', 'year', 'semester', 'department', 'class_no', 'title', 'professor', 'type', 'audience', 'credit', 'credit_au', 'limit')
+    list_display = ('code', 'year', 'semester', 'department', 'class_no', 'title', 'type', 'audience', 'credit', 'credit_au', 'limit')
     ordering = ('-year', '-semester', 'code')
 
 class ExamTime(models.Model):

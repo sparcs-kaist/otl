@@ -6,16 +6,16 @@ from otl.apps.common import *
 from otl.apps.timetable.models import Lecture
 
 class Professor(models.Model):
-    professor = models.CharField(max_length=100)            # 교수님 이름 (한글)
-    professor_en = models.CharField(max_length=100, blank=True, null=True)  # 교수님 이름 (영문)
+    professor_name = models.CharField(max_length=100)            # 교수님 이름 (한글)
+    professor_name_en = models.CharField(max_length=100, blank=True, null=True)  # 교수님 이름 (영문)
     professor_id = models.IntegerField()
 
 class ProfessorAdmin(admin.ModelAdmin):
     list_display = ('professor', 'professor_en', 'professor_id')
 
 class Course(models.Model):
-    code = models.CharField(max_length=10)                  # 과목코드 (12.123 형식)
-    recent_lecture = models.ForeignKey(Lecture)
+    old_code = models.CharField(max_length=10)                  # 과목코드 (ABC123 형식)
+    recent_lecture = models.ForeignKey(Lecture, related_name='course_lecture')
     recent_summary = models.ForeignKey('dictionary.Summary', related_name='course_summary')
     score_average = models.SmallIntegerField(choices=SCORE_TYPES)
     load_average = models.SmallIntegerField(choices=LOAD_TYPES)
@@ -35,7 +35,7 @@ class SummaryAdmin(admin.ModelAdmin):
 
 class Comment(models.Model):
     course = models.ForeignKey(Course)                      # 과목
-    lecture = models.ForeignKey(Lecture)                    # 시기+과목
+    lecture = models.ForeignKey(Lecture, null=True, blank=True)  # 시기+과목
 
     writer = models.ForeignKey(User, related_name='comment_set') # 수정한 사람
     written_datetime = models.DateTimeField(auto_now=True)       # 마지막 수정일
