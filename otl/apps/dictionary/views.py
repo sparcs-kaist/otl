@@ -83,7 +83,15 @@ def department(request, department_id):
         'courses' : courses }, context_instance=RequestContext(request))
 
 def search(request):
-    pass
+    try:
+        q = {}
+        for key, value in request.GET.iteritems():
+            q[str(key)] = value
+
+        output = _courses_to_output(_search(**q), True, request.session.get('django_language', 'ko'))
+        return HttpResponse(output)
+    except:
+        return HttpResponseBadRequest()
 
 def view(request, course_code):
     course = None
@@ -217,6 +225,32 @@ def add_summary(request):
         'result': result,
         'summary': _summary_to_output([new_summary])}, ensure_ascii=False, indent=4))
 
+# -- Private functions
+def _search(**conditions):
+    department = conditions.get('dept', None)
+    type = conditions.get('type', None)
+    lang = conditions.get('lang', 'ko')
+    keyword = conditions.get('keyword', None)
+
+    output = Course.objects.all()
+
+    if department != None and type != None and keyword != None:
+        keyword = keyword.strip()
+        if department == u'-1' and type == u'전체보기':
+            raise ValidationError()
+        if department != u'-1':
+            output = output.objects.filter(type__exact=type)
+        if type != u'전체보기':
+            output = output.objects.filter(department__id__exact=int(department))
+        if keyword != u'':
+            words = keyword.split()
+            for word in words:
+                output = output.filter(Q(old_code__icontains=word) | Q(title__icontains=word)).distinct()
+    else:
+        raise ValidationError()
+
+    return output
+
 def _comments_to_output(comments):
     all = []
     if not isinstance(comments, list):
@@ -234,6 +268,21 @@ def _comments_to_output(comments):
             'gain': comment.gain,
             'like': comment.like
         }
+        all.append(item)
+    return all
+
+def _courses_to_output(courses):
+    all = []
+    if not isinstance(courses, list):
+        courses = courses.select_related()
+    for course in courses:
+        item = {
+                'id': course.id,
+                'course_no': course.old_code,
+                'dept_id': course.department.id,
+                'type': course.type,
+                'title': course.recent_lecture.title
+                }
         all.append(item)
     return all
 
