@@ -262,7 +262,7 @@ var CourseList = {
 			url: '/timetable/search/',
 			data: conditions,
 			dataType: 'json',
-
+			beforeSend: $.proxy(function() {
 				if (this.loading)
 					Notifier.showIndicator();
 				else
