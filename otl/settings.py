@@ -74,13 +74,13 @@ MIDDLEWARE_CLASSES = [
     'otl.utils.middleware.CachedAuthMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     #'django.contrib.auth.middleware.AuthenticationMiddleware',
-]
+    ]
 if DEBUG:
-	try:
-	    import firepy
-	    MIDDLEWARE_CLASSES += ['firepy.django.middleware.FirePHPMiddleware']
-	except ImportError:
-	    pass
+    try:
+        import firepy
+        MIDDLEWARE_CLASSES += ['firepy.django.middleware.FirePHPMiddleware']
+    except ImportError:
+        pass
 
 ROOT_URLCONF = 'otl.urls'
 
