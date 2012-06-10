@@ -41,37 +41,20 @@ def search(request):
     pass
 
 def view(request, course_code):
-    course = None
-    if Course.objects.filter(code=course_code).count() == 0:
-        lecture = Lecture.objects.get(code=course_code)
-        course = Course.objects.create(\
-            code = course_code,\
-            department = lecture.department,\
-            title = lecture.title,\
-            title_en = lecture.title_en,\
-            type = lecture.type,\
-            type_en = lecture.type_en,\
-            audience = lecture.audience,\
-            credit = lecture.credit,\
-            num_classes = lecture.num_classes,\
-            num_labs = lecture.num_labs,\
-            credit_au = lecture.credit_au,\
-            limit = lecture.limit,\
-            is_english = lecture.is_english,\
-            deleted = lecture.deleted,\
-            summary = ''
-        )
-        for lecture in Lecture.objects.filter(code=course_code):
-            course.lectures.add(lecture)
-        course.save()
-    else:
+    try:
         course = Course.objects.get(code=course_code)
-    comments = Comment.objects.filter(course=course)
+        comment = Comment.objects.filter(course=course).order_by('-written_datetime')
+        summary = Summary.objects.filter(course=course).order_by('-written_datetime')
+        result = 'OK'
+    except ObjectDoesNotExist:
+        result = 'NOT_EXIST'
+    except:
+        return HttpResponseServerError()
     return render_to_response('dictionary/view.html', {
-        'section' : 'dictionary',
-        'title' : ugettext(u'과목 사전'),
+        'result' : result,
         'course' : course,
-        'comments' : comments
+        'summary' : summary,
+        'comment' : comment
     }, context_instance=RequestContext(request))
 
 @login_required_ajax
@@ -140,4 +123,7 @@ def add_summary(request, course_id):
     return
 
 def _comment_to_output(comment):
+    return
+
+def _get_lecture_by_course(course):
     return

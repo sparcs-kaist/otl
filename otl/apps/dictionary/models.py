@@ -14,7 +14,7 @@ class ProfessorAdmin(admin.ModelAdmin):
     list_display = ('professor', 'professor_en', 'professor_id')
 
 class Course(models.Model):
-    code = models.CharField(max_length=10)                  # 과목코드 (12.123 형식)
+    old_code = models.CharField(max_length=10)                  # 과목코드 (ABC123 형식)
     recent_lecture = models.ForeignKey(Lecture, related_name='course_lecture')
     recent_summary = models.ForeignKey('dictionary.Summary', related_name='course_summary')
     score_average = models.SmallIntegerField(choices=SCORE_TYPES)
