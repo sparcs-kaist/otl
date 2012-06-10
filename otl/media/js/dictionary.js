@@ -119,7 +119,7 @@ var Utils = {
 	}
 };
 
-var LectureList = {
+var CourseList = {
 	initialize:function(tabs,contents)
 	{
 		this.tabs = $('#lecture_tabs');
@@ -214,16 +214,16 @@ var LectureList = {
 	},
 	clearList:function()
 	{
-		LectureList.contents.empty(); 
-		LectureList.buildTabs(LectureList.contents.children().length);
+		CourseList.contents.empty(); 
+		CourseList.buildTabs(CourseList.contents.children().length);
 	},
 	addToListMultiple:function(obj)
 	{
-		LectureList.contents.empty(); 
+		CourseList.contents.empty(); 
 		var max = NUM_ITEMS_PER_LIST;
 		var count=0;
 		var content = $('<div>', {'class': 'lecture_content'});
-		content.appendTo(LectureList.contents);
+		content.appendTo(CourseList.contents);
 		var currCategory;
 		$.each(obj, function(index, item) {
 			var key = item.classification;
@@ -233,7 +233,7 @@ var LectureList = {
 			}
 
 			if (count>=max) {
-				content = $('<div>', {'class':'lecture_content'}).appendTo(LectureList.contents);
+				content = $('<div>', {'class':'lecture_content'}).appendTo(CourseList.contents);
 				$('<h4>').text(currCategory).appendTo(content);
 				count=0;
 			} else
@@ -242,11 +242,9 @@ var LectureList = {
 			var el = $('<a>').text(item.title).appendTo(content);
 			Utils.clickable(el);
 
-			el.bind('mousedown', $.proxyWithArgs(Timetable.addLecture, Timetable, item));
-			el.bind('mouseover', $.proxyWithArgs(Timetable.onMouseoverTemp, Timetable, item));
-			el.bind('mouseout', $.proxyWithArgs(Timetable.onMouseout, Timetable, item));
+			el.bind('mousedown', $.proxyWithArgs(seeCourseComments, CourseList, item));
 		});
-		LectureList.buildTabs(LectureList.contents.children().length);
+		CourseList.buildTabs(CourseList.contents.children().length);
 		new Mootabs($('#lecture_tabs'), $('#lecture_contents'));
 	},
 	filter:function(conditions)
@@ -264,7 +262,7 @@ var LectureList = {
 			url: '/timetable/search/',
 			data: conditions,
 			dataType: 'json',
-			beforeSend: $.proxy(function() {
+
 				if (this.loading)
 					Notifier.showIndicator();
 				else
@@ -273,11 +271,11 @@ var LectureList = {
 			success: $.proxy(function(resObj) {
 				try {
 					if (resObj.length == 0) {
-						LectureList.clearList();
+						CourseList.clearList();
 						if (!this.loading)
 							Notifier.setErrorMsg(gettext('과목 정보를 찾지 못했습니다.'));
 					} else {
-						LectureList.addToListMultiple(resObj);
+						CourseList.addToListMultiple(resObj);
 						if (!this.loading)
 							Notifier.setMsg(gettext('검색 결과를 확인하세요.'));
 					}
@@ -330,6 +328,40 @@ var LectureList = {
 		});
 		*/
 		return ret;
+	},
+	seeCourseComments:function(e,obj)
+	{
+		var course_no = obj.id
+		$.ajax({
+				type: 'GET', 
+				url: '/dictionary/add/',
+				data: {'course_no':course_no},
+				dataType: 'json',
+				success: $.proxy(function(resObj)
+				{
+					try {
+						if (resObj.result=='OK') {
+						} else {
+							var msg;
+							Notifier.setErrorMsg(msg);
+						}
+					}
+					catch(e) {
+						Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+e.message+')');
+					}
+				}, this),
+				error: function(xhr) {
+					if (suppress_ajax_errors)
+						return;
+					if (xhr.status == 403){
+						Notifier.setErrorMsg(gettext('로그인해야 합니다.'));
+					}
+					else{
+						Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+gettext('요청 실패')+':'+xhr.status+')');
+					}
+				}
+			});
 	}
 };
+
 
