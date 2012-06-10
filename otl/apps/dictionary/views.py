@@ -19,6 +19,7 @@ from django import template
 template.add_to_builtins('django.templatetags.i18n')
 
 from django.utils.translation import ugettext
+import datetime
 
 def index(request):
     departments = Department.objects.all()
@@ -144,8 +145,25 @@ def like_comment(request, comment_id):
     return 
 
 @login_required
-def add_summary(request, course_id):
-    return
+def add_summary(request):
+    try:
+        content = request.POST.get('content', None)
+        course_id = int(request.POST.get('course_id', -1))
+        course = Course.objects.get(id=course_id)
+        if content == None or course_id < 0:
+            raise ValidationError()
+        writer = request.user
+        written_datetime = datetime.now()
+        new_summary = Summary(summary=content, writer=writer, written_datetime=writte_datetime, course=course)
+        result = 'OK'
+    except ValidationError:
+        return HttpResponseBadReqeust()
+    except:
+        return HttpResponseServerError()
+    
+    return HttpResponse(json.dumps({
+        'result': result,
+        'summary': _summary_to_output(new_summary)}, ensure_ascii=False, indent=4))
 
 def _comment_to_output(comment):
     return
