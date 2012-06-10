@@ -2,9 +2,10 @@
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.core.paginator import Paginator
+from django.core.exceptions import *
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.http import HttpResponseRedirect
+from django.http import *
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.utils.html import strip_tags, escape
@@ -42,22 +43,30 @@ def search(request):
     pass
 
 def view(request, course_code):
+    course = None
+    recent_summary = None
+    professors = []
+
     try:
-        course = Course.objects.get(code=course_code)
+        course = Course.objects.get(old_code=course_code)
         summary = Summary.objects.filter(course=course).orber_by('-written_datetime')
         if summary.count() > 0:
             recent_summary = summary[0]
         else:
             recent_summary = None
+    
+        lectures = Lecture.objects.filter(course=course)
+        for lecture in lectures:
+            prefessors.append(lecture.professor.id)
+
         result = 'OK'
     except ObjectDoesNotExist:
-        result = 'NOT_EXIST'
-    except:
-        return HttpResponseServerError()
+        result = 'NOT_EXIST' 
+
     return render_to_response('dictionary/view.html', {
         'result' : result,
         'course' : course,
-        'professors' : Professor.objects.filter(course=course).order_by('professor_name'),
+        'professors' : Professor.objects.filter(id__in=professors).order_by('professor_name'),
         'summary' : recent_summary,
         'comments' : Comment.objects.filter(course=course).order_by('-written_datetime')
     }, context_instance=RequestContext(request))
