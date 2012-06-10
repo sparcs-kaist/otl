@@ -87,9 +87,9 @@ def get_autocomplete_list(request):
         output = cache.get(cache_key)
         if output is None:
             if lang == 'ko':
-                func = lambda x:[x.title, x.professor.professor_name, x.old_code]
+                func = lambda x:[x.title, x.professor.get().professor_name, x.old_code] # TODO : 추후 professor.get()이 아닌 다른 방법으로 수정
             elif lang == 'en':
-                func = lambda x:[x.title_en, x.professor.professor_name_en, x.old_code]
+                func = lambda x:[x.title_en, x.professor.get().professor_name_en, x.old_code] # TODO : 추후 professor.get()이 아닌 다른 방법으로 수정
             result = list(set(reduce(map(func, _search_by_ysdt(year, semester, department, type)))))
             while None in result:
                 result[result.index(None)] = 'None'
