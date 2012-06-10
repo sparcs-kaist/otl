@@ -170,6 +170,12 @@ def add_comment(request):
         new_comment.save()
         result = 'ADD'
 
+        comments = Comment.objects.filter(course=course, lecture=lecture)
+        score_average = comments.annotate(Avg('score'))
+        load_average = comments.annotate(Avg('load'))
+        gain_average = comments.anotate(Avg('gain'))
+        Course.objects.filter(id=course.id).update(score_average=score_average, load_average=load_average, gain_average=gain_average)
+
     except ValidationError:
         return HttpResponseBadRequest()
     except:

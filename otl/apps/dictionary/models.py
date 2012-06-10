@@ -21,9 +21,9 @@ class Course(models.Model):
     type_en = models.CharField(max_length=36)
     recent_lecture = models.ForeignKey(Lecture, related_name='course_lecture')
     recent_summary = models.ForeignKey('dictionary.Summary', related_name='course_summary')
-    score_average = models.SmallIntegerField(choices=SCORE_TYPES)
-    load_average = models.SmallIntegerField(choices=LOAD_TYPES)
-    gain_average = models.SmallIntegerField(choices=GAIN_TYPES)
+    score_average = models.FloatField()
+    load_average = models.FloatField()
+    gain_average = models.FloatField()
 
 class CourseAdmin(admin.ModelAdmin):
     list_display = ('old_code', 'department', 'type', 'recent_lecture', 'recent_summary', 'score_average', 'load_average', 'gain_average')
