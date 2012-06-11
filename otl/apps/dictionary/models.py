@@ -17,6 +17,7 @@ class ProfessorAdmin(admin.ModelAdmin):
 class Course(models.Model):
     old_code = models.CharField(max_length=10)                  # 과목코드 (ABC123 형식)
     department = models.ForeignKey(Department)
+    professor = models.ForeignKey(Professor)
     type = models.CharField(max_length=12)
     type_en = models.CharField(max_length=36)
     recent_lecture = models.ForeignKey(Lecture, related_name='course_lecture')

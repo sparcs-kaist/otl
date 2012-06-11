@@ -313,9 +313,9 @@ def _search_by_ysdtlw(year, semester, department, type, lang, word):
     if output is None:
         output = _search_by_ysdt(year, semester, department, type)
         if lang == 'ko':
-            output = output.filter(Q(old_code__icontains=word) | Q(title__icontains=word)).distinct() # XXX 2012.06.10(Kuss) :  | Q(professor.professor_en__icontains=word) 삭제
+            output = output.filter(Q(old_code__icontains=word) | Q(title__icontains=word) | Q(professor__professor_name__icontains=word)).distinct() 
         else:
-            output = output.filter(Q(old_code__icontains=word) | Q(title_en__icontains=word)).distinct() # XXX 2012.06.10(Kuss) :  | Q(professor.professor_en__icontains=word) 삭제
+            output = output.filter(Q(old_code__icontains=word) | Q(title_en__icontains=word) | Q(professor__professor_name_en__icontains=word)).distinct() 
         cache.set(cache_key, output, 3600)
     return output
 

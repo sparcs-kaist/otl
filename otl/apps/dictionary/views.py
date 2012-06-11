@@ -251,7 +251,7 @@ def _search(**conditions):
         if keyword != u'':
             words = keyword.split()
             for word in words:
-                output = output.filter(Q(old_code__icontains=word) | Q(title__icontains=word)).distinct()
+                output = output.filter(Q(old_code__icontains=word) | Q(title__icontains=word) | Q(professor__professor_name__icontains=word)).distinct()
     else:
         raise ValidationError()
 
