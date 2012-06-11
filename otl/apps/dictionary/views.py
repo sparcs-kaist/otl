@@ -184,7 +184,7 @@ def add_comment(request):
         comment = request.POST.get('comment', None)
         load = int(request.POST.get('load', -1))
         gain = int(request.POST.get('gain', -1))
-        score = int(request.POST.get('gain', -1))
+        score = int(request.POST.get('score', -1))
         writer = request.user
 
         if load < 0 or gain < 0 or score < 0:
@@ -196,9 +196,9 @@ def add_comment(request):
         new_comment = Comment(course=course, lecture=lecture, writer=writer, comment=comment, load=load, score=score, gain=gain)
         new_comment.save()
 
-        comments = Comment.objects.filter(course=course, lecture=lecture)
-        average = comments.annotate(avg_score=Avg('score'),avg_gain=Avg('gain'),avg_load=Avg('load'))
-        Course.objects.filter(id=course.id).update(score_average=average[0].avg_score, load_average=average[0].avg_load, gain_average=average[0].avg_gain)
+        comments = Comment.objects.filter(course=course, lecture=lecture)      
+        average = comments.aggregate(avg_score=Avg('score'),avg_gain=Avg('gain'),avg_load=Avg('load'))
+        Course.objects.filter(id=course.id).update(score_average=average['avg_score'], load_average=average['avg_load'], gain_average=average['avg_gain'])
 
         result = 'ADD'
     except AlreadyWrittenError:
@@ -223,6 +223,15 @@ def delete_comment(request):
         comment = Comment.objects.get(pk=comment_id, writer=user)
         comment.delete()
         result = 'DELETE'
+        
+        course = comment.course
+        lecture = comment.lecture
+        comments = Comment.objects.filter(course=course,lecture=lecture)
+        if comments.count() != 0 :
+            average = comments.aggregate(avg_score=Avg('score'),avg_gain=Avg('gain'),avg_load=Avg('load'))
+            Course.objects.filter(id=course.id).update(score_average=average['avg_score'],load_average=average['avg_load'],gain_average=average['avg_gain'])
+        else :
+            Course.objects.filter(id=course.id).update(score_average=0,load_average=0,gain_average=0)
     except ObjectDoesNotExist:
         result = 'REMOVE_NOT_EXIST'
     except ValidationError:

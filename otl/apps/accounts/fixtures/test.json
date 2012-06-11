@@ -183,5 +183,15 @@
 		"pk": "2",
 		"model": "auth.user",
 		"fields": {"username": "test_user", "password": "sha1$20583$72c4c5f36ff80b75be00b0eaac973822034b32f8", "email": "otl@server.daybreaker.info", "first_name": "Maruta", "last_name": "X", "is_staff": false, "is_active": true, "is_superuser": false, "date_joined": "2009-04-05 18:00:00"}
+	},
+	{
+		"pk":"3",
+		"model": "auth.user",
+		"fields": {"username": "rodumani", "password": "sha1$20583$72c4c5f36ff80b75be00b0eaac973822034b32f8", "first_name":"Changje","last_name":"Jeong","is_staff":false,"is_active":true,"is_superuser":false}
+	},
+	{
+		"pk": "2",
+		"model": "accounts.userprofile",
+		"fields": {"user": "3", "student_id": "20110846", "language": "ko-KR", "department": "532", "favorite_departments": ["2044"], "nickname":"rodumani", "score":2000}
 	}
 ]
