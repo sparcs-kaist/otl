@@ -71,6 +71,10 @@ class LectureRating(models.Model):
 class LectureRatingAdmin(admin.ModelAdmin):
     list_display = ('course', 'lecture', 'number_of_students', 'number_of_respondents', 'rating', 'standard_deviation')
 
+class AlreadyWrittenError(Exception):
+    pass
+
+
 admin.site.register(Comment, CommentAdmin)
 admin.site.register(Course, CourseAdmin)
 admin.site.register(Summary, SummaryAdmin)

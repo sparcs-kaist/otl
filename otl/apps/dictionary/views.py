@@ -188,6 +188,9 @@ def add_comment(request):
         if load < 0 or gain < 0 or score < 0:
             raise ValidationError()
 
+        if Comment.objects.filter(course=course, lecture=lecture, writer=writer).count() > 0:
+            raise AlreadyWrittenError()
+
         new_comment = Comment(course=course, lecture=lecture, writer=writer, comment=comment, load=load, score=score, gain=gain)
         new_comment.save()
 
@@ -196,6 +199,8 @@ def add_comment(request):
         Course.objects.filter(id=course.id).update(score_average=average[0].avg_score, load_average=average[0].avg_load, gain_average=average[0].avg_gain)
 
         result = 'ADD'
+    except AlreadyWrittenError:
+        result = 'ALREADY_WRITTEN'
     except ValidationError:
         return HttpResponseBadRequest()
     except:
