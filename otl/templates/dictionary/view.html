@@ -142,6 +142,12 @@ function CheckNull(form)
                 {% trans "평가" %} - {% trans "로드" %} : <span>{{comment.load}}</span>, {% trans "학점" %} : <span>{{comment.score}}</span>, {% trans "남는거" %} : <span>{{comment.gain}}</span>
                 , By {{comment.writer}} ({{comment.written_datetime|date:"Y/m/d"}})
             </div>
+			<div class="dictionary_comment_delete">
+				<form action = "/dictionary/delete_comment/" method="post">
+					<input type="text" name="comment_id" value="{{comment.id}}"	hidden=true />
+					<input type="submit" name="submitDelete" value="지우기" />
+				</form>
+			</div>
         </div>
         {% endfor %}
     </div>

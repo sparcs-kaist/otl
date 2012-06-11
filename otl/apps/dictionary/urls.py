@@ -7,7 +7,7 @@ urlpatterns = patterns('',
     (ur'^search/$', views.search),
     (ur'^view/(\w+)/$', views.view),
     (ur'^add_comment/$', views.add_comment),
-    (ur'^del_comment/$', views.delete_comment),
+    (ur'^delete_comment/$', views.delete_comment),
     (ur'^add_summary/$', views.add_summary),
 )
 
