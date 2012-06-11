@@ -64,11 +64,11 @@ def index(request):
         'department' : u'넘겨줘',
         'score' : u'넘겨줘',
         'rank' : u'넘겨줘',
-        'rank_list' : rank_list,
+        'rank_list' : _top_by_score(10),
         'taken_credits' : u'넘겨줘',
-        'taken_AU' : u'넘겨줘',
+        'taken_au' : u'넘겨줘',
         'planned_credits' : u'넘겨줘',
-        'planned_AU' : u'넘겨줘',
+        'planned_au' : u'넘겨줘',
         'monthly_rank_list' : monthly_rank_list,
         'todo_comment_list' : todo_comment_list,
     }, context_instance=RequestContext(request))
@@ -259,6 +259,14 @@ def add_summary(request):
         'summary': _summary_to_output([new_summary])}, ensure_ascii=False, indent=4))
 
 # -- Private functions
+def _top_by_score(count):
+    rank_list = UserProfile.objects.all().order_by('-score')
+    rank_list_size = rank_list.count()
+    if rank_list_size < count:
+        return rank_list[0:rank_list_size]
+    else:
+        return rank_list[0:count]
+
 def _search(**conditions):
     department = conditions.get('dept', None)
     type = conditions.get('type', None)
