@@ -2,6 +2,7 @@
 {% load yearterm %}
 {% block headers %}
 <link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}favorites.css" />
+<script type="text/javascript" src="{{MEDIA_URL}}js/dictionary.js?v=1269108500"></script>
 <script type="text/javascript">
 //<!--
 var LinkThumb = {
@@ -54,6 +55,7 @@ var LinkThumb = {
 $(document).ready(function () {
 	LinkThumb.initialize('#publicFavorites', '.favorite-link');
 	LinkThumb.initialize('#publicFavorites', '.search-link');
+	CommentList.initialize();
 });
 //-->
 </script>
@@ -97,33 +99,33 @@ function CheckNull(form)
 <div class="dictionary_part">
     <span>{% trans "코멘트 남기기" %}</span>
     {% if user.is_authenticated %}
-    <form action="/dictionary/add_comment/" method="post">
+	<div>
 		<input type="text" name="course_id" value="{{course.id}}" hidden=true />
-        <div class="course_comment_form">
-            {% trans "로드" %} : 
-            <input type="radio" name="load" value="1"/> {% trans "쉬움" %}
-            <input type="radio" name="load" value="2"/> {% trans "무난" %}
-            <input type="radio" name="load" value="3"/> {% trans "힘듬" %}
-        </div>
-        <div class="course_comment_form">
-            {% trans "학점" %} :
-            <input type="radio" name="score" value="1"/> {% trans "박함" %}
-            <input type="radio" name="score" value="2"/> {% trans "무난" %}
-            <input type="radio" name="score" value="3"/> {% trans "후함" %}
-        </div>
-        <div class="course_comment_form">
-            {% trans "남는거" %} :
-            <input type="radio" name="gain" value="1"/> {% trans "없음" %}
-            <input type="radio" name="gain" value="2"/> {% trans "있음" %}
-            <input type="radio" name="gain" value="3"/> {% trans "많음" %}
-        </div>
-        <div>
-            <textarea name="comment" cols="50" rows="5"></textarea>
-        </div>
-        <div>
-            <input type="submit" name="submitComment" value="{% trans "남기기" %}" />
-        </div>
-    </form>
+		<div class="course_comment_form">
+			{% trans "로드" %} : 
+			<input type="radio" name="load" value="1"/> {% trans "쉬움" %}
+			<input type="radio" name="load" value="2"/> {% trans "무난" %}
+			<input type="radio" name="load" value="3"/> {% trans "힘듬" %}
+		</div>
+		<div class="course_comment_form">
+			{% trans "학점" %} :
+			<input type="radio" name="score" value="1"/> {% trans "박함" %}
+			<input type="radio" name="score" value="2"/> {% trans "무난" %}
+			<input type="radio" name="score" value="3"/> {% trans "후함" %}
+		</div>
+		<div class="course_comment_form">
+			{% trans "남는거" %} :
+			<input type="radio" name="gain" value="1"/> {% trans "없음" %}
+			<input type="radio" name="gain" value="2"/> {% trans "있음" %}
+			<input type="radio" name="gain" value="3"/> {% trans "많음" %}
+		</div>
+		<div>
+			<textarea name="comment" cols="50" rows="5"></textarea>
+		</div>
+	</div>
+	<div>
+		<input type="submit" name="submitComment" value="{% trans "남기기" %}" />
+	</div>
     {% else %}
     <div>
         {% trans "로그인을 하셔야 코멘트를 남길 수 있습니다." %}

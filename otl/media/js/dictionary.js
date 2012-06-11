@@ -39,6 +39,7 @@ function roundD(n, digits) {
 }
 
 var NUM_ITEMS_PER_LIST = 15;
+var NUM_ITEMS_PER_COMMENT = 10;
 var NUMBER_OF_TABS = 3;
 var Data = {};
 var Mootabs = function(tabContainer, contents, trigerEvent, useAsTimetable)
@@ -370,4 +371,73 @@ var CourseList = {
 	}
 };
 
+var CommentList = {
+	initialize:function()
+	{
+		this.comments = $('#course_comments');
+		this.submitComment = $('input[name="submitComment"]');
+		this.registerHandles();
+	},
+	registerHandles:function()
+	{
+		$(this.submitComment).bind('mousedown', $.proxy(this.addComment, this));
+	},
+	addComment:function()
+	{
+		var new_comment_content = $('textarea[name="comment"]').val();
+		var new_comment_load = $('input[name="load"]:checked').val();
+		var new_comment_score = $('input[name="score"]:checked').val();
+		var new_comment_gain = $('input[name="gain"]:checked').val();
+		Data.lecture_id = -1;
+		Data.course_id = 1;
+		if (!new_comment_load || !new_comment_score || !new_comment_gain) {
+			Notifier.setErrorMsg(gettext('로드, 학점, 남는거를 선택하세요.'));
+		}
+		else {
+			$.ajax({
+				type: 'POST', 
+				url: '/dictionary/add_comment/',
+				data: {'comment': new_comment_content, 'load': new_comment_load, 'score': new_comment_score, 'gain': new_comment_gain, 'lecture_id': Data.lecture_id, 'course_id': Data.course_id},
+				dataType: 'json',
+				success: $.proxy(function(resObj)
+				{
+					//try {
+						if (resObj.result=='ADD') {
+							CommentList.addToMultipleComment(resObj.comment)							
+						} else if (resObj.result='ALREADY_WRITTEN') {
+							Notifier.setErrorMsg(gettext('이미 등록하셨습니다.'));
+						}
+					//}
+					//catch(e) {
+					//	Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+e.message+')');
+					//}
+				}, this),
+				error: function(xhr) {
+					if (suppress_ajax_errors)
+						return;
+					if (xhr.status == 403){
+						Notifier.setErrorMsg(gettext('로그인해야 합니다.'));
+					}
+					else{
+						Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+gettext('요청 실패')+':'+xhr.status+')');
+					}
+				}
+			});
+		}
+	},
+	addToMultipleComment:function(obj)
+	{
+		var max = NUM_ITEMS_PER_COMMENT;
+		var count=0;
+		$.each(obj, function(index, item) {
+			var comment = $('<div>', {'class': 'dictionary_comment'});
+			comment.appendTo(CommentList.comments);
+			alert(item.comment);
 
+			$('<div>', {'class': 'dictionary_comment_content'}).text(item.comment).appendTo(comment);
+//			$('<div>', {'class': 'dictionary_comment_eval'}).text('{% trans "평가" %} - {% trans "로드" %} : <span>' + item.load + '{% trans "학점" %} : ').appendTo(comment)
+			$('<div>', {'class': 'dictionary_comment_delete'}).text("지우기").appendTo(comment);
+		});
+
+	}
+};
