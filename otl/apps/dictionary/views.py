@@ -83,15 +83,15 @@ def department(request, department_id):
         'courses' : courses }, context_instance=RequestContext(request))
 
 def search(request):
-    try:
-        q = {}
-        for key, value in request.GET.iteritems():
-            q[str(key)] = value
+    #try:
+    q = {}
+    for key, value in request.GET.iteritems():
+        q[str(key)] = value
 
-        output = _courses_to_output(_search(**q), True, request.session.get('django_language', 'ko'))
-        return HttpResponse(output)
-    except:
-        return HttpResponseBadRequest()
+    output = _courses_to_output(_search(**q))
+    return HttpResponse(json.dumps(output, ensure_ascii=False, indent=4))
+    #except:
+    #    return HttpResponseBadRequest()
 
 def get_autocomplete_list(request):
     try:
@@ -270,9 +270,9 @@ def _search(**conditions):
         if department == u'-1' and type == u'전체보기':
             raise ValidationError()
         if department != u'-1':
-            output = output.objects.filter(type__exact=type)
+            output = output.filter(department__id__exact=int(department))
         if type != u'전체보기':
-            output = output.objects.filter(department__id__exact=int(department))
+            output = output.filter(type__exact=type)
         if keyword != u'':
             words = keyword.split()
             for word in words:

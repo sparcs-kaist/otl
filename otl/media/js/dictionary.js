@@ -242,7 +242,7 @@ var CourseList = {
 			var el = $('<a>').text(item.title).appendTo(content);
 			Utils.clickable(el);
 
-			el.bind('mousedown', $.proxyWithArgs(seeCourseComments, CourseList, item));
+			el.bind('mousedown', $.proxyWithArgs(CourseList.seeCourseComments, CourseList, item));
 		});
 		CourseList.buildTabs(CourseList.contents.children().length);
 		new Mootabs($('#lecture_tabs'), $('#lecture_contents'));
@@ -259,7 +259,7 @@ var CourseList = {
 			conditions.term = Data.ViewTerm;
 		$.ajax({
 			type: 'GET',
-			url: '/timetable/search/',
+			url: '/dictionary/search/',
 			data: conditions,
 			dataType: 'json',
 			beforeSend: $.proxy(function() {
@@ -311,7 +311,7 @@ var CourseList = {
 			var key = item.category;
 			if (!categories.contains(key))
 				categories.push(key);
-		});
+
 		*/
 		return categories;
 	},
@@ -331,10 +331,15 @@ var CourseList = {
 	},
 	seeCourseComments:function(e,obj)
 	{
-		var course_no = obj.id
+		var course_no = obj.course_no;
+		var url = '/dictionary/view/' + course_no + '/';
+		$.post(url, function(data) {
+			window.location = url;
+		});
+		/*
 		$.ajax({
 				type: 'GET', 
-				url: '/dictionary/add/',
+				url: '/dictionary/view/'+course_no,
 				data: {'course_no':course_no},
 				dataType: 'json',
 				success: $.proxy(function(resObj)
@@ -361,6 +366,7 @@ var CourseList = {
 					}
 				}
 			});
+		*/
 	}
 };
 
