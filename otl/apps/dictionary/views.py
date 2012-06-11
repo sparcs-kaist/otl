@@ -262,10 +262,15 @@ def add_summary(request):
 def _top_by_score(count):
     rank_list = UserProfile.objects.all().order_by('-score')
     rank_list_size = rank_list.count()
-    if rank_list_size < count:
-        return rank_list[0:rank_list_size]
-    else:
-        return rank_list[0:count]
+    rank_list_with_index = []
+    for i in xrange(count):
+        if rank_list_size > i :
+            item = {
+                    'index':i+1,
+                    'user' :rank_list[i]
+                    }
+            rank_list_with_index.append(item)
+    return rank_list_with_index
 
 def _search(**conditions):
     department = conditions.get('dept', None)

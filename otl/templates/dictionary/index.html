@@ -166,8 +166,8 @@ $(document).ready(function() {
 				{% for r in rank_list %}
 				<tr>
 					<td>{{ r.index }}</td>
-					<td>{{ r.nickname }}</td>
-					<td>{{ r.score }}</td>
+					<td>{{ r.user.nickname }}</td>
+					<td>{{ r.user.score }}</td>
 				</tr>
 				{% endfor %}
 			</tbody>
