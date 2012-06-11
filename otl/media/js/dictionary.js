@@ -374,13 +374,14 @@ var CourseList = {
 var CommentList = {
 	initialize:function()
 	{
-		this.comments = $('#course_comments');
+		this.comments = $('.course_comments');
 		this.submitComment = $('input[name="submitComment"]');
 		this.registerHandles();
 	},
 	registerHandles:function()
 	{
 		$(this.submitComment).bind('mousedown', $.proxy(this.addComment, this));
+		$
 	},
 	addComment:function()
 	{
@@ -401,16 +402,16 @@ var CommentList = {
 				dataType: 'json',
 				success: $.proxy(function(resObj)
 				{
-					//try {
+					try {
 						if (resObj.result=='ADD') {
 							CommentList.addToMultipleComment(resObj.comment)							
 						} else if (resObj.result='ALREADY_WRITTEN') {
 							Notifier.setErrorMsg(gettext('이미 등록하셨습니다.'));
 						}
-					//}
-					//catch(e) {
-					//	Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+e.message+')');
-					//}
+					}
+					catch(e) {
+						Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+e.message+')');
+					}
 				}, this),
 				error: function(xhr) {
 					if (suppress_ajax_errors)
@@ -432,10 +433,11 @@ var CommentList = {
 		$.each(obj, function(index, item) {
 			var comment = $('<div>', {'class': 'dictionary_comment'});
 			comment.appendTo(CommentList.comments);
-			alert(item.comment);
 
 			$('<div>', {'class': 'dictionary_comment_content'}).text(item.comment).appendTo(comment);
-//			$('<div>', {'class': 'dictionary_comment_eval'}).text('{% trans "평가" %} - {% trans "로드" %} : <span>' + item.load + '{% trans "학점" %} : ').appendTo(comment)
+			//$('<div>', {'class': 'dictionary_comment_eval'}).text(gettext("평가") + '-');
+			//$('<span>').text(gettext("학점") + ':')
+			//$('<span>').text(get</span>{{comment.load}}</span>, {% trans "학점" %} : <span>{{comment.score}}</span>, {% trans "남는거" %} : <span>{{comment.gain}}</span>, By {{comment.writer}} ({{comment.written_datetime|date:"Y/m/d"}}').appendTo(comment);
 			$('<div>', {'class': 'dictionary_comment_delete'}).text("지우기").appendTo(comment);
 		});
 

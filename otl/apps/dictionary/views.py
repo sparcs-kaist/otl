@@ -327,7 +327,7 @@ def _comments_to_output(comments):
             'writer_id': writer.id,
             'writer_nickname': UserProfile.objects.get(user__exact=writer).nickname,
             'written_datetime': comment.written_datetime.isoformat(),
-            'content': comment.comment,
+            'comment': comment.comment,
             'score': comment.score,
             'gain': comment.gain,
             'like': comment.like
