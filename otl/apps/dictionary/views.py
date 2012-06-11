@@ -93,6 +93,33 @@ def search(request):
     except:
         return HttpResponseBadRequest()
 
+def get_autocomplete_list(request):
+    try:
+        def reduce(list):
+            return [item for sublist in list for item in sublist]
+        q = {}
+        for key, value in request.GET.iteritems():
+            q[str(key)] = value
+
+        lang = request.GET.get('lang', 'ko')
+
+        output = None
+        #cache_key = 'autocomplete-list-cache:year=%s:semester=%s:department=%s:type=%s:lang=%s' % (year, semester, department, type, lang)
+        #output = cache.get(cache_key)
+        if output is None:
+            if lang == 'ko':
+                func = lambda x:[x.title, x.professors.get().professor_name, x.old_code] # TODO : 추후 professors.get()이 아닌 다른 방법으로 수정
+            elif lang == 'en':
+                func = lambda x:[x.title_en, x.professors.get().professor_name_en, x.old_code] # TODO : 추후 professors.get()이 아닌 다른 방법으로 수정
+            result = list(set(reduce(map(func, _search(**q)))))
+            while None in result:
+                result[result.index(None)] = 'None'
+            output = json.dumps(result, ensure_ascii=False, indent=4)
+            #cache.set(cache_key, output, 3600)
+        return HttpResponse(output)
+    except:
+        return HttpResponseBadRequest()
+
 def view(request, course_code):
     course = None
     recent_summary = None
