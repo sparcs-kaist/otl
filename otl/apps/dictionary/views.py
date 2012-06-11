@@ -83,24 +83,26 @@ def department(request, department_id):
         'courses' : courses }, context_instance=RequestContext(request))
 
 def search(request):
-    #try:
-    q = {}
-    for key, value in request.GET.iteritems():
-        q[str(key)] = value
+    try:
+        q = {}
+        for key, value in request.GET.iteritems():
+            q[str(key)] = value
 
-    output = _courses_to_output(_search(**q))
-    return HttpResponse(json.dumps(output, ensure_ascii=False, indent=4))
-    #except:
-    #    return HttpResponseBadRequest()
+        output = _courses_to_output(_search(**q))
+        return HttpResponse(json.dumps(output, ensure_ascii=False, indent=4))
+    except:
+        return HttpResponseBadRequest()
 
 def get_autocomplete_list(request):
     try:
         def reduce(list):
             return [item for sublist in list for item in sublist]
         q = {}
-        for key, value in request.GET.iteritems():
-            q[str(key)] = value
 
+        year = request.GET.get('year', unicode(settings.NEXT_YEAR))
+        semester = request.GET.get('term', unicode(settings.NEXT_SEMESTER))
+        department = request.GET.get('dept', None)
+        type = request.GET.get('type', None)
         lang = request.GET.get('lang', 'ko')
 
         output = None
@@ -111,7 +113,7 @@ def get_autocomplete_list(request):
                 func = lambda x:[x.title, x.professors.get().professor_name, x.old_code] # TODO : 추후 professors.get()이 아닌 다른 방법으로 수정
             elif lang == 'en':
                 func = lambda x:[x.title_en, x.professors.get().professor_name_en, x.old_code] # TODO : 추후 professors.get()이 아닌 다른 방법으로 수정
-            result = list(set(reduce(map(func, _search(**q)))))
+            result = list(set(reduce(map(func, _search_by_dt(department, type)))))
             while None in result:
                 result[result.index(None)] = 'None'
             output = json.dumps(result, ensure_ascii=False, indent=4)
@@ -263,22 +265,27 @@ def _search(**conditions):
     lang = conditions.get('lang', 'ko')
     keyword = conditions.get('keyword', None)
 
-    output = Course.objects.all()
-
     if department != None and type != None and keyword != None:
         keyword = keyword.strip()
-        if department == u'-1' and type == u'전체보기':
-            raise ValidationError()
-        if department != u'-1':
-            output = output.filter(department__id__exact=int(department))
-        if type != u'전체보기':
-            output = output.filter(type__exact=type)
-        if keyword != u'':
+        output = _search_by_dt(department, type) 
+        if keyword == u'':
+            if department == u'-1' and type == u'전체보기':
+                raise ValidationError()
+        else:
             words = keyword.split()
             for word in words:
                 output = output.filter(Q(old_code__icontains=word) | Q(title__icontains=word) | Q(professors__professor_name__icontains=word)).distinct()
     else:
         raise ValidationError()
+
+    return output
+
+def _search_by_dt(department, type):
+    output = Course.objects.all()
+    if department != u'-1':
+        output = output.filter(department__id__exact=int(department))
+    if type != u'전체보기':
+        output = output.filter(type__exact=type)
 
     return output
 

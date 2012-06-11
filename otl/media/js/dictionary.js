@@ -157,7 +157,7 @@ var CourseList = {
 			conditions = {'year': Data.ViewYear, 'term': Data.ViewTerm, 'dept': -1, 'type': '전체보기', 'lang': USER_LANGUAGE};
 		$.ajax({
 			type: 'GET',
-			url: '/timetable/autocomplete/',
+			url: '/dictionary/autocomplete/',
 			data: conditions,
 			dataType: 'json',
 			success: $.proxy(function(resObj) {

@@ -9,5 +9,6 @@ urlpatterns = patterns('',
     (ur'^add_comment/$', views.add_comment),
     (ur'^delete_comment/$', views.delete_comment),
     (ur'^add_summary/$', views.add_summary),
+    (ur'^autocomplete/$', views.get_autocomplete_list)
 )
 
