@@ -80,12 +80,12 @@ function CheckNull(form)
 {% endblock %}
 {% block content %}
 <div class="dictionary_part">
-	<span>{{course.old_code}}</span>
+	<span>{{course.old_code}}/{{course.score_average}}/{{course.load_average}}/{{course.gain_average}}</span>
 </div>
 <div class="dictionary_part">
     <span>{% trans "과목 소개" %}</span>
     <div>
-        {{summary.summary}}
+		{{summary.summary}}
     </div>
 </div>
 <div class="dictionary_part">
@@ -97,7 +97,8 @@ function CheckNull(form)
 <div class="dictionary_part">
     <span>{% trans "코멘트 남기기" %}</span>
     {% if user.is_authenticated %}
-    <form action="/dictionary/add_comment/{{course.old_code}}" method="post">
+    <form action="/dictionary/add_comment/" method="post">
+		<input type="text" name="course_id" value="{{course.id}}" hidden=true />
         <div class="course_comment_form">
             {% trans "로드" %} : 
             <input type="radio" name="load" value="1"/> {% trans "쉬움" %}

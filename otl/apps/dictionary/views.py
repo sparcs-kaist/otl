@@ -7,14 +7,14 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.http import *
 from django.contrib.auth.decorators import login_required
-from django.db.models import Q
+from django.db.models import Q, Avg
 from django.utils.html import strip_tags, escape
 from django.utils import simplejson as json
 from otl.apps.favorites.models import CourseLink
 from otl.apps.common import *
 from otl.utils import respond_as_attachment
 from otl.utils.decorators import login_required_ajax
-from otl.apps.accounts.models import Department
+from otl.apps.accounts.models import Department, UserProfile
 from otl.apps.timetable.models import Lecture
 from otl.apps.dictionary.models import *
 from otl.apps.timetable.views import _lectures_to_output
@@ -163,14 +163,12 @@ def add_comment(request):
 
         new_comment = Comment(course=course, lecture=lecture, writer=writer, comment=comment, load=load, score=score, gain=gain)
         new_comment.save()
-        result = 'ADD'
 
         comments = Comment.objects.filter(course=course, lecture=lecture)
-        score_average = comments.annotate(Avg('score'))
-        load_average = comments.annotate(Avg('load'))
-        gain_average = comments.anotate(Avg('gain'))
-        Course.objects.filter(id=course.id).update(score_average=score_average, load_average=load_average, gain_average=gain_average)
+        average = comments.annotate(avg_score=Avg('score'),avg_gain=Avg('gain'),avg_load=Avg('load'))
+        Course.objects.filter(id=course.id).update(score_average=average[0].avg_score, load_average=average[0].avg_load, gain_average=average[0].avg_gain)
 
+        result = 'ADD'
     except ValidationError:
         return HttpResponseBadRequest()
     except:
@@ -214,7 +212,7 @@ def add_summary(request):
         if content == None or course_id < 0:
             raise ValidationError()
         writer = request.user
-        written_datetime = datetime.now()
+        written_datetime = datetime.datetime.now()
         new_summary = Summary(summary=content, writer=writer, written_datetime=writte_datetime, course=course)
         result = 'OK'
     except ValidationError:
@@ -258,12 +256,16 @@ def _comments_to_output(comments):
         comments = comments.select_related()
     for comment in comments:
         writer = comment.writer
+        if comment.lecture == None:
+            lecture_id = -1
+        else:
+            lecture_id = comment.lecture.id
         item = {
             'course_id': comment.course.id,
-            'lecture_id': comment.lecture.id,
+            'lecture_id': lecture_id,
             'writer_id': writer.id,
-            'writer_nickname': writer.nickname,
-            'written_datetime': comment.written_datetime,
+            'writer_nickname': UserProfile.objects.get(user__exact=writer).nickname,
+            'written_datetime': comment.written_datetime.isoformat(),
             'content': comment.comment,
             'score': comment.score,
             'gain': comment.gain,
