@@ -96,7 +96,6 @@ def search(request):
 def view(request, course_code):
     course = None
     recent_summary = None
-    professors = []
 
     try:
         course = Course.objects.get(old_code=course_code)
@@ -106,10 +105,6 @@ def view(request, course_code):
         else:
             recent_summary = None
     
-        lectures = Lecture.objects.filter(course=course)
-        for lecture in lectures:
-            professors.append(lecture.professor.get().id)
-
         result = 'OK'
     except ObjectDoesNotExist:
         result = 'NOT_EXIST' 
@@ -117,7 +112,7 @@ def view(request, course_code):
     return render_to_response('dictionary/view.html', {
         'result' : result,
         'course' : course,
-        'professors' : Professor.objects.filter(id__in=professors).order_by('professor_name'),
+        'professors' : course.professors,
         'summary' : recent_summary,
         'comments' : Comment.objects.filter(course=course).order_by('-written_datetime')
     }, context_instance=RequestContext(request))
@@ -251,7 +246,7 @@ def _search(**conditions):
         if keyword != u'':
             words = keyword.split()
             for word in words:
-                output = output.filter(Q(old_code__icontains=word) | Q(title__icontains=word) | Q(professor__professor_name__icontains=word)).distinct()
+                output = output.filter(Q(old_code__icontains=word) | Q(title__icontains=word) | Q(professors__professor_name__icontains=word)).distinct()
     else:
         raise ValidationError()
 
@@ -287,7 +282,7 @@ def _courses_to_output(courses):
                 'course_no': course.old_code,
                 'dept_id': course.department.id,
                 'type': course.type,
-                'title': course.recent_lecture.title
+                'title': course.title
                 }
         all.append(item)
     return all
@@ -304,6 +299,3 @@ def _summary_to_output(summaries):
             'course_id': summary.course.id
             }
     return item
-
-def _get_lecture_by_course(course):
-    return

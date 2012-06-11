@@ -17,17 +17,17 @@ class ProfessorAdmin(admin.ModelAdmin):
 class Course(models.Model):
     old_code = models.CharField(max_length=10)                  # 과목코드 (ABC123 형식)
     department = models.ForeignKey(Department)
-    professor = models.ForeignKey(Professor)
+    professors = models.ManyToManyField(Professor)
     type = models.CharField(max_length=12)
     type_en = models.CharField(max_length=36)
-    recent_lecture = models.ForeignKey(Lecture, related_name='course_lecture')
-    recent_summary = models.ForeignKey('dictionary.Summary', related_name='course_summary')
+    title = models.CharField(max_length=100)
+    title_en = models.CharField(max_length=200)
     score_average = models.FloatField()
     load_average = models.FloatField()
     gain_average = models.FloatField()
 
 class CourseAdmin(admin.ModelAdmin):
-    list_display = ('old_code', 'department', 'type', 'recent_lecture', 'recent_summary', 'score_average', 'load_average', 'gain_average')
+    list_display = ('old_code', 'department', 'type', 'title', 'score_average', 'load_average', 'gain_average')
 
 class Summary(models.Model):
     summary = models.CharField(max_length=65536)
