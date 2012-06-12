@@ -140,6 +140,8 @@ def view(request, course_code):
 
     return render_to_response('dictionary/view.html', {
         'result' : result,
+        'lang' : request.session.get('django_language', 'ko'),
+        'departments': Department.objects.filter(visible=True).order_by('name'),
         'course' : course,
         'professors' : course.professors,
         'summary' : recent_summary,

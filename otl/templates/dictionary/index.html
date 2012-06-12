@@ -1,118 +1,26 @@
-{% extends 'layout.html' %}
-{% load yearterm %}
-{% block headers %}
-<link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}table.css" />
-<link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}timetable.css" />
-<link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}dictionary.css" />
-<link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}jquery.autocomplete.css" />
-<!--[if lte IE 6]><link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}timetable.ie6.css" /><![endif]-->
+{% extends 'dictionary/base.html' %}
+{% block header_main %}
 <script type="text/javascript">
-	//<![CDATA[
-var USER_LANGUAGE = "{{lang}}";
-//]]>
-</script>
-<script type="text/javascript" src="{% url django.views.i18n.javascript_catalog %}"></script>
-<script type="text/javascript" src="{{MEDIA_URL}}js/dictionary.js?v=1269108500"></script>
-<script type="text/javascript" src="{{MEDIA_URL}}js/jquery.autocomplete.js"></script>
-<script type="text/javascript">
-	//<![CDATA[
+//<![CDATA[
 $(document).ready(function() {
-		Data.Lectures = []; // Initialized via ajax calls after page loading.
-		Data.MediaUrl = {{MEDIA_URL}};
-		Data.Comments = [];
-
-		Notifier.initialize();
-		CourseList.initialize();
-		IndexCommentList.initialize();
-		});
+    Data.Comments = [];
+    IndexCommentList.initialize();
+});
 //]]>
 </script>
-<!--jquery templates-->
-<script type="text/javascript" src="http://ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
 
 {% endblock %}
-{% block content %}
-<div id="left-side">
-	<div style="margin-bottom:10px">
-		<div id="lecturelist-range"></div>
-		<div id="lecturelist-filter">
-			<label>{% trans "학과" %}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-size:11px">(<a href="/accounts/myinfo/">{% trans "관심학과 설정"%}</a>)</span></label>
-			<select id="department" style="width:100%">
-				<optgroup label="{% trans "소속학과/관심학과" %}">
-					{% if user.is_authenticated and not user.is_superuser %}
-					{% ifnotequal user.userprofile.department.id 10000 %}
-					{% ifequal lang "ko" %}
-					<option value="{{ user.userprofile.department.id }}">{{ user.userprofile.department.name }}</option>
-					{% else %}
-					<option value="{{ user.userprofile.department.id }}">{{ user.userprofile.department.name_en }}</option>
-					{% endifequal %}
-					{% endifnotequal %}
-					{% for item in user.userprofile.favorite_departments.all %}
-					{% ifequal lang "ko" %}
-					<option value="{{ item.id }}">{{ item.name }}</option>
-					{% else %}
-					<option value="{{ item.id }}">{{ item.name_en }}</option>
-					{% endifequal %}
-					{% endfor %}
-					{% else %}
-					<option value="3894">{% trans "인문.사회과학과" %}</option>
-					{% endif %}
-				</optgroup>
-				<optgroup label="{% trans "전체 목록" %}">
-					<option value="-1">{% trans "전체보기" %}</option>
-					{% for item in departments %}{# Firefox에서는 사용자가 선택한 form 값을 자동 저장하여 새로고침했을 때 아래의 selected 속성이 무시되는 문제가 있음. #}
-					<option value="{{ item.id }}"{% ifequal item.id 3894 %} selected="selected"{% endifequal %}>{% ifequal lang "ko" %}{{ item.name }}{% else %}{% ifequal item.name_en None %}{{ item.name }}{% else %}{{ item.name_en }}{% endifequal %}{% endifequal %}</option>
-					{% endfor %}
-				</optgroup>
-			</select>
-			<br />
-			<label>{% trans "과목구분" %}</label>
-			<select id="classification" style="width:100%">
-				<option value="전체보기">{% trans "전체보기" %}</option>
-				<option value="기초필수">{% trans "기초필수" %}</option>
-				<option value="기초선택">{% trans "기초선택" %}</option>
-				<option value="전공필수">{% trans "전공필수" %}</option>
-				<option value="전공선택">{% trans "전공선택" %}</option>
-				<option value="교양필수">{% trans "교양필수" %}</option>
-				<option value="교양필수(체육)">{% trans "교양필수(체육)" %}</option>
-				<option value="교양선택">{% trans "교양선택" %}</option>
-				<option value="자유선택">{% trans "자유선택" %}</option>
-				<option value="공통필수">{% trans "공통필수" %}</option>
-				<option value="인문사회선택">{% trans "인문사회선택" %}</option>
-				<option value="선택(석/박사)">{% trans "선택(석/박사)" %}</option>
-				<option value="개별연구">{% trans "개별연구" %}</option>
-				<option value="졸업연구">{% trans "졸업연구" %}</option>
-				<option value="세미나">{% trans "세미나" %}</option>
-				<option value="논문세미나">{% trans "논문세미나" %}</option>
-				<option value="현장실습및연구">{% trans "현장실습및연구" %}</option>
-			</select>
-			<br />
-			<label>{% trans "키워드" %}</label>
-			<input type="text" id="keyword" autocomplete="off" style="width:97%">
-			<br />
-			<div style="text-align:right; margin-top:10px;">
-				<input type="checkbox" id="in_category" name="in_category" value="in_category" />&nbsp;{% trans "카테고리 내 검색" %} &nbsp;&nbsp;
-				<input type="button" id="apply" name="apply" value="{% trans "적용" %}" style="text-align:right;">
-			</div>
-		</div><!--lecture-list-filter-->
-		<div id="lecturelist-notice">{% trans "※ 강의시간이 없는 과목들은 제외됩니다. (예: 졸업연구, 논문연구)" %}</div>
-	</div>
-	<div id="lecture_container">
-		<div class="left" style="width:15%;padding:0;margin:0;">
-			<div id="lecture_tabs"></div>
-			<div class="clear"></div>
-		</div>
-		<div class="left" style="width:85%;padding:0;margin:0;">
-			<div id="lecture_contents"></div>
-			<div id="lecture_contents_footer"><div></div></div>
-		</div>
-		<div class="clear"></div>
-	</div><!--lecture_container-->
-</div><!--left-side-->
+{% block main %}
 <div id="main-side">
 	<div id="timeline">
 		
 	</div>
+        <div id="Notifier">
+	<div id="indicator"></div>
+	<div id="message-wrap">
+		<div id="message"></div>
+	</div>
+</div>
 </div>
 <div id="right-side">
 	<div id="topranking">
