@@ -8,6 +8,7 @@ urlpatterns = patterns('',
     (ur'^view/(\w+)/$', views.view),
     (ur'^add_comment/$', views.add_comment),
     (ur'^delete_comment/$', views.delete_comment),
+    (ur'^update_comment/$', views.update_comment),
     (ur'^add_summary/$', views.add_summary),
     (ur'^autocomplete/$', views.get_autocomplete_list)
 )

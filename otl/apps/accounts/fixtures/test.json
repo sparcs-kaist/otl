@@ -192,6 +192,6 @@
 	{
 		"pk": "2",
 		"model": "accounts.userprofile",
-		"fields": {"user": "3", "student_id": "20110846", "language": "ko-KR", "department": "532", "favorite_departments": ["2044"], "nickname":"rodumani", "score":2000}
+		"fields": {"user": "3", "student_id": "20110846", "language": "ko-KR", "department": 532, "favorite_departments": ["2044"], "nickname":"rodumani", "score":2000}
 	}
 ]

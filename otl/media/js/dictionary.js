@@ -40,6 +40,7 @@ function roundD(n, digits) {
 
 var NUM_ITEMS_PER_LIST = 15;
 var NUM_ITEMS_PER_COMMENT = 10;
+var NUM_ITEMS_PER_INDEX_COMMENT = 15;
 var NUMBER_OF_TABS = 3;
 var Data = {};
 var Mootabs = function(tabContainer, contents, trigerEvent, useAsTimetable)
@@ -110,7 +111,6 @@ var Utils = {
 	clickable: function(o)
 	{
 		$(o).bind('mousedown',function(){ $(o).addClass('clicked') });
-		$(document).bind('mouseup',function(){ $(o).removeClass('clicked') });
 	},
 	NumericTimeToReadable: function(t)
 	{
@@ -254,10 +254,6 @@ var CourseList = {
 		if (conditions.type == undefined){
 			conditions.type = '전체보기';
 		}
-		if (conditions.year == undefined)
-			conditions.year = Data.ViewYear;
-		if (conditions.term == undefined)
-			conditions.term = Data.ViewTerm;
 		$.ajax({
 			type: 'GET',
 			url: '/dictionary/search/',
@@ -371,7 +367,7 @@ var CourseList = {
 	}
 };
 
-var CommentList = {
+var DictionaryCommentList = {
 	initialize:function()
 	{
 		this.comments = $('.course_comments');
@@ -381,7 +377,6 @@ var CommentList = {
 	registerHandles:function()
 	{
 		$(this.submitComment).bind('mousedown', $.proxy(this.addComment, this));
-		$
 	},
 	addComment:function()
 	{
@@ -404,7 +399,7 @@ var CommentList = {
 				{
 					try {
 						if (resObj.result=='ADD') {
-							CommentList.addToMultipleComment(resObj.comment)							
+							DictionaryCommentList.addToMultipleComment(resObj.comment)							
 						} else if (resObj.result='ALREADY_WRITTEN') {
 							Notifier.setErrorMsg(gettext('이미 등록하셨습니다.'));
 						}
@@ -432,7 +427,7 @@ var CommentList = {
 		var count=0;
 		$.each(obj, function(index, item) {
 			var comment = $('<div>', {'class': 'dictionary_comment'});
-			comment.appendTo(CommentList.comments);
+			comment.appendTo(DictionaryCommentList.comments);
 
 			$('<div>', {'class': 'dictionary_comment_content'}).text(item.comment).appendTo(comment);
 			//$('<div>', {'class': 'dictionary_comment_eval'}).text(gettext("평가") + '-');
@@ -443,3 +438,73 @@ var CommentList = {
 
 	}
 };
+
+var IndexCommentList = {
+	initialize:function() 
+	{
+		this.comments = Data.Comments;	
+		this.timeline = $('#timeline');
+		this.registerHandles();
+		this.updateComment();
+	},
+	registerHandles:function()
+	{
+	},
+	updateComment:function()
+	{
+		var max = NUM_ITEMS_PER_INDEX_COMMENT;
+		$.ajax ({
+			type: 'POST',
+			url: '/dictionary/update_comment/',
+			data: {'count': max},
+			dataType: 'json',
+			success: function (resObj) {
+				try {
+					if (resObj.result=='OK') {
+						IndexCommentList.addToMultipleComment(resObj.comments)
+					}
+					else {
+						Notifier.setErrrorMsg(gettext('오류가 발생했습니다.'));
+					}
+				} catch (e) {
+					Notifier.setErrorMsg(gettext('오류가 발생했습니다.'));
+				}	
+			},
+			error: function (xhr) {
+				Notifier.setErrorMsg(gettext('오류가 발생했습니다.'));
+			}	   
+		});
+	},
+	addToMultipleComment:function(obj)
+	{
+		console.log(obj);
+		$.each(obj, function(index, item) {
+			console.log(item);
+			var div_comment = $('<div>', {'class': 'timeline_comment'});
+			div_comment.appendTo(IndexCommentList.timeline);
+
+			var left_div_comment = $('<div>', {'class': 'timeline_comment_left'});
+			var right_div_comment = $('<div>', {'class': 'timeline_comment_right'});
+
+			left_div_comment.appendTo(div_comment);
+			right_div_comment.appendTo(div_comment);
+
+			$('<a>', {'class': 'content_prof_photo'}).text('사진').appendTo(left_div_comment);
+			$('<a>', {'class': 'content_prof_name'}).text(item.professor[0].professor_name).appendTo(left_div_comment);
+
+			var top_right_div_comment = $('<div>', {'class': 'timeline_comment_right_subject'});
+			var mid_right_div_comment = $('<div>', {'class': 'timeline_comment_right_comment'});
+			var down_right_div_comment = $('<div>', {'class': 'timeline_comemnt_right_eval'});
+
+			top_right_div_comment.appendTo(right_div_comment);
+			mid_right_div_comment.appendTo(right_div_comment);
+			down_right_div_comment.appendTo(right_div_comment);
+
+			$('<a>', {'class': 'content_subject'}).text(item.course_title).appendTo(top_right_div_comment);
+			$('<a>', {'class': 'content_comment'}).text(item.comment).appendTo(mid_right_div_comment);
+			$('<a>', {'class': 'content_score'}).text('학점 :' + item.score).appendTo(down_right_div_comment);
+			$('<a>', {'class': 'content_load'}).text('로드 :' + item.load).appendTo(down_right_div_comment);
+			$('<a>', {'class': 'content_gain'}).text('남는거 :' + item.gain).appendTo(down_right_div_comment);
+		});
+	}
+};	

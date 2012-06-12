@@ -55,7 +55,7 @@ var LinkThumb = {
 $(document).ready(function () {
 	LinkThumb.initialize('#publicFavorites', '.favorite-link');
 	LinkThumb.initialize('#publicFavorites', '.search-link');
-	CommentList.initialize();
+	DictionaryCommentList.initialize();
 });
 //-->
 </script>
@@ -81,6 +81,12 @@ function CheckNull(form)
 
 {% endblock %}
 {% block content %}
+<div id="Notifier">
+	<div id="indicator"></div>
+	<div id="message-wrap">
+		<div id="message"></div>
+	</div>
+</div>
 <div class="dictionary_part">
 	<span>{{course.old_code}}/{{course.score_average}}/{{course.load_average}}/{{course.gain_average}}</span>
 </div>

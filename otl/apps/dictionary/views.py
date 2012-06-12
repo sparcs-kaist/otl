@@ -242,6 +242,30 @@ def delete_comment(request):
     return HttpResponse(json.dumps({
         'result': result}, ensure_ascii=False, indent=4)) # TODO: 삭제를 위해서는 무엇을 리턴해야 하는가?
 
+
+def update_comment(request):
+    comments = []
+
+    try:
+        count = int(request.POST.get('count', -1))
+        q = {}
+        if request.user.is_authenticated():
+            user = request.user
+            userprofile = UserProfile.objects.get(user=user)
+            q['dept'] = userprofile.department
+            comments = _update_comment(count, **q)
+        else:
+            comments = _update_comment(count, **q)
+        result = 'OK'
+
+    except ObjectDoesNotExist:
+        result = 'ERROR'
+
+    return HttpResponse(json.dumps({
+        'result': result,
+        'comments': _comments_to_output(comments) }, ensure_ascii=False, indent=4))
+
+
 @login_required
 def like_comment(request, comment_id):
     return
@@ -267,6 +291,7 @@ def add_summary(request):
         'result': result,
         'summary': _summary_to_output([new_summary])}, ensure_ascii=False, indent=4))
 
+
 # -- Private functions
 def _top_by_score(count):
     rank_list = UserProfile.objects.all().order_by('-score')
@@ -280,6 +305,17 @@ def _top_by_score(count):
                     }
             rank_list_with_index.append(item)
     return rank_list_with_index
+
+def _update_comment(count, **conditions):
+    department = conditions.get('dept', None)
+    if department != None:
+        comments = Comment.objects.filter(course__department=department)
+    else:
+        comments = Comment.objects.all().order_by('-written_datetime')
+        comments_size = comments.count()
+        if comments_size < count:
+            return comments[0:comments_size]
+        return comments[0:count]
 
 def _search(**conditions):
     department = conditions.get('dept', None)
@@ -317,23 +353,51 @@ def _comments_to_output(comments):
         comments = comments.select_related()
     for comment in comments:
         writer = comment.writer
+        try:
+            profile = UserProfile.objects.get(user=writer)
+            nickname = profile.nickname
+        except:
+            nickname = ''
         if comment.lecture == None:
             lecture_id = -1
         else:
             lecture_id = comment.lecture.id
         item = {
             'course_id': comment.course.id,
+            'course_title': comment.course.title,
+            'course_title_en': comment.course.title_en,
             'lecture_id': lecture_id,
-            'writer_id': writer.id,
-            'writer_nickname': UserProfile.objects.get(user__exact=writer).nickname,
+            'writer_id': comment.writer.id,
+            'writer_nickname': nickname,
+            'professor': _professors_to_output(_get_professor_by_cl(comment.course, comment.lecture)),
             'written_datetime': comment.written_datetime.isoformat(),
             'comment': comment.comment,
             'score': comment.score,
             'gain': comment.gain,
+            'load': comment.load,
             'like': comment.like
         }
         all.append(item)
     return all
+
+def _professors_to_output(professors):
+    all = []
+    if not isinstance(professors, list):
+        professors = professors.select_related()
+    for professor in professors:
+        item = {
+                'professor_name': professor.professor_name,
+                'professor_id': professor.professor_id
+                }
+        all.append(item)
+    return all
+
+def _get_professor_by_cl(course, lecture):
+    if course == None and lecture == None:
+        return Professor.objects.all()
+    if lecture == None:
+        return course.professors.all()
+    return lecture.professor.all()
 
 def _courses_to_output(courses):
     all = []

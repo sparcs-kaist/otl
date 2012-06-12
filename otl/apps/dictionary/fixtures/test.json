@@ -1,6 +1,6 @@
 [{"pk": 1, "model": "dictionary.professor", "fields":{"professor_name":"\uc548\uc7ac\ub9cc", "professor_name_en":"Jaeman An", "professor_id":1}},
  {"pk": 1, "model": "dictionary.course", "fields":{"old_code":"cs330", "department":532, "professors":[1], "type":"\uc804\uacf5\ud544\uc218", "type_en":"Major Required", "title":"\uc6b4\uc601\uccb4\uc81c \ubc0f \uc2e4\ud5d8","title_en":"Operating Systems & Experiment", "score_average":1.16, "load_average":1.16, "gain_average":1.16}},
  {"pk": 1, "model": "dictionary.summary", "fields":{"summary":"\uc6b0\uc655\u314b\uad73\u314b", "prerequisite":"cs101","writer":1, "written_datetime": "2012-06-10 20:00:00", "course":1}},
- {"pk": 1, "model": "dictionary.comment", "fields":{"course":1, "lecture":1, "writer":1, "written_datetime":"2012-06-10 20:05:00", "comment":"\u314e\u314e\u314e", "load":1, "score":1, "gain":1, "like":0}},
+ {"pk": 1, "model": "dictionary.comment", "fields":{"course":1, "lecture":1, "writer":2, "written_datetime":"2012-06-10 20:05:00", "comment":"\u314e\u314e\u314e", "load":1, "score":1, "gain":1, "like":0}},
  {"pk": 1, "model": "dictionary.lecturerating", "fields":{"course":1, "lecture":1, "number_of_students":20, "number_of_respondents":5, "rating":3.3, "standard_deviation":1.7}}
 ]

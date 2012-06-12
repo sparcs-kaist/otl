@@ -18,17 +18,12 @@ var USER_LANGUAGE = "{{lang}}";
 	//<![CDATA[
 $(document).ready(function() {
 		Data.Lectures = []; // Initialized via ajax calls after page loading.
-		Data.Timetables = [];
-		Data.MyLectures = {{my_lectures|safe}};
-		Data.CurrentYear = {{current_year}};
-		Data.CurrentTerm = {{current_semester}};
-		Data.ViewYear = {{next_year}};
-		Data.ViewTerm = {{next_semester}};
 		Data.MediaUrl = {{MEDIA_URL}};
-		Data.CompRates = {};
+		Data.Comments = [];
 
 		Notifier.initialize();
 		CourseList.initialize();
+		IndexCommentList.initialize();
 		});
 //]]>
 </script>
@@ -115,42 +110,12 @@ $(document).ready(function() {
 	</div><!--lecture_container-->
 </div><!--left-side-->
 <div id="main-side">
-	<div id="ranking">
-		<table class="user-info">
-			<caption>
-				{{username}}({{nickname}})님
-			</caption>
-			<tbody>
-				<tr>
-					<td>별명</td>
-					<td>{{nickname}}</td>
-				</tr>
-				<tr>
-					<td>학번</td>
-					<td>{{studentno}}</td>
-				</tr>
-				<tr>
-					<td>학과</td>
-					<td>{{department}}</td>
-				</tr>
-				<tr>
-					<td>내공</td>
-					<td>{{score}}</td>
-				</tr>
-				<tr>
-					<td>순위</td>
-					<td>{{rank}}</td>
-				</tr>
-				<tr>
-					<td>이수학점</td>
-					<td>{{taken_credits}}학점 {{taken_AU}}AU</td>
-				</tr>
-				<tr>
-					<td>졸업학점</td>
-					<td>{{planned_credits}}학점 {{planned_AU}}AU</td>
-				</tr>
-			</tbody>
-		</table>
+	<div id="timeline">
+		
+	</div>
+</div>
+<div id="right-side">
+	<div id="topranking">
 		<table class="dictionary-main">
 			<caption>
 				Top 10
@@ -172,6 +137,8 @@ $(document).ready(function() {
 				{% endfor %}
 			</tbody>
 		</table>
+	</div>
+	<div id="recentranking">
 		<table class="dictionary-main">
 			<caption>
 				Monthly Top 10
@@ -193,8 +160,8 @@ $(document).ready(function() {
 				{% endfor %}
 			</tbody>
 		</table>
-	</div><!--ranking-->
-	<div id="your-comment">
+	</div>
+	<div id="askcomment">
 		<table class="mcomment">
 			<caption>
 				당신의 의견을 남겨주세요 :)
@@ -220,7 +187,7 @@ $(document).ready(function() {
 				{% endfor %}
 			</tbody>
 		</table>
-	</div><!--your-comment-->
-</div><!--main-side-->
+	</div>
+</div>
 <div class="clear" style="height:10px;"></div>
 {% endblock %}
