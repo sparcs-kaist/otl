@@ -192,8 +192,8 @@ def add_comment(request):
         if load < 0 or gain < 0 or score < 0:
             raise ValidationError()
 
-        if Comment.objects.filter(course=course, lecture=lecture, writer=writer).count() > 0:
-            raise AlreadyWrittenError()
+        #if Comment.objects.filter(course=course, lecture=lecture, writer=writer).count() > 0:
+        #    raise AlreadyWrittenError()
 
         new_comment = Comment(course=course, lecture=lecture, writer=writer, comment=comment, load=load, score=score, gain=gain)
         new_comment.save()
@@ -314,10 +314,10 @@ def _update_comment(count, **conditions):
         comments = Comment.objects.filter(course__department=department)
     else:
         comments = Comment.objects.all().order_by('-written_datetime')
-        comments_size = comments.count()
-        if comments_size < count:
-            return comments[0:comments_size]
-        return comments[0:count]
+    comments_size = comments.count()
+    if comments_size < count:
+        return comments[0:comments_size]
+    return comments[0:count]
 
 def _search(**conditions):
     department = conditions.get('dept', None)
