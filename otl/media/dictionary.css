@@ -39,3 +39,136 @@ table.mcomment caption
 	float:left;
 	width:780px;
 }
+
+#left-side
+{
+        float:left;
+        width:200px;
+}
+
+#lecturelist-range h4
+{
+    margin: 5px 0;
+    padding: 0;
+}
+
+#lecturelist-filter label
+{
+    font-weight: bold;
+}
+
+#lecturelist p
+{
+    margin: 2px;
+    padding: 0;
+}
+
+#lecturelist-notice
+{
+    font-size: 8pt;
+    line-height: 1.4;
+    margin-top: 5px;
+}
+
+ 
+ #lecture_tabs .lecture_tab
+ {
+     margin-bottom:3px;
+     cursor:pointer;
+     background:#E1ECFE url('images/corner_tl.gif') left top no-repeat;
+ }
+ #lecture_tabs .lecture_tab div
+ {
+     padding:2px 7px;
+     background:transparent url('images/corner_bl.gif') left bottom no-repeat;
+ }
+ 
+ #lecture_tabs .active
+ {
+     background-color:#C3D9FF;
+ }
+ 
+ #lecture_contents
+ {
+     clear:both;
+     background:#C3D9FF url('images/corner_tr.gif') right top no-repeat;
+     padding:5px;
+ }
+ 
+ #lecture_contents_footer
+ {
+     background:#C3D9FF url('images/corner_bl.gif') left bottom no-repeat;
+ }
+ 
+ #lecture_contents_footer div
+ {
+     height:5px;
+     background:transparent url('images/corner_br.gif') right bottom no-repeat;
+ }
+ 
+ #lecture_contents h4 {
+         font-size: 9pt;
+ }
+ 
+ #message-wrap
+ {
+     background:#C3D9FF url('images/corner_tl.gif') left top no-repeat;
+ }
+ 
+ #message-wrap div.bl
+ {
+     background:transparent url('images/corner_bl.gif') bottom left no-repeat;
+ }
+ 
+ #message-wrap div.br
+ {
+     background:transparent url('images/corner_br.gif') bottom right no-repeat;
+ }
+
+
+#message 
+{
+    padding:3px 20px 1px;
+    background:transparent url('images/corner_tr.gif') right top no-repeat;
+}
+
+
+#indicator
+{
+        width:16px;
+        height:16px;
+        margin-right:10px;
+}
+
+#indicator_semester
+{
+        width:16px;
+        height:16px;
+        margin-right:10px;
+}
+
+
+
+
+.lecture_content a
+{
+    text-decoration:none;
+    display:block;
+    margin-bottom:2px;
+    padding:1px 5px;
+    cursor:pointer;
+    background:#fff;
+}
+
+.lecture_content a:hover
+{
+    color:#333;
+    background:#E1ECFE;
+}
+
+.lecture_content a.clicked
+{
+    background:#D1EFD5;
+}
+
+
