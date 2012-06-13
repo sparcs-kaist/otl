@@ -189,6 +189,13 @@ def add_comment(request):
                 course = Course.objects.get(id=course_id)
             else:
                 raise ValidationError()
+        
+        lectures = _get_taken_lecture_by_db(request.user, course)
+        if lectures == Lecture.objects.none():
+            lecture = None
+        else:
+            lecture = lectures[0]   # 여러번 들었을 경우 가장 최근에 들은 과목 기준으로 한다.
+
         comment = request.POST.get('comment', None)
         load = int(request.POST.get('load', -1))
         gain = int(request.POST.get('gain', -1))
@@ -406,13 +413,6 @@ def _professors_to_output(professors):
         all.append(item)
     return all
 
-def _get_professor_by_cl(course, lecture):
-    if course == None and lecture == None:
-        return Professor.objects.all()
-    if lecture == None:
-        return course.professors.all()
-    return lecture.professor.all()
-
 def _courses_to_output(courses):
     all = []
     if isinstance(courses, Course):
@@ -451,3 +451,20 @@ def _summary_to_output(summaries):
             }
     return item
 
+def _get_professor_by_cl(course, lecture):
+    if course == None and lecture == None:
+        return Professor.objects.all()
+    if lecture == None:
+        return course.professors.all()
+    return lecture.professor.all()
+
+def _get_taken_lecture_by_db(user, course):
+    try:
+        lectures = Lecture.objects.filter(course=course)
+        take_lecture_list = UserProfile.objects.get(user=user).take_lecture_list
+
+        result = take_lecture_list.filter(course=course).order_by('-year','-semester')
+
+        return result
+    except ObjectDoesNotExist:
+        return Lecture.objects.none()
