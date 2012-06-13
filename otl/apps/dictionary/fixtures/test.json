@@ -13,7 +13,7 @@
 	"fields":{
 		"old_code":"cs330", 
 		"department":532, 
-		"professors":[1], 
+		"professors":[1,3], 
 		"type":"\uc804\uacf5\ud544\uc218", 
 		"type_en":"Major Required", 
 		"title":"\uc6b4\uc601\uccb4\uc81c \ubc0f \uc2e4\ud5d8",
@@ -95,8 +95,16 @@
 		"written_datetime": "2012-06-10 20:00:00", 
 		"course":2
 	}
+  },
+  {
+	"pk": 3,
+	"model":"dictionary.professor",
+	"fields":{
+		"professor_name":"\ucd5c\ub099\ud604",
+		"professor_name_en":"Nakhyun Choi",
+		"professor_id":3
+  	}
   }
- 
 ]
 
 
