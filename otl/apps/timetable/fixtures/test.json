@@ -6,7 +6,7 @@
 			"notice": "", 
 			"code": "36.330", 
 			"old_code": "CS330", 
-			"class_no": "", 
+			"class_no": "A", 
 			"title": "\uc6b4\uc601\uccb4\uc81c \ubc0f \uc2e4\ud5d8", 
 			"type_en": "Major Required", 
 			"professor": [1], 
@@ -25,8 +25,34 @@
 			"course": 1
 		}
 	}, 
- 	{
+	{
 		"pk": 2, 
+		"model": "timetable.lecture", 
+		"fields": {
+			"notice": "", 
+			"code": "36.330", 
+			"old_code": "CS330", 
+			"class_no": "B", 
+			"title": "\uc6b4\uc601\uccb4\uc81c \ubc0f \uc2e4\ud5d8", 
+			"type_en": "Major Required", 
+			"professor": [2, 3], 
+			"num_labs": 2, 
+			"title_en": "Operating Systems & Experiments", 
+			"audience": 0, 
+			"credit_au": 0, 
+			"credit": 4, 
+			"semester": 3, 
+			"is_english": true, 
+			"limit": 0, 
+			"year": 2009, 
+			"department": 532, 
+			"type": "\uc804\uacf5\ud544\uc218", 
+			"num_classes": 3, 
+			"course": 1
+		}
+	}, 
+ 	{
+		"pk": 3, 
 		"model": "timetable.lecture", 
 		"fields": {
 			"notice": "", 
@@ -48,11 +74,11 @@
 			"department": 2044, 
 			"type": "\uad50\uc591\uc120\ud0dd", 
 			"num_classes": 3, 
-			"course": 1
+			"course": 2
 		}
 	}, 
  	{
-		"pk": 3, 
+		"pk": 4, 
 		"model": "timetable.lecture", 
 		"fields": {
 			"notice": "", 
@@ -74,11 +100,11 @@
 			"department": 110, 
 			"type": "\uae30\ucd08\ud544\uc218", 
 			"num_classes": 3, 
-			"course": 1
+			"course": 3
 		}
 	},
  	{
-		"pk": 4, 
+		"pk": 5, 
 		"model": "timetable.lecture", 
 		"fields": {
 			"notice": "", 
@@ -100,7 +126,7 @@
 			"department": 3540, 
 			"type": "\uc790\uc720\uc120\ud0dd", 
 			"num_classes": 1, 
-			"course": 1
+			"course": 4
 		}
 	}, 
 	{
