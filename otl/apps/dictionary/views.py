@@ -399,7 +399,7 @@ def _comments_to_output(comments,conv_to_json=True, lang='ko'):
             'lecture_id': lecture_id,
             'writer_id': comment.writer.id,
             'writer_nickname': nickname,
-            'professor': _professors_to_output(_get_professor_by_cl(comment.course, comment.lecture),False,lang),
+            'professor': _professors_to_output(_get_professor_by_lecture(comment.lecture),False,lang),
             'written_datetime': comment.written_datetime.isoformat(),
             'comment': comment.comment,
             'score': comment.score,
@@ -443,7 +443,7 @@ def _courses_to_output(courses,conv_to_json=True,lang='ko'):
     if isinstance(courses, Course):
         item = {
                 'id': courses.id,
-                'course_no': courses.old_code,
+                'old_code': courses.old_code,
                 'dept_id': courses.department.id,
                 'type': _trans(courses.type,courses.type_en,lang),
                 'title': _trans(courses.title,courses.title_en,lang)
@@ -463,7 +463,7 @@ def _courses_to_output(courses,conv_to_json=True,lang='ko'):
     for course in courses:
         item = {
                 'id': course.id,
-                'course_no': course.old_code,
+                'old_code': course.old_code,
                 'dept_id': course.department.id,
                 'type': _trans(course.type,course.type_en,lang),
                 'title': _trans(course.title,course.title_en,lang)
@@ -500,11 +500,9 @@ def _summary_to_output(summaries,conv_to_json=True,lang='ko'):
     else :
         return item
 
-def _get_professor_by_cl(course, lecture):
-    if course == None and lecture == None:
-        return Professor.objects.all()
+def _get_professor_by_lecture(lecture):
     if lecture == None:
-        return course.professors.all()
+        return Professor.objects.none()
     return lecture.professor.all()
 
 def _get_taken_lecture_by_db(user, course):
