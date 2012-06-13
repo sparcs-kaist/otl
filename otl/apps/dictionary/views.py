@@ -89,7 +89,7 @@ def search(request):
         for key, value in request.GET.iteritems():
             q[str(key)] = value
 
-        output = _courses_to_output(_search(**q))
+        output = _courses_to_output(_search(**q),False,request.session.get('django_language','ko'))
         return HttpResponse(json.dumps(output, ensure_ascii=False, indent=4))
     except:
         return HttpResponseBadRequest()
@@ -128,16 +128,17 @@ def view(request, course_code):
     try:
         course = Course.objects.get(old_code=course_code)
         summary = Summary.objects.filter(course=course).order_by('-written_datetime')
+        lang=request.session.get('django_language','ko')
         if summary.count() > 0:
             recent_summary = summary[0]
         else:
             recent_summary = None
     
         comments = Comment.objects.filter(course=course).order_by('-written_datetime')
-        comments_output = json.dumps(_comments_to_output(comments), ensure_ascii=False, indent=4)
-        course_output = json.dumps(_courses_to_output(course), ensure_ascii=False, indent=4)
-        lectures_output = _lectures_to_output(Lecture.objects.filter(course=course), True, request.session.get('django_language', 'ko'))
-        professors_output = json.dumps(_professors_to_output(course.professors), ensure_ascii=False, indent=4) 
+        comments_output = _comments_to_output(comments,True,lang)
+        course_output = _courses_to_output(course,True,lang)
+        lectures_output = _lectures_to_output(Lecture.objects.filter(course=course), True, lang)
+        professors_output = _professors_to_output(course.professors,True,lang) 
         result = 'OK'
     except ObjectDoesNotExist:
         result = 'NOT_EXIST' 
@@ -172,7 +173,7 @@ def view_comment_by_professor(request):
         result = 'NOT_EXIST'
     return HttpResponse(json.dumps({
         'result': result,
-        'comments': _comments_to_output(comments)}, ensure_ascii=False, indent=4))
+        'comments': _comments_to_output(comments,False,request.session.get('django_language','ko'))}, ensure_ascii=False, indent=4))
 
 @login_required_ajax
 def add_comment(request):
@@ -258,7 +259,7 @@ def delete_comment(request):
 
     return HttpResponse(json.dumps({
         'result': result,
-        'comment': _comments_to_output(comments)}, ensure_ascii=False, indent=4)) 
+        'comment': _comments_to_output(comments,False,request.session.get('django_langugage','ko'))}, ensure_ascii=False, indent=4)) 
 
 def update_comment(request):
     comments = []
@@ -280,7 +281,7 @@ def update_comment(request):
 
     return HttpResponse(json.dumps({
         'result': result,
-        'comments': _comments_to_output(comments) }, ensure_ascii=False, indent=4))
+        'comments': _comments_to_output(comments,False,request.session.get('django_language','ko')) }, ensure_ascii=False, indent=4))
 
 
 @login_required
@@ -306,10 +307,16 @@ def add_summary(request):
     
     return HttpResponse(json.dumps({
         'result': result,
-        'summary': _summary_to_output([new_summary])}, ensure_ascii=False, indent=4))
+        'summary': _summary_to_output([new_summary],False,'ko')}, ensure_ascii=False, indent=4))
 
 
 # -- Private functions
+def _trans(ko_message, en_message, lang) :
+    if en_message == None or lang == 'ko' :
+        return ko_message
+    else :
+        return en_message
+
 def _top_by_score(count):
     rank_list = UserProfile.objects.all().order_by('-score')
     rank_list_size = rank_list.count()
@@ -349,7 +356,10 @@ def _search(**conditions):
         else:
             words = keyword.split()
             for word in words:
-                output = output.filter(Q(old_code__icontains=word) | Q(title__icontains=word) | Q(professors__professor_name__icontains=word)).distinct()
+                if lang=='ko':
+                    output = output.filter(Q(old_code__icontains=word) | Q(title__icontains=word) | Q(professors__professor_name__icontains=word)).distinct()
+                elif lang=='en':
+                    output = output.filter(Q(old_code__icontains=word) | Q(title_en__icontains=word) | Q(professors__professor_name_en__icontains=word)).distinct()
     else:
         raise ValidationError()
 
@@ -367,7 +377,7 @@ def _search_by_dt(department, type):
         cache.set(cache_key,output,3600)
     return output
 
-def _comments_to_output(comments):
+def _comments_to_output(comments,conv_to_json=True, lang='ko'):
     all = []
     if not isinstance(comments, list):
         comments = comments.select_related()
@@ -385,12 +395,11 @@ def _comments_to_output(comments):
         item = {
             'comment_id': comment.id,
             'course_id': comment.course.id,
-            'course_title': comment.course.title,
-            'course_title_en': comment.course.title_en,
+            'course_title': _trans(comment.course.title,comment.course.title_en,lang),
             'lecture_id': lecture_id,
             'writer_id': comment.writer.id,
             'writer_nickname': nickname,
-            'professor': _professors_to_output(_get_professor_by_cl(comment.course, comment.lecture)),
+            'professor': _professors_to_output(_get_professor_by_cl(comment.course, comment.lecture),False,lang),
             'written_datetime': comment.written_datetime.isoformat(),
             'comment': comment.comment,
             'score': comment.score,
@@ -399,31 +408,55 @@ def _comments_to_output(comments):
             'like': comment.like
         }
         all.append(item)
-    return all
+    if conv_to_json:
+        io = StringIO()
+        if settings.DEBUG:
+            json.dump(all,io,ensure_ascii=False,indent=4)
+        else:
+            json.dump(all,io,ensure_ascii=False,sort_keys=False,separators=(',',':'))
+        return io.getvalue()
+    else :
+        return all
 
-def _professors_to_output(professors):
+def _professors_to_output(professors,conv_to_json=True,lang='ko'):
     all = []
     if not isinstance(professors, list):
         professors = professors.select_related()
     for professor in professors:
         item = {
-                'professor_name': professor.professor_name,
+                'professor_name': _trans(professor.professor_name,professor.professor_name_en,lang),
                 'professor_id': professor.professor_id
                 }
         all.append(item)
-    return all
+    if conv_to_json:
+        io = StringIO()
+        if settings.DEBUG:
+            json.dump(all,io,ensure_ascii=False,indent=4)
+        else:
+            json.dump(all,io,ensure_ascii=False,sort_keys=False,separators=(',',':'))
+        return io.getvalue()
+    else :
+        return all
 
-def _courses_to_output(courses):
+def _courses_to_output(courses,conv_to_json=True,lang='ko'):
     all = []
     if isinstance(courses, Course):
         item = {
                 'id': courses.id,
                 'course_no': courses.old_code,
                 'dept_id': courses.department.id,
-                'type': courses.type,
-                'title': courses.title
+                'type': _trans(courses.type,courses.type_en,lang),
+                'title': _trans(courses.title,courses.title_en,lang)
                 }
-        return item
+        if conv_to_json:
+            io = StringIO()
+            if settings.DEBUG:
+                json.dump(item,io,ensure_ascii=False,indent=4)
+            else:
+                json.dump(item,io,ensure_ascii=False,sort_keys=False,separators=(',',':'))
+            return io.getvalue()
+        else :
+            return item
 
     if not isinstance(courses, list):
         courses = courses.select_related()
@@ -432,13 +465,21 @@ def _courses_to_output(courses):
                 'id': course.id,
                 'course_no': course.old_code,
                 'dept_id': course.department.id,
-                'type': course.type,
-                'title': course.title
+                'type': _trans(course.type,course.type_en,lang),
+                'title': _trans(course.title,course.title_en,lang)
                 }
         all.append(item)
-    return all
+    if conv_to_json:
+        io = StringIO()
+        if settings.DEBUG:
+            json.dump(all,io,ensure_ascii=False,indent=4)
+        else:
+            json.dump(all,io,ensure_ascii=False,sort_keys=False,separators=(',',':'))
+        return io.getvalue()
+    else :
+        return all
 
-def _summary_to_output(summaries):
+def _summary_to_output(summaries,conv_to_json=True,lang='ko'):
     all = []
     if not isintance(summaries, list):
         summaries = summaries.select_related()
@@ -449,7 +490,15 @@ def _summary_to_output(summaries):
             'written_datetime': summary.written_datetime,
             'course_id': summary.course.id
             }
-    return item
+    if conv_to_json:
+        io = StringIO()
+        if settings.DEBUG:
+            json.dump(item,io,ensure_ascii=False,indent=4)
+        else:
+            json.dump(item,io,ensure_ascii=False,sort_keys=False,separators=(',',':'))
+        return io.getvalue()
+    else :
+        return item
 
 def _get_professor_by_cl(course, lecture):
     if course == None and lecture == None:
