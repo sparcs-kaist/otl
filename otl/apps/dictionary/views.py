@@ -19,6 +19,7 @@ from otl.apps.accounts.models import Department, UserProfile
 from otl.apps.timetable.models import Lecture
 from otl.apps.dictionary.models import *
 from otl.apps.timetable.views import _lectures_to_output
+from StringIO import StringIO
 
 from django import template
 template.add_to_builtins('django.templatetags.i18n')
@@ -127,7 +128,7 @@ def view(request, course_code):
     recent_summary = None
 
     try:
-        course = Course.objects.get(old_code=course_code)
+        course = Course.objects.get(old_code=course_code.upper())
         summary = Summary.objects.filter(course=course).order_by('-written_datetime')
         lang=request.session.get('django_language','ko')
         if summary.count() > 0:
