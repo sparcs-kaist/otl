@@ -445,9 +445,9 @@ var DictionaryCommentList = {
 
 			$('<a>').text(item.writer_nickname).appendTo(comment);
 			$('<div>', {'class': 'dictionary_comment_content'}).text(item.comment).appendTo(comment);
-			//$('<div>', {'class': 'dictionary_comment_eval'}).text(gettext("평가") + '-');
-			//$('<span>').text(gettext("학점") + ':')
-			//$('<span>').text(get</span>{{comment.load}}</span>, {% trans "학점" %} : <span>{{comment.score}}</span>, {% trans "남는거" %} : <span>{{comment.gain}}</span>, By {{comment.writer}} ({{comment.written_datetime|date:"Y/m/d"}}').appendTo(comment);
+			$('<div>', {'class': 'dictionary_comment_eval'}).text(gettext("학점") + ':' + item.score).appendTo(comment);
+			$('<div>', {'class': 'dictionary_comment_eval'}).text(gettext("로드") + ':' + item.load).appendTo(comment);
+			$('<div>', {'class': 'dictionary_comment_eval'}).text(gettext("남는거") + ':' + item.gain).appendTo(comment);
 			
 			if (enableDelete) {
 				var deletelink = $('<div>', {'class': 'dictionary_comment_delete'}).text("지우기").appendTo(comment);

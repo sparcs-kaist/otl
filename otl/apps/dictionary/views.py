@@ -211,7 +211,7 @@ def add_comment(request):
         new_comment = Comment(course=course, lecture=lecture, writer=writer, comment=comment, load=load, score=score, gain=gain)
         new_comment.save()
 
-        comments = Comment.objects.filter(course=course, lecture=lecture)      
+        comments = Comment.objects.filter(course=course)      
         average = comments.aggregate(avg_score=Avg('score'),avg_gain=Avg('gain'),avg_load=Avg('load'))
         Course.objects.filter(id=course.id).update(score_average=average['avg_score'], load_average=average['avg_load'], gain_average=average['avg_gain'])
 
@@ -243,7 +243,7 @@ def delete_comment(request):
         
         course = comment.course
         lecture = comment.lecture
-        comments = Comment.objects.filter(course=course,lecture=lecture)
+        comments = Comment.objects.filter(course=course)
         if comments.count() != 0 :
             average = comments.aggregate(avg_score=Avg('score'),avg_gain=Avg('gain'),avg_load=Avg('load'))
             Course.objects.filter(id=course.id).update(score_average=average['avg_score'],load_average=average['avg_load'],gain_average=average['avg_gain'])

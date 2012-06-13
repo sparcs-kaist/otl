@@ -15,13 +15,14 @@ class ProfessorAdmin(admin.ModelAdmin):
     list_display = ('professor', 'professor_en', 'professor_id')
 
 class Course(models.Model):
-    old_code = models.CharField(max_length=10)                  # 과목코드 (ABC123 형식)
-    department = models.ForeignKey(Department)
-    professors = models.ManyToManyField(Professor)
-    type = models.CharField(max_length=12)
-    type_en = models.CharField(max_length=36)
-    title = models.CharField(max_length=100)
-    title_en = models.CharField(max_length=200)
+# *이 붙은 항목은 Lecture가 업데이트될때 함께 업데이트 되어야 할 것
+    old_code = models.CharField(max_length=10)                  # 과목코드 (ABC123 형식) *
+    department = models.ForeignKey(Department)                  # 가장 최근의 department *
+    professors = models.ManyToManyField(Professor)              # 맡았던 교수들 *
+    type = models.CharField(max_length=12)                      # 가장 최근의 type *
+    type_en = models.CharField(max_length=36)                   # 가장 최근의 type_en *
+    title = models.CharField(max_length=100)                    # 가장 최근의 title *
+    title_en = models.CharField(max_length=200)                 # 가장 최근의 title_en *
     score_average = models.FloatField()
     load_average = models.FloatField()
     gain_average = models.FloatField()
