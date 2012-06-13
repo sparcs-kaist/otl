@@ -76,7 +76,7 @@ def search(request):
 def get_autocomplete_list(request):
     try:
         def reduce(list):
-            return [item for sublist in list for item in sublist]
+            return [item for sublist in list for subsublist in sublist for item in subsublist]
         year = request.GET.get('year', unicode(settings.NEXT_YEAR))
         semester = request.GET.get('term', unicode(settings.NEXT_SEMESTER))
         department = request.GET.get('dept', None)
@@ -87,9 +87,9 @@ def get_autocomplete_list(request):
         output = cache.get(cache_key)
         if output is None:
             if lang == 'ko':
-                func = lambda x:[x.title, x.professor.get().professor_name, x.old_code] # TODO : 추후 professor.get()이 아닌 다른 방법으로 수정
+                func = lambda x:[[x.title,x.old_code], map(lambda y:y.professor_name,x.professor.all())] 
             elif lang == 'en':
-                func = lambda x:[x.title_en, x.professor.get().professor_name_en, x.old_code] # TODO : 추후 professor.get()이 아닌 다른 방법으로 수정
+                func = lambda x:[[x.title_en,x.old_code],map(lambda y:y.professor_name_en,x.professor.all())] 
             result = list(set(reduce(map(func, _search_by_ysdt(year, semester, department, type)))))
             while None in result:
                 result[result.index(None)] = 'None'
