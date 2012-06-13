@@ -104,6 +104,24 @@
 		"professor_name_en":"Nakhyun Choi",
 		"professor_id":3
   	}
+  },
+  {
+	"pk": 4,
+	"model":"dictionary.professor",
+	"fields":{
+		"professor_name":"\uc720\ubbfc\uc815",
+		"professor_name_en":"Youmin Jung",
+		"professor_id":4
+	}
+  },
+  {
+	"pk":5,
+	"model":"dictionary.professor",
+	"fields":{
+		"professor_name":"\ud669\uc740\ube44",
+		"professor_name_en":"Eunbi Hwang",
+		"professor_id":5
+	}
   }
 ]
 

@@ -336,8 +336,9 @@ def _lectures_to_output(lectures, conv_to_json=True, lang='ko'):
         if len([item for item in classtimes if item['_type'] == 'l']) > 0:
             room = classtimes[0]['classroom']
         professors = lecture.professor.all()
+        name=""
         for professor in professors:
-            name = _trans(professor.professor_name, professor.professor_name_en, lang) # TODO : 일단 이런식으로 구현해놓았는데, professor가 여러명일 때 list로 return하여야한다.
+            name += _trans(professor.professor_name, professor.professor_name_en, lang) +", "
         item = {
             'id': lecture.id,
             'dept_id': lecture.department.id,
@@ -354,7 +355,7 @@ def _lectures_to_output(lectures, conv_to_json=True, lang='ko'):
             'num_people': lecture.num_people,
             'classroom': room,
             'deleted': lecture.deleted,
-            'prof': name,
+            'prof': name[:len(name)-2],
             'times': classtimes,
             'remarks': ugettext(u'영어강의') if lecture.is_english else u'',
             'examtime': {'day': exam.day, 'start': exam.get_begin_numeric(), 'end': exam.get_end_numeric()} if exam != None else None,
