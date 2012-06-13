@@ -50,6 +50,7 @@ class Comment(models.Model):
     score = models.SmallIntegerField(choices=SCORE_TYPES)                      # 학점
     gain = models.SmallIntegerField(choices=GAIN_TYPES)                       # 남는 거
     like = models.IntegerField(default=0)
+    like_list = models.ManyToManyField(User, related_name='comment_likelist', null=True)
 
 class CommentAdmin(admin.ModelAdmin):
     list_display = ('course', 'comment', 'load', 'score', 'gain')

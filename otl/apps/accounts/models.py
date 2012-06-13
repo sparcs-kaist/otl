@@ -27,7 +27,7 @@ class UserProfile(models.Model):
     favorite_departments = models.ManyToManyField('Department', related_name='favoredby_set')
     score = models.IntegerField(default=0, null=False, blank=True)
     nickname = models.CharField(max_length=15, null=False, blank=True)
-    like_list = models.ManyToManyField('dictionary.Comment', null=True, blank=True)
+    take_course_list = models.ManyToManyField('timetable.Lecture', null=True, blank=True) 
 
     def __unicode__(self):
         return u'%s %s (%s)' % (self.user.username, self.student_id, self.department.code)
