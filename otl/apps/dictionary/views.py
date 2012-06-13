@@ -3,6 +3,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.core.paginator import Paginator
 from django.core.exceptions import *
+from django.core.cache import cache
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.http import *
@@ -99,15 +100,13 @@ def get_autocomplete_list(request):
             return [item for sublist in list for subsublist in sublist for item in subsublist]
         q = {}
 
-        year = request.GET.get('year', unicode(settings.NEXT_YEAR))
-        semester = request.GET.get('term', unicode(settings.NEXT_SEMESTER))
         department = request.GET.get('dept', None)
         type = request.GET.get('type', None)
         lang = request.GET.get('lang', 'ko')
 
         output = None
-        #cache_key = 'autocomplete-list-cache:year=%s:semester=%s:department=%s:type=%s:lang=%s' % (year, semester, department, type, lang)
-        #output = cache.get(cache_key)
+        cache_key = 'autocomplete-list-dict-cache:department=%s:type=%s:lang=%s'%(department,type,lang)
+        output = cache.get(cache_key)
         if output is None:
             if lang == 'ko':
                 func = lambda x:[[x.title, x.old_code],map(lambda y : y.professor_name,x.professors.all())] 
@@ -117,7 +116,7 @@ def get_autocomplete_list(request):
             while None in result:
                 result[result.index(None)] = 'None'
             output = json.dumps(result, ensure_ascii=False, indent=4)
-            #cache.set(cache_key, output, 3600)
+            cache.set(cache_key, output, 3600)
         return HttpResponse(output)
     except:
         return HttpResponseBadRequest()
@@ -350,12 +349,15 @@ def _search(**conditions):
     return output
 
 def _search_by_dt(department, type):
-    output = Course.objects.all()
-    if department != u'-1':
-        output = output.filter(department__id__exact=int(department))
-    if type != u'전체보기':
-        output = output.filter(type__exact=type)
-
+    cache_key = 'dictionary-search-cache:department=%s:type=%s' % (department,type)
+    output = cache.get(cache_key)
+    if output is None:
+        output = Course.objects.all()
+        if department != u'-1':
+            output = output.filter(department__id__exact=int(department))
+        if type != u'전체보기':
+            output = output.filter(type__exact=type)
+        cache.set(cache_key,output,3600)
     return output
 
 def _comments_to_output(comments):
