@@ -172,7 +172,8 @@ def view_comment_by_professor(request):
 @login_required_ajax
 def add_comment(request):
     try:
-        lecture_id = int(request.POST.get('lecture_id', -1))
+        lecture_id = int(request.POST.get('lecture_id', -1)) 
+        new_comment= Comment.objects.none()
         if lecture_id >= 0:
             lecture = Lecture.objests.get(id=lecture_id)
             course = lecture.course
@@ -192,8 +193,8 @@ def add_comment(request):
         if load < 0 or gain < 0 or score < 0:
             raise ValidationError()
 
-        #if Comment.objects.filter(course=course, lecture=lecture, writer=writer).count() > 0:
-        #    raise AlreadyWrittenError()
+        if Comment.objects.filter(course=course, lecture=lecture, writer=writer).count() > 0:
+            raise AlreadyWrittenError()
 
         new_comment = Comment(course=course, lecture=lecture, writer=writer, comment=comment, load=load, score=score, gain=gain)
         new_comment.save()
@@ -205,6 +206,8 @@ def add_comment(request):
         result = 'ADD'
     except AlreadyWrittenError:
         result = 'ALREADY_WRITTEN'
+        return HttpResponse(json.dumps({
+            'result':result},  ensure_ascii=False, indent=4))
     except ValidationError:
         return HttpResponseBadRequest()
     except:
