@@ -24,6 +24,7 @@ from django import template
 template.add_to_builtins('django.templatetags.i18n')
 
 from django.utils.translation import ugettext
+from StringIO import StringIO
 import datetime
 
 def index(request):
@@ -446,7 +447,10 @@ def _courses_to_output(courses,conv_to_json=True,lang='ko'):
                 'old_code': courses.old_code,
                 'dept_id': courses.department.id,
                 'type': _trans(courses.type,courses.type_en,lang),
-                'title': _trans(courses.title,courses.title_en,lang)
+                'title': _trans(courses.title,courses.title_en,lang),
+                'score_average': courses.score_average,
+                'load_average': courses.load_average,
+                'gain_average': courses.gain_average
                 }
         if conv_to_json:
             io = StringIO()
@@ -466,7 +470,10 @@ def _courses_to_output(courses,conv_to_json=True,lang='ko'):
                 'old_code': course.old_code,
                 'dept_id': course.department.id,
                 'type': _trans(course.type,course.type_en,lang),
-                'title': _trans(course.title,course.title_en,lang)
+                'title': _trans(course.title,course.title_en,lang),
+                'score_average': course.score_average,
+                'load_average': course.load_average,
+                'gain_average': course.gain_average
                 }
         all.append(item)
     if conv_to_json:
