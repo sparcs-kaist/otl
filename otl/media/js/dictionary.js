@@ -39,7 +39,7 @@ function roundD(n, digits) {
 }
 
 var NUM_ITEMS_PER_LIST = 15;
-var NUM_ITEMS_PER_COMMENT = 10;
+var NUM_ITEMS_PER_DICT_COMMENT = 10;
 var NUM_ITEMS_PER_INDEX_COMMENT = 15;
 var NUMBER_OF_TABS = 3;
 var Data = {};
@@ -300,32 +300,6 @@ var CourseList = {
 			tab.appendTo(this.tabs);
 		}
 	},
-	getCategories:function(arr,category) // currently unused
-	{
-		var categories = [];
-		/*
-		$.each(arr, function(index, item) {
-			var key = item.category;
-			if (!categories.contains(key))
-				categories.push(key);
-
-		*/
-		return categories;
-	},
-	clustering:function(arr,category) // currently unused
-	{
-		var categories = this.getCategories(arr,category);
-		var ret = [];
-		/*
-		categories.each(function(key)
-		{
-			arr.each(function(item){ 
-				if($H(item).get(category)==key) ret.push(item) 
-			});
-		});
-		*/
-		return ret;
-	},
 	seeCourseComments:function(e,obj)
 	{
 		var course_no = obj.course_no;
@@ -370,7 +344,7 @@ var CourseList = {
 var DictionaryCommentList = {
 	initialize:function()
 	{
-		this.comments = $('.course_comments');
+		this.comments = $('#course-comment-view');
 		this.submitComment = $('input[name="submitComment"]');
 		this.registerHandles();
 	},
@@ -423,7 +397,7 @@ var DictionaryCommentList = {
 	},
 	addToMultipleComment:function(obj)
 	{
-		var max = NUM_ITEMS_PER_COMMENT;
+		var max = NUM_ITEMS_PER_DICT_COMMENT;
 		var count=0;
 		$.each(obj, function(index, item) {
 			var comment = $('<div>', {'class': 'dictionary_comment'});

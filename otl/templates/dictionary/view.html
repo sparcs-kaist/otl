@@ -10,84 +10,74 @@ $(document).ready(function () {
 
 {% endblock %}
 {% block main %}
-<div id="Notifier">
-	<div id="indicator"></div>
-	<div id="message-wrap">
-		<div id="message"></div>
-	</div>
-</div>
-<div class="dictionary_part">
-	<span>{{course.old_code}}/{{course.score_average}}/{{course.load_average}}/{{course.gain_average}}</span>
-</div>
-<div class="dictionary_part">
-    <span>{% trans "과목 소개" %}</span>
-    <div>
-		{{summary.summary}}
-    </div>
-</div>
-<div class="dictionary_part">
-    <span>{% trans "선수 과목" %}</span>
-    <div>
-		{{summary.prerequisite}}
-    </div>
-</div>
-<div class="dictionary_part">
-    <span>{% trans "코멘트 남기기" %}</span>
-    {% if user.is_authenticated %}
-	<div>
-		<input type="text" name="course_id" value="{{course.id}}" hidden=true />
-		<div class="course_comment_form">
-			{% trans "로드" %} : 
-			<input type="radio" name="load" value="1"/> {% trans "쉬움" %}
-			<input type="radio" name="load" value="2"/> {% trans "무난" %}
-			<input type="radio" name="load" value="3"/> {% trans "힘듬" %}
+<div id="main-side">
+	<div id="course-description">
+		<div id="course-subject">
+			<span>{{course.old_code}}/{{course.score_average}}/{{course.load_average}}/{{course.gain_average}}</span>
 		</div>
-		<div class="course_comment_form">
-			{% trans "학점" %} :
-			<input type="radio" name="score" value="1"/> {% trans "박함" %}
-			<input type="radio" name="score" value="2"/> {% trans "무난" %}
-			<input type="radio" name="score" value="3"/> {% trans "후함" %}
+		<div id="course-professor">
 		</div>
-		<div class="course_comment_form">
-			{% trans "남는거" %} :
-			<input type="radio" name="gain" value="1"/> {% trans "없음" %}
-			<input type="radio" name="gain" value="2"/> {% trans "있음" %}
-			<input type="radio" name="gain" value="3"/> {% trans "많음" %}
-		</div>
-		<div>
-			<textarea name="comment" cols="50" rows="5"></textarea>
-		</div>
-	</div>
-	<div>
-		<input type="submit" name="submitComment" value="{% trans "남기기" %}" />
-	</div>
-    {% else %}
-    <div>
-        {% trans "로그인을 하셔야 코멘트를 남길 수 있습니다." %}
-    </div>
-    {% endif %}
-</div>
-<div class="dictionary_part">
-    <span>{% trans "코멘트들" %}</span>
-    <div class="course_comments">
-        {% for comment in comments %}
-        <div class="dictionary_comment">
-            <div class="dictionary_comment_content">
-                {{comment.comment}}<br>
-            </div>
-            <div class="dictionary_comment_eval">
-                {% trans "평가" %} - {% trans "로드" %} : <span>{{comment.load}}</span>, {% trans "학점" %} : <span>{{comment.score}}</span>, {% trans "남는거" %} : <span>{{comment.gain}}</span>
-                , By {{comment.writer}} ({{comment.written_datetime|date:"Y/m/d"}})
-            </div>
-			<div class="dictionary_comment_delete">
-				<form action = "/dictionary/delete_comment/" method="post">
-					<input type="text" name="comment_id" value="{{comment.id}}"	hidden=true />
-					<input type="submit" name="submitDelete" value="지우기" />
-				</form>
+		<div id="course-summary">
+			<span>{% trans "과목 소개" %}</span>
+			<div>
+				{{summary.summary}}
 			</div>
-        </div>
-        {% endfor %}
-    </div>
+			<span>{% trans "선수과목" %}</span>
+			<div>
+				{{summary.prerequisite}}
+			</div>
+		</div>
+	</div>
+	<div id="course-coment">
+		<div id="course-comment-add">
+			<span>{% trans "코멘트 남기기" %}</span>
+			{% if user.is_authenticated %}
+			<div>
+				<div>
+					{% trans "로드" %} :
+					<input type="radio" name="load" value="1"/> {% trans "별반개/빡셈" %}
+					<input type="radio" name="load" value="2"/> {% trans "별한개" %}
+					<input type="radio" name="load" value="3"/> {% trans "별한개반" %}
+					<input type="radio" name="load" value="4"/> {% trans "별두개" %}
+					<input type="radio" name="load" value="5"/> {% trans "별두개반" %}
+					<input type="radio" name="load" value="6"/> {% trans "별세개/널널함" %}
+				</div>
+				<div>
+					{% trans "학점" %} :
+					<input type="radio" name="score" value="1"/> {% trans "별반개/박함" %}
+					<input type="radio" name="score" value="2"/> {% trans "별한개" %}
+					<input type="radio" name="score" value="3"/> {% trans "별한개반" %}
+					<input type="radio" name="score" value="4"/> {% trans "별두개" %}
+					<input type="radio" name="score" value="5"/> {% trans "별두개반" %}
+					<input type="radio" name="score" value="6"/> {% trans "별세개/후함" %}
+				</div>
+				<div>
+					{% trans "남는거" %} :
+					<input type="radio" name="gain" value="1"/> {% trans "별반개/없음" %}
+					<input type="radio" name="gain" value="2"/> {% trans "별한개" %}
+					<input type="radio" name="gain" value="3"/> {% trans "별한개반" %}
+					<input type="radio" name="gain" value="4"/> {% trans "별두개" %}
+					<input type="radio" name="gain" value="5"/> {% trans "별두개반" %}
+					<input type="radio" name="gain" value="6"/> {% trans "별세개/많음" %}
+					<textarea name="comment" cols="50" rows="5"></textarea>
+					<input type="submit" name="submitComment" value="{% trans "남기기" %}" />
+				</div>
+			</div>
+			{% else %}
+			<div>
+				{% trans "로그인을 하셔야 코멘트를 남길 수 있습니다." %}
+			</div>
+			{% endif %}
+		</div>
+		<div id="course-comment-view">
+		</div>
+	</div>
+	<div id="Notifier">
+		<div id="indicator"></div>
+		<div id="message-wrap">
+			<div id="message"></div>
+		</div>
+	</div>
 </div>
-
+<div class="clear"></div>
 {% endblock %}
