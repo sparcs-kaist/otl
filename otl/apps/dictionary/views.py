@@ -390,7 +390,7 @@ def _comments_to_output(comments):
             'lecture_id': lecture_id,
             'writer_id': comment.writer.id,
             'writer_nickname': nickname,
-            'professor': _professors_to_output(_get_professor_by_cl(comment.course, comment.lecture)),
+            'professor': _professors_to_output(_get_professor_by_lecture(comment.lecture)),
             'written_datetime': comment.written_datetime.isoformat(),
             'comment': comment.comment,
             'score': comment.score,
@@ -418,10 +418,13 @@ def _courses_to_output(courses):
     if isinstance(courses, Course):
         item = {
                 'id': courses.id,
-                'course_no': courses.old_code,
+                'old_code': courses.old_code,
                 'dept_id': courses.department.id,
                 'type': courses.type,
-                'title': courses.title
+                'title': courses.title,
+                'score_average' : courses.score_average,
+                'load_average': courses.load_average,
+                'gain_average': courses.gain_average
                 }
         return item
 
@@ -430,10 +433,13 @@ def _courses_to_output(courses):
     for course in courses:
         item = {
                 'id': course.id,
-                'course_no': course.old_code,
+                'old_code': course.old_code,
                 'dept_id': course.department.id,
                 'type': course.type,
-                'title': course.title
+                'title': course.title,
+                'score_average': course.score_average,
+                'load_average': course.load_average,
+                'gain_average': course.gain_average
                 }
         all.append(item)
     return all
@@ -451,11 +457,9 @@ def _summary_to_output(summaries):
             }
     return item
 
-def _get_professor_by_cl(course, lecture):
-    if course == None and lecture == None:
-        return Professor.objects.all()
+def _get_professor_by_lecture(lecture):
     if lecture == None:
-        return course.professors.all()
+        return Professor.objects.none()
     return lecture.professor.all()
 
 def _get_taken_lecture_by_db(user, course):

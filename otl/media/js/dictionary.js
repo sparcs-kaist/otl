@@ -343,6 +343,8 @@ var CourseList = {
 var DictionaryCommentList = {
 	initialize:function()
 	{
+		this.summary = $('#course-summary');
+		this.eval = $('#course-eval');
 		this.comments = $('#course-comment-view');
 		this.submitComment = $('input[name="submitComment"]');
 		this.onLoad();
@@ -351,7 +353,7 @@ var DictionaryCommentList = {
 	onLoad:function()
 	{
 		this.addToMultipleProfessor(Data.Professors);
-		this.addToMultipleComment(Data.DictionaryComment);
+		this.onChangeProfessor(DictionaryCommentList, null);
 	},
 	registerHandles:function()
 	{
@@ -474,26 +476,58 @@ var DictionaryCommentList = {
 	{
 		this.comments.empty();
 	},
+	clearEval: function()
+	{
+		this.eval.empty();
+	},
 	update:function(obj)
 	{
 		Data.DictionaryComment = obj;
 	},
 	onChangeProfessor:function(e,obj)
 	{
+		this.clearEval();
 		if (obj===null) {
+			$('<a>').text('학점 : ' + Data.Course.score_average).appendTo(this.eval);
+			$('<a>').text('로드 : ' + Data.Course.load_average).appendTo(this.eval);
+			$('<a>').text('남는거 : ' + Data.Course.gain_average).appendTo(this.eval);
+
 			this.addToMultipleComment(Data.DictionaryComment);
 			Data.current_professor_id = -1;
 		}
 		else {	
-			Data.current_professor_id = obj.id;
+			Data.current_professor_id = obj.professor_id;
 			var new_comment=[];
-			var i;
+			var i, j;
 			for (i=0;i<Data.DictionaryComment.length;i++) {
-				if ($.inArray(obj, Data.DictionaryComment[i].professor)) {
-					new_comment.push(Data.DictionaryComment[i]);
+				for (j=0;j<Data.DictionaryComment[i].professor.length;j++) {
+					if (Data.DictionaryComment[i].professor[j].professor_id == obj.professor_id) {
+						new_comment.push(Data.DictionaryComment[i]);
+					}
 				}
 			}
+			var score_average = 0;
+			var load_average = 0;
+			var gain_average = 0;
+			for (i=0;i<new_comment.length;i++) {
+				score_average += new_comment[i].score;
+				load_average += new_comment[i].load;
+				gain_average += new_comment[i].gain;
+			}
+			if (new_comment.length == 0) {
+				score_average = 0;
+				load_average = 0;
+				gain_average = 0;
+			}
+			else {	
+				score_average /= new_comment.length;
+				load_average /= new_comment.length;
+				gain_average /= new_comment.length;
+			}
 
+			$('<a>').text('학점 : ' + score_average).appendTo(this.eval);
+			$('<a>').text('로드 : ' + load_average).appendTo(this.eval);
+			$('<a>').text('남는거 : ' + gain_average).appendTo(this.eval);
 			this.addToMultipleComment(new_comment);
 		}
 	}

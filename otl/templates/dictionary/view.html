@@ -28,19 +28,20 @@ $(document).ready(function () {
 <div id="main-side">
 	<div id="course-description">
 		<div id="course-subject">
-			<span>{{course.old_code}}/{{course.score_average}}/{{course.load_average}}/{{course.gain_average}}</span>
+			<span>{{course.old_code}}</span>
 		</div>
 		<div id="course-professor">
 		</div>
 		<div id="course-summary">
-			<span>{% trans "과목 소개" %}</span>
 			<div>
+				<span>{% trans "과목 소개" %}</span>
 				{{summary.summary}}
 			</div>
-			<span>{% trans "선수과목" %}</span>
 			<div>
+				<span>{% trans "선수과목" %}</span>
 				{{summary.prerequisite}}
 			</div>
+			<div id="course-eval"></div>
 		</div>
 	</div>
 	<div id="course-coment">
