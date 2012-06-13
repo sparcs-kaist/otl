@@ -134,6 +134,10 @@ def view(request, course_code):
         else:
             recent_summary = None
     
+        comments = Comment.objects.filter(course=course).order_by('-written_datetime')
+        comments_output = json.dumps(_comments_to_output(comments), ensure_ascii=False, indent=4)
+        course_output = json.dumps(_courses_to_output(course), ensure_ascii=False, indent=4)
+        lectures_output = _lectures_to_output(Lecture.objects.filter(course=course), True, request.session.get('django_language', 'ko'))
         result = 'OK'
     except ObjectDoesNotExist:
         result = 'NOT_EXIST' 
@@ -142,11 +146,12 @@ def view(request, course_code):
         'result' : result,
         'lang' : request.session.get('django_language', 'ko'),
         'departments': Department.objects.filter(visible=True).order_by('name'),
-        'course' : course,
+        'course' : course_output,
+        'lectures' : lectures_output,
         'professors' : course.professors,
         'summary' : recent_summary,
-        'comments' : Comment.objects.filter(course=course).order_by('-written_datetime')
-    }, context_instance=RequestContext(request))
+        'comments' : comments_output 
+        }, context_instance=RequestContext(request))
 
 def view_comment_by_professor(request):
     try:
@@ -210,12 +215,12 @@ def add_comment(request):
             'result':result},  ensure_ascii=False, indent=4))
     except ValidationError:
         return HttpResponseBadRequest()
-    except:
-        return HttpResponseServerError()
+    #except:
+    #    return HttpResponseServerError()
 
     return HttpResponse(json.dumps({
         'result': result,
-        'comment': _comments_to_output([new_comment])}, ensure_ascii=False, indent=4))
+        'comment': _comments_to_output(comments)}, ensure_ascii=False, indent=4))
             
 @login_required_ajax
 def delete_comment(request):
@@ -241,12 +246,12 @@ def delete_comment(request):
         result = 'REMOVE_NOT_EXIST'
     except ValidationError:
         return HttpResponseBadReqeust()
-    except:
-        return HttpResponseServerError()
+    #except:
+    #    return HttpResponseServerError()
 
     return HttpResponse(json.dumps({
-        'result': result}, ensure_ascii=False, indent=4)) # TODO: 삭제를 위해서는 무엇을 리턴해야 하는가?
-
+        'result': result,
+        'comment': _comments_to_output(comments)}, ensure_ascii=False, indent=4)) 
 
 def update_comment(request):
     comments = []
@@ -368,6 +373,7 @@ def _comments_to_output(comments):
         else:
             lecture_id = comment.lecture.id
         item = {
+            'comment_id': comment.id,
             'course_id': comment.course.id,
             'course_title': comment.course.title,
             'course_title_en': comment.course.title_en,
@@ -406,6 +412,16 @@ def _get_professor_by_cl(course, lecture):
 
 def _courses_to_output(courses):
     all = []
+    if isinstance(courses, Course):
+        item = {
+                'id': courses.id,
+                'course_no': courses.old_code,
+                'dept_id': courses.department.id,
+                'type': courses.type,
+                'title': courses.title
+                }
+        return item
+
     if not isinstance(courses, list):
         courses = courses.select_related()
     for course in courses:
@@ -431,3 +447,4 @@ def _summary_to_output(summaries):
             'course_id': summary.course.id
             }
     return item
+

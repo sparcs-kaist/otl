@@ -83,7 +83,6 @@ Mootabs.prototype.activate = function(key)
 			else $(item).addClass('none');
 		});
 		this.activeKey = key;
-		this.updateData();
 	};
 Mootabs.prototype.getTableId = function()
 	{
@@ -346,7 +345,12 @@ var DictionaryCommentList = {
 	{
 		this.comments = $('#course-comment-view');
 		this.submitComment = $('input[name="submitComment"]');
+		this.onLoad();
 		this.registerHandles();
+	},
+	onLoad:function()
+	{
+		this.addToMultipleComment(Data.DictionaryComment);
 	},
 	registerHandles:function()
 	{
@@ -358,8 +362,9 @@ var DictionaryCommentList = {
 		var new_comment_load = $('input[name="load"]:checked').val();
 		var new_comment_score = $('input[name="score"]:checked').val();
 		var new_comment_gain = $('input[name="gain"]:checked').val();
-		Data.lecture_id = -1;
-		Data.course_id = 1;
+		var course_id = Data.Course.id;
+		var lecture_id = Data.current_lecture_id;
+
 		if (!new_comment_load || !new_comment_score || !new_comment_gain) {
 			Notifier.setErrorMsg(gettext('로드, 학점, 남는거를 선택하세요.'));
 		}
@@ -367,13 +372,13 @@ var DictionaryCommentList = {
 			$.ajax({
 				type: 'POST', 
 				url: '/dictionary/add_comment/',
-				data: {'comment': new_comment_content, 'load': new_comment_load, 'score': new_comment_score, 'gain': new_comment_gain, 'lecture_id': Data.lecture_id, 'course_id': Data.course_id},
+				data: {'comment': new_comment_content, 'load': new_comment_load, 'score': new_comment_score, 'gain': new_comment_gain, 'lecture_id': lecture_id, 'course_id': course_id},
 				dataType: 'json',
-				success: $.proxy(function(resObj)
-				{
+				success: $.proxy(function(resObj) {
 					try {
 						if (resObj.result=='ADD') {
-							DictionaryCommentList.addToMultipleComment(resObj.comment)							
+							DictionaryCommentList.update(resObj.comment)							
+							DictionaryCommentList.addToMultipleComment(resObj.comment)
 						} else if (resObj.result='ALREADY_WRITTEN') {
 							Notifier.setErrorMsg(gettext('이미 등록하셨습니다.'));
 						}
@@ -395,21 +400,71 @@ var DictionaryCommentList = {
 			});
 		}
 	},
+	deleteComment:function(e,obj) 
+	{
+		$.ajax({
+			type: 'POST',
+			url: '/dictionary/delete_comment/',
+			data: {'comment_id': obj.comment_id},
+			dataType: 'json',
+			success: $.proxy(function(resObj) {
+				try {
+					if (resObj.result=='DELETE') {
+						DictionaryCommentList.update(resObj.comment);
+						DictionaryCommentList.addToMultipleComment(resObj.comment);
+					} else if (resObj=='REMOVE_NOT_EXIST') {
+						Notifier.setErrorMsg(gettext('잘못된 접근입니다.'));
+					}
+				}
+				catch(e) {
+					Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+e.message+')');
+				}
+			}, this),
+			error: function(xhr) {
+				if (suppress_ajax_errors)
+					return;
+				if (xhr.status == 403) {
+					Notifier.setErrorMsg(gettext('로그인 해야합니다.'));
+				}	
+				else {
+					Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+gettext('요청 실패')+':'+xhr.status+')');
+				}
+			}
+		});
+	},
 	addToMultipleComment:function(obj)
 	{
 		var max = NUM_ITEMS_PER_DICT_COMMENT;
 		var count=0;
+		this.clearComment();
 		$.each(obj, function(index, item) {
+			var enableDelete = (item.writer_id == Data.user_id);
 			var comment = $('<div>', {'class': 'dictionary_comment'});
 			comment.appendTo(DictionaryCommentList.comments);
 
+			$('<a>').text(item.writer_nickname).appendTo(comment);
 			$('<div>', {'class': 'dictionary_comment_content'}).text(item.comment).appendTo(comment);
 			//$('<div>', {'class': 'dictionary_comment_eval'}).text(gettext("평가") + '-');
 			//$('<span>').text(gettext("학점") + ':')
 			//$('<span>').text(get</span>{{comment.load}}</span>, {% trans "학점" %} : <span>{{comment.score}}</span>, {% trans "남는거" %} : <span>{{comment.gain}}</span>, By {{comment.writer}} ({{comment.written_datetime|date:"Y/m/d"}}').appendTo(comment);
-			$('<div>', {'class': 'dictionary_comment_delete'}).text("지우기").appendTo(comment);
+			
+			if (enableDelete) {
+				var deletelink = $('<div>', {'class': 'dictionary_comment_delete'}).text("지우기").appendTo(comment);
+				deletelink.bind('click', $.proxyWithArgs(DictionaryCommentList.deleteComment, DictionaryCommentList, item));
+			}
 		});
 
+	},
+	clearComment:function()
+	{
+		this.comments.empty();
+	},
+	update:function(obj)
+	{
+		Data.DictionaryComment = {};
+		$.each(obj, function(index, item) {
+			Data.DictionaryComment[item.comment_id] = item;
+		});
 	}
 };
 
@@ -451,9 +506,7 @@ var IndexCommentList = {
 	},
 	addToMultipleComment:function(obj)
 	{
-		console.log(obj);
 		$.each(obj, function(index, item) {
-			console.log(item);
 			var div_comment = $('<div>', {'class': 'timeline_comment'});
 			div_comment.appendTo(IndexCommentList.timeline);
 
