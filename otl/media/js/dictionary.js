@@ -518,7 +518,7 @@ var IndexCommentList = {
 			left_div_comment.appendTo(div_comment);
 			right_div_comment.appendTo(div_comment);
 
-			$('<a>', {'class': 'content_prof_photo'}).text('사진').appendTo(left_div_comment);
+			$('<img>', {'class': 'content_prof_photo', 'src':'http://cais.kaist.ac.kr/static_files/photo/1990/'+item.professor[0].professor_id+'.jpg'}).appendTo(left_div_comment);
 			$('<a>', {'class': 'content_prof_name'}).text(item.professor[0].professor_name).appendTo(left_div_comment);
 
 			var top_right_div_comment = $('<div>', {'class': 'timeline_comment_right_subject'});

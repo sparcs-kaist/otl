@@ -4,7 +4,7 @@
 	"model": "dictionary.professor", 
 	"fields":{
 		"professor_name":"\uc548\uc7ac\ub9cc", 
-		"professor_name_en":"Jaeman An", "professor_id":1
+		"professor_name_en":"Jaeman An", "professor_id":284
 	}
   },
   {
@@ -66,7 +66,7 @@
 	"model": "dictionary.professor", 
 	"fields":{
 		"professor_name":"\uc815\ucc3d\uc81c", 
-		"professor_name_en":"Changje Jeong", "professor_id":2
+		"professor_name_en":"Changje Jeong", "professor_id":285
 	}
   },
   {

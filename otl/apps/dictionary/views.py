@@ -138,6 +138,7 @@ def view(request, course_code):
         comments_output = json.dumps(_comments_to_output(comments), ensure_ascii=False, indent=4)
         course_output = json.dumps(_courses_to_output(course), ensure_ascii=False, indent=4)
         lectures_output = _lectures_to_output(Lecture.objects.filter(course=course), True, request.session.get('django_language', 'ko'))
+        professors_output = json.dumps(_professors_to_output(course.professors), ensure_ascii=False, indent=4) 
         result = 'OK'
     except ObjectDoesNotExist:
         result = 'NOT_EXIST' 
