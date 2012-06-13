@@ -439,6 +439,8 @@ var DictionaryCommentList = {
 		this.clearComment();
 		$.each(obj, function(index, item) {
 			var enableDelete = (item.writer_id == Data.user_id);
+			console.log(item.writer_id);
+			console.log(Data.user_id);
 			var comment = $('<div>', {'class': 'dictionary_comment'});
 			comment.appendTo(DictionaryCommentList.comments);
 
