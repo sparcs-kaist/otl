@@ -149,7 +149,7 @@ def view(request, course_code):
         'departments': Department.objects.filter(visible=True).order_by('name'),
         'course' : course_output,
         'lectures' : lectures_output,
-        'professors' : course.professors,
+        'professors' : professors_output,
         'summary' : recent_summary,
         'comments' : comments_output 
         }, context_instance=RequestContext(request))

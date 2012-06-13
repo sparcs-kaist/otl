@@ -350,6 +350,7 @@ var DictionaryCommentList = {
 	},
 	onLoad:function()
 	{
+		this.addToMultipleProfessor(Data.Professors);
 		this.addToMultipleComment(Data.DictionaryComment);
 	},
 	registerHandles:function()
@@ -363,7 +364,7 @@ var DictionaryCommentList = {
 		var new_comment_score = $('input[name="score"]:checked').val();
 		var new_comment_gain = $('input[name="gain"]:checked').val();
 		var course_id = Data.Course.id;
-		var lecture_id = Data.current_lecture_id;
+		var lecture_id = -1;
 
 		if (!new_comment_load || !new_comment_score || !new_comment_gain) {
 			Notifier.setErrorMsg(gettext('로드, 학점, 남는거를 선택하세요.'));
@@ -455,7 +456,21 @@ var DictionaryCommentList = {
 				deletelink.bind('click', $.proxyWithArgs(DictionaryCommentList.deleteComment, DictionaryCommentList, item));
 			}
 		});
+	},
+	addToMultipleProfessor:function(obj)
+	{
+		var professor_tabs = $('#course-professor');
+		var default_tab = $('<div>', {'class': 'course-professor-tab'}).text('일반');
 
+		default_tab.appendTo(professor_tabs);
+		default_tab.bind('click', $.proxyWithArgs(DictionaryCommentList.onChangeProfessor, DictionaryCommentList, null));
+
+		$.each(obj, function(index, item) {
+			var professor_tab = $('<div>', {'class': 'course-professor-tab'}).text(item.professor_name);
+			professor_tab.appendTo(professor_tabs);
+			
+			professor_tab.bind('click', $.proxyWithArgs(DictionaryCommentList.onChangeProfessor, DictionaryCommentList, item));
+		});
 	},
 	clearComment:function()
 	{
@@ -463,10 +478,26 @@ var DictionaryCommentList = {
 	},
 	update:function(obj)
 	{
-		Data.DictionaryComment = {};
-		$.each(obj, function(index, item) {
-			Data.DictionaryComment[item.comment_id] = item;
-		});
+		Data.DictionaryComment = obj;
+	},
+	onChangeProfessor:function(e,obj)
+	{
+		if (obj===null) {
+			this.addToMultipleComment(Data.DictionaryComment);
+			Data.current_professor_id = -1;
+		}
+		else {	
+			Data.current_professor_id = obj.id;
+			var new_comment=[];
+			var i;
+			for (i=0;i<Data.DictionaryComment.length;i++) {
+				if ($.inArray(obj, Data.DictionaryComment[i].professor)) {
+					new_comment.push(Data.DictionaryComment[i]);
+				}
+			}
+
+			this.addToMultipleComment(new_comment);
+		}
 	}
 };
 
