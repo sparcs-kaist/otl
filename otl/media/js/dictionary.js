@@ -301,8 +301,8 @@ var CourseList = {
 	},
 	seeCourseComments:function(e,obj)
 	{
-		var course_no = obj.course_no;
-		var url = '/dictionary/view/' + course_no + '/';
+		var old_code = obj.old_code;
+		var url = '/dictionary/view/' + old_code + '/';
 		$.post(url, function(data) {
 			window.location = url;
 		});
