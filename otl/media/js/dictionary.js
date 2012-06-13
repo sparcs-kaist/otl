@@ -452,7 +452,8 @@ var DictionaryCommentList = {
 			$('<div>', {'class': 'dictionary_comment_eval'}).text(gettext("남는거") + ':' + item.gain).appendTo(comment);
 			
 			if (enableDelete) {
-				var deletelink = $('<div>', {'class': 'dictionary_comment_delete'}).text("지우기").appendTo(comment);
+				var deletelink = $('<div>', {'class': 'dictionary_comment_delete'}).text("지우기")
+				deletelink.appendTo(comment);
 				deletelink.bind('click', $.proxyWithArgs(DictionaryCommentList.deleteComment, DictionaryCommentList, item));
 			}
 		});

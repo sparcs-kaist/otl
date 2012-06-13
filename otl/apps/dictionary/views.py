@@ -229,7 +229,7 @@ def add_comment(request):
 
     return HttpResponse(json.dumps({
         'result': result,
-        'comment': _comments_to_output(comments)}, ensure_ascii=False, indent=4))
+        'comment': _comments_to_output(comments, False, request.session.get('django_language','ko'))}, ensure_ascii=False, indent=4))
             
 @login_required_ajax
 def delete_comment(request):
