@@ -13,7 +13,7 @@ Data.Lectures =
 	{
 		id:'1',
 		dept_id:'3847',
-		classification:'기초필수',
+		type:'기초필수',
 		course_no:'CS202',
 		class_no:'A',
 		code:'37.231',
@@ -226,7 +226,7 @@ var CourseList = {
 		content.appendTo(CourseList.contents);
 		var currCategory;
 		$.each(obj, function(index, item) {
-			var key = item.classification;
+			var key = item.type;
 			if (currCategory != key) {
 				currCategory = key;
 				if (count < max) $('<h4>').text(currCategory).appendTo(content);
