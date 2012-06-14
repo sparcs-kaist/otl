@@ -19,7 +19,6 @@ from otl.apps.accounts.models import Department, UserProfile
 from otl.apps.timetable.models import Lecture
 from otl.apps.dictionary.models import *
 from otl.apps.timetable.views import _lectures_to_output
-from StringIO import StringIO
 
 from django import template
 template.add_to_builtins('django.templatetags.i18n')
@@ -74,6 +73,11 @@ def index(request):
         'planned_au' : u'넘겨줘',
         'monthly_rank_list' : monthly_rank_list,
         'todo_comment_list' : todo_comment_list,
+        'dept': -1,
+        'classification': 0,
+        'keyword': json.dumps('',ensure_ascii=False,indent=4), 
+        'in_category': json.dumps(False),
+        'active_tab': -1,
     }, context_instance=RequestContext(request))
 
 def department(request, department_id):
@@ -128,6 +132,12 @@ def view(request, course_code):
     recent_summary = None
 
     try:
+        dept = int(request.GET.get('dept', -1))
+        classification = int(request.GET.get('classification', 0))
+        keyword = request.GET.get('keyword', "")
+        in_category = request.GET.get('in_category', json.dumps(False))
+        active_tab = int(request.GET.get('active_tab', -1))
+
         course = Course.objects.get(old_code=course_code.upper())
         summary = Summary.objects.filter(course=course).order_by('-written_datetime')
         lang=request.session.get('django_language','ko')
@@ -153,7 +163,12 @@ def view(request, course_code):
         'lectures' : lectures_output,
         'professors' : professors_output,
         'summary' : recent_summary,
-        'comments' : comments_output 
+        'comments' : comments_output,
+        'dept': dept,
+        'classification': classification,
+        'keyword': keyword,
+        'in_category': in_category,
+        'active_tab': active_tab
         }, context_instance=RequestContext(request))
 
 def view_comment_by_professor(request):

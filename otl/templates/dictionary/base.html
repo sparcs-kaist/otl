@@ -16,6 +16,12 @@ $(document).ready(function() {
     Data.Lectures = [];
     Data.MediaUrl = [];
 
+	CourseList.pre_dept = {{dept}};
+	CourseList.pre_classification = {{classification}};
+	CourseList.pre_keyword = "{{keyword}}";
+	CourseList.pre_in_category = {{in_category}};
+	CourseList.pre_active_tab = {{active_tab}};
+
     Notifier.initialize();
     CourseList.initialize();        
 });

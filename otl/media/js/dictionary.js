@@ -116,6 +116,22 @@ var Utils = {
 		var hour = Math.floor(t / 60);
 		var minute = t % 60;
 		return (hour < 10 ? '0':'') + hour + ':' + (minute < 10 ? '0':'') + minute;
+	},
+	post_to_url:function(path, params, method) 
+	{
+		method = method || "post";
+		var form = document.createElement("form");
+		form.setAttribute("method", method);
+		form.setAttribute("action", path);
+		for (var key in params) {
+			var hiddenField = document.createElement("input");
+			hiddenField.setAttribute("type", "hidden");
+			hiddenField.setAttribute("name", key);
+			hiddenField.setAttribute("value", params[key]);
+			form.appendChild(hiddenField);
+		}
+		document.body.appendChild(form);
+		form.submit();
 	}
 };
 
@@ -135,7 +151,8 @@ var CourseList = {
 		this.dept.selectedIndex = 0;
 		this.registerHandles();
 		this.getAutocompleteList();
-		this.onChange();
+		if (this.pre_active_tab === -1) this.onChange();
+		else this.onPreChange();
 	},
 	registerHandles:function()
 	{
@@ -212,13 +229,42 @@ var CourseList = {
 				this.filter({'dept':-1,'type':'전체보기','lang':USER_LANGUAGE,'keyword':keyword});
 		}
 	},
+	onPreChange:function()
+	{
+		//console.log(pre_keyword);
+		if (this.pre_keyword === false) this.pre_keyword = '';
+
+		document.getElementById("department").selectedIndex = this.pre_dept;
+		document.getElementById("classification").selectedIndex = this.pre_classification;
+		document.getElementById("keyword").value = this.pre_keyword;
+		document.getElementById("in_category").checked = this.pre_in_category;
+
+		var dept = document.getElementById("department")[this.pre_dept].value;
+		var classification = document.getElementById("classification")[this.pre_classification].value;
+		var keyword = this.pre_keyword.replace(/^s+|\s+$/g, '');
+		var in_category = this.pre_in_category;
+		var active_tab = this.pre_active_tab-1;
+
+		if (dept == '-1' && USER_LANGUAGE == 'ko' && classification == '전체보기' && keyword == '')
+			Notifier.setErrorMsg('키워드 없이 학과 전체보기는 과목 구분을 선택한 상태에서만 가능합니다.');
+		else if (dept == '-1' && USER_LANGUAGE == 'en' && classification == '전체보기' && keyword == '')
+			Notifier.setErrorMsg('You must select a course type if you want to see \'ALL\' departments without keywords.');
+		else {
+			if( in_category || keyword == '')
+				this.filter({'dept':dept,'type':classification,'lang':USER_LANGUAGE,'keyword':keyword},active_tab);
+			else
+				this.filter({'dept':-1,'type':'전체보기','lang':USER_LANGUAGE,'keyword':keyword},active_tab);
+		}
+		this.pre_active_tab=-1;
+	},
 	clearList:function()
 	{
 		CourseList.contents.empty(); 
 		CourseList.buildTabs(CourseList.contents.children().length);
 	},
-	addToListMultiple:function(obj)
+	addToListMultiple:function(obj,active_tab)
 	{
+		if (active_tab===undefined) active_tab=0;
 		CourseList.contents.empty(); 
 		var max = NUM_ITEMS_PER_LIST;
 		var count=0;
@@ -245,9 +291,10 @@ var CourseList = {
 			el.bind('mousedown', $.proxyWithArgs(CourseList.seeCourseComments, CourseList, item));
 		});
 		CourseList.buildTabs(CourseList.contents.children().length);
-		new Mootabs($('#lecture_tabs'), $('#lecture_contents'));
+		this.mootabs = new Mootabs($('#lecture_tabs'), $('#lecture_contents'));
+		this.mootabs.activate(active_tab);
 	},
-	filter:function(conditions)
+	filter:function(conditions,active_tab)
 	{
 		//TODO: conditions.type와 상관 없도록 고쳐야 함
 		if (conditions.type == undefined){
@@ -271,7 +318,7 @@ var CourseList = {
 						if (!this.loading)
 							Notifier.setErrorMsg(gettext('과목 정보를 찾지 못했습니다.'));
 					} else {
-						CourseList.addToListMultiple(resObj);
+						CourseList.addToListMultiple(resObj,active_tab);
 						if (!this.loading)
 							Notifier.setMsg(gettext('검색 결과를 확인하세요.'));
 					}
@@ -303,40 +350,15 @@ var CourseList = {
 	{
 		var old_code = obj.old_code;
 		var url = '/dictionary/view/' + old_code + '/';
-		$.post(url, function(data) {
-			window.location = url;
-		});
-		/*
-		$.ajax({
-				type: 'GET', 
-				url: '/dictionary/view/'+course_no,
-				data: {'course_no':course_no},
-				dataType: 'json',
-				success: $.proxy(function(resObj)
-				{
-					try {
-						if (resObj.result=='OK') {
-						} else {
-							var msg;
-							Notifier.setErrorMsg(msg);
-						}
-					}
-					catch(e) {
-						Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+e.message+')');
-					}
-				}, this),
-				error: function(xhr) {
-					if (suppress_ajax_errors)
-						return;
-					if (xhr.status == 403){
-						Notifier.setErrorMsg(gettext('로그인해야 합니다.'));
-					}
-					else{
-						Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+gettext('요청 실패')+':'+xhr.status+')');
-					}
-				}
-			});
-		*/
+
+		var dept = document.getElementById("department").selectedIndex;
+		var classification = document.getElementById("classification").selectedIndex;
+		var keyword = $(this.keyword).val();
+		var in_category = $(this.in_category).is(':checked');
+		var active_tab = $('div[class="lecture_tab active"]').text();
+		var sendData = {'dept':dept, 'classification':classification, 'keyword':keyword, 'in_category':in_category, 'active_tab':active_tab};
+
+		Utils.post_to_url(url, sendData, 'GET');
 	}
 };
 
