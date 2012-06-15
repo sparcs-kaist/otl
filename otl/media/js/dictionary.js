@@ -369,6 +369,8 @@ var DictionaryCommentList = {
 		this.eval = $('#course-eval');
 		this.comments = $('#course-comment-view');
 		this.submitComment = $('input[name="submitComment"]');
+                this.addSummaryShow = $('input[name="addSummaryShow"]');
+                this.addSummarySend = $('input[name="addSummarySend"]');
 		this.onLoad();
 		this.registerHandles();
 	},
@@ -380,7 +382,48 @@ var DictionaryCommentList = {
 	registerHandles:function()
 	{
 		$(this.submitComment).bind('mousedown', $.proxy(this.addComment, this));
+		$(this.addSummarySend).bind('mousedown', $.proxy(this.addSummary, this));
 	},
+
+	addSummary:function()
+	{
+		var new_summary_content = $("#summary_add_content").val();
+		var course_id = Data.Course.id;
+                var writer_id = Data.user_id;
+                $.ajax({
+                    type: 'POST',
+                    url: '/dictionary/add_summary/',
+                    data: {'content': new_summary_content, 'course_id': course_id, 'writer_id': writer_id},
+                    dataType: 'json',
+                    success: $.proxy(function(resObj) {
+                        try {
+                            if (resObj.result=='OK') {
+                                Data.summary = resObj.summary
+                            }
+                            else {
+                            }
+                        }
+                        catch(e) {
+                            Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+e.message+')');
+                                }
+				}, this),
+		    error: function(xhr) {
+			if (suppress_ajax_errors)
+                            return;
+			if (xhr.status == 403){
+		            Notifier.setErrorMsg(gettext('로그인해야 합니다.'));
+			}
+			else{
+			    Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+gettext('요청 실패')+':'+xhr.status+')');
+			}
+		    }
+		});
+                $("#summary_label").text(new_summary_content);
+                $("#summary_add_content").text(new_summary_content);
+                $("#summary_add").hide();
+                $("#summary_show").show();
+	},
+
 	addComment:function()
 	{
 		var new_comment_content = $('textarea[name="comment"]').val();
