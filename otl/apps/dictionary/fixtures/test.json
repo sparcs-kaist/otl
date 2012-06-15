@@ -24,7 +24,7 @@
 	}
   },
   {
-    "pk": 2,
+    "pk": 3,
 	"model": "dictionary.course",
 	"fields":{
 		"old_code": "HS297",
@@ -40,7 +40,7 @@
 	}
   },
   {
-    "pk": 3,
+    "pk": 4,
 	"model": "dictionary.course",
 	"fields":{
 		"old_code": "PH141",
@@ -56,7 +56,7 @@
 	}
   },
   {
-    "pk": 4,
+    "pk": 5,
 	"model": "dictionary.course",
 	"fields":{
 		"old_code": "BEP492",
