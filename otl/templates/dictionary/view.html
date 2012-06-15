@@ -15,9 +15,8 @@ $(document).ready(function () {
 	Data.DictionaryComment = {{comments|safe}};
 	Data.Course = {{course|safe}};
 	Data.Lectures = {{lectures|safe}};
-	Data.Professors = {{professors|safe}};
+        Data.Professors = {{professors|safe}};
 	Data.current_professor_id = -1;
-
 	DictionaryCommentList.initialize();
 });
 //]]>
@@ -35,7 +34,14 @@ $(document).ready(function () {
 		<div id="course-summary">
 			<div>
 				<span>{% trans "과목 소개" %}</span>
-				{{summary.summary}}
+				<div id="summary_show">
+                                	<label id="summary_label">{{summary.summary}}</label>
+					<input type="submit" name="addSummaryShow" value ={% trans "수정하기" %} onclick="$('#summary_show').hide(); $('#summary_add').show();"/>
+				</div>
+				<div id="summary_add" hidden="true">
+                                	<textarea id="summary_add_content" name="summary" cols="50" rows="5">{{summary.summary}}</textarea>
+					<input type="submit" name="addSummarySend" value ="{% trans "완료" %}" />
+				</div>
 			</div>
 			<div>
 				<span>{% trans "선수과목" %}</span>
@@ -74,10 +80,13 @@ $(document).ready(function () {
 					<input type="radio" name="gain" value="3"/> {% trans "별한개반" %}
 					<input type="radio" name="gain" value="4"/> {% trans "별두개" %}
 					<input type="radio" name="gain" value="5"/> {% trans "별두개반" %}
-					<input type="radio" name="gain" value="6"/> {% trans "별세개/많음" %} <br />
-					<textarea name="comment" cols="50" rows="5"></textarea>
+                                        <input type="radio" name="gain" value="6"/> {% trans "별세개/많음" %} 
+                                </div>
+                                <div>
+                                        <textarea name="comment" cols="50" rows="5"></textarea>
 					<input type="submit" name="submitComment" value="{% trans "남기기" %}" />
-				</div>
+                                </div>
+
 			</div>
 			{% else %}
 			<div>

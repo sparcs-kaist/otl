@@ -162,8 +162,8 @@ def view(request, course_code):
         'course' : course_output,
         'lectures' : lectures_output,
         'professors' : professors_output,
-        'summary' : recent_summary,
         'comments' : comments_output,
+        'summary' : recent_summary,
         'dept': dept,
         'classification': classification,
         'keyword': keyword,
@@ -315,13 +315,14 @@ def add_summary(request):
             raise ValidationError()
         writer = request.user
         written_datetime = datetime.datetime.now()
-        new_summary = Summary(summary=content, writer=writer, written_datetime=writte_datetime, course=course)
+        new_summary = Summary(summary=content, writer=writer, written_datetime=written_datetime, course=course)
+        new_summary.save()
         result = 'OK'
     except ValidationError:
         return HttpResponseBadReqeust()
     except:
         return HttpResponseServerError()
-    
+
     return HttpResponse(json.dumps({
         'result': result,
         'summary': _summary_to_output([new_summary],False,'ko')}, ensure_ascii=False, indent=4))
@@ -504,7 +505,7 @@ def _courses_to_output(courses,conv_to_json=True,lang='ko'):
 
 def _summary_to_output(summaries,conv_to_json=True,lang='ko'):
     all = []
-    if not isintance(summaries, list):
+    if not isinstance(summaries, list):
         summaries = summaries.select_related()
     for summary in summaries:
         item = {
@@ -513,6 +514,7 @@ def _summary_to_output(summaries,conv_to_json=True,lang='ko'):
             'written_datetime': summary.written_datetime,
             'course_id': summary.course.id
             }
+        all.append(item) 
     if conv_to_json:
         io = StringIO()
         if settings.DEBUG:
@@ -521,7 +523,7 @@ def _summary_to_output(summaries,conv_to_json=True,lang='ko'):
             json.dump(item,io,ensure_ascii=False,sort_keys=False,separators=(',',':'))
         return io.getvalue()
     else :
-        return item
+        return all
 
 def _get_professor_by_lecture(lecture):
     if lecture == None:
