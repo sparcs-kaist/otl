@@ -25,5 +25,5 @@ urlpatterns = patterns('',
     (ur'^favicon.ico$', lambda request: HttpResponseNotFound()),
 
     (ur'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': './media'}),
-    (ur'^admin/(.*)', admin.site.root),
+    (ur'^admin/',include(admin.site.urls)),
 )
