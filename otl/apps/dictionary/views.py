@@ -139,14 +139,14 @@ def view(request, course_code):
         active_tab = int(request.GET.get('active_tab', -1))
 
         course = Course.objects.get(old_code=course_code.upper())
-        summary = Summary.objects.filter(course=course).order_by('-written_datetime')
+        summary = Summary.objects.filter(course=course).order_by('-id')
         lang=request.session.get('django_language','ko')
         if summary.count() > 0:
             recent_summary = summary[0]
         else:
             recent_summary = None
     
-        comments = Comment.objects.filter(course=course).order_by('-written_datetime')
+        comments = Comment.objects.filter(course=course).order_by('-id')
         comments_output = _comments_to_output(comments,True,lang)
         course_output = _courses_to_output(course,True,lang)
         lectures_output = _lectures_to_output(Lecture.objects.filter(course=course), True, lang)
@@ -353,7 +353,7 @@ def _update_comment(count, **conditions):
     if department != None:
         comments = Comment.objects.filter(course__department=department)
     else:
-        comments = Comment.objects.all().order_by('-written_datetime')
+        comments = Comment.objects.all().order_by('-id')
     comments_size = comments.count()
     if comments_size < count:
         return comments[0:comments_size]

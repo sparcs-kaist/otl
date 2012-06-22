@@ -55,7 +55,7 @@ class Comment(models.Model):
 
 class CommentAdmin(admin.ModelAdmin):
     list_display = ('course', 'comment', 'load', 'score', 'gain')
-    ordering = ('-written_datetime',)
+    ordering = ('-id',)
 
 class LectureRating(models.Model):
     course = models.ForeignKey(Course, related_name='rating_set')   # 과목
