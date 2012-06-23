@@ -87,8 +87,8 @@ $(document).ready(function() {
 				{% for c in todo_comment_list %}
 				<tr>
 					<td>{{ c.semester }}</td>
-					<td>{{ c.code }}</td>
-					<td>{{ c.lecture_name }}</td>
+					<td>{{ c.course_no }}</td>
+					<td>{{ c.title }}</td>
 					<td>{{ c.prof }}</td>
 					<td><a href="{{ c.url }}">바로가기</a></td>
 				</tr>

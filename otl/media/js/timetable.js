@@ -713,6 +713,9 @@ var Timetable = {
 							case 'DUPLICATED':
 								msg = gettext('강의 시간이 겹칩니다.');
 								break;
+                                                        case 'OVERLAPPEDEXAMTIME':
+                                                                msg = gettext('시험 시간이 겹칩니다.');
+                                                                break;
 							case 'ERROR':
 							default:
 								msg = gettext('기타 오류입니다.');

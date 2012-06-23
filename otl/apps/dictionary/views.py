@@ -52,7 +52,10 @@ def index(request):
 
     rank_list = [{'rank':0, 'ID':'noname', 'score':u'넘겨줘'}]*10
     monthly_rank_list = [{'rank':0, 'ID':'noname', 'score':u'넘겨줘'}]*10
-    todo_comment_list = [{'semester':u'0000ㅁ학기', 'code':'XX000', 'lecture_name':'넘겨', 'prof':'넘겨', 'url':'/넘겨야할/주소/줘'}]*10
+    todo_comment_list = []
+    if request.user.is_authenticated():
+        comment_lecture_list = _get_unwritten_lecture_by_db(request.user)
+        todo_comment_list = _lectures_to_output(comment_lecture_list, False, request.session.get('django_language','ko'))
     return render_to_response('dictionary/index.html', {
         'section': 'dictionary',
         'title': ugettext(u'과목 사전'),
@@ -75,7 +78,7 @@ def index(request):
         'todo_comment_list' : todo_comment_list,
         'dept': -1,
         'classification': 0,
-        'keyword': json.dumps('',ensure_ascii=False,indent=4), 
+        'keyword': json.dumps('',ensure_ascii=False,indent=4),
         'in_category': json.dumps(False),
         'active_tab': -1,
     }, context_instance=RequestContext(request))
@@ -540,3 +543,20 @@ def _get_taken_lecture_by_db(user, course):
         return result
     except ObjectDoesNotExist:
         return Lecture.objects.none()
+
+def _get_unwritten_lecture_by_db(user):
+    try:
+        take_lecture_list = UserProfile.objects.get(user=user).take_lecture_list.all()
+    except ObjectDoesNotExist:
+        return Lecture.objects.none()
+
+    try:
+        comment_list = Comment.objects.filter(writer=user)
+    except ObjectDoesNotExist :
+        comment_list = []
+    
+    ret_list = list(take_lecture_list)
+    for comment in comment_list:
+        if comment.lecture in ret_list:
+            ret_list.remove(comment.lecture)
+    return ret_list

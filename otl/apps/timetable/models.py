@@ -64,6 +64,17 @@ class Lecture(models.Model):
                     return True
         return False
 
+    def check_examtime_overlapped(self, another_lecture):
+        '''이 과목과 주어진 다른 과목의 시험 시간 중 겹치는 것이 있는지 검사한다.'''
+        my_times = self.examtime_set.all()
+        their_times = another_lecture.examtime_set.all()
+
+        for mt in my_times:
+            for tt in their_times:
+                if not (mt.end <= tt.begin or mt.begin >= tt.end) and mt.day==tt.day:
+                    return True
+        return False
+
     def dictionary_url(self):
         return 'dictionary/' + self.code
 
@@ -202,6 +213,9 @@ class TimetableAdmin(admin.ModelAdmin):
     ordering = ('user', 'year', 'semester', 'table_id')
 
 class OverlappingTimeError(Exception):
+    pass
+
+class OverlappingExamTimeError(Exception):
     pass
 
 admin.site.register(Lecture, LectureAdmin)
