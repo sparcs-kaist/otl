@@ -8,7 +8,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.http import *
 from django.contrib.auth.decorators import login_required
-from django.db.models import Q, Avg
+from django.db.models import Q, Avg, Max
 from django.utils.html import strip_tags, escape
 from django.utils import simplejson as json
 from otl.apps.favorites.models import CourseLink
@@ -26,6 +26,8 @@ template.add_to_builtins('django.templatetags.i18n')
 from django.utils.translation import ugettext
 from StringIO import StringIO
 import datetime
+
+comment_num = 10
 
 def index(request):
 
@@ -127,6 +129,19 @@ def get_autocomplete_list(request):
     except:
         return HttpResponseBadRequest()
 
+def show_more_comments(request):
+    course_id = int(request.GET.get('course_id', -1))
+    next_comment_id = int(request.GET.get('next_comment_id', -1))
+    course = Course.objects.get(id=course_id)
+    comments = Comment.objects.filter(course=course,id__lte=next_comment_id).order_by('-id')[:comment_num]
+    lang=request.session.get('django_language','ko')
+    comments_output = _comments_to_output(comments,False,lang)
+
+    return HttpResponse(json.dumps({
+        'next_comment_id': comments[len(comments)-1].id-1,
+        'comments': comments_output}))
+
+
 def view(request, course_code):
     course = None
     recent_summary = None
@@ -146,8 +161,7 @@ def view(request, course_code):
         else:
             recent_summary = None
     
-        comments = Comment.objects.filter(course=course).order_by('-written_datetime')
-        comments_output = _comments_to_output(comments,True,lang)
+        max_id = Comment.objects.aggregate(Max('id'))['id__max']
         course_output = _courses_to_output(course,True,lang)
         lectures_output = _lectures_to_output(Lecture.objects.filter(course=course), True, lang)
         professors_output = _professors_to_output(course.professors,True,lang) 
@@ -160,9 +174,9 @@ def view(request, course_code):
         'lang' : request.session.get('django_language', 'ko'),
         'departments': Department.objects.filter(visible=True).order_by('name'),
         'course' : course_output,
+        'max_id' : max_id,
         'lectures' : lectures_output,
         'professors' : professors_output,
-        'comments' : comments_output,
         'summary' : recent_summary,
         'dept': dept,
         'classification': classification,
@@ -230,6 +244,7 @@ def add_comment(request):
         new_comment.save()
 
         comments = Comment.objects.filter(course=course)      
+        new_comment = Comment.objects.filter(id=new_comment.id)      
         average = comments.aggregate(avg_score=Avg('score'),avg_gain=Avg('gain'),avg_load=Avg('load'))
         Course.objects.filter(id=course.id).update(score_average=average['avg_score'], load_average=average['avg_load'], gain_average=average['avg_gain'])
 
@@ -245,7 +260,7 @@ def add_comment(request):
 
     return HttpResponse(json.dumps({
         'result': result,
-        'comment': _comments_to_output(comments, False, request.session.get('django_language','ko'))}, ensure_ascii=False, indent=4))
+        'comment': _comments_to_output(new_comment, False, request.session.get('django_language','ko'))}, ensure_ascii=False, indent=4))
             
 @login_required_ajax
 def delete_comment(request):
@@ -258,7 +273,7 @@ def delete_comment(request):
         comment = Comment.objects.get(pk=comment_id, writer=user)
         comment.delete()
         result = 'DELETE'
-        
+         
         course = comment.course
         lecture = comment.lecture
         comments = Comment.objects.filter(course=course)

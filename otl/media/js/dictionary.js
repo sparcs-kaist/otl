@@ -373,6 +373,8 @@ var DictionaryCommentList = {
                 this.addSummarySend = $('input[name="addSummarySend"]');
 		this.onLoad();
 		this.registerHandles();
+                this.loading=true;
+                this.showMoreComments();
 	},
 	onLoad:function()
 	{
@@ -383,6 +385,47 @@ var DictionaryCommentList = {
 	{
 		$(this.submitComment).bind('mousedown', $.proxy(this.addComment, this));
 		$(this.addSummarySend).bind('mousedown', $.proxy(this.addSummary, this));
+
+                $(window).scroll(function() {
+                    if(!DictionaryCommentList.loading){
+                    if($(window).scrollTop() + $(window).height() == $(document).height()) {
+			    DictionaryCommentList.showMoreComments();
+
+                    }
+                    }
+                });
+
+	},
+
+	showMoreComments:function()
+	{
+		if (Data.comment_id>0){
+			var conditions = {'course_id': Data.Course.id, 'next_comment_id': Data.comment_id};
+			$.ajax({
+				type: 'GET',
+				url: '/dictionary/show_more_comments/',
+				data: conditions,
+				dataType: 'json',
+				success: $.proxy(function(resObj) {
+					try {
+						Data.comment_id = resObj.next_comment_id;
+						DictionaryCommentList.addToMultipleComment(resObj.comments);
+                                                Data.DictionaryComment = Data.DictionaryComment.concat(resObj.comments);
+					} catch(e) {
+						Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+e.message+')');
+					}
+                                        this.loading = false;
+
+				}, this),
+				error: $.proxy(function(xhr) {
+					if (suppress_ajax_errors)
+						return;
+					Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+gettext('요청 실패')+':'+xhr.status+')');
+                                        this.loading = false;
+				}, this)
+			});
+		}
+
 	},
 
 	addSummary:function()
@@ -445,8 +488,8 @@ var DictionaryCommentList = {
 				success: $.proxy(function(resObj) {
 					try {
 						if (resObj.result=='ADD') {
-							DictionaryCommentList.update(resObj.comment)							
-							DictionaryCommentList.addToMultipleComment(resObj.comment)
+							DictionaryCommentList.addToFront(resObj.comment);							
+							DictionaryCommentList.addNewComment(resObj.comment);
 						} else if (resObj.result='ALREADY_WRITTEN') {
 							Notifier.setErrorMsg(gettext('이미 등록하셨습니다.'));
 						}
@@ -504,7 +547,8 @@ var DictionaryCommentList = {
 	{
 		var max = NUM_ITEMS_PER_DICT_COMMENT;
 		var count=0;
-		this.clearComment();
+		//this.clearComment();
+			
 		$.each(obj, function(index, item) {
 			var enableDelete = (item.writer_id == Data.user_id);
 			var comment = $('<div>', {'class': 'dictionary_comment'});
@@ -515,7 +559,7 @@ var DictionaryCommentList = {
 			$('<div>', {'class': 'dictionary_comment_eval'}).text(gettext("학점") + ':' + item.score).appendTo(comment);
 			$('<div>', {'class': 'dictionary_comment_eval'}).text(gettext("로드") + ':' + item.load).appendTo(comment);
 			$('<div>', {'class': 'dictionary_comment_eval'}).text(gettext("남는거") + ':' + item.gain).appendTo(comment);
-			
+		
 			if (enableDelete) {
 				var deletelink = $('<div>', {'class': 'dictionary_comment_delete'}).text("지우기")
 				deletelink.appendTo(comment);
@@ -549,6 +593,10 @@ var DictionaryCommentList = {
 	update:function(obj)
 	{
 		Data.DictionaryComment = obj;
+	},
+	addToFront:function(obj)
+	{
+		Data.DictionaryComment = obj.concat(Data.DictionaryComment);
 	},
 	onChangeProfessor:function(e,obj)
 	{
@@ -596,7 +644,30 @@ var DictionaryCommentList = {
 			$('<a>').text('남는거 : ' + gain_average).appendTo(this.eval);
 			this.addToMultipleComment(new_comment);
 		}
-	}
+	},
+
+        addNewComment:function(obj){
+	    $.each(obj, function(index, item) {
+	        var enableDelete = (item.writer_id == Data.user_id);
+	        var comment = $('<div>', {'class': 'dictionary_comment'});
+	        comment.prependTo(DictionaryCommentList.comments);
+	
+
+
+	        $('<a>').text(item.writer_nickname).appendTo(comment);
+	        $('<div>', {'class': 'dictionary_comment_content'}).text(item.comment).appendTo(comment);
+	        $('<div>', {'class': 'dictionary_comment_eval'}).text(gettext("학점") + ':' + item.score).appendTo(comment);
+	        $('<div>', {'class': 'dictionary_comment_eval'}).text(gettext("로드") + ':' + item.load).appendTo(comment);
+	        $('<div>', {'class': 'dictionary_comment_eval'}).text(gettext("남는거") + ':' + item.gain).appendTo(comment);
+	
+	        if (enableDelete) {
+	            var deletelink = $('<div>', {'class': 'dictionary_comment_delete'}).text("지우기")
+	            deletelink.appendTo(comment);
+	            deletelink.bind('click', $.proxyWithArgs(DictionaryCommentList.deleteComment, DictionaryCommentList, item));
+	        }
+	    });
+	
+	},
 };
 
 var IndexCommentList = {
@@ -636,7 +707,8 @@ var IndexCommentList = {
 			}	   
 		});
 	},
-	addToMultipleComment:function(obj)
+	
+        addToMultipleComment:function(obj)
 	{
 		$.each(obj, function(index, item) {
 			var div_comment = $('<div>', {'class': 'timeline_comment'});
