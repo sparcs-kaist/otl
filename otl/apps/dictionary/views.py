@@ -260,6 +260,7 @@ def add_comment(request):
 
     return HttpResponse(json.dumps({
         'result': result,
+        'average': average,
         'comment': _comments_to_output(new_comment, False, request.session.get('django_language','ko'))}, ensure_ascii=False, indent=4))
             
 @login_required_ajax
@@ -277,6 +278,7 @@ def delete_comment(request):
         course = comment.course
         lecture = comment.lecture
         comments = Comment.objects.filter(course=course)
+        average = {'score':0, 'gain':0, 'load':0}
         if comments.count() != 0 :
             average = comments.aggregate(avg_score=Avg('score'),avg_gain=Avg('gain'),avg_load=Avg('load'))
             Course.objects.filter(id=course.id).update(score_average=average['avg_score'],load_average=average['avg_load'],gain_average=average['avg_gain'])
@@ -290,7 +292,7 @@ def delete_comment(request):
     #    return HttpResponseServerError()
 
     return HttpResponse(json.dumps({
-        'result': result}, ensure_ascii=False, indent=4)) 
+        'result': result, 'average': average}, ensure_ascii=False, indent=4)) 
 
 def update_comment(request):
     comments = []

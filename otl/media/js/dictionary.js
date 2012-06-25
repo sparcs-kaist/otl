@@ -490,6 +490,9 @@ var DictionaryCommentList = {
 						if (resObj.result=='ADD') {
 							DictionaryCommentList.addToFront(resObj.comment);							
 							DictionaryCommentList.addNewComment(resObj.comment);
+                                                        $($("#course-eval").children()[0]).text("학점 : "+resObj.average['avg_score']);
+                                                        $($("#course-eval").children()[1]).text("로드 : "+resObj.average['avg_load']);
+                                                        $($("#course-eval").children()[2]).text("남는거 : "+resObj.average['avg_gain']);
 						} else if (resObj.result='ALREADY_WRITTEN') {
 							Notifier.setErrorMsg(gettext('이미 등록하셨습니다.'));
 						}
@@ -522,6 +525,9 @@ var DictionaryCommentList = {
 				try {
 					if (resObj.result=='DELETE') {
                                             comment.remove();
+                                            $($("#course-eval").children()[0]).text("학점 : "+resObj.average['avg_score']);
+                                            $($("#course-eval").children()[1]).text("로드 : "+resObj.average['avg_load']);
+                                            $($("#course-eval").children()[2]).text("남는거 : "+resObj.average['avg_gain']);
 					} else if (resObj=='REMOVE_NOT_EXIST') {
 						Notifier.setErrorMsg(gettext('잘못된 접근입니다.'));
 					}
