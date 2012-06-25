@@ -511,7 +511,7 @@ var DictionaryCommentList = {
 			});
 		}
 	},
-	deleteComment:function(e,obj) 
+	deleteComment:function(e,obj, comment) 
 	{
 		$.ajax({
 			type: 'POST',
@@ -521,8 +521,7 @@ var DictionaryCommentList = {
 			success: $.proxy(function(resObj) {
 				try {
 					if (resObj.result=='DELETE') {
-						DictionaryCommentList.update(resObj.comment);
-						DictionaryCommentList.addToMultipleComment(resObj.comment);
+                                            comment.remove();
 					} else if (resObj=='REMOVE_NOT_EXIST') {
 						Notifier.setErrorMsg(gettext('잘못된 접근입니다.'));
 					}
@@ -547,7 +546,6 @@ var DictionaryCommentList = {
 	{
 		var max = NUM_ITEMS_PER_DICT_COMMENT;
 		var count=0;
-		//this.clearComment();
 			
 		$.each(obj, function(index, item) {
 			var enableDelete = (item.writer_id == Data.user_id);
@@ -563,7 +561,7 @@ var DictionaryCommentList = {
 			if (enableDelete) {
 				var deletelink = $('<div>', {'class': 'dictionary_comment_delete'}).text("지우기")
 				deletelink.appendTo(comment);
-				deletelink.bind('click', $.proxyWithArgs(DictionaryCommentList.deleteComment, DictionaryCommentList, item));
+				deletelink.bind('click', $.proxyWithArgs(DictionaryCommentList.deleteComment, DictionaryCommentList, item, comment));
 			}
 		});
 	},
@@ -663,7 +661,7 @@ var DictionaryCommentList = {
 	        if (enableDelete) {
 	            var deletelink = $('<div>', {'class': 'dictionary_comment_delete'}).text("지우기")
 	            deletelink.appendTo(comment);
-	            deletelink.bind('click', $.proxyWithArgs(DictionaryCommentList.deleteComment, DictionaryCommentList, item));
+	            deletelink.bind('click', $.proxyWithArgs(DictionaryCommentList.deleteComment, DictionaryCommentList, item, comment));
 	        }
 	    });
 	

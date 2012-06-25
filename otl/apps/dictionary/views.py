@@ -290,8 +290,7 @@ def delete_comment(request):
     #    return HttpResponseServerError()
 
     return HttpResponse(json.dumps({
-        'result': result,
-        'comment': _comments_to_output(comments,False,request.session.get('django_langugage','ko'))}, ensure_ascii=False, indent=4)) 
+        'result': result}, ensure_ascii=False, indent=4)) 
 
 def update_comment(request):
     comments = []
