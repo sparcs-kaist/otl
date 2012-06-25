@@ -69,7 +69,7 @@ def index(request):
         'taken_au' : u'넘겨줘',
         'planned_credits' : u'넘겨줘',
         'planned_au' : u'넘겨줘',
-        'monthly_rank_list' : _top_by_recent_score(10),
+        'recent_rank_list' : _top_by_recent_score(10),
         'todo_comment_list' : todo_comment_list,
         'dept': -1,
         'classification': 0,
