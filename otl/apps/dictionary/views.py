@@ -50,8 +50,6 @@ def index(request):
     else:
         my_lectures_output = json.dumps(my_lectures, ensure_ascii=False, sort_keys=False, separators=(',',':'))
 
-    rank_list = [{'rank':0, 'ID':'noname', 'score':u'넘겨줘'}]*10
-    monthly_rank_list = [{'rank':0, 'ID':'noname', 'score':u'넘겨줘'}]*10
     todo_comment_list = [{'semester':u'0000ㅁ학기', 'code':'XX000', 'lecture_name':'넘겨', 'prof':'넘겨', 'url':'/넘겨야할/주소/줘'}]*10
     return render_to_response('dictionary/index.html', {
         'section': 'dictionary',
@@ -71,7 +69,7 @@ def index(request):
         'taken_au' : u'넘겨줘',
         'planned_credits' : u'넘겨줘',
         'planned_au' : u'넘겨줘',
-        'monthly_rank_list' : monthly_rank_list,
+        'monthly_rank_list' : _top_by_recent_score(10),
         'todo_comment_list' : todo_comment_list,
         'dept': -1,
         'classification': 0,
@@ -337,6 +335,19 @@ def _trans(ko_message, en_message, lang) :
 
 def _top_by_score(count):
     rank_list = UserProfile.objects.all().order_by('-score')
+    rank_list_size = rank_list.count()
+    rank_list_with_index = []
+    for i in xrange(count):
+        if rank_list_size > i :
+            item = {
+                    'index':i+1,
+                    'user' :rank_list[i]
+                    }
+            rank_list_with_index.append(item)
+    return rank_list_with_index
+
+def _top_by_recent_score(count):
+    rank_list = UserProfile.objects.all().order_by('-recent_score')
     rank_list_size = rank_list.count()
     rank_list_with_index = []
     for i in xrange(count):
