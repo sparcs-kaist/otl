@@ -399,7 +399,7 @@ var DictionaryCommentList = {
 
 	showMoreComments:function()
 	{
-		if (Data.comment_id>0){
+		if (Data.comment_id!=0){
 			var conditions = {'course_id': Data.Course.id, 'next_comment_id': Data.comment_id};
 			$.ajax({
 				type: 'GET',

@@ -27,8 +27,6 @@ from django.utils.translation import ugettext
 from StringIO import StringIO
 import datetime
 
-comment_num = 10
-
 def index(request):
 
     #Make the semester info to make users select the semester which they want to view.
@@ -133,7 +131,10 @@ def show_more_comments(request):
     course_id = int(request.GET.get('course_id', -1))
     next_comment_id = int(request.GET.get('next_comment_id', -1))
     course = Course.objects.get(id=course_id)
-    comments = Comment.objects.filter(course=course,id__lte=next_comment_id).order_by('-id')[:comment_num]
+    if next_comment_id == -1:
+        comments = Comment.objects.all().order_by('-id')[:settings.COMMENT_NUM]
+    else:
+        comments = Comment.objects.filter(course=course,id__lte=next_comment_id).order_by('-id')[:settings.COMMENT_NUM]
     lang=request.session.get('django_language','ko')
     comments_output = _comments_to_output(comments,False,lang)
 
@@ -161,7 +162,6 @@ def view(request, course_code):
         else:
             recent_summary = None
     
-        max_id = Comment.objects.aggregate(Max('id'))['id__max']
         course_output = _courses_to_output(course,True,lang)
         lectures_output = _lectures_to_output(Lecture.objects.filter(course=course), True, lang)
         professors_output = _professors_to_output(course.professors,True,lang) 
@@ -174,7 +174,6 @@ def view(request, course_code):
         'lang' : request.session.get('django_language', 'ko'),
         'departments': Department.objects.filter(visible=True).order_by('name'),
         'course' : course_output,
-        'max_id' : max_id,
         'lectures' : lectures_output,
         'professors' : professors_output,
         'summary' : recent_summary,
