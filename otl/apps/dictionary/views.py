@@ -50,9 +50,7 @@ def index(request):
     else:
         my_lectures_output = json.dumps(my_lectures, ensure_ascii=False, sort_keys=False, separators=(',',':'))
 
-    rank_list = [{'rank':0, 'ID':'noname', 'score':u'넘겨줘'}]*10
-    monthly_rank_list = [{'rank':0, 'ID':'noname', 'score':u'넘겨줘'}]*10
-    todo_comment_list = []
+    todo_comment_list = [{'semester':u'0000ㅁ학기', 'code':'XX000', 'lecture_name':'넘겨', 'prof':'넘겨', 'url':'/넘겨야할/주소/줘'}]*10
     if request.user.is_authenticated():
         comment_lecture_list = _get_unwritten_lecture_by_db(request.user)
         todo_comment_list = _lectures_to_output(comment_lecture_list, False, request.session.get('django_language','ko'))
@@ -74,7 +72,7 @@ def index(request):
         'taken_au' : u'넘겨줘',
         'planned_credits' : u'넘겨줘',
         'planned_au' : u'넘겨줘',
-        'monthly_rank_list' : monthly_rank_list,
+        'recent_rank_list' : _top_by_recent_score(10),
         'todo_comment_list' : todo_comment_list,
         'dept': -1,
         'classification': 0,
@@ -351,6 +349,19 @@ def _top_by_score(count):
             rank_list_with_index.append(item)
     return rank_list_with_index
 
+def _top_by_recent_score(count):
+    rank_list = UserProfile.objects.all().order_by('-recent_score')
+    rank_list_size = rank_list.count()
+    rank_list_with_index = []
+    for i in xrange(count):
+        if rank_list_size > i :
+            item = {
+                    'index':i+1,
+                    'user' :rank_list[i]
+                    }
+            rank_list_with_index.append(item)
+    return rank_list_with_index
+
 def _update_comment(count, **conditions):
     department = conditions.get('dept', None)
     if department != None:
@@ -554,7 +565,7 @@ def _get_unwritten_lecture_by_db(user):
         comment_list = Comment.objects.filter(writer=user)
     except ObjectDoesNotExist :
         comment_list = []
-    
+   
     ret_list = list(take_lecture_list)
     for comment in comment_list:
         if comment.lecture in ret_list:
