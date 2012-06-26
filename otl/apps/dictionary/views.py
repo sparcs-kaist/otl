@@ -235,6 +235,13 @@ def add_comment(request):
         Course.objects.filter(id=course.id).update(score_average=average['avg_score'], load_average=average['avg_load'], gain_average=average['avg_gain'])
 
         result = 'ADD'
+
+        # update writer score
+        user_profile = UserProfile.objects.get(user=writer)
+        user_profile.score = user_profile.score + COMMENT_SCORE
+        user_profile.recent_score = user_profile.recent_score + COMMENT_SCORE
+        user_profile.save()
+
     except AlreadyWrittenError:
         result = 'ALREADY_WRITTEN'
         return HttpResponse(json.dumps({
@@ -258,6 +265,7 @@ def delete_comment(request):
             raise ValidationError()
         comment = Comment.objects.get(pk=comment_id, writer=user)
         comment.delete()
+
         result = 'DELETE'
         
         course = comment.course
@@ -268,6 +276,13 @@ def delete_comment(request):
             Course.objects.filter(id=course.id).update(score_average=average['avg_score'],load_average=average['avg_load'],gain_average=average['avg_gain'])
         else :
             Course.objects.filter(id=course.id).update(score_average=0,load_average=0,gain_average=0)
+
+        # update writer score
+        user_profile = UserProfile.objects.get(user=user)
+        user_profile.score = user_profile.score - COMMENT_SCORE
+        user_profile.recent_score = user_profile.recent_score - COMMENT_SCORE
+        user_profile.save()
+
     except ObjectDoesNotExist:
         result = 'REMOVE_NOT_EXIST'
     except ValidationError:
