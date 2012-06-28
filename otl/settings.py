@@ -179,6 +179,8 @@ PORTAL_SSO_ADMIN_PASSWORD = ''
 PORTAL_SSO_TOKEN = ''
 PORTAL_SSO_WSDL_ADDRESS = 'https://ksso.kaist.ac.kr/kstsso/services/simpleAuthSrv?wsdl'
 
+COMMENT_NUM = 10
+
 try:
     from otl.settings_local import *
 except ImportError:
