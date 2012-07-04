@@ -1,0 +1,37 @@
+{% extends 'dictionary/base.html' %}
+{% block header_main %}
+
+<script type="text/javascript">
+//<![CDATA[
+$(document).ready(function () {
+    Data.Professor = {{professor_js|safe}};
+    Data.Comments = [];
+    ProfessorCommentList.initialize();
+});
+//]]>
+</script>
+
+{% endblock %}
+{% block main %}
+<div id="main-side">
+    <img src="http://cais.kaist.ac.kr/static_files/photo/1990/{{professor.professor_id}}.jpg"/> <br>
+    교수님 이름 : {{professor.professor_name}} <br>
+    가르친 과목 : <br>
+    {% for course in courses %}
+        {{ course.title }}
+        <br>
+    {% endfor %}
+    코멘트 : <br>
+    <div id="comments">
+	<div id="comment-view">
+	</div>
+    </div>
+    <div id="Notifier">
+	<div id="indicator"></div>
+	    <div id="message-wrap">
+		<div id="message"></div>
+	    </div>
+    </div>
+</div>
+<div class="clear"></div>
+{% endblock %}

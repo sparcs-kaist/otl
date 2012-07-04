@@ -132,7 +132,7 @@ def show_more_comments(request):
     next_comment_id = int(request.GET.get('next_comment_id', -1))
     course = Course.objects.get(id=course_id)
     if next_comment_id == -1:
-        comments = Comment.objects.all().order_by('-id')[:settings.COMMENT_NUM]
+        comments = Comment.objects.filter(course=course).order_by('-id')[:settings.COMMENT_NUM]
     else:
         comments = Comment.objects.filter(course=course,id__lte=next_comment_id).order_by('-id')[:settings.COMMENT_NUM]
     lang=request.session.get('django_language','ko')
@@ -184,6 +184,40 @@ def view(request, course_code):
         'active_tab': active_tab
         }, context_instance=RequestContext(request))
 
+def view_professor(request, prof_id):
+    professor = None
+
+    try:
+        dept = int(request.GET.get('dept', -1))
+        classification = int(request.GET.get('classification', 0))
+        keyword = request.GET.get('keyword', "")
+        in_category = request.GET.get('in_category', json.dumps(False))
+        active_tab = int(request.GET.get('active_tab', -1))
+
+        professor = Professor.objects.get(professor_id=int(prof_id))
+        lang=request.session.get('django_language','ko')
+
+        courses = Course.objects.filter(professors=professor)
+        result = 'OK'
+
+    except ObjectDoesNotExist:
+        result = 'NOT_EXIST' 
+
+    return render_to_response('dictionary/professor.html', {
+        'result' : result,
+        'lang' : request.session.get('django_language', 'ko'),
+        'departments': Department.objects.filter(visible=True).order_by('name'),
+        'courses' : courses,
+        'professor_js' : _professors_to_output(professor,True,lang),
+        'professor' : professor,
+        'dept': dept,
+        'classification': classification,
+        'keyword': keyword,
+        'in_category': in_category,
+        'active_tab': active_tab
+        }, context_instance=RequestContext(request))
+    
+
 def view_comment_by_professor(request):
     try:
         professor_id = int(request.GET.get('professor_id', -1))
@@ -220,12 +254,13 @@ def add_comment(request):
                 course = Course.objects.get(id=course_id)
             else:
                 raise ValidationError()
-        
+        '''
         lectures = _get_taken_lecture_by_db(request.user, course)
         if lectures == Lecture.objects.none():
             lecture = None
         else:
             lecture = lectures[0]   # 여러번 들었을 경우 가장 최근에 들은 과목 기준으로 한다.
+        '''
 
         comment = request.POST.get('comment', None)
         load = int(request.POST.get('load', -1))
@@ -235,9 +270,10 @@ def add_comment(request):
 
         if load < 0 or gain < 0 or score < 0:
             raise ValidationError()
-
+        '''
         if Comment.objects.filter(course=course, lecture=lecture, writer=writer).count() > 0:
             raise AlreadyWrittenError()
+        '''
 
         new_comment = Comment(course=course, lecture=lecture, writer=writer, comment=comment, load=load, score=score, gain=gain)
         new_comment.save()
@@ -315,6 +351,23 @@ def update_comment(request):
         'result': result,
         'comments': _comments_to_output(comments,False,request.session.get('django_language','ko')) }, ensure_ascii=False, indent=4))
 
+def professor_comment(request):
+    comments = []
+
+    try:
+        count = int(request.POST.get('count', -1))
+        prof_id = int(request.POST.get('prof_id', -1))
+        q = {}
+        q['professor'] = Professor.objects.get(professor_id=prof_id)
+        comments = _update_comment(count, **q)
+        result = 'OK'
+
+    except ObjectDoesNotExist:
+        result = 'ERROR'
+
+    return HttpResponse(json.dumps({
+        'result': result,
+        'comments': _comments_to_output(comments,False,request.session.get('django_language','ko')) }, ensure_ascii=False, indent=4))
 
 @login_required
 def like_comment(request, comment_id):
@@ -365,8 +418,11 @@ def _top_by_score(count):
 
 def _update_comment(count, **conditions):
     department = conditions.get('dept', None)
+    professor = conditions.get('professor', None)
     if department != None:
         comments = Comment.objects.filter(course__department=department)
+    elif professor != None:
+        comments = Comment.objects.filter(course__professors=professor)
     else:
         comments = Comment.objects.all().order_by('-written_datetime')
     comments_size = comments.count()
@@ -452,6 +508,20 @@ def _comments_to_output(comments,conv_to_json=True, lang='ko'):
         return all
 
 def _professors_to_output(professors,conv_to_json=True,lang='ko'):
+    if isinstance(professors, Professor):
+        item = {
+                'professor_name': _trans(professors.professor_name,professors.professor_name_en,lang),
+                'professor_id': professors.professor_id
+                }
+        if conv_to_json:
+            io = StringIO()
+            if settings.DEBUG:
+                json.dump(item,io,ensure_ascii=False,indent=4)
+            else:
+                json.dump(item,io,ensure_ascii=False,sort_keys=False,separators=(',',':'))
+            return io.getvalue()
+        else :
+            return item
     all = []
     if not isinstance(professors, list):
         professors = professors.select_related()

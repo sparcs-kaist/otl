@@ -41,6 +41,7 @@ function roundD(n, digits) {
 var NUM_ITEMS_PER_LIST = 15;
 var NUM_ITEMS_PER_DICT_COMMENT = 10;
 var NUM_ITEMS_PER_INDEX_COMMENT = 15;
+var NUM_ITEMS_PER_PROF_COMMENT = 15;
 var NUMBER_OF_TABS = 3;
 var Data = {};
 var Mootabs = function(tabContainer, contents, trigerEvent, useAsTimetable)
@@ -743,3 +744,56 @@ var IndexCommentList = {
 		});
 	}
 };	
+
+
+var ProfessorCommentList = {
+	initialize:function() 
+	{
+		this.comments = $('#comments');
+		this.registerHandles();
+		this.showComment();
+	},
+	registerHandles:function()
+	{
+	},
+	showComment:function()
+	{
+		var max = NUM_ITEMS_PER_PROF_COMMENT;
+		var conditions = {'count': max, 'prof_id': Data.Professor.professor_id};
+		$.ajax ({
+			type: 'POST',
+			url: '/dictionary/professor_comment/',
+			data: conditions,
+			dataType: 'json',
+			success: function (resObj) {
+				try {
+					if (resObj.result=='OK') {
+						this.comments = resObj.comments;
+						ProfessorCommentList.addToMultipleComment(resObj.comments)
+					}
+					else {
+						Notifier.setErrrorMsg(gettext('오류가 발생했습니다.'));
+					}
+				} catch (e) {
+					Notifier.setErrorMsg(gettext('오류가 발생했습니다.'));
+				}	
+			},
+			error: function (xhr) {
+				Notifier.setErrorMsg(gettext('오류가 발생했습니다.'));
+			} 
+		});
+	},
+        addToMultipleComment:function(obj)
+	{
+		$.each(obj, function(index, item) {
+			var div_comment = $('<div>', {'class': 'professor_comment'});
+			div_comment.appendTo(ProfessorCommentList.comments);
+
+			$('<a>', {'class': 'content_subject'}).text("과목명:"+item.course_title+" ").appendTo(div_comment);
+			$('<a>', {'class': 'content_comment'}).text("코멘트:"+item.comment+" ").appendTo(div_comment);
+			$('<a>', {'class': 'content_score'}).text('학점:' + item.score).appendTo(div_comment);
+			$('<a>', {'class': 'content_load'}).text('로드:' + item.load).appendTo(div_comment);
+			$('<a>', {'class': 'content_gain'}).text('남는거:' + item.gain).appendTo(div_comment);
+		});
+	}
+}
