@@ -4,9 +4,10 @@
 <script type="text/javascript">
 //<![CDATA[
 $(document).ready(function () {
-    Data.Professor = {{professor_js|safe}};
+    Data.ProfID = {{professor.professor_id|safe}};
     Data.Comments = [];
     ProfessorCommentList.initialize();
+    Data.Average = {{average|safe}};
 });
 //]]>
 </script>
@@ -15,16 +16,17 @@ $(document).ready(function () {
 {% block main %}
 <div id="main-side">
     <img src="http://cais.kaist.ac.kr/static_files/photo/1990/{{professor.professor_id}}.jpg"/> <br>
-    교수님 이름 : {{professor.professor_name}} <br>
+    교수님 이름 : {{professor.professor_name}} <br><br>
     가르친 과목 : <br>
     {% for course in courses %}
         {{ course.title }}
         <br>
     {% endfor %}
+    <br>
     코멘트 : <br>
     <div id="comments">
-	<div id="comment-view">
-	</div>
+        <div id="comment-avg">(평균) - </div>
+	<div id="comment-view"></div>
     </div>
     <div id="Notifier">
 	<div id="indicator"></div>

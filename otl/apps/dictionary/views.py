@@ -198,6 +198,7 @@ def view_professor(request, prof_id):
         lang=request.session.get('django_language','ko')
 
         courses = Course.objects.filter(professors=professor)
+        average = _cal_average(courses)
         result = 'OK'
 
     except ObjectDoesNotExist:
@@ -208,7 +209,7 @@ def view_professor(request, prof_id):
         'lang' : request.session.get('django_language', 'ko'),
         'departments': Department.objects.filter(visible=True).order_by('name'),
         'courses' : courses,
-        'professor_js' : _professors_to_output(professor,True,lang),
+        'average' : average,
         'professor' : professor,
         'dept': dept,
         'classification': classification,
@@ -216,7 +217,7 @@ def view_professor(request, prof_id):
         'in_category': in_category,
         'active_tab': active_tab
         }, context_instance=RequestContext(request))
-    
+
 
 def view_comment_by_professor(request):
     try:
@@ -254,13 +255,12 @@ def add_comment(request):
                 course = Course.objects.get(id=course_id)
             else:
                 raise ValidationError()
-        '''
+            
         lectures = _get_taken_lecture_by_db(request.user, course)
         if lectures == Lecture.objects.none():
             lecture = None
         else:
             lecture = lectures[0]   # 여러번 들었을 경우 가장 최근에 들은 과목 기준으로 한다.
-        '''
 
         comment = request.POST.get('comment', None)
         load = int(request.POST.get('load', -1))
@@ -270,16 +270,15 @@ def add_comment(request):
 
         if load < 0 or gain < 0 or score < 0:
             raise ValidationError()
-        '''
+
         if Comment.objects.filter(course=course, lecture=lecture, writer=writer).count() > 0:
             raise AlreadyWrittenError()
-        '''
 
         new_comment = Comment(course=course, lecture=lecture, writer=writer, comment=comment, load=load, score=score, gain=gain)
         new_comment.save()
 
         comments = Comment.objects.filter(course=course)      
-        new_comment = Comment.objects.filter(id=new_comment.id)      
+        new_comment = Comment.objects.filter(id=new_comment.id)  
         average = comments.aggregate(avg_score=Avg('score'),avg_gain=Avg('gain'),avg_load=Avg('load'))
         Course.objects.filter(id=course.id).update(score_average=average['avg_score'], load_average=average['avg_load'], gain_average=average['avg_gain'])
 
@@ -508,20 +507,6 @@ def _comments_to_output(comments,conv_to_json=True, lang='ko'):
         return all
 
 def _professors_to_output(professors,conv_to_json=True,lang='ko'):
-    if isinstance(professors, Professor):
-        item = {
-                'professor_name': _trans(professors.professor_name,professors.professor_name_en,lang),
-                'professor_id': professors.professor_id
-                }
-        if conv_to_json:
-            io = StringIO()
-            if settings.DEBUG:
-                json.dump(item,io,ensure_ascii=False,indent=4)
-            else:
-                json.dump(item,io,ensure_ascii=False,sort_keys=False,separators=(',',':'))
-            return io.getvalue()
-        else :
-            return item
     all = []
     if not isinstance(professors, list):
         professors = professors.select_related()
@@ -625,3 +610,9 @@ def _get_taken_lecture_by_db(user, course):
         return result
     except ObjectDoesNotExist:
         return Lecture.objects.none()
+
+def _cal_average(courses):
+    comments = Comment.objects.filter(course__in=courses)
+    average = comments.aggregate(avg_score=Avg('score'),avg_gain=Avg('gain'),avg_load=Avg('load'))
+    print average
+    return average

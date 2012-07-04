@@ -749,9 +749,11 @@ var IndexCommentList = {
 var ProfessorCommentList = {
 	initialize:function() 
 	{
-		this.comments = $('#comments');
+		this.comments = $('#comment-view');
 		this.registerHandles();
 		this.showComment();
+		this.eval = $('#comment-avg');
+                this.average = Data.Average;
 	},
 	registerHandles:function()
 	{
@@ -759,7 +761,7 @@ var ProfessorCommentList = {
 	showComment:function()
 	{
 		var max = NUM_ITEMS_PER_PROF_COMMENT;
-		var conditions = {'count': max, 'prof_id': Data.Professor.professor_id};
+		var conditions = {'count': max, 'prof_id': Data.ProfID};
 		$.ajax ({
 			type: 'POST',
 			url: '/dictionary/professor_comment/',
@@ -775,11 +777,13 @@ var ProfessorCommentList = {
 						Notifier.setErrrorMsg(gettext('오류가 발생했습니다.'));
 					}
 				} catch (e) {
-					Notifier.setErrorMsg(gettext('오류가 발생했습니다.'));
+                                    Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+e.message+')');
 				}	
 			},
 			error: function (xhr) {
-				Notifier.setErrorMsg(gettext('오류가 발생했습니다.'));
+                                if (suppress_ajax_errors)
+                                        return;
+				Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+gettext('요청 실패')+':'+xhr.status+')');
 			} 
 		});
 	},
@@ -795,5 +799,8 @@ var ProfessorCommentList = {
 			$('<a>', {'class': 'content_load'}).text('로드:' + item.load).appendTo(div_comment);
 			$('<a>', {'class': 'content_gain'}).text('남는거:' + item.gain).appendTo(div_comment);
 		});
+		$('<a>').text('학점 : '+Data.Average.avg_score).appendTo(this.eval);
+		$('<a>').text('로드 : '+Data.Average.avg_load).appendTo(this.eval);
+		$('<a>').text('남는거 : '+Data.Average.avg_gain).appendTo(this.eval);
 	}
 }
