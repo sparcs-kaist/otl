@@ -198,7 +198,7 @@ def view_professor(request, prof_id):
         lang=request.session.get('django_language','ko')
 
         courses = Course.objects.filter(professors=professor)
-        average = _cal_average(courses)
+        average = Comment.course_average(courses)
         result = 'OK'
 
     except ObjectDoesNotExist:
@@ -610,9 +610,4 @@ def _get_taken_lecture_by_db(user, course):
         return result
     except ObjectDoesNotExist:
         return Lecture.objects.none()
-
-def _cal_average(courses):
-    comments = Comment.objects.filter(course__in=courses)
-    average = comments.aggregate(avg_score=Avg('score'),avg_gain=Avg('gain'),avg_load=Avg('load'))
-    print average
     return average

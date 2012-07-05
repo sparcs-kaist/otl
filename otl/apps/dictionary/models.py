@@ -1,5 +1,6 @@
 # -*- coding: utf-8
 from django.db import models
+from django.db.models import Avg
 from django.contrib import admin
 from django.contrib.auth.models import User
 from otl.apps.common import *
@@ -52,6 +53,12 @@ class Comment(models.Model):
     gain = models.SmallIntegerField(choices=GAIN_TYPES)                       # 남는 거
     like = models.IntegerField(default=0)
     like_list = models.ManyToManyField(User, related_name='comment_likelist', null=True)
+
+    @staticmethod
+    def course_average(courses):
+        comments = Comment.objects.filter(course__in=courses)
+        average = comments.aggregate(avg_score=Avg('score'),avg_gain=Avg('gain'),avg_load=Avg('load'))
+        return average
 
 class CommentAdmin(admin.ModelAdmin):
     list_display = ('course', 'comment', 'load', 'score', 'gain')
