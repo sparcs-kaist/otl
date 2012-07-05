@@ -12,11 +12,12 @@
 <script type="text/javascript">
 //<![CDATA[
 $(document).ready(function () {
-	Data.DictionaryComment = {{comments|safe}};
+	Data.DictionaryComment = [];
 	Data.Course = {{course|safe}};
 	Data.Lectures = {{lectures|safe}};
         Data.Professors = {{professors|safe}};
 	Data.current_professor_id = -1;
+        Data.comment_id = -1;
 	DictionaryCommentList.initialize();
 });
 //]]>

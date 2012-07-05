@@ -15,7 +15,7 @@ from otl.utils import respond_as_attachment
 from otl.utils.decorators import login_required_ajax
 from otl.apps.common import *
 from otl.apps.accounts.models import Department
-from otl.apps.timetable.models import Lecture, ExamTime, ClassTime, Syllabus, Timetable, OverlappingTimeError
+from otl.apps.timetable.models import Lecture, ExamTime, ClassTime, Syllabus, Timetable, OverlappingTimeError, OverlappingExamTimeError
 from StringIO import StringIO
 from django.db.models import Q
 
@@ -132,7 +132,8 @@ def add_to_timetable(request):
         for existing_lecture in lectures:
             if existing_lecture.check_classtime_overlapped(lecture):
                 raise OverlappingTimeError()
-            # We don't check overlapped exam times.
+            if existing_lecture.check_examtime_overlapped(lecture):
+                raise OverlappingExamTimeError()
         timetable = Timetable(user=user, lecture=lecture, year=lecture.year, semester=lecture.semester, table_id=table_id)
         timetable.save()
 
@@ -144,6 +145,8 @@ def add_to_timetable(request):
         result = 'OVERLAPPED'
     except IntegrityError:
         result = 'DUPLICATED'
+    except OverlappingExamTimeError:
+        result = 'OVERLAPPEDEXAMTIME'
     except:
         return HttpResponseServerError()
 
@@ -359,6 +362,8 @@ def _lectures_to_output(lectures, conv_to_json=True, lang='ko'):
             'times': classtimes,
             'remarks': ugettext(u'영어강의') if lecture.is_english else u'',
             'examtime': {'day': exam.day, 'start': exam.get_begin_numeric(), 'end': exam.get_end_numeric()} if exam != None else None,
+            'semester' : lecture.semester,
+            'url' : "/dictionary/view/"+lecture.old_code+"/"
         }
         all.append(item)
     if conv_to_json:
