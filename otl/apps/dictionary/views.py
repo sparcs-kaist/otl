@@ -133,7 +133,7 @@ def show_more_comments(request):
     next_comment_id = int(request.GET.get('next_comment_id', -1))
     course = Course.objects.get(id=course_id) 
     if next_comment_id == -1:  #starting point
-        comments = Comment.objects.all().order_by('-id')[:settings.COMMENT_NUM]
+        comments = Comment.objects.filter(course=course).order_by('-id')[:settings.COMMENT_NUM]
     elif next_comment_id == -2 : #nothing 
         return HttpResponse(json.dumps({
             'next_comment_id':0,
@@ -280,7 +280,7 @@ def add_comment(request):
             
 @login_required_ajax
 def delete_comment(request):
-    average = {'score':0, 'gain':0, 'load':0}
+    average = {'avg_score':0, 'avg_gain':0, 'avg_load':0}
     try:
         user = request.user
         comment_id = int(request.POST.get('comment_id', -1))
@@ -296,7 +296,7 @@ def delete_comment(request):
         lecture = comment.lecture
         comments = Comment.objects.filter(course=course)
         if comments.count() != 0 :
-            average = comments.aggregate(avg_score=Avg('score'),avg_gain=Avg('gain'),avg_load=Avg('load'))
+            average = comments.aggregate(avg_score=Avg('avg_score'),avg_gain=Avg('avg_gain'),avg_load=Avg('avg_load'))
             Course.objects.filter(id=course.id).update(score_average=average['avg_score'],load_average=average['avg_load'],gain_average=average['avg_gain'])
         else :
             Course.objects.filter(id=course.id).update(score_average=0,load_average=0,gain_average=0)
