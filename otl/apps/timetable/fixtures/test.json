@@ -159,6 +159,16 @@
 			"day": 4
 		}
 	}, 
+	{
+		"pk": 4, 
+		"model": "timetable.examtime", 
+		"fields": {
+			"lecture": 4, 
+			"begin": "13:00", 
+			"end": "15:00", 
+			"day": 4
+		}
+	}, 
  	{
 		"pk": 1, 
 		"model": "timetable.classtime", 
