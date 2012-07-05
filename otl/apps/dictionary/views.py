@@ -131,16 +131,24 @@ def get_autocomplete_list(request):
 def show_more_comments(request):
     course_id = int(request.GET.get('course_id', -1))
     next_comment_id = int(request.GET.get('next_comment_id', -1))
-    course = Course.objects.get(id=course_id)
-    if next_comment_id == -1:
+    course = Course.objects.get(id=course_id) 
+    if next_comment_id == -1:  #starting point
         comments = Comment.objects.all().order_by('-id')[:settings.COMMENT_NUM]
+    elif next_comment_id == -2 : #nothing 
+        return HttpResponse(json.dumps({
+            'next_comment_id':0,
+            'comments':[]}))
     else:
         comments = Comment.objects.filter(course=course,id__lte=next_comment_id).order_by('-id')[:settings.COMMENT_NUM]
     lang=request.session.get('django_language','ko')
     comments_output = _comments_to_output(comments,False,lang)
-
+  
+    if len(comments) == 0 :
+        return HttpResponse(json.dumps({
+            'next_comment_id': -2,
+            'comments':comments_output}))
     return HttpResponse(json.dumps({
-        'next_comment_id': comments[len(comments)-1].id-1,
+        'next_comment_id': (comments[len(comments)-1].id)-1,
         'comments': comments_output}))
 
 
@@ -237,8 +245,8 @@ def add_comment(request):
         if load < 0 or gain < 0 or score < 0:
             raise ValidationError()
 
-        if Comment.objects.filter(course=course, lecture=lecture, writer=writer).count() > 0:
-            raise AlreadyWrittenError()
+        #if Comment.objects.filter(course=course, lecture=lecture, writer=writer).count() > 0:
+        #    raise AlreadyWrittenError()
 
         new_comment = Comment(course=course, lecture=lecture, writer=writer, comment=comment, load=load, score=score, gain=gain)
         new_comment.save()
@@ -272,6 +280,7 @@ def add_comment(request):
             
 @login_required_ajax
 def delete_comment(request):
+    average = {'score':0, 'gain':0, 'load':0}
     try:
         user = request.user
         comment_id = int(request.POST.get('comment_id', -1))
@@ -286,7 +295,6 @@ def delete_comment(request):
         course = comment.course
         lecture = comment.lecture
         comments = Comment.objects.filter(course=course)
-        average = {'score':0, 'gain':0, 'load':0}
         if comments.count() != 0 :
             average = comments.aggregate(avg_score=Avg('score'),avg_gain=Avg('gain'),avg_load=Avg('load'))
             Course.objects.filter(id=course.id).update(score_average=average['avg_score'],load_average=average['avg_load'],gain_average=average['avg_gain'])
