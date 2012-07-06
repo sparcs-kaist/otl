@@ -269,10 +269,29 @@ var CourseList = {
 		CourseList.contents.empty(); 
 		var max = NUM_ITEMS_PER_LIST;
 		var count=0;
+                var flag=0;
 		var content = $('<div>', {'class': 'lecture_content'});
 		content.appendTo(CourseList.contents);
-		var currCategory;
-		$.each(obj, function(index, item) {
+		var currCategory='교수정보';
+                
+		$.each(obj.professors, function(index, item) {
+                        if(flag==0&&count==0) {
+                            $('<h4>').text(currCategory).appendTo(content);
+                            flag=1;
+                        }
+                        if(count>=max) {
+				content = $('<div>', {'class':'lecture_content'}).appendTo(CourseList.contents);
+				$('<h4>').text(currCategory).appendTo(content);
+				count=0;
+                        } else
+                                count++;
+
+			var el = $('<a>').text(item.professor_name).appendTo(content);
+			Utils.clickable(el);
+
+			el.bind('mousedown', $.proxyWithArgs(CourseList.seeProfessorInfo, CourseList, item));
+                });
+		$.each(obj.courses, function(index, item) {
 			var key = item.type;
 			if (currCategory != key) {
 				currCategory = key;
@@ -314,7 +333,7 @@ var CourseList = {
 			}, this),
 			success: $.proxy(function(resObj) {
 				try {
-					if (resObj.length == 0) {
+					if (resObj.courses.length == 0 && resObj.professors.length == 0) {
 						CourseList.clearList();
 						if (!this.loading)
 							Notifier.setErrorMsg(gettext('과목 정보를 찾지 못했습니다.'));
@@ -360,7 +379,21 @@ var CourseList = {
 		var sendData = {'dept':dept, 'classification':classification, 'keyword':keyword, 'in_category':in_category, 'active_tab':active_tab};
 
 		Utils.post_to_url(url, sendData, 'GET');
-	}
+	},
+	seeProfessorInfo:function(e,obj)
+	{
+		var professor_id = obj.professor_id;
+		var url = '/dictionary/professor/' + professor_id + '/';
+
+		var dept = document.getElementById("department").selectedIndex;
+		var classification = document.getElementById("classification").selectedIndex;
+		var keyword = $(this.keyword).val();
+		var in_category = $(this.in_category).is(':checked');
+		var active_tab = $('div[class="lecture_tab active"]').text();
+		var sendData = {'dept':dept, 'classification':classification, 'keyword':keyword, 'in_category':in_category, 'active_tab':active_tab};
+
+		Utils.post_to_url(url, sendData, 'GET');
+	},
 };
 
 var DictionaryCommentList = {

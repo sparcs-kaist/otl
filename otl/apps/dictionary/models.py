@@ -57,7 +57,10 @@ class Comment(models.Model):
     @staticmethod
     def course_average(courses):
         comments = Comment.objects.filter(course__in=courses)
-        average = comments.aggregate(avg_score=Avg('score'),avg_gain=Avg('gain'),avg_load=Avg('load'))
+        if len(comments) == 0:
+            average = {'avg_score':0, 'avg_gain':0, 'avg_load':0}
+        else:
+            average = comments.aggregate(avg_score=Avg('score'),avg_gain=Avg('gain'),avg_load=Avg('load'))
         return average
 
 class CommentAdmin(admin.ModelAdmin):

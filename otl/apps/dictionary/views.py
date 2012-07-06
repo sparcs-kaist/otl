@@ -27,6 +27,8 @@ from django.utils.translation import ugettext
 from StringIO import StringIO
 import datetime
 
+from sets import Set
+
 def index(request):
 
     #Make the semester info to make users select the semester which they want to view.
@@ -94,9 +96,15 @@ def search(request):
         q = {}
         for key, value in request.GET.iteritems():
             q[str(key)] = value
-
-        output = _courses_to_output(_search(**q),False,request.session.get('django_language','ko'))
-        return HttpResponse(json.dumps(output, ensure_ascii=False, indent=4))
+        output = _search(**q)
+        lang = request.session.get('django_language','ko') 
+        
+        courses = _courses_to_output(output['courses'],False,lang)
+        if output['professors'] != None:
+            professors = _professors_to_output(output['professors'],False,lang)
+        else:
+            professors = [] 
+        return HttpResponse(json.dumps({'courses':courses, 'professors':professors}, ensure_ascii=False, indent=4))
     except:
         return HttpResponseBadRequest()
 
@@ -434,20 +442,26 @@ def _search(**conditions):
     type = conditions.get('type', None)
     lang = conditions.get('lang', 'ko')
     keyword = conditions.get('keyword', None)
+    output = None
 
     if department != None and type != None and keyword != None:
         keyword = keyword.strip()
-        output = _search_by_dt(department, type) 
+        courses= _search_by_dt(department, type) 
+        professors = Professor.objects.all()
         if keyword == u'':
+            professors = None
             if department == u'-1' and type == u'전체보기':
                 raise ValidationError()
         else:
             words = keyword.split()
             for word in words:
                 if lang=='ko':
-                    output = output.filter(Q(old_code__icontains=word) | Q(title__icontains=word) | Q(professors__professor_name__icontains=word)).distinct()
+                    courses= courses.filter(Q(old_code__icontains=word) | Q(title__icontains=word) | Q(professors__professor_name__icontains=word)).distinct()
+                    professors= professors.filter(professor_name__icontains=word)
                 elif lang=='en':
-                    output = output.filter(Q(old_code__icontains=word) | Q(title_en__icontains=word) | Q(professors__professor_name_en__icontains=word)).distinct()
+                    courses= courses.filter(Q(old_code__icontains=word) | Q(title_en__icontains=word) | Q(professors__professor_name_en__icontains=word)).distinct()
+                    professors= professors.filter(professor_name_en__icontains=word)
+        output = {'courses':courses, 'professors':professors}
     else:
         raise ValidationError()
 
@@ -610,4 +624,3 @@ def _get_taken_lecture_by_db(user, course):
         return result
     except ObjectDoesNotExist:
         return Lecture.objects.none()
-    return average
