@@ -296,7 +296,7 @@ def delete_comment(request):
         lecture = comment.lecture
         comments = Comment.objects.filter(course=course)
         if comments.count() != 0 :
-            average = comments.aggregate(avg_score=Avg('avg_score'),avg_gain=Avg('avg_gain'),avg_load=Avg('avg_load'))
+            average = comments.aggregate(avg_score=Avg('score'),avg_gain=Avg('gain'),avg_load=Avg('load'))
             Course.objects.filter(id=course.id).update(score_average=average['avg_score'],load_average=average['avg_load'],gain_average=average['avg_gain'])
         else :
             Course.objects.filter(id=course.id).update(score_average=0,load_average=0,gain_average=0)
