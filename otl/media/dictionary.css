@@ -34,11 +34,7 @@ table.mcomment caption
 	margin:10px;
 }
 
-#main-side
-{
-	float:left;
-	width:780px;
-}
+
 
 #left-side
 {
@@ -169,6 +165,87 @@ table.mcomment caption
 .lecture_content a.clicked
 {
     background:#D1EFD5;
+}
+
+.dictionary-title
+{
+
+    background:#C3DAFB;
+    
+}
+
+#center
+{
+    float:left;
+    width:500px;
+    margin: 10px;
+}
+
+#recommend-area-professors
+{
+    height:200px;
+    background:#FF0000;
+}
+
+
+#right-side
+{
+    float:left;
+    width: 250px;
+    background:#00FF00;
+    margin: 10px;
+}
+
+.timeline_comment_left
+{
+    float:left;
+    margin: 5px;
+}
+
+.timeline_comment_right
+{
+    float:left;
+    margin: 5px;
+}
+
+#timeline_comment_right_top
+{
+    float:left;
+    width: 380px;
+}
+
+#timeline_comment_right_top_title
+{
+    float:left;
+    margin: 3px;
+}
+
+#timeline_comment_right_top_spec
+{
+    float:right;
+    margin: 3px;
+}
+
+.a_spec
+{
+    margin-left: 20px;
+}
+
+#timeline_comment_right_mid
+{
+    float:left;
+    height:50px;
+}
+
+#timeline_comment_right_mid_comment 
+{
+    height:50px;
+    float:left;
+}
+
+.timeline_comment
+{
+    height:150px;
 }
 
 

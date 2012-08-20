@@ -11,16 +11,27 @@ $(document).ready(function() {
 
 {% endblock %}
 {% block main %}
-<div id="main-side">
-	<div id="timeline">
-		
+<div id="center">
+	<div id="recommend-area">
+		<div class="dictionary-title"> 
+			<p id="recommend-title-p">추천과목</p>
+		</div>
+		<div id="recommend-area-professors">
+		</div>
 	</div>
-        <div id="Notifier">
-	<div id="indicator"></div>
-	<div id="message-wrap">
-		<div id="message"></div>
+	<div id="Notifier">
+		<div id="indicator"></div>
+		<div id="message-wrap">
+			<div id="message"></div>
+		</div>
 	</div>
-</div>
+	<div id="recent-comments">
+		<div class="dictionary-title">
+			<p id="recent-comments-title-p">최근 코멘트</p>
+		</div>
+		<div id="timeline">		
+		</div>
+	</div> 
 </div>
 <div id="right-side">
 	<div id="topranking">
@@ -96,6 +107,7 @@ $(document).ready(function() {
 			</tbody>
 		</table>
 	</div>
+</div>
 </div>
 <div class="clear" style="height:10px;"></div>
 {% endblock %}
