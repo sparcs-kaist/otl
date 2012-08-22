@@ -708,6 +708,28 @@ var DictionaryCommentList = {
 	},
 };
 
+var IndexLectureList = {
+	initialize:function()
+	{
+		this.semesters = $(".show_taken_lecture");
+		this.lecture_lists = $(".taken_lecture_list");
+		this.registerHandles();
+		this.current_open = 0;
+	},
+	registerHandles:function()
+	{
+		$.each(this.semesters, function(index, item) {
+			$(item).bind('click', $.proxyWithArgs(IndexLectureList.showLectures, IndexLectureList, item));
+		});
+	},
+	showLectures:function(e, obj)
+	{
+		$(IndexLectureList.lecture_lists[IndexLectureList.current_open]).hide();
+		IndexLectureList.current_open = parseInt(obj.id)-1;
+		$(IndexLectureList.lecture_lists[IndexLectureList.current_open]).show();
+	}
+};
+
 var IndexCommentList = {
 	initialize:function() 
 	{

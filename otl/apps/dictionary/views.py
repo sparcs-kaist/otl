@@ -52,10 +52,30 @@ def index(request):
     else:
         my_lectures_output = json.dumps(my_lectures, ensure_ascii=False, sort_keys=False, separators=(',',':'))
 
-    todo_comment_list = []
     if request.user.is_authenticated():
-        comment_lecture_list = _get_unwritten_lecture_by_db(request.user)
-        todo_comment_list = _lectures_to_output(comment_lecture_list, False, request.session.get('django_language','ko'))
+        try:
+            take_lecture_list = UserProfile.objects.get(user=request.user).take_lecture_list.order_by('-year', '-semester')
+            take_year_list = take_lecture_list.values('year', 'semester').distinct()
+            separate_list = []
+            result = []
+            for lecture in take_lecture_list:
+                if len(separate_list)==0:
+                    separate_list.append(lecture)
+                    continue
+                if lecture.year!=separate_list[0].year or lecture.semester!=separate_list[0].semester :
+                    result.append(_taken_lectures_to_output(request.user, separate_list))
+                    separate_list = []
+                separate_list.append(lecture)
+            result.append(_taken_lectures_to_output(request.user, separate_list))
+        except ObjectDoesNotExist:
+            result = []
+            take_year_list = []
+    else:
+        take_year_list = []
+        result = []
+
+    result = zip(take_year_list,result)
+
     return render_to_response('dictionary/index.html', {
         'section': 'dictionary',
         'title': ugettext(u'과목 사전'),
@@ -75,7 +95,7 @@ def index(request):
         'planned_credits' : u'넘겨줘',
         'planned_au' : u'넘겨줘',
         'recent_rank_list' : _top_by_recent_score(10),
-        'todo_comment_list' : todo_comment_list,
+        'lecture_list' : result,
         'dept': -1,
         'classification': 0,
         'keyword': json.dumps('',ensure_ascii=False,indent=4), 
@@ -420,7 +440,28 @@ def add_summary(request):
         'summary': _summary_to_output([new_summary],False,'ko')}, ensure_ascii=False, indent=4))
 
 
-# -- Private functions
+# -- Private functions   
+def _taken_lectures_to_output(user, lecture_list):
+    try:
+        written_list=[comment.lecture for comment in Comment.objects.filter(writer=user)]
+    except ObjectDoesNotExist:
+        written_list=[]
+
+    show_list=[]
+
+    for lecture in lecture_list:
+        written=False
+        if lecture in written_list:
+            written=True
+        item= {
+                'url': "/dictionary/view/" + lecture.old_code + "/",
+                'title': lecture.title,
+                'code': lecture.old_code,
+                'written':written
+            }
+        show_list.append(item)
+    return show_list
+
 def _trans(ko_message, en_message, lang) :
     if en_message == None or lang == 'ko' :
         return ko_message
@@ -671,3 +712,4 @@ def _get_unwritten_lecture_by_db(user):
         if comment.lecture in ret_list:
             ret_list.remove(comment.lecture)
     return ret_list
+

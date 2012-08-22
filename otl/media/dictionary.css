@@ -22,14 +22,14 @@ table caption
 
 table.mcomment
 {
-	width:760px;
+	width:200px;
 	margin:10px;
 }
 
 table.mcomment caption
 {
 	font-weight:bold;
-	font-size:20px;
+	font-size:13px;
 	text-align:left;
 	margin:10px;
 }
@@ -37,13 +37,19 @@ table.mcomment caption
 #main-side
 {
 	float:left;
-	width:780px;
+	width:550px;
 }
 
 #left-side
 {
         float:left;
         width:200px;
+}
+
+#right-side
+{
+        float:right;
+        width:250px;
 }
 
 #lecturelist-range h4

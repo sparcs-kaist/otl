@@ -1,10 +1,12 @@
 {% extends 'dictionary/base.html' %}
+{% load yearterm %}
 {% block header_main %}
 <script type="text/javascript">
 //<![CDATA[
 $(document).ready(function() {
-    Data.Comments = [];
+	Data.Comments = [];
     IndexCommentList.initialize();
+	IndexLectureList.initialize();
 });
 //]]>
 </script>
@@ -23,79 +25,17 @@ $(document).ready(function() {
 </div>
 </div>
 <div id="right-side">
-	<div id="topranking">
-		<table class="dictionary-main">
-			<caption>
-				Top 10
-			</caption>
-			<thead>
-				<tr>
-					<th>Rank</th>
-					<th>ID</th>
-					<th>내공</th>
-				</tr>
-			</thead>
-			<tbody>
-				{% for r in rank_list %}
-				<tr>
-					<td>{{ r.index }}</td>
-					<td>{{ r.user.nickname }}</td>
-					<td>{{ r.user.score }}</td>
-				</tr>
+	<div id="taken_lecture">
+		{% for y in lecture_list %}
+		<a href='#' id="{{ forloop.counter }}" class="show_taken_lecture"> {{  y.0.year }} {{ y.0.semester|term2str }}</a><br />
+			<div class="taken_lecture_list" {% if forloop.counter != 1 %} hidden="true"{% endif %}>
+				{% for lecture in y.1 %}
+				<a href={{lecture.url}}>{{lecture.code}} - {{lecture.title}}</a> 
+				{% if lecture.written %} 씀 {% else %} 안씀 {% endif %} <br />
 				{% endfor %}
-			</tbody>
-		</table>
-	</div>
-	<div id="recentranking">
-		<table class="dictionary-main">
-			<caption>
-				Monthly Top 10
-			</caption>
-			<thead>
-				<tr>
-					<th>Rank</th>
-					<th>ID</th>
-					<th>내공</th>
-				</tr>
-			</thead>
-			<tbody>
-				{% for r in recent_rank_list %}
-				<tr>
-					<td>{{ r.index }}</td>
-					<td>{{ r.user.nickname }}</td>
-					<td>{{ r.user.recent_score }}</td>
-				</tr>
-				{% endfor %}
-			</tbody>
-		</table>
-	</div>
-	<div id="askcomment">
-		<table class="mcomment">
-			<caption>
-				당신의 의견을 남겨주세요 :)
-			</caption>
-			<thead>
-				<tr>
-					<th> 학기 </th>
-					<th> 과목코드 </th>
-					<th> 과목명 </th>
-					<th> 교수님 </th>
-					<th> 코멘트 남기기 </th>
-				</tr>
-			</thead>
-			<tbody>
-				{% for c in todo_comment_list %}
-				<tr>
-					<td>{{ c.semester }}</td>
-					<td>{{ c.course_no }}</td>
-					<td>{{ c.title }}</td>
-					<td>{{ c.prof }}</td>
-					<td><a href="{{ c.url }}">바로가기</a></td>
-				</tr>
-				{% endfor %}
-			</tbody>
-		</table>
-	</div>
+			</div>
+		{% endfor %}
+		</div>
 </div>
 <div class="clear" style="height:10px;"></div>
 {% endblock %}
