@@ -59,11 +59,11 @@ $(document).ready(function() {
 				</tr>
 			</thead>
 			<tbody>
-				{% for r in rank_list %}
+				{% for r in recent_rank_list %}
 				<tr>
-					<td>{{ r.rank }}</td>
-					<td>{{ r.ID }}</td>
-					<td>{{ r.score }}</td>
+					<td>{{ r.index }}</td>
+					<td>{{ r.user.nickname }}</td>
+					<td>{{ r.user.recent_score }}</td>
 				</tr>
 				{% endfor %}
 			</tbody>
@@ -87,8 +87,8 @@ $(document).ready(function() {
 				{% for c in todo_comment_list %}
 				<tr>
 					<td>{{ c.semester }}</td>
-					<td>{{ c.code }}</td>
-					<td>{{ c.lecture_name }}</td>
+					<td>{{ c.course_no }}</td>
+					<td>{{ c.title }}</td>
 					<td>{{ c.prof }}</td>
 					<td><a href="{{ c.url }}">바로가기</a></td>
 				</tr>

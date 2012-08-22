@@ -65,23 +65,24 @@ class Comment(models.Model):
 
 class CommentAdmin(admin.ModelAdmin):
     list_display = ('course', 'comment', 'load', 'score', 'gain')
-    ordering = ('-written_datetime',)
+    ordering = ('-id',)
 
 class LectureRating(models.Model):
-    course = models.ForeignKey(Course, related_name='rating_set')   # 과목
     lecture = models.ForeignKey(Lecture)                            # 과목 (분반 포함)
     number_of_students = models.IntegerField()                      # 평가자 수
     number_of_respondents = models.IntegerField()                   # 응답자 수
+    number_of_effective_respondents = models.IntegerField()         # 유효응답자 수
     rating = models.FloatField()                                    # 점수
-    standard_deviation = models.FloatField()                        # 표준편
-    # rated_contents =                                              # 평가 항목
-    # rated_score =                                                 # 구체 점수
+    standard_deviation = models.FloatField()                        # 표준편가
 
     def rate_of_responds(self):
         return str(100.0 * self.number_of_respondents / self.number_of_students) + "%"
 
+    def rate_of_effective_responds(self):
+        return str(100.0 * self.number_of_effective_respondents / self.number_of_students) + "%"
+
 class LectureRatingAdmin(admin.ModelAdmin):
-    list_display = ('course', 'lecture', 'number_of_students', 'number_of_respondents', 'rating', 'standard_deviation')
+    list_display = ('lecture', 'number_of_students', 'number_of_respondents', 'number_of_effective_respondents','rating', 'standard_deviation')
 
 class AlreadyWrittenError(Exception):
     pass

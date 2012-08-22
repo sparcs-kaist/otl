@@ -71,3 +71,4 @@ GAIN_TYPES = (
     (5, u'별두개반'),
     (6, u'별세개')
 )
+COMMENT_SCORE = 10
