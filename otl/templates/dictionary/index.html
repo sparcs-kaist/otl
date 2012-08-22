@@ -4,9 +4,11 @@
 <script type="text/javascript">
 //<![CDATA[
 $(document).ready(function() {
-	Data.Comments = [];
+		Data.Comments = [];
+		Data.Favorites = {{favorite|safe}};
     IndexCommentList.initialize();
 	IndexLectureList.initialize();
+	FavoriteList.initialize();
 });
 //]]>
 </script>
@@ -46,7 +48,10 @@ $(document).ready(function() {
 				{% endfor %}
 			</div>
 		{% endfor %}
-		</div>
+	</div>
+	<div id="favorite-view">
+	즐겨찾기<br />
+	</div>
 </div>
 </div>
 <div class="clear" style="height:10px;"></div>

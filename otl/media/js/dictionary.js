@@ -684,7 +684,7 @@ var DictionaryCommentList = {
 		}
 	},
 
-        addNewComment:function(obj){
+    addNewComment:function(obj){
 	    $.each(obj, function(index, item) {
 	        var enableDelete = (item.writer_id == Data.user_id);
 	        var comment = $('<div>', {'class': 'dictionary_comment'});
@@ -870,5 +870,27 @@ var ProfessorCommentList = {
 		$('<a>').text('학점 : '+Data.Average.avg_score).appendTo(this.eval);
 		$('<a>').text('로드 : '+Data.Average.avg_load).appendTo(this.eval);
 		$('<a>').text('남는거 : '+Data.Average.avg_gain).appendTo(this.eval);
+	}
+}
+
+var FavoriteList = {
+	initialize:function() 
+	{
+		this.favorites = $('#favorite-view');
+		this.registerHandles();
+		console.log(Data.Favorites);
+		this.addToMultipleFavorite(Data.Favorites);
+	},
+	registerHandles:function()
+	{
+	},
+	addToMultipleFavorite:function(obj)
+	{
+		$.each(obj, function(index, item) {
+			var favorite = $('<div>', {'class': 'dictionary_favorite'});
+			favorite.appendTo(FavoriteList.favorites);
+			$('<a>', {'href': item.url}).text(item.code + ' - ' + item.title).appendTo(favorite);
+		
+		});
 	}
 }

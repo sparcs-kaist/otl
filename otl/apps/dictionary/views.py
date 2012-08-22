@@ -52,6 +52,7 @@ def index(request):
     else:
         my_lectures_output = json.dumps(my_lectures, ensure_ascii=False, sort_keys=False, separators=(',',':'))
 
+    # Read user's past lecture
     if request.user.is_authenticated():
         try:
             take_lecture_list = UserProfile.objects.get(user=request.user).take_lecture_list.order_by('-year', '-semester')
@@ -76,6 +77,15 @@ def index(request):
 
     result = zip(take_year_list,result)
 
+    # Load favorite list
+    if request.user.is_authenticated():
+        try: 
+            favorite_list = _favorites_to_output(UserProfile.objects.get(user=request.user).favorite.all(), True, request.session.get('django_language','ko'))
+        except ObjectDoesNotExist:
+            favorite_list = []
+    else:
+        favorite_list = []
+    
     return render_to_response('dictionary/index.html', {
         'section': 'dictionary',
         'title': ugettext(u'과목 사전'),
@@ -83,6 +93,7 @@ def index(request):
         'my_lectures': my_lectures_output,
         'lang' : request.session.get('django_language', 'ko'),
         'semester_info' : semester_info,
+        'favorite' : favorite_list,
         'username' : u'넘겨줘',
         'nickname' : u'넘겨줘',
         'studentno' : u'넘겨줘',
@@ -166,9 +177,12 @@ def show_more_comments(request):
         comments = Comment.objects.filter(course=course,id__lte=next_comment_id).order_by('-id')[:settings.COMMENT_NUM]
     lang=request.session.get('django_language','ko')
     comments_output = _comments_to_output(comments,False,lang)
-
+    if len(comments)==0:
+        next_comment_id = -1
+    else:
+        next_comment_id = comments[len(comments)-1].id-1
     return HttpResponse(json.dumps({
-        'next_comment_id': comments[len(comments)-1].id-1,
+        'next_comment_id': next_comment_id,
         'comments': comments_output}))
 
 
@@ -673,9 +687,9 @@ def _summary_to_output(summaries,conv_to_json=True,lang='ko'):
     if conv_to_json:
         io = StringIO()
         if settings.DEBUG:
-            json.dump(item,io,ensure_ascii=False,indent=4)
+            json.dump(all,io,ensure_ascii=False,indent=4)
         else:
-            json.dump(item,io,ensure_ascii=False,sort_keys=False,separators=(',',':'))
+            json.dump(all,io,ensure_ascii=False,sort_keys=False,separators=(',',':'))
         return io.getvalue()
     else :
         return all
@@ -712,4 +726,28 @@ def _get_unwritten_lecture_by_db(user):
         if comment.lecture in ret_list:
             ret_list.remove(comment.lecture)
     return ret_list
+
+def _favorites_to_output(favorites,conv_to_json=True,lang='ko'):
+    all = []
+    if not isinstance(favorites, list):
+        favorites = favorites.select_related()
+    for favorite in favorites:
+        item = {
+            'course_id': favorite.id,
+            'code': favorite.old_code,
+            'title': _trans(favorite.title,favorite.title_en,lang),
+            'url': "/dictionary/view/" + favorite.old_code + "/"
+            }
+        all.append(item) 
+    if conv_to_json:
+        io = StringIO()
+        if settings.DEBUG:
+            json.dump(all,io,ensure_ascii=False,indent=4)
+        else:
+            json.dump(all,io,ensure_ascii=False,sort_keys=False,separators=(',',':'))
+        return io.getvalue()
+    else :
+        return all
+
+
 
