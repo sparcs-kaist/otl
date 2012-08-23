@@ -298,19 +298,19 @@ def add_comment(request):
                 course = Course.objects.get(id=course_id)
             else:
                 raise ValidationError()
-            
         lectures = _get_taken_lecture_by_db(request.user, course)
-        if lectures == Lecture.objects.none():
+        
+        if not lectures:
             lecture = None
         else:
             lecture = lectures[0]   # 여러번 들었을 경우 가장 최근에 들은 과목 기준으로 한다.
-
+        
         comment = request.POST.get('comment', None)
         load = int(request.POST.get('load', -1))
         gain = int(request.POST.get('gain', -1))
         score = int(request.POST.get('score', -1))
         writer = request.user
-
+        
         if load < 0 or gain < 0 or score < 0:
             raise ValidationError()
 
