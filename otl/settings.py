@@ -80,6 +80,8 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.media',
     'otl.utils.context_processors.globaltime',
     'otl.utils.context_processors.myfavorites',
+    'otl.utils.context_processors.favorites',
+    'otl.utils.context_processors.taken_lecture_list',
 )
 
 MIDDLEWARE_CLASSES = [

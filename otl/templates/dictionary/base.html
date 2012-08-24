@@ -1,4 +1,5 @@
 {% extends 'layout.html' %}
+{% load yearterm %}
 {% block headers %}
 <link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}favorites.css" />
 <link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}table.css" />
@@ -14,7 +15,8 @@
 var USER_LANGUAGE = "{{lang}}";
 $(document).ready(function() {
     Data.Lectures = [];
-    Data.MediaUrl = [];
+	Data.MediaUrl = [];
+	Data.Favorites = {{favorite|safe}};
     CourseList.pre_dept = {{dept}};
     CourseList.pre_classification = {{classification}};
     CourseList.pre_keyword = "{{keyword}}";
@@ -22,7 +24,9 @@ $(document).ready(function() {
     CourseList.pre_active_tab = {{active_tab}};
 
     Notifier.initialize();
-    CourseList.initialize();        
+	CourseList.initialize();       
+	FavoriteList.initialize();
+	IndexLectureList.initialize();
 });
     //]]>
 </script>
@@ -106,6 +110,21 @@ $(document).ready(function() {
         <div class="clear"></div>
     </div><!--lecture_container-->
 </div><!--left-side-->
-
+<div id="right-side">
+	<div id="taken_lecture">
+		{% for y in lecture_list %}
+		<a href='#' id="{{ forloop.counter }}" class="show_taken_lecture"> {{  y.0.year }} {{ y.0.semester|term2str }}</a><br />
+			<div class="taken_lecture_list" {% if forloop.counter != 1 %} hidden="true"{% endif %}>
+				{% for lecture in y.1 %}
+				<a href={{lecture.url}}>{{lecture.code}} - {{lecture.title}}</a> 
+				{% if lecture.written %} 씀 {% else %} 안씀 {% endif %} <br />
+				{% endfor %}
+			</div>
+		{% endfor %}
+	</div>
+	<div id="favorite-view">
+	즐겨찾기<br />
+	</div>
+</div>
 {% block main %} {% endblock %}
 {% endblock %}

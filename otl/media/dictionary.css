@@ -37,20 +37,16 @@ table.mcomment caption
 #main-side
 {
 	float:left;
-	width:550px;
+	width:530px;
 }
 
 #left-side
 {
         float:left;
         width:200px;
+        margin:10px;
 }
 
-#right-side
-{
-        float:right;
-        width:250px;
-}
 
 #lecturelist-range h4
 {
@@ -200,8 +196,8 @@ table.mcomment caption
 
 #right-side
 {
-    float:left;
-    width: 250px;
+    float:right;
+    width: 230px;
     background:#00FF00;
     margin: 10px;
 }

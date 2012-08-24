@@ -877,12 +877,14 @@ var FavoriteList = {
 	initialize:function() 
 	{
 		this.favorites = $('#favorite-view');
+		this.submitFavorite = $('input[name="addFavorite"]');
 		this.registerHandles();
-		console.log(Data.Favorites);
 		this.addToMultipleFavorite(Data.Favorites);
 	},
 	registerHandles:function()
 	{
+		$(this.submitFavorite).bind('click', $.proxy(this.addFavorite, this));
+
 	},
 	addToMultipleFavorite:function(obj)
 	{
@@ -890,7 +892,49 @@ var FavoriteList = {
 			var favorite = $('<div>', {'class': 'dictionary_favorite'});
 			favorite.appendTo(FavoriteList.favorites);
 			$('<a>', {'href': item.url}).text(item.code + ' - ' + item.title).appendTo(favorite);
+		});
+	},
+	addFavorite:function(obj)
+	{
+		var course_id = Data.Course.id;
 		
+		$.ajax({
+			type: 'POST', 
+			url: '/dictionary/add_favorite/',
+			data: {'course_id': course_id},
+			dataType: 'json',
+			success: $.proxy(function(resObj) {
+				try {
+					if (resObj.result=='ADD') {
+						Data.Favorites = Data.Favorites.concat(resObj.favorite);
+						console.log(Data.Favorites);
+						FavoriteList.addNewFavorite(resObj.favorite);
+					} else if (resObj.result='ALREADY_ADDED') {
+						Notifier.setErrorMsg(gettext('이미 추가하셨습니다.'));
+					}
+				}
+				catch(e) {
+					Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+e.message+')');
+				}
+			}, this),
+			error: function(xhr) {
+				if (suppress_ajax_errors)
+					return;
+				if (xhr.status == 403){
+					Notifier.setErrorMsg(gettext('로그인해야 합니다.'));
+				}
+				else{
+					Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+gettext('요청 실패')+':'+xhr.status+')');
+				}
+			}
+		});
+	},
+	addNewFavorite:function(obj){
+		$.each(obj, function(index, item) {
+			var favorite = $('<div>', {'class': 'dictionary_favorite'});
+			favorite.appendTo(FavoriteList.favorites);
+			$('<a>', {'href': item.url}).text(item.code + ' - ' + item.title).appendTo(favorite);
 		});
 	}
+
 }
