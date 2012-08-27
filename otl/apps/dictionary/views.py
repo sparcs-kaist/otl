@@ -472,6 +472,7 @@ def _comments_to_output(comments,conv_to_json=True, lang='ko'):
             'writer_nickname': nickname,
             'professor': _professors_to_output(_get_professor_by_lecture(comment.lecture),False,lang),
             'written_datetime': comment.written_datetime.isoformat(),
+            'written_date':comment.written_datetime.isoformat()[:10],
             'comment': comment.comment,
             'score': comment.score,
             'gain': comment.gain,

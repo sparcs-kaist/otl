@@ -143,9 +143,6 @@ table.mcomment caption
         margin-right:10px;
 }
 
-
-
-
 .lecture_content a
 {
     text-decoration:none;
@@ -171,59 +168,85 @@ table.mcomment caption
 {
 
     background:#C3DAFB;
-    
+    height: 29px;
+    font-size : 15px;
 }
 
 #center
 {
     float:left;
-    width:500px;
-    margin: 10px;
+    width:548px;
+    margin-left: 18px;
+    margin-top : 36px;
 }
+#center p 
+{
+    margin:0px;
+}
+
 
 #recommend-area-professors
 {
-    height:200px;
+    height:202px;
+    margin-top : 15px;
     background:#FF0000;
 }
 
-
-#right-side
+#recent-comments
 {
-    float:left;
-    width: 250px;
-    background:#00FF00;
-    margin: 10px;
+    height: 510px;
+    margin-top : 19px;
+}
+
+.timeline_comment 
+{
+    margin-top : 15px;
+}
+.content_prof_photo
+{
+    width:66px;
+    margin:0px;
+}
+.content_prof_photo img
+{
+    margin: 0px;
+}
+.content_prof_name
+{
+    font-size:10px;
+    text-align:center;
 }
 
 .timeline_comment_left
 {
     float:left;
-    margin: 5px;
+    margin-left:19px;
+    width:66px;
+    padding:0px;
 }
 
 .timeline_comment_right
 {
     float:left;
-    margin: 5px;
+    margin-left: 19px;
+    width :444px; 
 }
 
-#timeline_comment_right_top
+.timeline_comment_right_top
 {
     float:left;
-    width: 380px;
+    width: 444px;
 }
 
-#timeline_comment_right_top_title
+.timeline_comment_right_top_title
 {
+    font-size:11px;
     float:left;
-    margin: 3px;
 }
 
-#timeline_comment_right_top_spec
+.timeline_comment_right_top_spec
 {
     float:right;
-    margin: 3px;
 }
 
 .a_spec
@@ -231,21 +254,42 @@ table.mcomment caption
     margin-left: 20px;
 }
 
-#timeline_comment_right_mid
+.timeline_comment_right_mid
 {
-    float:left;
-    height:50px;
+    height:70px;
 }
-
-#timeline_comment_right_mid_comment 
+.timeline_comment_right_mid_comment 
 {
     height:50px;
+    margin-top:10px;
     float:left;
 }
 
 .timeline_comment
 {
-    height:150px;
+    height:120px;
+}
+.timeline_comment_right_bot
+{
+    margin-top:10px;
+    height:10px;
+}
+.timeline_comment_right_bot_writer
+{
+    float:right;
+}
+.timeline_comment_right_bot_date
+{
+    float:right;
+    margin-left:11px;
+}
+
+#right-side
+{
+    float:left;
+    width: 191px;
+    background:#00FF00;
+    margin-left:21px;
 }
 
 
