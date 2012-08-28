@@ -22,289 +22,283 @@ table caption
 
 table.mcomment
 {
-	width:200px;
+	width:760px;
 	margin:10px;
 }
 
 table.mcomment caption
 {
 	font-weight:bold;
-	font-size:13px;
+	font-size:20px;
 	text-align:left;
 	margin:10px;
 }
 
-#main-side
-{
-	float:left;
-	width:530px;
-}
-
 #left-side
 {
-        float:left;
-        width:200px;
-        margin:10px;
+	float:left;
+	width:200px;
 }
-
 
 #lecturelist-range h4
 {
-    margin: 5px 0;
-    padding: 0;
+	margin: 5px 0;
+	padding: 0;
 }
 
 #lecturelist-filter label
 {
-    font-weight: bold;
+	font-weight: bold;
 }
 
 #lecturelist p
 {
-    margin: 2px;
-    padding: 0;
+	margin: 2px;
+  padding: 0;
 }
 
 #lecturelist-notice
 {
-    font-size: 8pt;
-    line-height: 1.4;
-    margin-top: 5px;
+  font-size: 8pt;
+  line-height: 1.4;
+  margin-top: 5px;
+}
+ 
+#lecture_tabs .lecture_tab
+{
+	margin-bottom:3px;
+	cursor:pointer;
+	background:#E1ECFE url('images/corner_tl.gif') left top no-repeat;
 }
 
+#lecture_tabs .lecture_tab div
+{
+	padding:2px 7px;
+	background:transparent url('images/corner_bl.gif') left bottom no-repeat;
+}
  
- #lecture_tabs .lecture_tab
- {
-     margin-bottom:3px;
-     cursor:pointer;
-     background:#E1ECFE url('images/corner_tl.gif') left top no-repeat;
- }
- #lecture_tabs .lecture_tab div
- {
-     padding:2px 7px;
-     background:transparent url('images/corner_bl.gif') left bottom no-repeat;
- }
+#lecture_tabs .active
+{
+	background-color:#C3D9FF;
+}
  
- #lecture_tabs .active
- {
-     background-color:#C3D9FF;
- }
+#lecture_contents
+{
+	clear:both;
+	background:#C3D9FF url('images/corner_tr.gif') right top no-repeat;
+	padding:5px;
+}
  
- #lecture_contents
- {
-     clear:both;
-     background:#C3D9FF url('images/corner_tr.gif') right top no-repeat;
-     padding:5px;
- }
+#lecture_contents_footer
+{
+	background:#C3D9FF url('images/corner_bl.gif') left bottom no-repeat;
+}
  
- #lecture_contents_footer
- {
-     background:#C3D9FF url('images/corner_bl.gif') left bottom no-repeat;
- }
+#lecture_contents_footer div
+{
+	height:5px;
+	background:transparent url('images/corner_br.gif') right bottom no-repeat;
+}
  
- #lecture_contents_footer div
- {
-     height:5px;
-     background:transparent url('images/corner_br.gif') right bottom no-repeat;
- }
+#lecture_contents h4
+{
+	font-size: 9pt;
+}
  
- #lecture_contents h4 {
-         font-size: 9pt;
- }
+#message-wrap
+{
+	background:#C3D9FF url('images/corner_tl.gif') left top no-repeat;
+}
  
- #message-wrap
- {
-     background:#C3D9FF url('images/corner_tl.gif') left top no-repeat;
- }
+#message-wrap div.bl
+{
+	background:transparent url('images/corner_bl.gif') bottom left no-repeat;
+}
  
- #message-wrap div.bl
- {
-     background:transparent url('images/corner_bl.gif') bottom left no-repeat;
- }
- 
- #message-wrap div.br
- {
-     background:transparent url('images/corner_br.gif') bottom right no-repeat;
- }
-
+#message-wrap div.br
+{
+	background:transparent url('images/corner_br.gif') bottom right no-repeat;
+}
 
 #message 
 {
-    padding:3px 20px 1px;
-    background:transparent url('images/corner_tr.gif') right top no-repeat;
+	padding:3px 20px 1px;
+	background:transparent url('images/corner_tr.gif') right top no-repeat;
 }
-
 
 #indicator
 {
-        width:16px;
-        height:16px;
-        margin-right:10px;
+	width:16px;
+  height:16px;
+  margin-right:10px;
 }
 
 #indicator_semester
 {
-        width:16px;
-        height:16px;
-        margin-right:10px;
+  width:16px;
+  height:16px;
+	margin-right:10px;
 }
-
-
-
 
 .lecture_content a
 {
-    text-decoration:none;
-    display:block;
-    margin-bottom:2px;
-    padding:1px 5px;
-    cursor:pointer;
-    background:#fff;
+  text-decoration:none;
+  display:block;
+  margin-bottom:2px;
+  padding:1px 5px;
+  cursor:pointer;
+  background:#fff;
 }
 
 .lecture_content a:hover
 {
-    color:#333;
-    background:#E1ECFE;
+  color:#333;
+  background:#E1ECFE;
 }
 
 .lecture_content a.clicked
 {
-    background:#D1EFD5;
+	background:#D1EFD5;
 }
 
 .dictionary-title
 {
-
-    background:#C3DAFB;
-    height: 29px;
-    font-size : 15px;
+	background:#C3DAFB;
+	height:30px;
+  font-size:15px;
 }
 
 #center
 {
-    float:left;
-    width:548px;
-    margin-left: 18px;
-    margin-top : 36px;
-}
-#center p 
-{
-    margin:0px;
+  float:left;
+  width:570px;
+  margin-left: 18px;
+  margin-top : 36px;
 }
 
+#recommend-title
+{
+	line-height:30px;
+	margin-left:18px;
+}
+
+#recent-comments-title
+{
+	line-height:30px;
+	margin-left:18px;
+}
 
 #recommend-area-professors
 {
-    height:202px;
-    margin-top : 15px;
-    background:#FF0000;
+  height:202px;
+  margin-top : 18px;
+  background:#FF0000;
 }
 
 #recent-comments
 {
-    height: 510px;
-    margin-top : 19px;
+  margin-top : 18px;
 }
 
 .timeline_comment 
 {
-    margin-top : 15px;
+	width:534px;
+	height:126px;
+  margin-top:18px;
+	margin-bottom:18px;
+	margin-left:18px;
+	margin-right:18px;
 }
+
 .content_prof_photo
 {
-    width:66px;
-    margin:0px;
+  width:67px;
+	height:79px;
 }
-.content_prof_photo img
-{
-    margin: 0px;
-}
+
 .content_prof_name
 {
-    font-size:10px;
-    text-align:center;
+  font-size:10px;
+  text-align:center;
 }
 
 .timeline_comment_left
 {
-    float:left;
-    margin-left:19px;
-    width:66px;
-    padding:0px;
+  float:left;
+  width:67px;
+	height:108px;
+  padding:0px;
 }
 
 .timeline_comment_right
 {
-    float:left;
-    margin-left: 19px;
-    width :444px; 
+  float:right;
+	width:449px;
+	height:108px;
+  margin-left:18px;
 }
 
 .timeline_comment_right_top
 {
-    float:left;
-    width: 444px;
+  width:449px;
+	height:18px;
+	font-size:11px;
 }
 
 .timeline_comment_right_top_title
 {
-    font-size:11px;
-    float:left;
+	height:18px;
+  float:left;
 }
 
 .timeline_comment_right_top_spec
 {
-    float:right;
-    margin: 3px;
+	height:18px;
+  float:right;
 }
 
 .a_spec
 {
-    margin-left: 20px;
+  margin-left:20px;
 }
 
-#timeline_comment_right_mid
+.timeline_comment_right_mid
 {
-    float:left;
-    height:50px;
+	width:449px;
+  height:36px;
+	margin-top:18px;
+	margin-bottom:18px;
 }
 
-#timeline_comment_right_mid_comment 
+.timeline_comment_right_mid_comment 
 {
-    height:50px;
-    float:left;
+  height:36px;
 }
 
-.timeline_comment
-{
-    height:150px;
-}
 .timeline_comment_right_bot
 {
-    margin-top:10px;
-    height:10px;
+	width:449px;
+  height:18px;
 }
+
 .timeline_comment_right_bot_writer
 {
-    float:right;
+  float:right;
 }
+
 .timeline_comment_right_bot_date
 {
-    float:right;
-    margin-left:11px;
+  float:right;
+  margin-left:11px;
 }
-
-
-
-
 
 #right-side
 {
-    float:right;
-    width: 230px;
-    background:#00FF00;
-    margin: 10px;
+  float:left;
+  width: 191px;
+  background:#00FF00;
+  margin-left:18px;
+	margin-top:36px;
 }
 
 
