@@ -768,7 +768,7 @@ var IndexCommentList = {
 		});
 	},
 	
-        addToMultipleComment:function(obj)
+    addToMultipleComment:function(obj)
 	{
 		$.each(obj, function(index, item) {
 			var div_comment = $('<div>', {'class': 'timeline_comment'});
@@ -797,13 +797,7 @@ var IndexCommentList = {
 			$('</br>').appendTo(right_div_comment);
 			right_mid_div.appendTo(right_div_comment);
 			right_mid_div_comment.appendTo(right_mid_div);
-		/*
-			var down_right_div_comment = $('<div>', {'class': 'timeline_comemnt_right_eval'});
-
-			top_right_div_comment.appendTo(right_div_comment);
-			mid_right_div_comment.appendTo(right_div_comment);
-			down_right_div_comment.appendTo(right_div_comment);
-		*/
+		
 			$('<a>', {'class': 'content_subject'}).text(item.course_title).appendTo(right_top_div_title);
 			$('<a>', {'class': 'content_comment'}).text(item.comment).appendTo(right_mid_div_comment);
 			$('<a>', {'class': 'a_spec'}).text('학점 :' + item.score).appendTo(right_top_div_spec);
@@ -936,5 +930,4 @@ var FavoriteList = {
 			$('<a>', {'href': item.url}).text(item.code + ' - ' + item.title).appendTo(favorite);
 		});
 	}
-
-}
+};

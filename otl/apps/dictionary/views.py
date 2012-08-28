@@ -52,7 +52,10 @@ def index(request):
     else:
         my_lectures_output = json.dumps(my_lectures, ensure_ascii=False, sort_keys=False, separators=(',',':'))
 
-    
+    todo_comment_list = []
+    if request.user.is_authenticated():
+        comment_lecture_list = _get_unwritten_lecture_by_db(request.user)
+        todo_comment_list = _lectures_to_output(comment_lecture_list, False, request.session.get('django_language','ko'))
     return render_to_response('dictionary/index.html', {
         'section': 'dictionary',
         'title': ugettext(u'과목 사전'),
@@ -72,6 +75,7 @@ def index(request):
         'planned_credits' : u'넘겨줘',
         'planned_au' : u'넘겨줘',
         'recent_rank_list' : _top_by_recent_score(10),
+        'todo_comment_list' : todo_comment_list,
         'dept': -1,
         'classification': 0,
         'keyword': json.dumps('',ensure_ascii=False,indent=4), 
@@ -136,18 +140,23 @@ def show_more_comments(request):
     course_id = int(request.GET.get('course_id', -1))
     next_comment_id = int(request.GET.get('next_comment_id', -1))
     course = Course.objects.get(id=course_id)
-    if next_comment_id == -1:
+    if next_comment_id == -1:  #starting point
         comments = Comment.objects.filter(course=course).order_by('-id')[:settings.COMMENT_NUM]
+    elif next_comment_id == -2 : #nothing 
+        return HttpResponse(json.dumps({
+            'next_comment_id':0,
+            'comments':[]}))
     else:
         comments = Comment.objects.filter(course=course,id__lte=next_comment_id).order_by('-id')[:settings.COMMENT_NUM]
     lang=request.session.get('django_language','ko')
     comments_output = _comments_to_output(comments,False,lang)
+   
     if len(comments)==0:
-        next_comment_id = -1
-    else:
-        next_comment_id = comments[len(comments)-1].id-1
+        return HttpResponse(json.dumps({
+            'next_comment_id': -2,
+            'comments':comments_output}))
     return HttpResponse(json.dumps({
-        'next_comment_id': next_comment_id,
+        'next_comment_id': (comments[len(comments)-1].id)-1,
         'comments': comments_output}))
 
 
@@ -263,9 +272,10 @@ def add_comment(request):
                 course = Course.objects.get(id=course_id)
             else:
                 raise ValidationError()
+ 
         lectures = _get_taken_lecture_by_db(request.user, course)
         
-        if not lectures:
+        if lectures == Lecture.objects.none():
             lecture = None
         else:
             lecture = lectures[0]   # 여러번 들었을 경우 가장 최근에 들은 과목 기준으로 한다.
@@ -314,6 +324,7 @@ def add_comment(request):
             
 @login_required_ajax
 def delete_comment(request):
+    average = {'avg_score':0, 'avg_gain':0, 'avg_load':0}
     try:
         user = request.user
         comment_id = int(request.POST.get('comment_id', -1))
@@ -584,6 +595,7 @@ def _comments_to_output(comments,conv_to_json=True, lang='ko'):
             'writer_nickname': nickname,
             'professor': _professors_to_output(_get_professor_by_lecture(comment.lecture),False,lang),
             'written_datetime': comment.written_datetime.isoformat(),
+            'written_date':comment.written_datetime.isoformat()[:10],
             'comment': comment.comment,
             'score': comment.score,
             'gain': comment.gain,
@@ -670,7 +682,6 @@ def _courses_to_output(courses,conv_to_json=True,lang='ko'):
 
 def _summary_to_output(summaries,conv_to_json=True,lang='ko'):
     all = []
-    print type(summaries)
     if not isinstance(summaries, list):
         summaries = summaries.select_related()
     for summary in summaries:

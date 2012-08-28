@@ -6,6 +6,7 @@ from otl.apps.favorites.models import CourseLink
 from datetime import date
 from otl.apps.dictionary.views import _favorites_to_output,_taken_lectures_to_output
 from otl.apps.accounts.models import UserProfile
+from django.core.exceptions import ObjectDoesNotExist
 
 def globaltime(request):
     """서비스 전체에서 사용되는 기본 년도/학기 정보를 template 변수로 자동으로 포함시킨다."""
