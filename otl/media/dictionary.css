@@ -301,8 +301,7 @@ table.mcomment caption
 
 #right-side
 {
-    float:right;
-    width: 230px;
+    float:left;
     background:#00FF00;
     margin: 10px;
 }

@@ -110,6 +110,7 @@ $(document).ready(function() {
         <div class="clear"></div>
     </div><!--lecture_container-->
 </div><!--left-side-->
+{% block main %} {% endblock %}
 <div id="right-side">
 	<div id="taken_lecture">
 		{% for y in lecture_list %}
@@ -126,5 +127,6 @@ $(document).ready(function() {
 	즐겨찾기<br />
 	</div>
 </div>
-{% block main %} {% endblock %}
+
+<div class="clear" style="height:10px;"></div>
 {% endblock %}
