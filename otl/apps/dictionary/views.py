@@ -52,6 +52,39 @@ def index(request):
     else:
         my_lectures_output = json.dumps(my_lectures, ensure_ascii=False, sort_keys=False, separators=(',',':'))
 
+    # Read user's past lecture
+    if request.user.is_authenticated():
+        try:
+            take_lecture_list = UserProfile.objects.get(user=request.user).take_lecture_list.order_by('-year', '-semester')
+            take_year_list = take_lecture_list.values('year', 'semester').distinct()
+            separate_list = []
+            result = []
+            for lecture in take_lecture_list:
+                if len(separate_list)==0:
+                    separate_list.append(lecture)
+                    continue
+                if lecture.year!=separate_list[0].year or lecture.semester!=separate_list[0].semester :
+                    result.append(_taken_lectures_to_output(request.user, separate_list))
+                    separate_list = []
+                separate_list.append(lecture)
+            result.append(_taken_lectures_to_output(request.user, separate_list))
+        except ObjectDoesNotExist:
+            result = []
+            take_year_list = []
+    else:
+        take_year_list = []
+        result = []
+
+    result = zip(take_year_list,result)
+
+    # Load favorite list
+    if request.user.is_authenticated():
+        try: 
+            favorite_list = _favorites_to_output(UserProfile.objects.get(user=request.user).favorite.all(), True, request.session.get('django_language','ko'))
+        except ObjectDoesNotExist:
+            favorite_list = []
+    else:
+        favorite_list = []
     
     return render_to_response('dictionary/index.html', {
         'section': 'dictionary',
@@ -60,6 +93,7 @@ def index(request):
         'my_lectures': my_lectures_output,
         'lang' : request.session.get('django_language', 'ko'),
         'semester_info' : semester_info,
+        'favorite' : favorite_list,
         'username' : u'넘겨줘',
         'nickname' : u'넘겨줘',
         'studentno' : u'넘겨줘',
@@ -72,6 +106,7 @@ def index(request):
         'planned_credits' : u'넘겨줘',
         'planned_au' : u'넘겨줘',
         'recent_rank_list' : _top_by_recent_score(10),
+        'lecture_list' : result,
         'dept': -1,
         'classification': 0,
         'keyword': json.dumps('',ensure_ascii=False,indent=4), 
@@ -418,40 +453,9 @@ def add_summary(request):
         'result': result,
         'summary': _summary_to_output([new_summary],False,'ko')}, ensure_ascii=False, indent=4))
 
-@login_required
-def add_favorite(request):
-    try:
-        if request.user.is_authenticated():
-            user= request.user
-            userprofile= UserProfile.objects.get(user=user)
-            
-            result = "ADD"
-
-            course_id = int(request.POST.get('course_id',-1))
-            course = Course.objects.get(id=course_id)
-         
-            if course_id < 0:
-                raise ValidationError()
-            
-            if course in UserProfile.objects.get(user=user).favorite.all():
-                result = "ALEADY_ADDED"
-            else:
-                userprofile.favorite.add(course)
-                userprofile.save()
-            new_favorite=[]
-            new_favorite.append(course)
-            return HttpResponse(json.dumps({
-                    'result' : result,
-                    'favorite' : _favorites_to_output(new_favorite,False,request.session.get('django_language','ko'))}))
-    except ValidationError:
-        return HttpResponseBadRequest()
-    except:
-        return HttpResponseServerError()
-
-
 
 # -- Private functions   
-def _taken_lectures_to_output(user, lecture_list, lang='ko'):
+def _taken_lectures_to_output(user, lecture_list):
     try:
         written_list=[comment.lecture for comment in Comment.objects.filter(writer=user)]
     except ObjectDoesNotExist:
@@ -465,7 +469,7 @@ def _taken_lectures_to_output(user, lecture_list, lang='ko'):
             written=True
         item= {
                 'url': "/dictionary/view/" + lecture.old_code + "/",
-                'title': _trans(lecture.title,lecture.title_en,lang),
+                'title': lecture.title,
                 'code': lecture.old_code,
                 'written':written
             }
@@ -670,7 +674,6 @@ def _courses_to_output(courses,conv_to_json=True,lang='ko'):
 
 def _summary_to_output(summaries,conv_to_json=True,lang='ko'):
     all = []
-    print type(summaries)
     if not isinstance(summaries, list):
         summaries = summaries.select_related()
     for summary in summaries:
@@ -726,8 +729,8 @@ def _get_unwritten_lecture_by_db(user):
 
 def _favorites_to_output(favorites,conv_to_json=True,lang='ko'):
     all = []
-    if isinstance(favorites, Course):
-        favorites = [favorites]
+    if not isinstance(favorites, list):
+        favorites = favorites.select_related()
     for favorite in favorites:
         item = {
             'course_id': favorite.id,
