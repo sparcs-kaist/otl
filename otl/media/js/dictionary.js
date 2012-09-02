@@ -871,14 +871,7 @@ var FavoriteList = {
 	initialize:function() 
 	{
 		this.favorites = $('#favorite-view');
-		this.submitFavorite = $('input[name="addFavorite"]');
-		this.registerHandles();
 		this.addToMultipleFavorite(Data.Favorites);
-	},
-	registerHandles:function()
-	{
-		$(this.submitFavorite).bind('click', $.proxy(this.addFavorite, this));
-
 	},
 	addToMultipleFavorite:function(obj)
 	{
@@ -888,14 +881,33 @@ var FavoriteList = {
 			$('<a>', {'href': item.url}).text(item.code + ' - ' + item.title).appendTo(favorite);
 		});
 	},
+	addNewFavorite:function(obj){
+		$.each(obj, function(index, item) {
+			var favorite = $('<div>', {'class': 'dictionary_favorite'});
+			favorite.appendTo(FavoriteList.favorites);
+			$('<a>', {'href': item.url}).text(item.code + ' - ' + item.title).appendTo(favorite);
+		});
+	}
+};
+
+var FavoriteController = {
+	initialize:function()
+	{
+		this.course_id =  Data.Course['id'];
+		this.submitFavorite = $('input[name="addFavorite"]');
+		this.registerHandles();
+	},
+	registerHandles:function()
+	{
+		$(this.submitFavorite).bind('click', $.proxy(this.addFavorite, this));
+
+	},
 	addFavorite:function(obj)
 	{
-		var course_id = Data.Course.id;
-		
 		$.ajax({
 			type: 'POST', 
 			url: '/dictionary/add_favorite/',
-			data: {'course_id': course_id},
+			data: {'course_id': this.course_id},
 			dataType: 'json',
 			success: $.proxy(function(resObj) {
 				try {
@@ -923,11 +935,4 @@ var FavoriteList = {
 			}
 		});
 	},
-	addNewFavorite:function(obj){
-		$.each(obj, function(index, item) {
-			var favorite = $('<div>', {'class': 'dictionary_favorite'});
-			favorite.appendTo(FavoriteList.favorites);
-			$('<a>', {'href': item.url}).text(item.code + ' - ' + item.title).appendTo(favorite);
-		});
-	}
 };

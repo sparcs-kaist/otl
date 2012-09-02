@@ -10,17 +10,16 @@
 {% endif %}
 
 <script type="text/javascript">
-//<![CDATA[
 $(document).ready(function () {
 	Data.DictionaryComment = [];
 	Data.Course = {{course|safe}};
 	Data.Lectures = {{lectures|safe}};
     Data.Professors = {{professors|safe}};
 	Data.current_professor_id = -1;
-    Data.comment_id = -1;
+	Data.comment_id = -1;
 	DictionaryCommentList.initialize();
+	FavoriteController.initialize();
 });
-//]]>
 </script>
 
 {% endblock %}
@@ -34,7 +33,7 @@ $(document).ready(function () {
 		</div>
 		<div id="course-summary">
 			<div>
-				<span>{% trans "과목 소개" %}</span>
+				<span>{% trans "과목 소개" %}</span><input type="submit" name="addFavorite" value="즐겨찾기 추가"/>
 				<div id="summary_show">
                                 	<label id="summary_label">{{summary.summary}}</label>
 					<input type="submit" name="addSummaryShow" value ={% trans "수정하기" %} onclick="$('#summary_show').hide(); $('#summary_add').show();"/>
