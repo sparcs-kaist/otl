@@ -81,6 +81,8 @@ def index(request):
         'keyword': json.dumps('',ensure_ascii=False,indent=4), 
         'in_category': json.dumps(False),
         'active_tab': -1,
+        'favorite':favorites(request),
+        'lecture_list':taken_lecture_list(request),
     }, context_instance=RequestContext(request))
 
 def department(request, department_id):
@@ -459,7 +461,44 @@ def add_favorite(request):
     except:
         return HttpResponseServerError()
 
+def favorites(request):
+    """dictionary의 즐겨찾기 정보를 가지고 있는다."""
+    if request.user.is_authenticated():
+        try: 
+            favorite_list = _favorites_to_output(UserProfile.objects.get(user=request.user).favorite.all(), True, request.session.get('django_language','ko'))
+        except ObjectDoesNotExist:
+            favorite_list = []
+    else:
+        favorite_list = []
+    
+    return favorite_list 
 
+def taken_lecture_list(request):
+    """dictionary의 들었던 과목 정보를 가지고 있는다."""
+    if request.user.is_authenticated():
+        try:
+            take_lecture_list = UserProfile.objects.get(user=request.user).take_lecture_list.order_by('-year', '-semester')
+            take_year_list = take_lecture_list.values('year', 'semester').distinct()
+            separate_list = []
+            result = []
+            for lecture in take_lecture_list:
+                if len(separate_list)==0:
+                    separate_list.append(lecture)
+                    continue
+                if lecture.year!=separate_list[0].year or lecture.semester!=separate_list[0].semester :
+                    result.append(_taken_lectures_to_output(request.user, separate_list, request.session.get('django_language','ko')))
+                    separate_list = []
+                separate_list.append(lecture)
+            result.append(_taken_lectures_to_output(request.user, separate_list, request.session.get('django_language','ko')))
+        except ObjectDoesNotExist:
+            result = []
+            take_year_list = []
+    else:
+        take_year_list = []
+        result = []
+
+    result = zip(take_year_list,result)
+    return result
 
 # -- Private functions   
 def _taken_lectures_to_output(user, lecture_list, lang='ko'):
