@@ -15,24 +15,9 @@ table.user-info
 }
 
 
-table caption
-{
-	font-weight:bold;
-}
 
-table.mcomment
-{
-	width:200px;
-	margin:10px;
-}
 
-table.mcomment caption
-{
-	font-weight:bold;
-	font-size:13px;
-	text-align:left;
-	margin:10px;
-}
+
 
 #main-side
 {
@@ -73,59 +58,59 @@ table.mcomment caption
 }
 
  
- #lecture_tabs .lecture_tab
- {
-     margin-bottom:3px;
-     cursor:pointer;
-     background:#E1ECFE url('images/corner_tl.gif') left top no-repeat;
- }
- #lecture_tabs .lecture_tab div
- {
-     padding:2px 7px;
-     background:transparent url('images/corner_bl.gif') left bottom no-repeat;
- }
- 
- #lecture_tabs .active
- {
-     background-color:#C3D9FF;
- }
- 
- #lecture_contents
- {
-     clear:both;
-     background:#C3D9FF url('images/corner_tr.gif') right top no-repeat;
-     padding:5px;
- }
- 
- #lecture_contents_footer
- {
-     background:#C3D9FF url('images/corner_bl.gif') left bottom no-repeat;
- }
- 
- #lecture_contents_footer div
- {
-     height:5px;
-     background:transparent url('images/corner_br.gif') right bottom no-repeat;
- }
- 
- #lecture_contents h4 {
-         font-size: 9pt;
- }
- 
- #message-wrap
- {
-     background:#C3D9FF url('images/corner_tl.gif') left top no-repeat;
- }
- 
- #message-wrap div.bl
- {
-     background:transparent url('images/corner_bl.gif') bottom left no-repeat;
- }
- 
- #message-wrap div.br
- {
-     background:transparent url('images/corner_br.gif') bottom right no-repeat;
- }
+#lecture_tabs .lecture_tab
+{
+    margin-bottom:3px;
+    cursor:pointer;
+    background:#E1ECFE url('images/corner_tl.gif') left top no-repeat;
+}
+#lecture_tabs .lecture_tab div
+{
+    padding:2px 7px;
+    background:transparent url('images/corner_bl.gif') left bottom no-repeat;
+}
+
+#lecture_tabs .active
+{
+    background-color:#C3D9FF;
+}
+
+#lecture_contents
+{
+    clear:both;
+    background:#C3D9FF url('images/corner_tr.gif') right top no-repeat;
+    padding:5px;
+}
+
+#lecture_contents_footer
+{
+    background:#C3D9FF url('images/corner_bl.gif') left bottom no-repeat;
+}
+
+#lecture_contents_footer div
+{
+    height:5px;
+    background:transparent url('images/corner_br.gif') right bottom no-repeat;
+}
+
+#lecture_contents h4 {
+        font-size: 9pt;
+}
+
+#message-wrap
+{
+    background:#C3D9FF url('images/corner_tl.gif') left top no-repeat;
+}
+
+#message-wrap div.bl
+{
+    background:transparent url('images/corner_bl.gif') bottom left no-repeat;
+}
+
+#message-wrap div.br
+{
+    background:transparent url('images/corner_br.gif') bottom right no-repeat;
+}
 
 
 #message 
