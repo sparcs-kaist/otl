@@ -135,7 +135,6 @@
 }
 #recent-comments
 {
-    height: 510px;
     margin-top : 19px;
 }
 
@@ -188,6 +187,7 @@
 .timeline_comment_right_top_spec
 {
     float:right;
+    margin-right:15px;
 }
 
 .a_spec
@@ -198,23 +198,29 @@
 
 .timeline_comment_right_mid
 {
-    height:70px;
+    height:95px;
 }
 .timeline_comment_right_mid_comment 
 {
     height:50px;
     margin-top:10px;
+    margin-right:15px;
     float:left;
 }
-
+.content_comment
+{
+    height:45px;
+    margin-top : 10px;
+    margin-bottom:10px;
+}
 .timeline_comment
 {
-    height:120px;
+    height:110px;
 }
 .timeline_comment_right_bot
 {
-    margin-top:10px;
-    height:10px;
+    height:15px;
+    margin-right:15px;
 }
 .timeline_comment_right_bot_writer
 {
@@ -223,9 +229,17 @@
 .timeline_comment_right_bot_date
 {
     float:right;
-    margin-left:11px;
+    margin-left:15px;
 }
-
+.comment_line 
+{
+    width:548px;
+    margin-top:15px;
+    margin-bottom:15px;
+    color:#cecece;
+    background-color:#cecece;
+    height:1px;
+}
 #right-side
 {
     float:left;

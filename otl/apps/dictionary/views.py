@@ -151,7 +151,7 @@ def show_more_comments(request):
     else:
         comments = Comment.objects.filter(course=course,id__lte=next_comment_id).order_by('-id')[:settings.COMMENT_NUM]
     lang=request.session.get('django_language','ko')
-    comments_output = _comments_to_output(comments,False,lang)
+    comments_output = _comments_to_output(comments,False,lang,False)
    
     if len(comments)==0:
         return HttpResponse(json.dumps({
@@ -257,7 +257,7 @@ def view_comment_by_professor(request):
         result = 'NOT_EXIST'
     return HttpResponse(json.dumps({
         'result': result,
-        'comments': _comments_to_output(comments,False,request.session.get('django_language','ko'))}, ensure_ascii=False, indent=4))
+        'comments': _comments_to_output(comments,False,request.session.get('django_language','ko'),False)}, ensure_ascii=False, indent=4))
 
 @login_required_ajax
 def add_comment(request):
@@ -322,7 +322,7 @@ def add_comment(request):
     return HttpResponse(json.dumps({
         'result': result,
         'average': average,
-        'comment': _comments_to_output(new_comment, False, request.session.get('django_language','ko'))}, ensure_ascii=False, indent=4))
+        'comment': _comments_to_output(new_comment, False, request.session.get('django_language','ko'),False)}, ensure_ascii=False, indent=4))
             
 @login_required_ajax
 def delete_comment(request):
@@ -385,7 +385,7 @@ def update_comment(request):
 
     return HttpResponse(json.dumps({
         'result': result,
-        'comments': _comments_to_output(comments,False,request.session.get('django_language','ko')) }, ensure_ascii=False, indent=4))
+        'comments': _comments_to_output(comments,False,request.session.get('django_language','ko'),True) }, ensure_ascii=False, indent=4))
 
 def professor_comment(request):
     comments = []
@@ -627,8 +627,8 @@ def _comments_to_output(comments,conv_to_json=True, lang='ko',preview=True):
             lecture_id = comment.lecture.id
         comment_to_return =''
         if preview :
-            if len(comment.comment)>130 :
-                comment_to_return = comment.comment[:130]+'...'
+            if len(comment.comment)>85 :
+                comment_to_return = comment.comment[:85]+' ...'
             else :
                 comment_to_return = comment.comment
         else :

@@ -747,7 +747,7 @@ var IndexCommentList = {
 		$.ajax ({
 			type: 'POST',
 			url: '/dictionary/update_comment/',
-			data: {'count': max},
+			data: {'count': max,},
 			dataType: 'json',
 			success: function (resObj) {
 				//try {
@@ -770,6 +770,7 @@ var IndexCommentList = {
 	
     addToMultipleComment:function(obj)
 	{
+		var total = $(obj).length;
 		$.each(obj, function(index, item) {
 			var div_comment = $('<div>', {'class': 'timeline_comment'});
 			div_comment.appendTo(IndexCommentList.timeline);
@@ -781,7 +782,6 @@ var IndexCommentList = {
 			right_div_comment.appendTo(div_comment);
 
 			$('<img>', {'class': 'content_prof_photo', 'src':'http://cais.kaist.ac.kr/static_files/photo/1990/'+item.professor[0].professor_id+'.jpg'}).appendTo(left_div_comment);
-			$('</br>').appendTo(left_div_comment);
 			$('<div>', {'class': 'content_prof_name'}).text(item.professor[0].professor_name).appendTo(left_div_comment);
 			var right_top_div = $('<div>', {'class': 'timeline_comment_right_top'});
 			var right_top_div_title = $('<div>',{'class':'timeline_comment_right_top_title'});
@@ -791,15 +791,14 @@ var IndexCommentList = {
 			right_top_div_title.appendTo(right_top_div);
 			right_top_div_spec.appendTo(right_top_div);
 		
-			var right_mid_div = $('<div>', {'id': 'timeline_comment_right_mid'});
-			var right_mid_div_comment = $('<div>',{'id':'timeline_comment_right_mid_comment'});
+			var right_mid_div = $('<div>', {'class': 'timeline_comment_right_mid'});
+			var right_mid_div_comment = $('<div>',{'class':'timeline_comment_right_mid_comment'});
 			
-			$('</br>').appendTo(right_div_comment);
 			right_mid_div.appendTo(right_div_comment);
 			right_mid_div_comment.appendTo(right_mid_div);
 		
 			$('<a>', {'class': 'content_subject','href':'view/'+item.course_code+"/"}).text(item.course_title).appendTo(right_top_div_title);
-			$('<a>', {'class': 'content_comment'}).text(item.comment).appendTo(right_mid_div_comment);
+			$('<div>', {'class': 'content_comment'}).text(item.comment).appendTo(right_mid_div_comment);
 			$('<div>', {'class': 'a_spec'}).text('학점 :' + item.score).appendTo(right_top_div_spec);
 			$('<div>', {'class': 'a_spec'}).text('로드 :' + item.load).appendTo(right_top_div_spec);
 			$('<div>', {'class': 'a_spec'}).text('남는거 :' + item.gain).appendTo(right_top_div_spec);
@@ -813,6 +812,9 @@ var IndexCommentList = {
     		right_bot_div.appendTo(right_div_comment);
     		right_bot_div_date.appendTo(right_bot_div);
     		right_bot_div_writer.appendTo(right_bot_div);
+			if (index != total -1){
+				$('<hr>',{'class': 'comment_line'}).appendTo(IndexCommentList.timeline);
+			}
 	});
 	}
 };	
