@@ -750,7 +750,7 @@ var IndexCommentList = {
 			data: {'count': max},
 			dataType: 'json',
 			success: function (resObj) {
-				try {
+				//try {
 					if (resObj.result=='OK') {
 						this.comments = resObj.comments;
 						IndexCommentList.addToMultipleComment(resObj.comments)
@@ -758,9 +758,9 @@ var IndexCommentList = {
 					else {
 						Notifier.setErrrorMsg(gettext('오류가 발생했습니다.'));
 					}
-				} catch (e) {
-					Notifier.setErrorMsg(gettext('오류가 발생했습니다.'));
-				}	
+				//} catch (e) {
+				//	Notifier.setErrorMsg(gettext('오류가 발생했습니다.'));
+				//}	
 			},
 			error: function (xhr) {
 				Notifier.setErrorMsg(gettext('오류가 발생했습니다.'));
@@ -783,9 +783,9 @@ var IndexCommentList = {
 			$('<img>', {'class': 'content_prof_photo', 'src':'http://cais.kaist.ac.kr/static_files/photo/1990/'+item.professor[0].professor_id+'.jpg'}).appendTo(left_div_comment);
 			$('</br>').appendTo(left_div_comment);
 			$('<a>', {'class': 'content_prof_name'}).text(item.professor[0].professor_name).appendTo(left_div_comment);
-			var right_top_div = $('<div>', {'id': 'timeline_comment_right_top'});
-			var right_top_div_title = $('<div>',{'id':'timeline_comment_right_top_title'});
-			var right_top_div_spec = $('<div>',{'id':'timeline_comment_right_top_spec'});
+			var right_top_div = $('<div>', {'class': 'timeline_comment_right_top'});
+			var right_top_div_title = $('<div>',{'class':'timeline_comment_right_top_title'});
+			var right_top_div_spec = $('<div>',{'class':'timeline_comment_right_top_spec'});
 			
 			right_top_div.appendTo(right_div_comment);
 			right_top_div_title.appendTo(right_top_div);
@@ -803,7 +803,17 @@ var IndexCommentList = {
 			$('<a>', {'class': 'a_spec'}).text('학점 :' + item.score).appendTo(right_top_div_spec);
 			$('<a>', {'class': 'a_spec'}).text('로드 :' + item.load).appendTo(right_top_div_spec);
 			$('<a>', {'class': 'a_spec'}).text('남는거 :' + item.gain).appendTo(right_top_div_spec);
-		});
+
+			var right_bot_div = $('<div>',{'class':'timeline_comment_right_bot'});
+    		var right_bot_div_writer = $('<div>',{'class':'timeline_comment_right_bot_writer'});
+    		var right_bot_div_date = $('<div>',{'class':'timeline_comment_right_bot_date'});
+    	
+    		right_bot_div_writer.text('작성자 : '+ item.writer_nickname).appendTo(right_bot_div);	
+    		right_bot_div_date.text(item.written_date).appendTo(right_bot_div);
+    		right_bot_div.appendTo(right_div_comment);
+    		right_bot_div_date.appendTo(right_bot_div);
+    		right_bot_div_writer.appendTo(right_bot_div);
+	});
 	}
 };	
 
