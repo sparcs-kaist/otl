@@ -291,8 +291,8 @@ def add_comment(request):
         if load < 0 or gain < 0 or score < 0:
             raise ValidationError()
 
-        if Comment.objects.filter(course=course, lecture=lecture, writer=writer).count() > 0:
-            raise AlreadyWrittenError()
+        #if Comment.objects.filter(course=course, lecture=lecture, writer=writer).count() > 0:
+        #    raise AlreadyWrittenError()
 
         new_comment = Comment(course=course, lecture=lecture, writer=writer, comment=comment, load=load, score=score, gain=gain)
         new_comment.save()
@@ -610,7 +610,7 @@ def _search_by_dt(department, type):
         cache.set(cache_key,output,3600)
     return output
 
-def _comments_to_output(comments,conv_to_json=True, lang='ko'):
+def _comments_to_output(comments,conv_to_json=True, lang='ko',preview=True):
     all = []
     if not isinstance(comments, list):
         comments = comments.select_related()
@@ -625,9 +625,18 @@ def _comments_to_output(comments,conv_to_json=True, lang='ko'):
             lecture_id = -1
         else:
             lecture_id = comment.lecture.id
+        comment_to_return =''
+        if preview :
+            if len(comment.comment)>130 :
+                comment_to_return = comment.comment[:130]+'...'
+            else :
+                comment_to_return = comment.comment
+        else :
+            comment_to_return = comment.comment
         item = {
             'comment_id': comment.id,
             'course_id': comment.course.id,
+            'course_code': comment.course.old_code, 
             'course_title': _trans(comment.course.title,comment.course.title_en,lang),
             'lecture_id': lecture_id,
             'writer_id': comment.writer.id,
@@ -635,7 +644,7 @@ def _comments_to_output(comments,conv_to_json=True, lang='ko'):
             'professor': _professors_to_output(_get_professor_by_lecture(comment.lecture),False,lang),
             'written_datetime': comment.written_datetime.isoformat(),
             'written_date':comment.written_datetime.isoformat()[:10],
-            'comment': comment.comment,
+            'comment': comment_to_return,
             'score': comment.score,
             'gain': comment.gain,
             'load': comment.load,

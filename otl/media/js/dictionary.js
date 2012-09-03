@@ -782,7 +782,7 @@ var IndexCommentList = {
 
 			$('<img>', {'class': 'content_prof_photo', 'src':'http://cais.kaist.ac.kr/static_files/photo/1990/'+item.professor[0].professor_id+'.jpg'}).appendTo(left_div_comment);
 			$('</br>').appendTo(left_div_comment);
-			$('<a>', {'class': 'content_prof_name'}).text(item.professor[0].professor_name).appendTo(left_div_comment);
+			$('<div>', {'class': 'content_prof_name'}).text(item.professor[0].professor_name).appendTo(left_div_comment);
 			var right_top_div = $('<div>', {'class': 'timeline_comment_right_top'});
 			var right_top_div_title = $('<div>',{'class':'timeline_comment_right_top_title'});
 			var right_top_div_spec = $('<div>',{'class':'timeline_comment_right_top_spec'});
@@ -798,11 +798,11 @@ var IndexCommentList = {
 			right_mid_div.appendTo(right_div_comment);
 			right_mid_div_comment.appendTo(right_mid_div);
 		
-			$('<a>', {'class': 'content_subject'}).text(item.course_title).appendTo(right_top_div_title);
+			$('<a>', {'class': 'content_subject','href':'view/'+item.course_code+"/"}).text(item.course_title).appendTo(right_top_div_title);
 			$('<a>', {'class': 'content_comment'}).text(item.comment).appendTo(right_mid_div_comment);
-			$('<a>', {'class': 'a_spec'}).text('학점 :' + item.score).appendTo(right_top_div_spec);
-			$('<a>', {'class': 'a_spec'}).text('로드 :' + item.load).appendTo(right_top_div_spec);
-			$('<a>', {'class': 'a_spec'}).text('남는거 :' + item.gain).appendTo(right_top_div_spec);
+			$('<div>', {'class': 'a_spec'}).text('학점 :' + item.score).appendTo(right_top_div_spec);
+			$('<div>', {'class': 'a_spec'}).text('로드 :' + item.load).appendTo(right_top_div_spec);
+			$('<div>', {'class': 'a_spec'}).text('남는거 :' + item.gain).appendTo(right_top_div_spec);
 
 			var right_bot_div = $('<div>',{'class':'timeline_comment_right_bot'});
     		var right_bot_div_writer = $('<div>',{'class':'timeline_comment_right_bot_writer'});
