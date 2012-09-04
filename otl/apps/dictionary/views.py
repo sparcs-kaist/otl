@@ -56,6 +56,10 @@ def index(request):
     if request.user.is_authenticated():
         comment_lecture_list = _get_unwritten_lecture_by_db(request.user)
         todo_comment_list = _lectures_to_output(comment_lecture_list, False, request.session.get('django_language','ko'))
+
+    taken_lectures = taken_lecture_list(request)
+    taken_lectures.reverse()
+
     return render_to_response('dictionary/index.html', {
         'section': 'dictionary',
         'title': ugettext(u'과목 사전'),
@@ -82,8 +86,8 @@ def index(request):
         'in_category': json.dumps(False),
         'active_tab': -1,
         'favorite':favorites(request),
-        'lecture_list':taken_lecture_list(request),
-    }, context_instance=RequestContext(request))
+        'lecture_list': taken_lectures,
+        }, context_instance=RequestContext(request))
 
 def department(request, department_id):
     dept = Department.objects.get(id=department_id)

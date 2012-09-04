@@ -714,7 +714,7 @@ var IndexLectureList = {
 		this.semesters = $(".show_taken_lecture");
 		this.lecture_lists = $(".taken_lecture_list");
 		this.registerHandles();
-		this.current_open = 0;
+		this.current_open = this.semesters.length-1;
 	},
 	registerHandles:function()
 	{

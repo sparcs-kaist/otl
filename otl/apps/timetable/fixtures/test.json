@@ -129,6 +129,58 @@
 			"course": 4
 		}
 	}, 
+ 	{
+		"pk": 6, 
+		"model": "timetable.lecture", 
+		"fields": {
+			"notice": "", 
+			"code": "42.492", 
+			"old_code": "BEP492", 
+			"class_no": "", 
+			"title": "CEO \uc138\ubbf8\ub098", 
+			"type_en": "Major Elective", 
+			"professor": [1], 
+			"num_labs": 0, 
+			"title_en": "CEO Seminar", 
+			"audience": 7, 
+			"credit_au": 0, 
+			"credit": 1, 
+			"semester": 1, 
+			"is_english": false, 
+			"limit": 60, 
+			"year": 2009, 
+			"department": 3540, 
+			"type": "\uc790\uc720\uc120\ud0dd", 
+			"num_classes": 1, 
+			"course": 4
+		}
+	}, 
+ 	{
+		"pk": 7, 
+		"model": "timetable.lecture", 
+		"fields": {
+			"notice": "", 
+			"code": "42.492", 
+			"old_code": "BEP492", 
+			"class_no": "", 
+			"title": "CEO \uc138\ubbf8\ub098", 
+			"type_en": "Major Elective", 
+			"professor": [1], 
+			"num_labs": 0, 
+			"title_en": "CEO Seminar", 
+			"audience": 7, 
+			"credit_au": 0, 
+			"credit": 1, 
+			"semester": 1, 
+			"is_english": false, 
+			"limit": 60, 
+			"year": 2008, 
+			"department": 3540, 
+			"type": "\uc790\uc720\uc120\ud0dd", 
+			"num_classes": 1, 
+			"course": 4
+		}
+	}, 
 	{
 		"pk": 1, 
 		"model": "timetable.examtime", 
@@ -326,5 +378,38 @@
 			"type": "l", 
 			"day": 2
 		}
+	},
+ 	{
+		"pk": 11, 
+		"model": "timetable.classtime", 
+		"fields": {
+			"building": "", 
+			"begin": "16:00", 
+			"end": "17:30", 
+			"room": "", 
+			"unit_time": null, 
+			"room_ko": "\ucc3d\uc758\ud559\uc2b5\uad00 301\ud638", 
+			"lecture": 6, 
+			"room_en": "Creative Learning Bld, #301", 
+			"type": "l", 
+			"day": 2
+		}
+	},
+	{
+		"pk": 12, 
+		"model": "timetable.classtime", 
+		"fields": {
+			"building": "", 
+			"begin": "16:00", 
+			"end": "17:30", 
+			"room": "", 
+			"unit_time": null, 
+			"room_ko": "\ucc3d\uc758\ud559\uc2b5\uad00 301\ud638", 
+			"lecture": 7, 
+			"room_en": "Creative Learning Bld, #301", 
+			"type": "l", 
+			"day": 2
+		}
 	}
+
 ]
