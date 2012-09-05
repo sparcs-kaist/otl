@@ -232,7 +232,6 @@ var CourseList = {
 	},
 	onPreChange:function()
 	{
-		//console.log(pre_keyword);
 		if (this.pre_keyword === false) this.pre_keyword = '';
 
 		document.getElementById("department").selectedIndex = this.pre_dept;
@@ -896,13 +895,6 @@ var FavoriteList = {
 			$('<a>', {'href': item.url}).text(item.code + ' - ' + item.title).appendTo(favorite);
 		});
 	},
-	addNewFavorite:function(obj){
-		$.each(obj, function(index, item) {
-			var favorite = $('<div>', {'class': 'dictionary_favorite'});
-			favorite.appendTo(FavoriteList.favorites);
-			$('<a>', {'href': item.url}).text(item.code + ' - ' + item.title).appendTo(favorite);
-		});
-	}
 };
 
 var FavoriteController = {
@@ -928,7 +920,6 @@ var FavoriteController = {
 				try {
 					if (resObj.result=='ADD') {
 						Data.Favorites = Data.Favorites.concat(resObj.favorite);
-						console.log(Data.Favorites);
 						FavoriteList.addNewFavorite(resObj.favorite);
 					} else if (resObj.result='ALREADY_ADDED') {
 						Notifier.setErrorMsg(gettext('이미 추가하셨습니다.'));
