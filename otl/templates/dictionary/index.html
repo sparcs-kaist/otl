@@ -40,20 +40,27 @@ $(document).ready(function() {
 
 <div id="right-side">
 	<div id="taken_lecture">
-		{% for y in lecture_list %}
-			<div class="taken_lecture_title">
-				<a href='#' id="{{ forloop.counter }}" class="show_taken_lecture"> {{  y.0.year }} {{ y.0.semester|term2str }}</a>
-			</div>
-			<div class="taken_lecture_list" {% if not forloop.last %} hidden="true"{% endif %}>
-				{% for lecture in y.1 %}
-				<a href={{lecture.url}}>{{lecture.code}} - {{lecture.title}}</a> 
-				{% if lecture.written %} 씀 {% else %} 안씀 {% endif %} <br />
-				{% endfor %}
-			</div>
-		{% endfor %}
+		<table id="taken_lecture_table">
+			{% for y in lecture_list %}
+			<tr class="taken_lecture_title">
+					<td  {% if forloop.last %} style="background-color:#C0D9FD;" {% endif %}>
+						<a href='#' id="{{ forloop.counter }}" class="show_taken_lecture"> {{  y.0.year }} {{ y.0.semester|term2str }}</a>
+					</td>
+				</tr>
+				<tr class="taken_lecture_list" {% if not forloop.last %} hidden="true"{% endif %}>
+					<td>
+						{% for lecture in y.1 %}
+							<a href={{lecture.url}}>{{lecture.code}} - {{lecture.title}}</a> 
+						{% if lecture.written %} 씀 {% else %} 안씀 {% endif %} <br />
+						{% endfor %}
+					</td>
+				</tr>
+			{% endfor %}
+		</table>
 	</div>
-	<div id="favorite-view">
-	즐겨찾기<br />
+	<div id="favorite_view">
+		<div id="favorite_view_title">즐겨찾기</div>
+		<div id="favorite_view_contents"></div>
 	</div>
 </div>
 

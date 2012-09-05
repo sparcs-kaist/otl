@@ -113,7 +113,8 @@
 {
 
     background:#C3DAFB;
-    height: 29px;
+    line-height: 29px;
+    padding-left:18px;
     font-size : 15px;
 }
 #center
@@ -131,7 +132,7 @@
 {
     height:202px;
     margin-top : 15px;
-    background:#FF0000;
+    background:#ECF1F9;
 }
 #recent-comments
 {
@@ -244,7 +245,51 @@
 {
     float:left;
     width: 191px;
+    margin-top:36px;
     margin-left:21px;
 }
-
-
+.taken_lecture_title
+{
+    margin-left:18px;
+    height:20px;
+}
+.taken_lecture_title td
+{
+    text-align:left;
+    background-color:#DFE0E4;
+}
+.taken_lecture_list
+{
+    margin-left:10px;
+    margin-top:12px;
+    margin-bottom:12px;
+}
+.taken_lecture_list td
+{
+    text-align:left;
+}
+.taken_lecture_list a
+{
+    margin-left:10px;
+}
+#favorite_view
+{
+    margin-top:30px;
+    background-color:#C0D9FD;
+    padding-bottom:5px;
+}
+#favorite_view_title
+{
+    margin-left:15px;
+    line-height:25px;
+}
+#favorite_view_contents
+{
+    padding-top:10px;
+    background-color:#FFFFFF;
+    margin-left:5px;
+    margin-right:5px;
+    padding-left:10px;
+    padding-bottom:10px;
+}
+    

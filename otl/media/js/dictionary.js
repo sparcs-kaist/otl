@@ -713,6 +713,7 @@ var IndexLectureList = {
 	{
 		this.semesters = $(".show_taken_lecture");
 		this.lecture_lists = $(".taken_lecture_list");
+		this.lecture_titles = $(".taken_lecture_title");
 		this.registerHandles();
 		this.current_open = this.semesters.length-1;
 	},
@@ -725,8 +726,10 @@ var IndexLectureList = {
 	showLectures:function(e, obj)
 	{
 		$(IndexLectureList.lecture_lists[IndexLectureList.current_open]).hide();
+		$(IndexLectureList.lecture_titles[IndexLectureList.current_open]).find('td').css("background-color","#DFE0E4")
 		IndexLectureList.current_open = parseInt(obj.id)-1;
 		$(IndexLectureList.lecture_lists[IndexLectureList.current_open]).show();
+		$(IndexLectureList.lecture_titles[IndexLectureList.current_open]).find('td').css("background-color","#C0D9FD");
 	}
 };
 
@@ -882,7 +885,7 @@ var ProfessorCommentList = {
 var FavoriteList = {
 	initialize:function() 
 	{
-		this.favorites = $('#favorite-view');
+		this.favorites = $('#favorite_view_contents');
 		this.addToMultipleFavorite(Data.Favorites);
 	},
 	addToMultipleFavorite:function(obj)
