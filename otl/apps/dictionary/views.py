@@ -243,26 +243,32 @@ def view_professor(request, prof_id):
         }, context_instance=RequestContext(request))
 
 def interesting_courses(request):
-    user = request.user
-    
-    hss_courses = Course.objects.filter(department=settings.HSS_DEPARTMENT_ID)
-    hss_courses_sorted = _get_courses_sorted(hss_courses) 
+    # login이 되있든, 안되있든 교양과목은 추천에 들어간다
+    hss = Department.objects.get(id=settings.HSS_DEPARTMENT_ID)
+    q = Q(department=hss)
+    try:
+        user = request.user
+    	userprofile = UserProfile.objects.get(user=user)    
+	favorite_departments = userprofile.favorite_departments.all()
+        user_department_id = 0
 
-    if user.is_authenticated():
-        user_profile = UserProfile.objects.get(user=user)
-        department = user_profile.department
+        if user.is_authenticated():
+            user_profile = UserProfile.objects.get(user=user)
+            department = user_profile.department
+	    q |= Q(department=department)	    
+        
+	for department in favorite_departments:
+	    if department.id == settings.HSS_DEPARTMENT_ID or department.id == user_department_id:
+	        continue
+	    q |= Q(department=department)
+    except:
+	user_department_id = 0 #Means Nothing
 
-        major_courses = Course.objects.filter(department=department)
-        major_courses_sorted = _get_courses_sorted(major_courses)
-
-    else:
-        major_courses_sorted = []
-
+    courses = Course.objects.filter(q).distinct()
+    courses_sorted=_get_courses_sorted(courses)	
     return HttpResponse(json.dumps({
-        'hss_courses_sorted': hss_courses_sorted[:settings.INTERESTING_COURSE_NUM],
-        'major_courses_sorted': major_courses_sorted[:settings.INTERESTING_COURSE_NUM]}, ensure_ascii=False, indent=4))
-
-
+	 'courses_sorted' : courses_sorted[:settings.INTERESTING_COURSE_NUM]}, ensure_ascii=False, indent=4))
+ 
 def view_comment_by_professor(request):
     try:
         professor_id = int(request.GET.get('professor_id', -1))
