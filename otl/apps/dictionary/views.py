@@ -242,6 +242,26 @@ def view_professor(request, prof_id):
         'active_tab': active_tab
         }, context_instance=RequestContext(request))
 
+def interesting_courses(request):
+    user = request.user
+    
+    hss_courses = Course.objects.filter(department=settings.HSS_DEPARTMENT_ID)
+    hss_courses_sorted = _get_courses_sorted(hss_courses) 
+
+    if user.is_authenticated():
+        user_profile = UserProfile.objects.get(user=user)
+        department = user_profile.department
+
+        major_courses = Course.objects.filter(department=department)
+        major_courses_sorted = _get_courses_sorted(major_courses)
+
+    else:
+        major_courses_sorted = []
+
+    return HttpResponse(json.dumps({
+        'hss_courses_sorted': hss_courses_sorted[:settings.INTERESTING_COURSE_NUM],
+        'major_courses_sorted': major_courses_sorted[:settings.INTERESTING_COURSE_NUM]}, ensure_ascii=False, indent=4))
+
 
 def view_comment_by_professor(request):
     try:
@@ -835,3 +855,25 @@ def _favorites_to_output(favorites,conv_to_json=True,lang='ko'):
 
 
 
+def _get_courses_sorted(courses):
+    all = []
+    for course in courses:
+        average_sum = (course.score_average + course.load_average + course.gain_average) / 3
+           
+        lecture = Lecture.objects.filter(course=course).order_by('-year', '-semester')[0]
+        num_people = lecture.num_people
+
+        interesting_score = average_sum * num_people
+
+        item = {
+             'course_id': course.id,
+             'course_code': course.old_code,
+             'average_sum': average_sum,
+             'num_people': num_people,
+             'interesting_score': interesting_score,
+             }
+        all.append(item)
+
+    sorted_courses = sorted(all, key=lambda k:-k['interesting_score'])
+
+    return sorted_courses
