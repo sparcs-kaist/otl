@@ -419,12 +419,18 @@ def update_comment(request):
     try:
         count = int(request.POST.get('count', -1))
         q = {}
+        hss = Department.objects.get(id=settings.HSS_DEPARTMENT_ID)
         if request.user.is_authenticated():
             user = request.user
             userprofile = UserProfile.objects.get(user=user)
             q['dept'] = userprofile.department
+            q['fav_dept'] = []
+            q['fav_dept'].append(hss)
+            for department in userprofile.favorite_departments.all():
+                q['fav_dept'].append(department)
             comments = _update_comment(count, **q)
         else:
+            q['dept'] = hss
             comments = _update_comment(count, **q)
         result = 'OK'
 
@@ -605,8 +611,13 @@ def _top_by_recent_score(count):
 def _update_comment(count, **conditions):
     department = conditions.get('dept', None)
     professor = conditions.get('professor', None)
+    favorite_department = conditions.get('fav_dept', None)
     if department != None:
         comments = Comment.objects.filter(course__department=department)
+        q = Q(course__department=department)
+        for department in favorite_department:
+            q |= Q(course__department=department)
+        comments = Comment.objects.filter(q).distinct()
     elif professor != None:
         comments = Comment.objects.filter(course__professors=professor)
     else:

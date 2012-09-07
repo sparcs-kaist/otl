@@ -12,7 +12,7 @@
 	{
 		"pk": "2044",
 		"model": "accounts.department",
-		"fields": {"num_id": "10", "code": "HS", "name": "인문사회과학부"}
+		"fields": {"num_id": "10", "code": "HSS", "name": "인문사회과학부"}
 	},
 	{
 		"pk": "8",
