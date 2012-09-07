@@ -308,7 +308,7 @@ def add_comment(request):
  
         lectures = _get_taken_lecture_by_db(request.user, course)
         
-        if lectures == Lecture.objects.none():
+        if not lectures:
             lecture = None
         else:
             lecture = lectures[0]   # 여러번 들었을 경우 가장 최근에 들은 과목 기준으로 한다.
