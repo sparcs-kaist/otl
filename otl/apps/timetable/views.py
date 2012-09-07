@@ -41,7 +41,8 @@ def index(request):
     if request.user.is_authenticated():
         my_lectures = [_lectures_to_output(Lecture.objects.filter(year=settings.NEXT_YEAR, semester=settings.NEXT_SEMESTER, timetable__user=request.user, timetable__table_id=id), False, request.session.get('django_language', 'ko')) for id in xrange(0,settings.NUMBER_OF_TABS)]
     else:
-        my_lectures = [[], [], []]
+        my_lectures = [_lectures_to_output(Lecture.objects.filter(year=settings.NEXT_YEAR, semester=settings.NEXT_SEMESTER, id__in=request.session.get('lectures_%s_%s_%s' % (id, unicode(settings.NEXT_YEAR), unicode(settings.NEXT_SEMESTER)), [])), False, request.session.get('django_language', 'ko')) for id in xrange(0,settings.NUMBER_OF_TABS)]
+
     if settings.DEBUG:
         my_lectures_output = json.dumps(my_lectures, indent=4, ensure_ascii=False)
     else:
@@ -128,16 +129,31 @@ def add_to_timetable(request):
     lectures = []
     try:
         lecture = Lecture.objects.get(pk=lecture_id)
-        lectures = Lecture.objects.filter(timetable__table_id=table_id, timetable__user=user, year=view_year, semester=view_semester)
+
+        if user.is_authenticated():
+            lectures = Lecture.objects.filter(timetable__table_id=table_id, timetable__user=user, year=view_year, semester=view_semester)
+        else:
+            session_key = 'lectures_%s_%s_%s' % (table_id, view_year, view_semester)
+            lecture_ids = request.session.get(session_key, [])
+            lectures = Lecture.objects.filter(year=view_year, semester=view_semester,id__in=lecture_ids) 
+
+
         for existing_lecture in lectures:
             if existing_lecture.check_classtime_overlapped(lecture):
                 raise OverlappingTimeError()
             if existing_lecture.check_examtime_overlapped(lecture):
                 raise OverlappingExamTimeError()
-        timetable = Timetable(user=user, lecture=lecture, year=lecture.year, semester=lecture.semester, table_id=table_id)
-        timetable.save()
 
-        lectures = Lecture.objects.filter(timetable__table_id=table_id, timetable__user=user, year=view_year, semester=view_semester)
+        if user.is_authenticated():
+            timetable = Timetable(user=user, lecture=lecture, year=lecture.year, semester=lecture.semester, table_id=table_id)
+            timetable.save()
+
+            lectures = Lecture.objects.filter(timetable__table_id=table_id, timetable__user=user, year=view_year, semester=view_semester)
+        else:
+            session_key = 'lectures_%s_%s_%s' % (table_id, view_year, view_semester)
+            lecture_ids = request.session.get(session_key, [])
+            lectures = Lecture.objects.filter(year=view_year, semester=view_semester,id__in=lecture_ids) 
+
         result = 'OK'
     except ObjectDoesNotExist:
         result = 'NOT_EXIST'
@@ -165,13 +181,23 @@ def delete_from_timetable(request):
 
     lectures = []
     try:
-        if lecture_id is None:
-            Timetable.objects.filter(user=user, year=view_year, semester=view_semester, table_id=table_id).delete()
-        else:
-            lecture = Lecture.objects.get(pk=lecture_id)
-            Timetable.objects.get(user=user, lecture=lecture, year=lecture.year, semester=lecture.semester, table_id=table_id).delete()
+        if user.is_authenticated():
+            if lecture_id is None:
+                Timetable.objects.filter(user=user, year=view_year, semester=view_semester, table_id=table_id).delete()
+            else:
+                lecture = Lecture.objects.get(pk=lecture_id)
+                Timetable.objects.get(user=user, lecture=lecture, year=lecture.year, semester=lecture.semester, table_id=table_id).delete()
 
-        lectures = Lecture.objects.filter(timetable__table_id=table_id, timetable__user=user, year=view_year, semester=view_semester)
+            lectures = Lecture.objects.filter(timetable__table_id=table_id, timetable__user=user, year=view_year, semester=view_semester)
+        else:
+            session_key = 'lectures_%s_%s_%s' % (table_id, view_year, view_semester)
+            if lecture_id is None:
+                del request.session[session_key]
+            else:
+                lecture_list = request.session.get(session_key, [])
+                lecture_list.remove(int(lecture_id))
+                request.session[session_key] = lecture_list
+            lectures = Lecture.objects.filter(year=view_year, semester=view_semester,id__in=lecture_list) 
         result = 'OK'
     except ObjectDoesNotExist:
         result = 'NOT_EXIST'
@@ -211,7 +237,10 @@ def change_semester(request):
     view_semester = request.GET.get('view_semester', unicode(settings.NEXT_SEMESTER))
 
     try:
-        my_lectures = [_lectures_to_output(Lecture.objects.filter(year=view_year, semester=view_semester, timetable__user=user, timetable__table_id=id), False, request.session.get('django_language', 'ko')) for id in xrange(0,settings.NUMBER_OF_TABS)]
+        if user.is_authenticated():
+            my_lectures = [_lectures_to_output(Lecture.objects.filter(year=view_year, semester=view_semester, timetable__user=user, timetable__table_id=id), False, request.session.get('django_language', 'ko')) for id in xrange(0,settings.NUMBER_OF_TABS)]
+        else:
+            my_lectures = [_lectures_to_output(Lecture.objects.filter(year=view_year, semester=view_semester, id__in=request.session.get('lectures_%s_%s_%s' % (id, view_year, view_semester), [])), False, request.session.get('django_language', 'ko')) for id in xrange(0,settings.NUMBER_OF_TABS)]
         result = 'OK'
     except ObjectDoesNotExist:
         result = 'OK'
