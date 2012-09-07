@@ -3,6 +3,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.core.paginator import Paginator
 from django.core.exceptions import *
+from django.core.serializers.json import DjangoJSONEncoder
 from django.core.cache import cache
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -453,10 +454,10 @@ def add_summary(request):
         return HttpResponseBadReqeust()
     except:
         return HttpResponseServerError()
-
+    
     return HttpResponse(json.dumps({
         'result': result,
-        'summary': _summary_to_output([new_summary],False,'ko')}, ensure_ascii=False, indent=4))
+        'summary': _summary_to_output([new_summary],False,'ko')}, ensure_ascii=False, indent=4, cls=DjangoJSONEncoder))
 
 @login_required
 def add_favorite(request):

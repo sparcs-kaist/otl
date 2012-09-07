@@ -413,6 +413,11 @@ var DictionaryCommentList = {
 	{
 		this.addToMultipleProfessor(Data.Professors);
 		this.onChangeProfessor(DictionaryCommentList, null);
+
+		var new_summary_content = $("#summary_add_content").val();
+		var output_summary = new_summary_content.replace(/\n/g,'<br />');
+        $("#summary_label").html(output_summary);
+        $("#summary_add_content").text(new_summary_content);
 	},
 	registerHandles:function()
 	{
@@ -494,7 +499,8 @@ var DictionaryCommentList = {
 			}
 		    }
 		});
-                $("#summary_label").text(new_summary_content);
+				var output_summary = new_summary_content.replace(/\n/g,'<br />');
+                $("#summary_label").html(output_summary);
                 $("#summary_add_content").text(new_summary_content);
                 $("#summary_add").hide();
                 $("#summary_show").show();
@@ -589,10 +595,11 @@ var DictionaryCommentList = {
 		$.each(obj, function(index, item) {
 			var enableDelete = (item.writer_id == Data.user_id);
 			var comment = $('<div>', {'class': 'dictionary_comment'});
+			var comment_output = item.comment.replace(/\n/g,'<br />');
 			comment.appendTo(DictionaryCommentList.comments);
-
+	
 			$('<a>').text(item.writer_nickname).appendTo(comment);
-			$('<div>', {'class': 'dictionary_comment_content'}).text(item.comment).appendTo(comment);
+			$('<div>', {'class': 'dictionary_comment_content'}).html(comment_output).appendTo(comment);
 			$('<div>', {'class': 'dictionary_comment_eval'}).text(gettext("학점") + ':' + item.score).appendTo(comment);
 			$('<div>', {'class': 'dictionary_comment_eval'}).text(gettext("로드") + ':' + item.load).appendTo(comment);
 			$('<div>', {'class': 'dictionary_comment_eval'}).text(gettext("남는거") + ':' + item.gain).appendTo(comment);
@@ -687,12 +694,13 @@ var DictionaryCommentList = {
 	    $.each(obj, function(index, item) {
 	        var enableDelete = (item.writer_id == Data.user_id);
 	        var comment = $('<div>', {'class': 'dictionary_comment'});
+			var comment_output = item.comment.replace(/\n/g,'<br />');
 	        comment.prependTo(DictionaryCommentList.comments);
 	
 
 
 	        $('<a>').text(item.writer_nickname).appendTo(comment);
-	        $('<div>', {'class': 'dictionary_comment_content'}).text(item.comment).appendTo(comment);
+	        $('<div>', {'class': 'dictionary_comment_content'}).html(comment_output).appendTo(comment);
 	        $('<div>', {'class': 'dictionary_comment_eval'}).text(gettext("학점") + ':' + item.score).appendTo(comment);
 	        $('<div>', {'class': 'dictionary_comment_eval'}).text(gettext("로드") + ':' + item.load).appendTo(comment);
 	        $('<div>', {'class': 'dictionary_comment_eval'}).text(gettext("남는거") + ':' + item.gain).appendTo(comment);
@@ -798,9 +806,11 @@ var IndexCommentList = {
 			
 			right_mid_div.appendTo(right_div_comment);
 			right_mid_div_comment.appendTo(right_mid_div);
+
+			var comment_output = item.comment.replace(/\n/g,'<br/>');
 		
 			$('<a>', {'class': 'content_subject','href':'view/'+item.course_code+"/"}).text(item.course_title).appendTo(right_top_div_title);
-			$('<div>', {'class': 'content_comment'}).text(item.comment).appendTo(right_mid_div_comment);
+			$('<div>', {'class': 'content_comment'}).html(comment_output).appendTo(right_mid_div_comment);
 			$('<div>', {'class': 'a_spec'}).text('학점 :' + item.score).appendTo(right_top_div_spec);
 			$('<div>', {'class': 'a_spec'}).text('로드 :' + item.load).appendTo(right_top_div_spec);
 			$('<div>', {'class': 'a_spec'}).text('남는거 :' + item.gain).appendTo(right_top_div_spec);
