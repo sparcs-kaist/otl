@@ -893,8 +893,43 @@ var FavoriteList = {
 			var favorite = $('<div>', {'class': 'dictionary_favorite'});
 			favorite.appendTo(FavoriteList.favorites);
 			$('<a>', {'href': item.url}).text(item.code + ' - ' + item.title).appendTo(favorite);
+			
+			var deletelink = $('<a>').text(" X")
+			deletelink.appendTo(favorite);
+			deletelink.bind('click', $.proxyWithArgs(FavoriteList.deleteFavorite, FavoriteList, item, favorite));
 		});
 	},
+	deleteFavorite:function(e,obj, favorite) 
+	{
+		$.ajax({
+			type: 'POST',
+			url: '/dictionary/delete_favorite/',
+			data: {'course_id': obj.course_id},
+			dataType: 'json',
+			success: $.proxy(function(resObj) {
+				try {
+					if (resObj.result=='DELETE') {
+                        favorite.remove();
+					} else if (resObj=='REMOVE_NOT_EXIST') {
+						Notifier.setErrorMsg(gettext('잘못된 접근입니다.'));
+					}
+				}
+				catch(e) {
+					Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+e.message+')');
+				}
+			}, this),
+			error: function(xhr) {
+				if (suppress_ajax_errors)
+					return;
+				if (xhr.status == 403) {
+					Notifier.setErrorMsg(gettext('로그인 해야합니다.'));
+				}	
+				else {
+					Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+gettext('요청 실패')+':'+xhr.status+')');
+				}
+			}
+		});
+	}
 };
 
 var FavoriteController = {
@@ -919,8 +954,7 @@ var FavoriteController = {
 			success: $.proxy(function(resObj) {
 				try {
 					if (resObj.result=='ADD') {
-						Data.Favorites = Data.Favorites.concat(resObj.favorite);
-						FavoriteList.addNewFavorite(resObj.favorite);
+						Notifier.setErrorMsg(gettext('추가되었습니다.'));
 					} else if (resObj.result='ALREADY_ADDED') {
 						Notifier.setErrorMsg(gettext('이미 추가하셨습니다.'));
 					}
@@ -941,4 +975,5 @@ var FavoriteController = {
 			}
 		});
 	},
+
 };

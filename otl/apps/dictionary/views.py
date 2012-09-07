@@ -368,6 +368,29 @@ def delete_comment(request):
     return HttpResponse(json.dumps({
         'result': result, 'average': average}, ensure_ascii=False, indent=4)) 
 
+@login_required_ajax
+def delete_favorite(request):
+    try:
+        user = request.user
+        course_id = int(request.POST.get('course_id', -1))
+        
+        if course_id < 0:
+            raise ValidationError()
+        
+        course = Course.objects.get(id=course_id)
+        UserProfile.objects.get(user=user).favorite.remove(course) 
+
+        result = 'DELETE'
+
+    except ObjectDoesNotExist:
+        result = 'REMOVE_NOT_EXIST'
+    except ValidationError:
+        return HttpResponseBadReqeust()
+    except:
+        return HttpResponseServerError()
+
+    return HttpResponse(json.dumps({
+        'result': result}, ensure_ascii=False, indent=4)) 
 
 def update_comment(request):
     comments = []

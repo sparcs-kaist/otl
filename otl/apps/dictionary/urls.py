@@ -15,5 +15,6 @@ urlpatterns = patterns('',
     (ur'^autocomplete/$', views.get_autocomplete_list),
     (ur'^show_more_comments/$', views.show_more_comments),
     (ur'^add_favorite/$', views.add_favorite),
+    (ur'^delete_favorite/$', views.delete_favorite),
 )
 
