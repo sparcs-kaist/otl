@@ -707,7 +707,9 @@ def _comments_to_output(comments,conv_to_json=True, lang='ko',preview=True):
             'score': comment.score,
             'gain': comment.gain,
             'load': comment.load,
-            'like': comment.like
+            'like': comment.like,
+            'semester': comment.lecture.semester,
+            'year': comment.lecture.year
         }
         all.append(item)
     if conv_to_json:
