@@ -25,8 +25,6 @@ class UserProfile(models.Model):
     language = models.CharField(max_length=15)
     department = models.ForeignKey('Department')
     favorite_departments = models.ManyToManyField('Department', related_name='favoredby_set')
-    score = models.IntegerField(default=0, null=False, blank=True)
-    recent_score = models.IntegerField(default=0, null=False, blank=True)
     nickname = models.CharField(max_length=15, null=False, blank=True)
     take_lecture_list = models.ManyToManyField('timetable.Lecture', related_name='take_lecture_list', null=True)
     favorite=models.ManyToManyField('dictionary.Course', related_name='favorite_user', null=True)
@@ -35,7 +33,7 @@ class UserProfile(models.Model):
         return u'%s %s (%s)' % (self.user.username, self.student_id, self.department.code)
 
 class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'student_id', 'department', 'score', 'nickname')
+    list_display = ('user', 'student_id', 'department', 'nickname')
 
 class UserAdmin(admin.ModelAdmin):
     list_display = ('username', 'email', 'first_name', 'last_name')
