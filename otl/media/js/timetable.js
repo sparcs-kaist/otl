@@ -659,12 +659,14 @@ var Timetable = {
 					Data.CompRates[''+Data.ViewYear+Data.ViewTerm+item.course_no+item.class_no] = buildCompRate(item.num_people, item.limit);
 					Timetable.buildlmodules(wrap,item,bgcolor,true);
 				}
-                                var t = item['examtime']; //examtime
-                                var time = Utils.NumericTimeToReadable(t.start) + ' ~ ' + Utils.NumericTimeToReadable(t.end);
-                                var name_and_time = item.title+'<br>'+time;
-                                var code_and_class = item.code+item.class_no;
-                                LAST_MOUSE_ON = code_and_class;
-                                $('#examlist'+(t.day+1)).append('<li id="'+code_and_class+ '">'+name_and_time+'</li>');
+				var t = item['examtime']; //examtime
+				if (t != null) {
+					var time = Utils.NumericTimeToReadable(t.start) + ' ~ ' + Utils.NumericTimeToReadable(t.end);
+					var name_and_time = item.title+'<br>'+time;
+					var code_and_class = item.code+item.class_no;
+					LAST_MOUSE_ON = code_and_class;
+					$('#examlist'+(t.day+1)).append('<li id="'+code_and_class+ '">'+name_and_time+'</li>');
+				}
 			});
 			Data.Timetables[index] = {credit:credit, au:au};
 		});
@@ -843,12 +845,14 @@ var Timetable = {
 			var bgcolor = Utils.getColorByIndex(index);
 			Data.CompRates[''+Data.ViewYear+Data.ViewTerm+item.course_no+item.class_no] = buildCompRate(item.num_people, item.limit);
 			Timetable.buildlmodules(Timetable.tabs.getActiveTab(), item, bgcolor, true);
-                        var t = item['examtime']; //examtime
-                        var time = Utils.NumericTimeToReadable(t.start) + ' ~ ' + Utils.NumericTimeToReadable(t.end);
-                        var name_and_time = item.title+'<br>'+time;
-                        var code_and_class = item.code+item.class_no;
-                        LAST_MOUSE_ON = code_and_class;
-                        $('#examlist'+(t.day+1)).append('<li id="'+code_and_class+ '">'+name_and_time+'</li>');
+            var t = item['examtime']; //examtime
+			if (t != null) {
+				var time = Utils.NumericTimeToReadable(t.start) + ' ~ ' + Utils.NumericTimeToReadable(t.end);
+				var name_and_time = item.title+'<br>'+time;
+				var code_and_class = item.code+item.class_no;
+				LAST_MOUSE_ON = code_and_class;
+				$('#examlist'+(t.day+1)).append('<li id="'+code_and_class+ '">'+name_and_time+'</li>');
+			}
 		});
 		
 		Data.Timetables[Timetable.tabs.getTableId()] = {credit:credit,au:au};
@@ -902,13 +906,13 @@ var Timetable = {
 				var item = obj[key];
 				if (item!=null) {
 					switch (key) {
-                                        case 'examtime':
-                                                var time = Utils.NumericTimeToReadable(item.start) + ' ~ ' + Utils.NumericTimeToReadable(item.end);
-                                                var name_and_time = obj.title+' '+time;
-                                                $('#DS_'+key).text(Utils.days[item.day]+time);
-                                                //if (is_adding)
-                                                //      $('add_examtime'+item.day).set('text', name_and_time);
-                                                break;
+                    case 'examtime':
+                        var time = Utils.NumericTimeToReadable(item.start) + ' ~ ' + Utils.NumericTimeToReadable(item.end);
+                        var name_and_time = obj.title+' '+time;
+                        $('#DS_'+key).text(Utils.days[item.day]+time);
+                        //if (is_adding)
+                        //      $('add_examtime'+item.day).set('text', name_and_time);
+                        break;
 					case 'credit':
 						if (item > 0 && is_adding)
 							$('#add_credit').text('(+'+item+')');
@@ -952,12 +956,14 @@ var Timetable = {
 		this.buildlmodules(this.overlap,obj,-1,false);
 		this.overlap.css('opacity', 1.0);
 
-                var item = obj['examtime']
-                var time = Utils.NumericTimeToReadable(item.start) + ' ~ ' + Utils.NumericTimeToReadable(item.end);
-                var name_and_time = obj.title+'<br>'+time;
-                var code_and_class = obj.code+obj.class_no;
-                LAST_MOUSE_ON = code_and_class;
-                $('#examlist'+(item.day+1)).append('<li id="'+code_and_class+ '" class="mouseovered">'+name_and_time+'</li>');
+		var item = obj['examtime']
+		if (item != null) {
+			var time = Utils.NumericTimeToReadable(item.start) + ' ~ ' + Utils.NumericTimeToReadable(item.end);
+			var name_and_time = obj.title+'<br>'+time;
+			var code_and_class = obj.code+obj.class_no;
+			LAST_MOUSE_ON = code_and_class;
+			$('#examlist'+(item.day+1)).append('<li id="'+code_and_class+ '" class="mouseovered">'+name_and_time+'</li>');
+		}
 	},
 	onMouseover: function(ev, obj, is_adding)
 	{
