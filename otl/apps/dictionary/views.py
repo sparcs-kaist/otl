@@ -175,6 +175,7 @@ def view(request, course_code):
         keyword = request.GET.get('keyword', "")
         in_category = request.GET.get('in_category', json.dumps(False))
         active_tab = int(request.GET.get('active_tab', -1))
+        professor_id = int(request.GET.get('professor_id', -1))
 
         course = Course.objects.get(old_code=course_code.upper())
         summary = Summary.objects.filter(course=course).order_by('-id')
@@ -187,6 +188,13 @@ def view(request, course_code):
         course_output = _courses_to_output(course,True,lang)
         lectures_output = _lectures_to_output(Lecture.objects.filter(course=course), True, lang)
         professors_output = _professors_to_output(course.professors,True,lang) 
+
+        if professor_id != -1:
+            professor = Professor.objects.get(professor_id=professor_id)
+            lecture_info = { 'professor_id' : professor.professor_id, 'professor_name' : professor.professor_name, 'homepage' : 'None', 'main_text' : 'None', 'sub_text' : 'None' }
+        else:
+            lecture_info = 'None'
+        
         result = 'OK'
     except ObjectDoesNotExist:
         result = 'NOT_EXIST' 
@@ -198,6 +206,7 @@ def view(request, course_code):
         'course' : course_output,
         'lectures' : lectures_output,
         'professors' : professors_output,
+        'lecture_info' : lecture_info,
         'summary' : recent_summary,
         'dept': dept,
         'classification': classification,
