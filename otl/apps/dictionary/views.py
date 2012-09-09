@@ -74,12 +74,10 @@ def index(request):
         'department' : u'넘겨줘',
         'score' : u'넘겨줘',
         'rank' : u'넘겨줘',
-        'rank_list' : _top_by_score(10),
         'taken_credits' : u'넘겨줘',
         'taken_au' : u'넘겨줘',
         'planned_credits' : u'넘겨줘',
         'planned_au' : u'넘겨줘',
-        'recent_rank_list' : _top_by_recent_score(10),
         'todo_comment_list' : todo_comment_list,
         'dept': -1,
         'classification': 0,
@@ -588,41 +586,15 @@ def _trans(ko_message, en_message, lang) :
     else :
         return en_message
 
-def _top_by_score(count):
-    rank_list = UserProfile.objects.all().order_by('-score')
-    rank_list_size = rank_list.count()
-    rank_list_with_index = []
-    for i in xrange(count):
-        if rank_list_size > i :
-            item = {
-                    'index':i+1,
-                    'user' :rank_list[i]
-                    }
-            rank_list_with_index.append(item)
-    return rank_list_with_index
-
-def _top_by_recent_score(count):
-    rank_list = UserProfile.objects.all().order_by('-recent_score')
-    rank_list_size = rank_list.count()
-    rank_list_with_index = []
-    for i in xrange(count):
-        if rank_list_size > i :
-            item = {
-                    'index':i+1,
-                    'user' :rank_list[i]
-                    }
-            rank_list_with_index.append(item)
-    return rank_list_with_index
-
 def _update_comment(count, **conditions):
     department = conditions.get('dept', None)
     professor = conditions.get('professor', None)
     favorite_department = conditions.get('fav_dept', None)
     if department != None:
-        comments = Comment.objects.filter(course__department=department)
         q = Q(course__department=department)
-        for department in favorite_department:
-            q |= Q(course__department=department)
+        if favorite_department != None:
+            for department in favorite_department:
+                q |= Q(course__department=department)
         comments = Comment.objects.filter(q).distinct()
     elif professor != None:
         comments = Comment.objects.filter(course__professors=professor)
