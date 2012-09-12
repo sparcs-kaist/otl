@@ -342,12 +342,6 @@ def add_comment(request):
 
         result = 'ADD'
 
-        # update writer score
-        user_profile = UserProfile.objects.get(user=writer)
-        user_profile.score = user_profile.score + COMMENT_SCORE
-        user_profile.recent_score = user_profile.recent_score + COMMENT_SCORE
-        user_profile.save()
-
     except AlreadyWrittenError:
         result = 'ALREADY_WRITTEN'
         return HttpResponse(json.dumps({
