@@ -193,7 +193,7 @@ def view(request, course_code):
             professor = Professor.objects.get(professor_id=professor_id)
             lecture_info = { 'professor_id' : professor.professor_id, 'professor_name' : professor.professor_name, 'homepage' : 'None', 'main_text' : 'None', 'sub_text' : 'None' }
         else:
-            lecture_info = 'None'
+            lecture_info = {}
         
         result = 'OK'
     except ObjectDoesNotExist:
