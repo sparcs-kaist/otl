@@ -191,10 +191,10 @@ def view(request, course_code):
 
         if professor_id != -1:
             professor = Professor.objects.get(professor_id=professor_id)
-            lecture_info = { 'professor_id' : professor.professor_id, 'professor_name' : professor.professor_name, 'homepage' : 'None', 'main_text' : 'None', 'sub_text' : 'None' }
+            lecture_by_prof = { 'professor_id' : professor.professor_id, 'professor_name' : professor.professor_name, 'homepage' : 'None', 'main_text' : 'None', 'sub_text' : 'None' }
         else:
-            lecture_info = {}
-        
+            lecture_by_prof
+ 
         result = 'OK'
     except ObjectDoesNotExist:
         result = 'NOT_EXIST' 
@@ -206,7 +206,7 @@ def view(request, course_code):
         'course' : course_output,
         'lectures' : lectures_output,
         'professors' : professors_output,
-        'lecture_info' : lecture_info,
+        'lecture_by_prof' : lecture_by_prof,
         'summary' : recent_summary,
         'dept': dept,
         'classification': classification,
