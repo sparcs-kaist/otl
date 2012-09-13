@@ -191,9 +191,9 @@ def view(request, course_code):
 
         if professor_id != -1:
             professor = Professor.objects.get(professor_id=professor_id)
-            lecture_by_prof = { 'professor_id' : professor.professor_id, 'professor_name' : professor.professor_name, 'homepage' : 'None', 'main_text' : 'None', 'sub_text' : 'None' }
+            lecture_by_prof = { 'professor_id' : professor.professor_id, 'professor_name' : professor.professor_name, 'homepage' : 'www.kaist.ac.kr', 'main_text' : 'Nothing', 'sub_text' : 'Nothing' } # 임의로 정한 값들이므로 db 구축 후, 수정 필요.
         else:
-            lecture_by_prof
+            lecture_by_prof = {}
  
         result = 'OK'
     except ObjectDoesNotExist:
