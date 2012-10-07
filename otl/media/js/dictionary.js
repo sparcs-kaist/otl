@@ -527,7 +527,7 @@ var DictionaryCommentList = {
 				success: $.proxy(function(resObj) {
 					try {
 						if (resObj.result=='ADD') {
-							DictionaryCommentList.addToFront(resObj.comment);							
+							DictionaryCommentList.addToFront(resObj.comment);
 							DictionaryCommentList.addNewComment(resObj.comment);
                                                         $($("#course-eval").children()[0]).text("학점 : "+resObj.average['avg_score']);
                                                         $($("#course-eval").children()[1]).text("로드 : "+resObj.average['avg_load']);
@@ -580,7 +580,7 @@ var DictionaryCommentList = {
 					return;
 				if (xhr.status == 403) {
 					Notifier.setErrorMsg(gettext('로그인 해야합니다.'));
-				}	
+				}
 				else {
 					Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+gettext('요청 실패')+':'+xhr.status+')');
 				}
@@ -589,25 +589,49 @@ var DictionaryCommentList = {
 	},
 	addToMultipleComment:function(obj)
 	{
-		var max = NUM_ITEMS_PER_DICT_COMMENT;
-		var count=0;
-			
+		var total = $(obj).length;
 		$.each(obj, function(index, item) {
 			var enableDelete = (item.writer_id == Data.user_id);
 			var comment = $('<div>', {'class': 'dictionary_comment'});
 			var comment_output = item.comment.replace(/\n/g,'<br />');
 			comment.appendTo(DictionaryCommentList.comments);
-	
-			$('<a>').text(item.writer_nickname).appendTo(comment);
-			$('<div>', {'class': 'dictionary_comment_content'}).html(comment_output).appendTo(comment);
-			$('<div>', {'class': 'dictionary_comment_eval'}).text(gettext("학점") + ':' + item.score).appendTo(comment);
-			$('<div>', {'class': 'dictionary_comment_eval'}).text(gettext("로드") + ':' + item.load).appendTo(comment);
-			$('<div>', {'class': 'dictionary_comment_eval'}).text(gettext("남는거") + ':' + item.gain).appendTo(comment);
-		
+
+			var left_div_comment = $('<div>', {'class': 'dictionary_comment_left'});
+			var right_div_comment = $('<div>', {'class': 'dictionary_comment_right'});
+			left_div_comment.appendTo(comment);
+			right_div_comment.appendTo(comment);
+
+			$('<img>', {'class': 'dictionary_comment_prof_photo', 'src':'http://cais.kaist.ac.kr/static_files/photo/1990/'+item.professor[0].professor_id+'.jpg'}).appendTo(left_div_comment);
+
+			var right_top_div = $('<div>', {'class': 'dictionary_comment_right_top'});
+			var right_top_div_eval = $('<div>',{'class':'dictionary_comment_right_top_eval'});
+
+			right_top_div.appendTo(right_div_comment);
+			$('<div>', {'class': 'dictionary_comment_semester'}).text('<' + item.year + ' ' + item.semester + '>').appendTo(right_top_div);
+			$('<div>', {'class': 'dictionary_comment_prof_name'}).text(gettext("담당교수 : ") + item.professor[0].professor_name).appendTo(right_top_div);
+			right_top_div_eval.appendTo(right_top_div);
+
+			$('<div>', {'class': 'dictionary_comment_eval'}).text(gettext("학점") + ':' + item.score).appendTo(right_top_div_eval);
+			$('<div>', {'class': 'dictionary_comment_eval'}).text(gettext("로드") + ':' + item.load).appendTo(right_top_div_eval);
+			$('<div>', {'class': 'dictionary_comment_eval'}).text(gettext("남는거") + ':' + item.gain).appendTo(right_top_div_eval);
+
+
+			var right_mid_div = $('<div>', {'class': 'dictionary_comment_right_mid'});
+			right_mid_div.appendTo(right_div_comment);
+			$('<div>', {'class': 'dictionary_comment_content'}).html(comment_output).appendTo(right_mid_div);
+
+			var right_bot_div = $('<div>',{'class':'dictionary_comment_right_bot'});
+			right_bot_div.appendTo(right_div_comment);
+			$('<div>',{'class':'dictionary_comment_date'}).text(item.written_date).appendTo(right_bot_div);
+			$('<div>',{'class':'dictionary_comment_writer'}).text(gettext("작성자") + " : " + item.writer_nickname).appendTo(right_bot_div);
+
 			if (enableDelete) {
-				var deletelink = $('<div>', {'class': 'dictionary_comment_delete'}).text("지우기")
-				deletelink.appendTo(comment);
+				var deletelink = $('<div>', {'class': 'dictionary_comment_delete'}).text("X")
+				deletelink.appendTo(right_bot_div);
 				deletelink.bind('click', $.proxyWithArgs(DictionaryCommentList.deleteComment, DictionaryCommentList, item, comment));
+			}
+			if (index != total-1){
+				$('<hr>',{'class': 'dictionary_comment_line'}).appendTo(comment);
 			}
 		});
 	},
@@ -622,7 +646,7 @@ var DictionaryCommentList = {
 		$.each(obj, function(index, item) {
 			var professor_tab = $('<div>', {'class': 'course-professor-tab'}).text(item.professor_name);
 			professor_tab.appendTo(professor_tabs);
-			
+
 			professor_tab.bind('click', $.proxyWithArgs(DictionaryCommentList.onChangeProfessor, DictionaryCommentList, item));
 		});
 	},
@@ -653,7 +677,7 @@ var DictionaryCommentList = {
 			this.addToMultipleComment(Data.DictionaryComment);
 			Data.current_professor_id = -1;
 		}
-		else {	
+		else {
 			Data.current_professor_id = obj.professor_id;
 			var new_comment=[];
 			var i, j;
@@ -677,7 +701,7 @@ var DictionaryCommentList = {
 				load_average = 0;
 				gain_average = 0;
 			}
-			else {	
+			else {
 				score_average /= new_comment.length;
 				load_average /= new_comment.length;
 				gain_average /= new_comment.length;
@@ -692,26 +716,48 @@ var DictionaryCommentList = {
 
     addNewComment:function(obj){
 	    $.each(obj, function(index, item) {
-	        var enableDelete = (item.writer_id == Data.user_id);
-	        var comment = $('<div>', {'class': 'dictionary_comment'});
+			var enableDelete = (item.writer_id == Data.user_id);
+			var comment = $('<div>', {'class': 'dictionary_comment'});
 			var comment_output = item.comment.replace(/\n/g,'<br />');
-	        comment.prependTo(DictionaryCommentList.comments);
-	
+			comment.prependTo(DictionaryCommentList.comments);
+
+			var left_div_comment = $('<div>', {'class': 'dictionary_comment_left'});
+			var right_div_comment = $('<div>', {'class': 'dictionary_comment_right'});
+			left_div_comment.appendTo(comment);
+			right_div_comment.appendTo(comment);
+
+			$('<img>', {'class': 'dictionary_comment_prof_photo', 'src':'http://cais.kaist.ac.kr/static_files/photo/1990/'+item.professor[0].professor_id+'.jpg'}).appendTo(left_div_comment);
+
+			var right_top_div = $('<div>', {'class': 'dictionary_comment_right_top'});
+			var right_top_div_eval = $('<div>',{'class':'dictionary_comment_right_top_eval'});
+
+			right_top_div.appendTo(right_div_comment);
+			$('<div>', {'class': 'dictionary_comment_semester'}).text('<' + item.year + ' ' + item.semester + '>').appendTo(right_top_div);
+			$('<div>', {'class': 'dictionary_comment_prof_name'}).text(gettext("담당교수 : ") + item.professor[0].professor_name).appendTo(right_top_div);
+			right_top_div_eval.appendTo(right_top_div);
+
+			$('<div>', {'class': 'dictionary_comment_eval'}).text(gettext("학점") + ':' + item.score).appendTo(right_top_div_eval);
+			$('<div>', {'class': 'dictionary_comment_eval'}).text(gettext("로드") + ':' + item.load).appendTo(right_top_div_eval);
+			$('<div>', {'class': 'dictionary_comment_eval'}).text(gettext("남는거") + ':' + item.gain).appendTo(right_top_div_eval);
 
 
-	        $('<a>').text(item.writer_nickname).appendTo(comment);
-	        $('<div>', {'class': 'dictionary_comment_content'}).html(comment_output).appendTo(comment);
-	        $('<div>', {'class': 'dictionary_comment_eval'}).text(gettext("학점") + ':' + item.score).appendTo(comment);
-	        $('<div>', {'class': 'dictionary_comment_eval'}).text(gettext("로드") + ':' + item.load).appendTo(comment);
-	        $('<div>', {'class': 'dictionary_comment_eval'}).text(gettext("남는거") + ':' + item.gain).appendTo(comment);
-	
-	        if (enableDelete) {
-	            var deletelink = $('<div>', {'class': 'dictionary_comment_delete'}).text("지우기")
-	            deletelink.appendTo(comment);
-	            deletelink.bind('click', $.proxyWithArgs(DictionaryCommentList.deleteComment, DictionaryCommentList, item, comment));
-	        }
+			var right_mid_div = $('<div>', {'class': 'dictionary_comment_right_mid'});
+			right_mid_div.appendTo(right_div_comment);
+			$('<div>', {'class': 'dictionary_comment_content'}).html(comment_output).appendTo(right_mid_div);
+
+			var right_bot_div = $('<div>',{'class':'dictionary_comment_right_bot'});
+			right_bot_div.appendTo(right_div_comment);
+			$('<div>',{'class':'dictionary_comment_date'}).text(item.written_date).appendTo(right_bot_div);
+			$('<div>',{'class':'dictionary_comment_writer'}).text(gettext("작성자") + " : " + item.writer_nickname).appendTo(right_bot_div);
+
+			if (enableDelete) {
+				var deletelink = $('<div>', {'class': 'dictionary_comment_delete'}).text("X")
+				deletelink.appendTo(right_bot_div);
+				deletelink.bind('click', $.proxyWithArgs(DictionaryCommentList.deleteComment, DictionaryCommentList, item, comment));
+			}
+			$('<hr>',{'class': 'dictionary_comment_line'}).appendTo(comment);
 	    });
-	
+
 	},
 };
 
@@ -774,10 +820,10 @@ var IndexCommentList = {
 			},
 			error: function (xhr) {
 				Notifier.setErrorMsg(gettext('오류가 발생했습니다.'));
-			}	   
+			}
 		});
 	},
-	
+
     addToMultipleComment:function(obj)
 	{
 		var total = $(obj).length;
@@ -796,19 +842,19 @@ var IndexCommentList = {
 			var right_top_div = $('<div>', {'class': 'timeline_comment_right_top'});
 			var right_top_div_title = $('<div>',{'class':'timeline_comment_right_top_title'});
 			var right_top_div_spec = $('<div>',{'class':'timeline_comment_right_top_spec'});
-			
+
 			right_top_div.appendTo(right_div_comment);
 			right_top_div_title.appendTo(right_top_div);
 			right_top_div_spec.appendTo(right_top_div);
-		
+
 			var right_mid_div = $('<div>', {'class': 'timeline_comment_right_mid'});
 			var right_mid_div_comment = $('<div>',{'class':'timeline_comment_right_mid_comment'});
-			
+
 			right_mid_div.appendTo(right_div_comment);
 			right_mid_div_comment.appendTo(right_mid_div);
 
 			var comment_output = item.comment.replace(/\n/g,'<br/>');
-		
+
 			$('<a>', {'class': 'content_subject','href':'view/'+item.course_code+"/"}).text(item.course_title).appendTo(right_top_div_title);
 			$('<div>', {'class': 'content_comment'}).html(comment_output).appendTo(right_mid_div_comment);
 			$('<div>', {'class': 'a_spec'}).text('학점 :' + item.score).appendTo(right_top_div_spec);
@@ -816,20 +862,20 @@ var IndexCommentList = {
 			$('<div>', {'class': 'a_spec'}).text('남는거 :' + item.gain).appendTo(right_top_div_spec);
 
 			var right_bot_div = $('<div>',{'class':'timeline_comment_right_bot'});
-    		var right_bot_div_writer = $('<div>',{'class':'timeline_comment_right_bot_writer'});
-    		var right_bot_div_date = $('<div>',{'class':'timeline_comment_right_bot_date'});
-    	
-    		right_bot_div_writer.text('작성자 : '+ item.writer_nickname).appendTo(right_bot_div);	
-    		right_bot_div_date.text(item.written_date).appendTo(right_bot_div);
-    		right_bot_div.appendTo(right_div_comment);
-    		right_bot_div_date.appendTo(right_bot_div);
-    		right_bot_div_writer.appendTo(right_bot_div);
+			var right_bot_div_writer = $('<div>',{'class':'timeline_comment_right_bot_writer'});
+			var right_bot_div_date = $('<div>',{'class':'timeline_comment_right_bot_date'});
+
+			right_bot_div_writer.text('작성자 : '+ item.writer_nickname).appendTo(right_bot_div);
+			right_bot_div_date.text(item.written_date).appendTo(right_bot_div);
+			right_bot_div.appendTo(right_div_comment);
+			right_bot_div_date.appendTo(right_bot_div);
+			right_bot_div_writer.appendTo(right_bot_div);
 			if (index != total -1){
 				$('<hr>',{'class': 'comment_line'}).appendTo(IndexCommentList.timeline);
 			}
 	});
 	}
-};	
+};
 
 
 var ProfessorCommentList = {
@@ -903,7 +949,7 @@ var FavoriteList = {
 			var favorite = $('<div>', {'class': 'dictionary_favorite'});
 			favorite.appendTo(FavoriteList.favorites);
 			$('<a>', {'href': item.url}).text(item.code + ' - ' + item.title).appendTo(favorite);
-			
+
 			var deletelink = $('<a>').text(" X")
 			deletelink.appendTo(favorite);
 			deletelink.bind('click', $.proxyWithArgs(FavoriteList.deleteFavorite, FavoriteList, item, favorite));
@@ -933,7 +979,7 @@ var FavoriteList = {
 					return;
 				if (xhr.status == 403) {
 					Notifier.setErrorMsg(gettext('로그인 해야합니다.'));
-				}	
+				}
 				else {
 					Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+gettext('요청 실패')+':'+xhr.status+')');
 				}
