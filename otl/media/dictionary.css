@@ -1,7 +1,7 @@
 #main-side
 {
 	float:left;
-	width:530px;
+	width:770px;
 }
 #left-side
 {
@@ -237,8 +237,8 @@
     width:548px;
     margin-top:15px;
     margin-bottom:15px;
-    color:#cecece;
-    background-color:#cecece;
+    color:#c3dafb;
+    background-color:#c3dafb;
     height:1px;
 }
 #right-side
@@ -292,4 +292,85 @@
     padding-left:10px;
     padding-bottom:10px;
 }
-    
+.dictionary_comment
+{
+	height:76px;
+	margin:0px;
+	margin-top:15px;
+}
+.dictionary_comment_left
+{
+	float:left;
+	height:75px;
+	margin-left:25px;
+}
+.dictionary_comment_prof_photo
+{
+	height:65px;
+	width:55px;
+}
+.dictionary_comment_right
+{
+	float:right;
+	width:650px;
+	height:75px;
+	margin-left:15px;
+	margin-right:25px;
+}
+.dictionary_comment_right_top
+{
+	height:20px;
+	font-size:10pt;
+	font-family:돋움;
+	font-weight:bold;
+}
+.dictionary_comment_semester
+{
+	float:left;
+}
+.dictionary_comment_prof_name
+{
+	float:left;
+	margin-left:25px;
+}
+.dictionary_comment_right_top_eval
+{
+	float:right;
+}
+.dictionary_comment_eval
+{
+	float:left;
+	width:70px;
+	margin-left:15px;
+}
+.dictionary_comment_right_mid
+{
+	height:32px;
+}
+.dictionary_comment_content
+{
+	font-size:9pt;
+	font-family:돋움;
+	margin:0px;
+}
+.dictionary_comment_right_bot
+{
+	height:23px;
+	font-size:8pt;
+}
+.dictionary_comment_writer
+{
+	float:right;
+}
+.dictionary_comment_date
+{
+	float:right;
+	margin-left:10px;
+}
+.dictionary_comment_line
+{
+	height:1px;
+	color:#c3dafb;
+	background-color:#c3dafb;
+	margin:0px;
+}
