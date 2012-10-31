@@ -13,6 +13,11 @@
 $(document).ready(function () {
 	Data.DictionaryComment = [];
 	Data.Course = {{course|safe}};
+	{% if result == 'OK' %}
+		Data.Summary = {{summary|safe}};
+	{% else %}
+		Data.Summary = null;
+	{% endif %}
 	Data.Lectures = {{lectures|safe}};
     Data.Professors = {{professors|safe}};
 	Data.current_professor_id = -1;
@@ -25,32 +30,16 @@ $(document).ready(function () {
 {% endblock %}
 {% block main %}
 <div id="main-side">
+	<div id="course-favorite">
+		<input type="submit" name="addFavorite" value="즐겨찾기 추가" style="cursor:pointer"/>
+	</div>
 	<div id="course-description">
-		<div id="course-subject">
-			<span>{{course.old_code}}</span>
-		</div>
 		<div id="course-professor">
 		</div>
-		<div id="course-summary">
-			<div>
-				<span>{% trans "과목 소개" %}</span><input type="submit" name="addFavorite" value="즐겨찾기 추가" style="cursor:pointer"/>
-				<div id="summary_show">
-                                	<label id="summary_label">{{summary.summary}}</label>
-					<input type="submit" name="addSummaryShow" value ={% trans "수정하기" %} onclick="$('#summary_show').hide(); $('#summary_add').show();"/>
-				</div>
-				<div id="summary_add" hidden="true">
-                                	<textarea id="summary_add_content" name="summary" cols="50" rows="5">{{summary.summary}}</textarea>
-					<input type="submit" name="addSummarySend" value ="{% trans "완료" %}" />
-				</div>
-			</div>
-			<div>
-				<span>{% trans "선수과목" %}</span>
-				{{summary.prerequisite}}
-			</div>
-			<div id="course-eval"></div>
+		<div id = "course-summary">
 		</div>
 	</div>
-	<div id="course-coment">
+	<div id="course-comment">
 		<div id="course-comment-add">
 			<span>{% trans "코멘트 남기기" %}</span>
 			{% if user.is_authenticated %}

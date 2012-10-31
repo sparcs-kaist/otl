@@ -77,7 +77,7 @@
 	"fields":{
 		"summary":"\uc6b0\uc655\u314b\uad73\u314b", 
 		"prerequisite":"cs101",
-		"writer":1, 
+		"writer":2, 
 		"written_datetime": "2012-06-10 20:00:00", 
 		"course":1
 	}
@@ -112,7 +112,7 @@
 	"fields":{
 		"summary":"\u3141\u3134\u3147\u3139", 
 		"prerequisite":"",
-		"writer":1, 
+		"writer":2, 
 		"written_datetime": "2012-06-10 20:00:00", 
 		"course":2
 	}

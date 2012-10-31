@@ -399,25 +399,17 @@ var DictionaryCommentList = {
 	initialize:function()
 	{
 		this.summary = $('#course-summary');
-		this.eval = $('#course-eval');
 		this.comments = $('#course-comment-view');
 		this.submitComment = $('input[name="submitComment"]');
-                this.addSummaryShow = $('input[name="addSummaryShow"]');
-                this.addSummarySend = $('input[name="addSummarySend"]');
 		this.onLoad();
 		this.registerHandles();
                 this.loading=true;
-                this.showMoreComments();
 	},
 	onLoad:function()
 	{
 		this.addToMultipleProfessor(Data.Professors);
 		this.onChangeProfessor(DictionaryCommentList, null);
 
-		var new_summary_content = $("#summary_add_content").val();
-		var output_summary = new_summary_content.replace(/\n/g,'<br />');
-        $("#summary_label").html(output_summary);
-        $("#summary_add_content").text(new_summary_content);
 	},
 	registerHandles:function()
 	{
@@ -465,23 +457,30 @@ var DictionaryCommentList = {
 		}
 
 	},
-
+	showSummary:function()
+	{
+		$('#course-explain').hide();
+		$('#course-require').hide();
+		$('#course-summary-add-img').hide();
+		$('#course-explain-add').show();
+		$('#course-require-add').show();
+		$('#course-summary-complete-img').show();
+	},
 	addSummary:function()
 	{
-		var new_summary_content = $("#summary_add_content").val();
+		var new_explain_content = $("#course-explain-add").val();
+		var new_require_content = $('#course-require-add').val();
 		var course_id = Data.Course.id;
                 var writer_id = Data.user_id;
                 $.ajax({
                     type: 'POST',
                     url: '/dictionary/add_summary/',
-                    data: {'content': new_summary_content, 'course_id': course_id, 'writer_id': writer_id},
+                    data: {'content': new_explain_content, 'require': new_require_content, 'course_id': course_id, 'writer_id': writer_id},
                     dataType: 'json',
                     success: $.proxy(function(resObj) {
                         try {
                             if (resObj.result=='OK') {
                                 Data.summary = resObj.summary
-                            }
-                            else {
                             }
                         }
                         catch(e) {
@@ -499,11 +498,16 @@ var DictionaryCommentList = {
 			}
 		    }
 		});
-				var output_summary = new_summary_content.replace(/\n/g,'<br />');
-                $("#summary_label").html(output_summary);
-                $("#summary_add_content").text(new_summary_content);
-                $("#summary_add").hide();
-                $("#summary_show").show();
+		var output_explain = new_explain_content.replace(/\n/g,'<br />');
+		var output_require = new_require_content.replace(/\n/g,'<br />');
+		$("#course-require").html(output_require);
+		$("#course-explain").html(output_explain);
+		$('#course-explain-add').hide();
+		$('#course-require-add').hide();
+		$('#course-summary-complete-img').hide();
+		$('#course-explain').show();
+		$('#course-require').show();
+		$('#course-summary-add-img').show();
 	},
 
 	addComment:function()
@@ -529,9 +533,9 @@ var DictionaryCommentList = {
 						if (resObj.result=='ADD') {
 							DictionaryCommentList.addToFront(resObj.comment);
 							DictionaryCommentList.addNewComment(resObj.comment);
-                                                        $($("#course-eval").children()[0]).text("학점 : "+resObj.average['avg_score']);
-                                                        $($("#course-eval").children()[1]).text("로드 : "+resObj.average['avg_load']);
-                                                        $($("#course-eval").children()[2]).text("남는거 : "+resObj.average['avg_gain']);
+							$($("#course-eval").children()[0]).text("학점 : "+resObj.average['avg_score'].toFixed(1));
+							$($("#course-eval").children()[1]).text("로드 : "+resObj.average['avg_load'].toFixed(1));
+							$($("#course-eval").children()[2]).text("남는거 : "+resObj.average['avg_gain'].toFixed(1));
 						} else if (resObj.result='ALREADY_WRITTEN') {
 							Notifier.setErrorMsg(gettext('이미 등록하셨습니다.'));
 						}
@@ -563,10 +567,10 @@ var DictionaryCommentList = {
 			success: $.proxy(function(resObj) {
 				try {
 					if (resObj.result=='DELETE') {
-                                            comment.remove();
-                                            $($("#course-eval").children()[0]).text("학점 : "+resObj.average['avg_score']);
-                                            $($("#course-eval").children()[1]).text("로드 : "+resObj.average['avg_load']);
-                                            $($("#course-eval").children()[2]).text("남는거 : "+resObj.average['avg_gain']);
+						comment.remove();
+						$($("#course-eval").children()[0]).text("학점 : "+resObj.average['avg_score'].toFixed(1));
+						$($("#course-eval").children()[1]).text("로드 : "+resObj.average['avg_load'].toFixed(1));
+						$($("#course-eval").children()[2]).text("남는거 : "+resObj.average['avg_gain'].toFixed(1));
 					} else if (resObj=='REMOVE_NOT_EXIST') {
 						Notifier.setErrorMsg(gettext('잘못된 접근입니다.'));
 					}
@@ -638,6 +642,7 @@ var DictionaryCommentList = {
 	addToMultipleProfessor:function(obj)
 	{
 		var professor_tabs = $('#course-professor');
+
 		var default_tab = $('<div>', {'class': 'course-professor-tab'}).text('일반');
 
 		default_tab.appendTo(professor_tabs);
@@ -653,10 +658,15 @@ var DictionaryCommentList = {
 	clearComment:function()
 	{
 		this.comments.empty();
+		Data.DictionaryComment = [];
 	},
 	clearEval: function()
 	{
 		this.eval.empty();
+	},
+	clearSummary:function()
+	{
+		this.summary.empty();
 	},
 	update:function(obj)
 	{
@@ -666,16 +676,72 @@ var DictionaryCommentList = {
 	{
 		Data.DictionaryComment = obj.concat(Data.DictionaryComment);
 	},
+	addToGeneralSummary:function()
+	{
+		var top_div = $('<div>', {'id': 'course-summary-top'});
+		var left_div = $('<div>', {'id': 'course-intro'});
+		if (Data.Summary==null){
+			var output_explain = "";
+			var output_require = "";
+		}
+		else{
+			var output_explain = Data.Summary.summary.replace(/\n/g,'<br />');
+			var output_require = Data.Summary.prerequisite.replace(/\n/g,'<br />');	
+		}
+
+		$('<div>', {'id': 'course-subject'}).text(Data.Course.title).appendTo(left_div);
+		$('<hr>',{'id': 'course-line'}).appendTo(left_div);
+		$('<div>', {'id': 'course-explain-title'}).text(gettext("과목 설명")).appendTo(left_div);
+		$('<div>', {'id': 'course-explain'}).html(output_explain).appendTo(left_div);
+		$('<textarea>', {'id': 'course-explain-add'}).text(output_explain).appendTo(left_div);
+		$('<div>', {'id': 'course-require-title'}).text(gettext("선수 과목")).appendTo(left_div);
+		$('<div>', {'id': 'course-require'}).html(output_require).appendTo(left_div);
+		$('<textarea>', {'id': 'course-require-add'}).text(output_require).appendTo(left_div);
+
+		var right_div = $('<div>', {'id': 'course-score'});
+		$('<div>', {'id': 'course-eval-title'}).text("TOTAL SCORE").appendTo(right_div);
+
+		var right_div_eval = $('<div>', {'id': 'course-eval'});
+		$('<div>', {'class': 'course-eval-score'}).text(gettext("학 점 ") + Data.Course.score_average.toFixed(1)).appendTo(right_div_eval);
+		$('<div>', {'class': 'course-eval-score'}).text(gettext("로 드 ") + Data.Course.load_average.toFixed(1)).appendTo(right_div_eval);
+		$('<div>', {'class': 'course-eval-score'}).text(gettext("남는거 ") + Data.Course.gain_average.toFixed(1)).appendTo(right_div_eval);
+		right_div_eval.appendTo(right_div);
+
+		$('<div>', {'id': 'course-eval-average'}).text(((Data.Course.score_average+Data.Course.load_average+Data.Course.gain_average)/3).toFixed(1)).appendTo(right_div);;
+		$('<div>', {'id': 'course-eval-count'}).text(gettext("평가자 수 : ") + Data.Course.comment_num + gettext("명")).appendTo(right_div);
+
+		left_div.appendTo(top_div);
+		right_div.appendTo(top_div);
+		var bottom_div = $('<div>', {'id': 'course-summary-bottom'});
+		var add_img = $('<img>', {'src': 'http://bit.sparcs.org/~seal/OTL_project/%ea%b3%a0%ec%b9%a8%eb%b2%84%ed%8a%bc.gif', 'id': 'course-summary-add-img'});
+		var complete_img = $('<img>', {'src': 'http://bit.sparcs.org/~seal/OTL_project/%ea%b3%a0%ec%b9%a8%eb%b2%84%ed%8a%bc.gif', 'id': 'course-summary-complete-img'});
+		if(Data.Summary==null)
+			var bottom_text = $('<div>', {'id': 'course-change-user'}).html("");
+		else
+			var bottom_text = $('<div>', {'id': 'course-change-user'}).html(gettext("마지막 고침 : ") + Data.Summary.written_datetime + " " + Data.Summary.writer + " ");
+
+		add_img.appendTo(bottom_text);
+		complete_img.appendTo(bottom_text);
+		bottom_text.appendTo(bottom_div);
+		add_img.bind('click', $.proxy(this.showSummary, this));
+		complete_img.bind('click', $.proxy(this.addSummary, this));
+
+		top_div.appendTo(this.summary);
+		bottom_div.appendTo(this.summary);
+
+		$('#course-explain-add').hide();
+		$('#course-require-add').hide();
+		$('#course-summary-complete-img').hide();
+	},
 	onChangeProfessor:function(e,obj)
 	{
-		this.clearEval();
+		this.clearComment();
+		this.clearSummary();
 		if (obj===null) {
-			$('<a>').text('학점 : ' + Data.Course.score_average).appendTo(this.eval);
-			$('<a>').text('로드 : ' + Data.Course.load_average).appendTo(this.eval);
-			$('<a>').text('남는거 : ' + Data.Course.gain_average).appendTo(this.eval);
-
-			this.addToMultipleComment(Data.DictionaryComment);
+			this.addToGeneralSummary();
+			Data.comment_id = -1;
 			Data.current_professor_id = -1;
+			this.showMoreComments();
 		}
 		else {
 			Data.current_professor_id = obj.professor_id;
