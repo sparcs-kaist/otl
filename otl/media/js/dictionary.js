@@ -533,9 +533,11 @@ var DictionaryCommentList = {
 						if (resObj.result=='ADD') {
 							DictionaryCommentList.addToFront(resObj.comment);
 							DictionaryCommentList.addNewComment(resObj.comment);
-							$($("#course-eval").children()[0]).text("학점 : "+resObj.average['avg_score'].toFixed(1));
-							$($("#course-eval").children()[1]).text("로드 : "+resObj.average['avg_load'].toFixed(1));
-							$($("#course-eval").children()[2]).text("남는거 : "+resObj.average['avg_gain'].toFixed(1));
+							$($("#course-eval").children()[0]).text("학점 "+resObj.average['avg_score'].toFixed(1));
+							$($("#course-eval").children()[1]).text("로드 "+resObj.average['avg_load'].toFixed(1));
+							$($("#course-eval").children()[2]).text("남는거 "+resObj.average['avg_gain'].toFixed(1));
+							$("#course-eval-average").text(((resObj.average['avg_score']+resObj.average['avg_load']+resObj.average['avg_gain'])/3).toFixed(1));
+							$("#course-eval-count").text(gettext("평가자 수 : ") + resObj.comment_num + gettext("명"));
 						} else if (resObj.result='ALREADY_WRITTEN') {
 							Notifier.setErrorMsg(gettext('이미 등록하셨습니다.'));
 						}
@@ -568,9 +570,11 @@ var DictionaryCommentList = {
 				try {
 					if (resObj.result=='DELETE') {
 						comment.remove();
-						$($("#course-eval").children()[0]).text("학점 : "+resObj.average['avg_score'].toFixed(1));
-						$($("#course-eval").children()[1]).text("로드 : "+resObj.average['avg_load'].toFixed(1));
-						$($("#course-eval").children()[2]).text("남는거 : "+resObj.average['avg_gain'].toFixed(1));
+						$($("#course-eval").children()[0]).text("학점 "+resObj.average['avg_score'].toFixed(1));
+						$($("#course-eval").children()[1]).text("로드 "+resObj.average['avg_load'].toFixed(1));
+						$($("#course-eval").children()[2]).text("남는거 "+resObj.average['avg_gain'].toFixed(1));
+						$("#course-eval-average").text(((resObj.average['avg_score']+resObj.average['avg_load']+resObj.average['avg_gain'])/3).toFixed(1));
+						$("#course-eval-count").text(gettext("평가자 수 : ") + resObj.comment_num + gettext("명"));
 					} else if (resObj=='REMOVE_NOT_EXIST') {
 						Notifier.setErrorMsg(gettext('잘못된 접근입니다.'));
 					}
@@ -626,14 +630,14 @@ var DictionaryCommentList = {
 
 			var right_bot_div = $('<div>',{'class':'dictionary_comment_right_bot'});
 			right_bot_div.appendTo(right_div_comment);
-			$('<div>',{'class':'dictionary_comment_date'}).text(item.written_date).appendTo(right_bot_div);
-			$('<div>',{'class':'dictionary_comment_writer'}).text(gettext("작성자") + " : " + item.writer_nickname).appendTo(right_bot_div);
-
 			if (enableDelete) {
 				var deletelink = $('<div>', {'class': 'dictionary_comment_delete'}).text("X")
 				deletelink.appendTo(right_bot_div);
 				deletelink.bind('click', $.proxyWithArgs(DictionaryCommentList.deleteComment, DictionaryCommentList, item, comment));
 			}
+			$('<div>',{'class':'dictionary_comment_date'}).text(item.written_date).appendTo(right_bot_div);
+			$('<div>',{'class':'dictionary_comment_writer'}).text(gettext("작성자") + " : " + item.writer_nickname + " ").appendTo(right_bot_div);
+
 			if (index != total-1){
 				$('<hr>',{'class': 'dictionary_comment_line'}).appendTo(comment);
 			}
@@ -813,14 +817,15 @@ var DictionaryCommentList = {
 
 			var right_bot_div = $('<div>',{'class':'dictionary_comment_right_bot'});
 			right_bot_div.appendTo(right_div_comment);
-			$('<div>',{'class':'dictionary_comment_date'}).text(item.written_date).appendTo(right_bot_div);
-			$('<div>',{'class':'dictionary_comment_writer'}).text(gettext("작성자") + " : " + item.writer_nickname).appendTo(right_bot_div);
-
 			if (enableDelete) {
 				var deletelink = $('<div>', {'class': 'dictionary_comment_delete'}).text("X")
 				deletelink.appendTo(right_bot_div);
 				deletelink.bind('click', $.proxyWithArgs(DictionaryCommentList.deleteComment, DictionaryCommentList, item, comment));
 			}
+			$('<div>',{'class':'dictionary_comment_date'}).text(item.written_date).appendTo(right_bot_div);
+			$('<div>',{'class':'dictionary_comment_writer'}).text(gettext("작성자") + " : " + item.writer_nickname).appendTo(right_bot_div);
+
+
 			$('<hr>',{'class': 'dictionary_comment_line'}).appendTo(comment);
 	    });
 
