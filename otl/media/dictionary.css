@@ -374,3 +374,216 @@
 	background-color:#c3dafb;
 	margin:0px;
 }
+.dictionary_comment_delete
+{
+        float:right;
+        height:20px;
+        width:10px;
+}
+
+#course-favorite
+{
+	height:28px;
+	float:right;
+	margin-left:688px;
+}
+#course-favorite input
+{
+	margin-top:8px;
+}
+
+#course-description
+{
+	margin-top:28px;
+}
+#course-professor
+{
+	height:20px;
+        margin-left:5px;
+	width:770px;
+}
+
+.course-professor-tab
+{
+        cursor:pointer;
+        float: left;
+	font-family:돋움;
+	font-size:11px;
+        background: white;
+        width:45px;
+        height:18px;
+        text-align:center;
+        border-width:1px;
+        border-style:ridge;
+}
+#course-summary-boundary
+{
+        width:760px;
+        height:158px;
+        padding:5px;
+        background: #C3DAFB;
+        border-radius:3px;
+}
+#course-summary
+{
+        background:white;
+        height:158px;
+        padding-bottom: 5px;
+        border-radius: 5px;
+        border-width: 5px;
+        border-style: solid;
+        border-color: #C3D9FF;
+
+}
+#course-summary-top
+{
+        width:760px;
+        height:138px;
+}
+#course-summary-bottom
+{
+        float: right;
+}
+#course-intro
+{
+        margin-left:20px;
+        float: left;
+}
+#course-score
+{
+        float: right;
+        margin-right:20px;
+        width:138px;
+}
+#course-change
+{
+        float: right;
+        margin-right:20px;
+}
+#course-subject
+{
+        font-size:12px;
+        width:562px;
+        font-weight:bold;
+        line-height:30px;
+        font-family:돋움;
+        height:30px;
+        text-align:left;
+}
+#course-line
+{
+        height:3px;
+        background:black;
+        width: 562px;
+}
+#course-explain-title
+{
+        margin-top:10px;
+        margin-left:5px;
+        font-size:12px;
+        font-family:돋움;
+        font-weight:bold;
+}
+#course-explain
+{
+         margin-left:5px;
+         margin-top:8px;
+         line-height:19px;
+         height:19px;
+}
+#course-explain-add
+{
+         height:19px;
+         width:577px;
+         max-height:32px;
+         max-width:562px;
+}
+#course-require-title
+{
+        font-family:돋움;
+        font-size:12px;
+        font-weight:bold;
+        margin-top:10px;
+        margin-left:5px;
+}
+#course-require
+{
+        line-height:19px;
+        height:19px;
+        margin-top:8px;
+        margin-left:5px;
+}
+#course-require-add
+{
+        height:19px;
+        width:577px;
+        max-height:32px;
+        max-width:562px;
+}
+#course-eval-title
+{
+        margin-top:17px;
+        line-height:25px;
+        font-family:돋움;
+        font-weight:bold;
+        font-size:12px;
+        width:138px;
+        height:25px;
+        text-align:center;
+        background: #C3DAFB;
+        border-radius:5px;
+        box-shadow: 2px 2px 2px #000;
+}
+#course-eval
+{
+        margin:0px;
+        float:left;
+        margin-top:13px;
+        width:71px;
+        height:50px;
+}
+.course-eval-score
+{
+        margin:0px;
+        font-weight:bold;
+        font-size:10px;
+}
+#course-eval-average
+{
+        margin:0px;
+        float:right;
+        height:50px;
+        line-height:50px;
+        text-align: center;
+        width:50px;
+        margin:6px;
+        margin-top:13px;
+}
+#course-eval-count
+{
+        margin-top:13px; 
+        margin-left:10px;
+        float:right;
+        line-height:10px;
+        font-size:10px;
+        height:10px;
+}
+#course-comment
+{
+	margin-top:20px;
+}
+#course-change-user
+{
+        font-family:돋움;
+        font-weight:bold;
+        font-size:10px;
+        line-height:10px;
+        height:10px;
+        margin-bottom:10px;
+        margin-right:20px;
+}
+#course-change-user img
+{
+        width:10px;
+        height:10px;
+}
