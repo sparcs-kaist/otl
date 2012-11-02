@@ -167,7 +167,7 @@ def show_more_comments(request):
 
 def view(request, course_code):
     course = None
-    recent_summary = None
+    summary_output = None
 
     try:
         dept = int(request.GET.get('dept', -1))
@@ -181,13 +181,14 @@ def view(request, course_code):
         lang=request.session.get('django_language','ko')
         if summary.count() > 0:
             recent_summary = summary[0]
+            summary_output = _summary_to_output(recent_summary,True,lang);
+            result = 'OK'
         else:
-            recent_summary = None
+            result = 'EMPTY'
     
         course_output = _courses_to_output(course,True,lang)
         lectures_output = _lectures_to_output(Lecture.objects.filter(course=course), True, lang)
         professors_output = _professors_to_output(course.professors,True,lang) 
-        result = 'OK'
     except ObjectDoesNotExist:
         result = 'NOT_EXIST' 
 
@@ -198,7 +199,7 @@ def view(request, course_code):
         'course' : course_output,
         'lectures' : lectures_output,
         'professors' : professors_output,
-        'summary' : recent_summary,
+        'summary' : summary_output,
         'dept': dept,
         'classification': classification,
         'keyword': keyword,
@@ -465,13 +466,14 @@ def like_comment(request, comment_id):
 def add_summary(request):
     try:
         content = request.POST.get('content', None)
+        require = request.POST.get('require', None)
         course_id = int(request.POST.get('course_id', -1))
         course = Course.objects.get(id=course_id)
         if content == None or course_id < 0:
             raise ValidationError()
         writer = request.user
         written_datetime = datetime.datetime.now()
-        new_summary = Summary(summary=content, writer=writer, written_datetime=written_datetime, course=course)
+        new_summary = Summary(summary=content, writer=writer, written_datetime=written_datetime, course=course, prerequisite=require)
         new_summary.save()
         result = 'OK'
     except ValidationError:
@@ -481,7 +483,7 @@ def add_summary(request):
     
     return HttpResponse(json.dumps({
         'result': result,
-        'summary': _summary_to_output([new_summary],False,'ko')}, ensure_ascii=False, indent=4, cls=DjangoJSONEncoder))
+        'summary': _summary_to_output(new_summary,True,'ko')}))
 
 @login_required
 def add_favorite(request):
@@ -723,6 +725,7 @@ def _courses_to_output(courses,conv_to_json=True,lang='ko'):
                 'dept_id': courses.department.id,
                 'type': _trans(courses.type,courses.type_en,lang),
                 'title': _trans(courses.title,courses.title_en,lang),
+                'comment_num': len(Comment.objects.filter(course=courses)),
                 'score_average': courses.score_average,
                 'load_average': courses.load_average,
                 'gain_average': courses.gain_average
@@ -760,28 +763,23 @@ def _courses_to_output(courses,conv_to_json=True,lang='ko'):
         return io.getvalue()
     else :
         return all
-
-def _summary_to_output(summaries,conv_to_json=True,lang='ko'):
-    all = []
-    if not isinstance(summaries, list):
-        summaries = summaries.select_related()
-    for summary in summaries:
-        item = {
-            'summary': summary.summary,
-            'writer_id': summary.writer.id,
-            'written_datetime': summary.written_datetime,
-            'course_id': summary.course.id
-            }
-        all.append(item) 
+def _summary_to_output(summary,conv_to_json=True,lang='ko'):
+    item = {
+        'summary': summary.summary,
+        'prerequisite': summary.prerequisite,
+        'writer': UserProfile.objects.get(user = summary.writer).nickname,
+        'written_datetime': summary.written_datetime.isoformat()[:10],
+        'course_id': summary.course.id
+        }
     if conv_to_json:
         io = StringIO()
         if settings.DEBUG:
-            json.dump(all,io,ensure_ascii=False,indent=4)
+            json.dump(item,io,ensure_ascii=False,indent=4, cls=DjangoJSONEncoder)
         else:
-            json.dump(all,io,ensure_ascii=False,sort_keys=False,separators=(',',':'))
+            json.dump(item,io,ensure_ascii=False,sort_keys=False,separators=(',',':'), cls=DjangoJSONEncoder)
         return io.getvalue()
     else :
-        return all
+        return item
 
 def _get_professor_by_lecture(lecture):
     if lecture == None:
