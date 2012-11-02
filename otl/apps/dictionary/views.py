@@ -144,15 +144,30 @@ def get_autocomplete_list(request):
 def show_more_comments(request):
     course_id = int(request.GET.get('course_id', -1))
     next_comment_id = int(request.GET.get('next_comment_id', -1))
+    prof_id = int(request.GET.get('professor_id', -1))
     course = Course.objects.get(id=course_id)
-    if next_comment_id == -1:  #starting point
-        comments = Comment.objects.filter(course=course).order_by('-id')[:settings.COMMENT_NUM]
-    elif next_comment_id == -2 : #nothing 
+    if next_comment_id == -2 : #nothing 
         return HttpResponse(json.dumps({
             'next_comment_id':0,
             'comments':[]}))
+    if prof_id == -1 : #General
+        if next_comment_id == -1:  #starting point
+            comments = Comment.objects.filter(course=course).order_by('-id')[:settings.COMMENT_NUM]
+        else:
+            comments = Comment.objects.filter(course=course,id__lte=next_comment_id).order_by('-id')[:settings.COMMENT_NUM]
     else:
-        comments = Comment.objects.filter(course=course,id__lte=next_comment_id).order_by('-id')[:settings.COMMENT_NUM]
+        professor = Professor.objects.get(professor_id=prof_id)
+        lectures = professor.lecture_professor.all()
+        q = Q()
+        for lecture in lectures:
+            q |= Q(lecture=lecture)
+        q &= Q(course=course)
+        if next_comment_id == -1:  #starting point
+            comments = Comment.objects.filter(q).order_by('-id')[:settings.COMMENT_NUM]
+        else:
+            q &= Q(id__lte=next_comment_id)
+            comments = Comment.objects.filter(q).order_by('-id')[:settings.COMMENT_NUM]
+
     lang=request.session.get('django_language','ko')
     comments_output = _comments_to_output(comments,False,lang,False)
    
