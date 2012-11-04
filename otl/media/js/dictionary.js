@@ -409,7 +409,6 @@ var DictionaryCommentList = {
 	{
 		this.addToMultipleProfessor(Data.Professors);
 		this.onChangeProfessor(DictionaryCommentList, null);
-
 	},
 	registerHandles:function()
 	{
@@ -652,17 +651,18 @@ var DictionaryCommentList = {
 		Data.DictionaryComment = obj.concat(Data.DictionaryComment);
 	},
 	
-	addToGeneralSummary:function()
+	addToGeneralSummary:function(general_summary)
 	{
 		var top_div = $('<div>', {'id': 'course-summary-top'});
 		var left_div = $('<div>', {'id': 'course-intro'});
-		if (Data.Summary==null){
+		console.log(general_summary.summary);
+		if (general_summary==null){
 			var output_explain = "";
 			var output_require = "";
 		}
 		else{
-			var output_explain = Data.Summary.summary.replace(/\n/g,'<br />');
-			var output_require = Data.Summary.prerequisite.replace(/\n/g,'<br />');	
+			var output_explain = general_summary.summary.replace(/\n/g,'<br />');
+			var output_require = general_summary.prerequisite.replace(/\n/g,'<br />');	
 		}
 
 		$('<div>', {'id': 'course-subject'}).text(Data.Course.title).appendTo(left_div);
@@ -691,10 +691,10 @@ var DictionaryCommentList = {
 		var bottom_div = $('<div>', {'id': 'course-summary-bottom'});
 		var add_img = $('<img>', {'src': 'http://bit.sparcs.org/~seal/OTL_project/%ea%b3%a0%ec%b9%a8%eb%b2%84%ed%8a%bc.gif', 'id': 'course-summary-add-img'});
 		var complete_img = $('<img>', {'src': 'http://bit.sparcs.org/~seal/OTL_project/%ea%b3%a0%ec%b9%a8%eb%b2%84%ed%8a%bc.gif', 'id': 'course-summary-complete-img'});
-		if(Data.Summary==null)
+		if(general_summary==null)
 			var bottom_text = $('<div>', {'id': 'course-change-user'}).html("");
 		else
-			var bottom_text = $('<div>', {'id': 'course-change-user'}).html(gettext("마지막 고침 : ") + Data.Summary.written_datetime + " " + Data.Summary.writer + " ");
+			var bottom_text = $('<div>', {'id': 'course-change-user'}).html(gettext("마지막 고침 : ") + general_summary.written_datetime + " " + general_summary.writer + " ");
 
 		add_img.appendTo(bottom_text);
 		complete_img.appendTo(bottom_text);
@@ -713,17 +713,48 @@ var DictionaryCommentList = {
 	{
 		this.clearComment();
 		this.clearSummary();
-		if (obj===null) {
-			this.addToGeneralSummary();
+		if(obj==null) {
 			Data.current_professor_id = -1;
 			Data.comment_id = -1;
-			this.showMoreComments();
 		}
-		else {	
+		else {
 			Data.current_professor_id = obj.professor_id;
 			Data.comment_id = -1;
-			this.showMoreComments();
 		}
+		$.ajax({
+			type: 'POST',
+			url: '/dictionary/get_summary/',
+			data: {'professor_id': Data.current_professor_id,  'course_id' : Data.Course.id},
+			dataType: 'json',
+			success: $.proxy(function(resObj) {
+				try {
+					console.log(resObj);
+					if(resObj.result=="OK"){
+					    console.log(resObj.summary);
+					    this.addToGeneralSummary(resObj.summary);
+					    this.showMoreComments();
+					}
+					else if(resObj.result=='EMPTY')
+					{
+					    this.addToGeneralSummary(null);
+					    this.showMoreComments();
+					}	
+				}
+				catch(e) {
+					Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+e.message+')');
+				}	
+			}, this),
+			error: function(xhr) {
+				if (suppress_ajax_errors)
+					return;
+				if(xhr.status == 403){
+					Notifier.setErrorMsg(gettext('로그인해야 합니다.'));
+				}
+				else{
+					Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+gettext('요청 실패')+':'+xhr.status+')');
+				}
+			}
+		});
 	},
 
     addNewComment:function(obj){

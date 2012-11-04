@@ -192,18 +192,12 @@ def view(request, course_code):
         active_tab = int(request.GET.get('active_tab', -1))
 
         course = Course.objects.get(old_code=course_code.upper())
-        summary = Summary.objects.filter(course=course).order_by('-id')
         lang=request.session.get('django_language','ko')
-        if summary.count() > 0:
-            recent_summary = summary[0]
-            summary_output = _summary_to_output(recent_summary,True,lang);
-            result = 'OK'
-        else:
-            result = 'EMPTY'
     
         course_output = _courses_to_output(course,True,lang)
         lectures_output = _lectures_to_output(Lecture.objects.filter(course=course), True, lang)
         professors_output = _professors_to_output(course.professors,True,lang) 
+        result = 'OK'
     except ObjectDoesNotExist:
         result = 'NOT_EXIST' 
 
@@ -214,7 +208,6 @@ def view(request, course_code):
         'course' : course_output,
         'lectures' : lectures_output,
         'professors' : professors_output,
-        'summary' : summary_output,
         'dept': dept,
         'classification': classification,
         'keyword': keyword,
@@ -476,7 +469,7 @@ def professor_comment(request):
 @login_required
 def like_comment(request, comment_id):
     return
-
+	
 @login_required
 def add_summary(request):
     try:
@@ -492,13 +485,40 @@ def add_summary(request):
         new_summary.save()
         result = 'OK'
     except ValidationError:
-        return HttpResponseBadReqeust()
+        return HttpResponseBadRequest()
     except:
         return HttpResponseServerError()
     
     return HttpResponse(json.dumps({
         'result': result,
-        'summary': _summary_to_output(new_summary,True,'ko')}))
+        'summary': _summary_to_output(new_summary,False,'ko')}))
+
+@login_required
+def get_summary(request):
+    summary_output = None
+    try:
+	prof_id = int(request.POST.get('professor_id',-1))
+	course_id = int(request.POST.get('course_id',-1))
+	course = Course.objects.get(id=course_id)
+	if prof_id == -1:
+	    # General
+	    summary = Summary.objects.filter(course=course).order_by('-id')
+            lang=request.session.get('django_language','ko')
+            if summary.count() > 0:
+                recent_summary = summary[0]
+                summary_output = _summary_to_output(recent_summary,False,lang);
+                result = 'OK'
+            else:
+                result = 'EMPTY'
+	else:
+	    result='ERROR'
+    except ValidationError:
+	return HttpResponseBadRequest()
+    except:
+	return HttpResponseServerError()
+    return HttpResponse(json.dumps({
+	'result': result,
+	'summary': summary_output}))
 
 @login_required
 def add_favorite(request):
