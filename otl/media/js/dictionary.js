@@ -655,7 +655,6 @@ var DictionaryCommentList = {
 	{
 		var top_div = $('<div>', {'id': 'course-summary-top'});
 		var left_div = $('<div>', {'id': 'course-intro'});
-		console.log(general_summary.summary);
 		if (general_summary==null){
 			var output_explain = "";
 			var output_require = "";
@@ -728,9 +727,7 @@ var DictionaryCommentList = {
 			dataType: 'json',
 			success: $.proxy(function(resObj) {
 				try {
-					console.log(resObj);
 					if(resObj.result=="OK"){
-					    console.log(resObj.summary);
 					    this.addToGeneralSummary(resObj.summary);
 					    this.showMoreComments();
 					}
