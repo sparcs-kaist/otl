@@ -1,13 +1,13 @@
 #main-side
 {
 	float:left;
-	width:530px;
+	width:770px;
 }
 #left-side
 {
-        float:left;
-        width:200px;
-        margin:10px;
+    float:left;
+    width:200px;
+    margin:10px;
 }
 #lecturelist-range h4
 {
@@ -111,11 +111,27 @@
 }
 .dictionary-title
 {
-
-    background:#C3DAFB;
-    line-height: 29px;
-    padding-left:18px;
-    font-size : 15px;
+    background:#C3D9FF;
+    font-size:12px;
+    font-weight:bold;
+    font-family:'돋움';
+}
+.dictionary-title div.tl
+{
+    background:transparent url('images/corner_tl.gif') top left no-repeat;
+}
+.dictionary-title div.tr
+{
+    background:transparent url('images/corner_tr.gif') top right no-repeat;
+}
+.dictionary-title div.bl
+{
+    background:transparent url('images/corner_bl.gif') bottom left no-repeat;
+}
+.dictionary-title div.br
+{
+    background:transparent url('images/corner_br.gif') bottom right no-repeat;
+    padding: 3px 12px 1px;
 }
 #center
 {
@@ -138,10 +154,135 @@
 {
     margin-top : 19px;
 }
+#professor
+{
+	margin-left : 15px;
+	margin-top : 30px;
+	width : 770px;
+}
+#professor-info-title
+{
+    background:#C3D9FF;
+	margin-left:5px;
+	text-align:center;
+	font-weight:bold;
+	color:white;
+	width:70px;
+}
+#professor-info-back
+{
+    background:#C3D9FF;
+	padding : 5px;
+	margin-bottom:5px;
+    border-radius:3px;
+}
+#professor-info
+{
+	background:white;
+	padding:5px
+}
+.professor_info_table
+{
+	text-align:left;
+	width:720px;
+	border:hidden;
+	padding:0px;
+    padding-left:5px;
+	padding-top:10px;
+	height:25px;
+    font-family:'돋움';
+}
+.professor_info_photo
+{
+	padding:15px;
+	padding-bottom:0px;
+	border:hidden;
+}
+#Notifier
+{
+	height:23px;
+	margin-top:20px;
+}
+#educated-course
+{
+    margin-top:20px;
+}
+#course-view
+{
+	padding-top:15px;
+	padding-left:25px;
+}
+.course
+{
+    float:left;
+    width:248px;
+    padding-bottom:8px;
+}
+#prof-recent-comments
+{
+	margin-top : 20px;
+}
 
 .timeline_comment 
 {
     margin-top : 15px;
+    height:110px;
+}
+.professor_comment
+{
+	margin-top : 15px;
+	margin-bottom : 15px;
+	height:65px;
+	padding-left:15px;
+    float:left;
+    width :750px; 
+}
+.professor_comment_top
+{
+    float:left;
+    width:750px;
+    height:20px;
+}
+.professor_comment_top_title
+{
+    font-size:11px;
+    float:left;
+}
+
+.professor_comment_top_spec
+{
+    float:right;
+    margin-right:15px;
+}
+.professor_comment_mid
+{
+	float:left;
+    height:30px;
+    width:750px;
+}
+.professor_comment_mid_comment 
+{
+    height:30px;
+    float:left;
+}
+.professor_content_comment
+{
+    height:30px;
+    line-height:30px;
+}
+.professor_comment_bot
+{
+    height:15px;
+    margin-right:15px;
+}
+.professor_comment_bot_writer
+{
+    float:right;
+}
+.professor_comment_bot_date
+{
+    float:right;
+    margin-left:15px;
 }
 .content_prof_photo
 {
@@ -156,6 +297,11 @@
 {
     font-size:10px;
     text-align:center;
+}
+.content_subject
+{
+    font-weight: bold;
+	font-family: '돋움';
 }
 
 .timeline_comment_left
@@ -214,10 +360,6 @@
     margin-top : 10px;
     margin-bottom:10px;
 }
-.timeline_comment
-{
-    height:110px;
-}
 .timeline_comment_right_bot
 {
     height:15px;
@@ -237,6 +379,14 @@
     width:548px;
     margin-top:15px;
     margin-bottom:15px;
+    color:#cecece;
+    background-color:#cecece;
+    height:1px;
+}
+.professor_comment_line 
+{
+    width:770px;
+    margin-top:15px;
     color:#cecece;
     background-color:#cecece;
     height:1px;
@@ -292,4 +442,3 @@
     padding-left:10px;
     padding-bottom:10px;
 }
-    

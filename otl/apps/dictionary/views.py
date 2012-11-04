@@ -229,7 +229,6 @@ def view_professor(request, prof_id):
         lang=request.session.get('django_language','ko')
 
         courses = Course.objects.filter(professors=professor)
-        average = Comment.course_average(courses)
         result = 'OK'
 
     except ObjectDoesNotExist:
@@ -240,7 +239,6 @@ def view_professor(request, prof_id):
         'lang' : request.session.get('django_language', 'ko'),
         'departments': Department.objects.filter(visible=True).order_by('name'),
         'courses' : courses,
-        'average' : average,
         'professor' : professor,
         'dept': dept,
         'classification': classification,
@@ -457,6 +455,9 @@ def professor_comment(request):
         q = {}
         q['professor'] = Professor.objects.get(professor_id=prof_id)
         comments = _update_comment(count, **q)
+        
+        comments = comments[len(comments)-1::-1]
+        comments = comments[0:6]
         result = 'OK'
 
     except ObjectDoesNotExist:

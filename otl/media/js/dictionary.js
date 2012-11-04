@@ -835,11 +835,9 @@ var IndexCommentList = {
 var ProfessorCommentList = {
 	initialize:function() 
 	{
-		this.comments = $('#comment-view');
+		this.timeline = $('#course-comment-view');
 		this.registerHandles();
 		this.showComment();
-		this.eval = $('#comment-avg');
-                this.average = Data.Average;
 	},
 	registerHandles:function()
 	{
@@ -856,7 +854,6 @@ var ProfessorCommentList = {
 			success: function (resObj) {
 				try {
 					if (resObj.result=='OK') {
-						this.comments = resObj.comments;
 						ProfessorCommentList.addToMultipleComment(resObj.comments)
 					}
 					else {
@@ -875,19 +872,52 @@ var ProfessorCommentList = {
 	},
         addToMultipleComment:function(obj)
 	{
+                var total = $(obj).length;
 		$.each(obj, function(index, item) {
 			var div_comment = $('<div>', {'class': 'professor_comment'});
-			div_comment.appendTo(ProfessorCommentList.comments);
+			div_comment.appendTo(ProfessorCommentList.timeline);
+                        console.log(item);
 
-			$('<a>', {'class': 'content_subject'}).text("과목명:"+item.course_title+" ").appendTo(div_comment);
-			$('<a>', {'class': 'content_comment'}).text("코멘트:"+item.comment+" ").appendTo(div_comment);
-			$('<a>', {'class': 'content_score'}).text('학점:' + item.score).appendTo(div_comment);
-			$('<a>', {'class': 'content_load'}).text('로드:' + item.load).appendTo(div_comment);
-			$('<a>', {'class': 'content_gain'}).text('남는거:' + item.gain).appendTo(div_comment);
+                        var top_div = $('<div>',{'class': 'professor_comment_top'});
+                        var top_div_title = $('<div>',{'class':'professor_comment_top_title'});
+                        var top_div_spec = $('<div>',{'class':'professor_comment_top_spec'});
+
+                        top_div.appendTo(div_comment);
+                        top_div_title.appendTo(top_div);
+                        top_div_spec.appendTo(top_div);
+
+                        var mid_div = $('<div>', {'class': 'professor_comment_mid'});
+                        var mid_div_comment = $('<div>',{'class':'professor_comment_mid_comment'});
+
+                        mid_div.appendTo(div_comment);
+                        mid_div_comment.appendTo(mid_div);
+
+                        var comment_output = item.comment.replace(/\n/g,'<br/>');
+
+                        $('<a>', {'class' : 'content_subject'}).text("<"+item.year+" "+(item.semester==1?"봄":"가을")+"학기> ").appendTo(top_div_title);
+                        $('<a>', {'class' : 'content_subject', 'href':'/dictionary/view/'+item.course_code+"/"}).text(item.course_title).appendTo(top_div_title);
+                        $('<div>', {'class': 'professor_content_comment'}).html(comment_output).appendTo(mid_div_comment);
+                        $('<div>', {'class': 'a_spec'}).text('학점' + item.score).appendTo(top_div_spec);
+                        $('<div>', {'class': 'a_spec'}).text('로드' + item.load).appendTo(top_div_spec);
+                        $('<div>', {'class': 'a_spec'}).text('남는거' + item.gain).appendTo(top_div_spec);
+
+                        var bot_div = $('<div>',{'class':'professor_comment_bot'});
+                        var bot_div_writer = $('<div>',{'class':'professor_comment_bot_writer'});
+                        var bot_div_date = $('<div>',{'class':'professor_comment_bot_date'});
+
+                        bot_div_writer.text('작성자 : '+ item.writer_nickname).appendTo(bot_div);
+                        bot_div_date.text(item.written_date).appendTo(bot_div);
+                        
+                        bot_div.appendTo(div_comment);
+                        bot_div_date.appendTo(bot_div);
+                        bot_div_writer.appendTo(bot_div);
+                        if (index != total -1){
+                            $('<hr>',{'class': 'professor_comment_line'}).appendTo(ProfessorCommentList.timeline);
+                        }
+                        // comment_line이 위치가 이상함
+                        // comment의 길이가 길면 줄이는 방법이 예전이랑 맞지 않음 
+                        
 		});
-		$('<a>').text('학점 : '+Data.Average.avg_score).appendTo(this.eval);
-		$('<a>').text('로드 : '+Data.Average.avg_load).appendTo(this.eval);
-		$('<a>').text('남는거 : '+Data.Average.avg_gain).appendTo(this.eval);
 	}
 }
 

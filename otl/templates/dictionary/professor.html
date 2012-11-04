@@ -7,7 +7,6 @@ $(document).ready(function () {
     Data.ProfID = {{professor.professor_id|safe}};
     Data.Comments = [];
     ProfessorCommentList.initialize();
-    Data.Average = {{average|safe}};
 });
 //]]>
 </script>
@@ -15,24 +14,49 @@ $(document).ready(function () {
 {% endblock %}
 {% block main %}
 <div id="main-side">
-    <img src="http://cais.kaist.ac.kr/static_files/photo/1990/{{professor.professor_id}}.jpg"/> <br>
-    교수님 이름 : {{professor.professor_name}} <br><br>
-    가르친 과목 : <br>
-    {% for course in courses %}
-        {{ course.title }}
-        <br>
-    {% endfor %}
-    <br>
-    코멘트 : <br>
-    <div id="comments">
-        <div id="comment-avg">(평균) - </div>
-	<div id="comment-view"></div>
-    </div>
-    <div id="Notifier">
-	<div id="indicator"></div>
-	    <div id="message-wrap">
-		<div id="message"></div>
-	    </div>
+    <div id="professor">
+        <div id="professor-info-title"> 교수정보 </div>
+        <div id="professor-info-back">
+            <div id="professor-info">
+                <table>
+                    <tr>
+                        <td class="professor_info_photo" rowspan=4><img src="http://cais.kaist.ac.kr/static_files/photo/1990/{{professor.professor_id}}.jpg"/></td>
+                        <td class="professor_info_table"><b>Name : </b>{{professor.professor_name}}</td></tr>
+                    <tr><td class="professor_info_table"><b>Major : </b>{{professor.major}}</td></tr>
+                    <tr><td class="professor_info_table"><b>E-mail : </b>{{professor.email}}</td></tr>
+                    <tr><td class="professor_info_table"><b>Homepage : </b>{{professor.homepage}}</td></tr>
+                </table>
+            </div>
+        </div>
+        <div id="Notifier">
+            <div class="left" id="message-wrap">
+                <div class="bl"><div class="br">
+                    	    <div id="message">{% trans "안녕하세요. 이 서비스는 <strong>SPARCS</strong>에서 제공하고 있습니다." %}</div>
+                </div></div>
+            </div>
+        </div>
+        <div id="educated-course">
+            <div class="dictionary-title">
+                <div class="tl"><div class="tr"><div class="bl"><div class="br">
+                                가르친 과목
+                </div></div></div></div>
+            </div>
+	    	<div id="course-view">
+				{% for course in courses %}
+					<li class="course"> {{ course.title }} </li>
+				{% endfor %}
+				.
+	    	</div>
+        </div>
+        <div id="prof-recent-comments">
+            <div class="dictionary-title">
+                <div class="tl"><div class="tr"><div class="bl"><div class="br">
+                                최근 코멘트 
+                </div></div></div></div>
+            </div>
+            <div id="course-comment-view">
+            </div>
+        </div>
     </div>
 </div>
 <div class="clear"></div>
