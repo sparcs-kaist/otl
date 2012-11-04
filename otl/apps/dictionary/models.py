@@ -12,6 +12,14 @@ class Professor(models.Model):
     professor_name_en = models.CharField(max_length=100, blank=True, null=True)  # 교수님 이름 (영문)
     professor_id = models.IntegerField()
 
+class ProfessorInfor(models.Model):
+    major = models.CharField(max_length=30)
+    email = models.CharField(max_length=100)
+    homepage = models.CharField(max_length=200)
+    writer = models.ForeignKey(User)
+    written_datetime = models.DateTimeField(auto_now=True)
+    professor = models.ForeignKey(Professor)
+
 class ProfessorAdmin(admin.ModelAdmin):
     list_display = ('professor', 'professor_en', 'professor_id')
 
