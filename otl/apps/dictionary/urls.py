@@ -18,5 +18,6 @@ urlpatterns = patterns('',
     (ur'^delete_favorite/$', views.delete_favorite),
     (ur'^get_recommend/$', views.interesting_courses),
     (ur'^get_summary/$', views.get_summary),
+    (ur'^add_lecture_summary/$', views.add_lecture_summary),
 )
 
