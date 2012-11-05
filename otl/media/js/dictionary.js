@@ -400,7 +400,6 @@ var DictionaryCommentList = {
 	{
 		this.summary = $('#course-summary');
 		this.comments = $('#course-comment-view');
-		this.submitComment = $('input[name="submitComment"]');
 		this.onLoad();
 		this.registerHandles();
                 this.loading=true;
@@ -413,9 +412,12 @@ var DictionaryCommentList = {
 	},
 	registerHandles:function()
 	{
-		$(this.submitComment).bind('mousedown', $.proxy(this.addComment, this));
-		$(this.addSummarySend).bind('mousedown', $.proxy(this.addSummary, this));
-
+		$('#course-comment-add-submit').bind('mousedown', $.proxy(this.addComment, this));
+		$('#new-comment-semester').change(function(){
+			if(Data.current_professor_id == -1){
+				DictionaryCommentList.addToProfessor();
+			}
+		});
                 $(window).scroll(function() {
                     if(!DictionaryCommentList.loading){
                     if($(window).scrollTop() + $(window).height() == $(document).height()) {
@@ -511,21 +513,26 @@ var DictionaryCommentList = {
 
 	addComment:function()
 	{
-		var new_comment_content = $('textarea[name="comment"]').val();
-		var new_comment_load = $('input[name="load"]:checked').val();
-		var new_comment_score = $('input[name="score"]:checked').val();
-		var new_comment_gain = $('input[name="gain"]:checked').val();
-		var course_id = Data.Course.id;
-		var lecture_id = -1;
-
-		if (!new_comment_load || !new_comment_score || !new_comment_gain) {
+		var new_comment_content = $('#course-comment-add-text').val();
+		var new_comment_load = $('#new-comment-load').val();
+		var new_comment_score = $('#new-comment-score').val();
+		var new_comment_gain = $('#new-comment-gain').val();
+		var new_comment_year = parseInt($('#new-comment-semester').val()/10);
+		var new_comment_semester = $('#new-comment-semester').val()%10;
+		var new_comment_professor = Data.current_professor_id;
+		if(new_comment_professor == -1)
+			new_comment_professor = $('#new-comment-professor').val();
+		if (new_comment_load==0 || new_comment_score==0 || new_comment_gain==0) {
 			Notifier.setErrorMsg(gettext('로드, 학점, 남는거를 선택하세요.'));
+		}
+		else if(new_comment_semester==0 || new_comment_professor==0){
+			Notifier.setErrorMsg(gettext('학기, 담당교수를 선택하세요.'));
 		}
 		else {
 			$.ajax({
 				type: 'POST', 
 				url: '/dictionary/add_comment/',
-				data: {'comment': new_comment_content, 'load': new_comment_load, 'score': new_comment_score, 'gain': new_comment_gain, 'lecture_id': lecture_id, 'course_id': course_id},
+				data: {'comment': new_comment_content, 'load': new_comment_load, 'score': new_comment_score, 'gain': new_comment_gain, 'course_id': Data.Course.id, 'professor_id': new_comment_professor, 'year': new_comment_year, 'semester': new_comment_semester},
 				dataType: 'json',
 				success: $.proxy(function(resObj) {
 					try {
@@ -663,9 +670,22 @@ var DictionaryCommentList = {
 		this.eval.empty();
 	},
 	clearSummary:function()
-   	{
-   		this.summary.empty();
-   	},
+	{
+		this.summary.empty();
+	},
+	clearBox:function()
+	{
+		$('#new-comment-semester').empty();
+		$('#new-comment-professor').empty();
+		$('#new-comment-score').val("");
+		$('#new-comment-load').val("");
+		$('#new-comment-gain').val("");
+		$('#course-comment-add-text').val("");
+	},
+	clearProfessorBox:function()
+	{
+		$('#new-comment-professor').empty();
+	},
 	update:function(obj)
 	{
 		Data.DictionaryComment = obj;
@@ -731,10 +751,50 @@ var DictionaryCommentList = {
 		$('#course-require-add').hide();
 		$('#course-summary-complete-img').hide();
 	},
+	addToProfessor:function(){
+		this.clearProfessorBox();
+		var new_comment_year = parseInt($('#new-comment-semester').val()/10);
+		var new_comment_semester = $('#new-comment-semester').val()%10;
+		$.ajax({
+			type: 'POST',
+			url: '/dictionary/get_year_list/',
+			data: {'course_id': Data.Course.id, 'year':new_comment_year, 'semester':new_comment_semester},
+			dataType: 'json',
+			success: $.proxy(function(resObj) {
+				try {
+					var professor_box = $('#new-comment-professor');
+					$.each(resObj.professor, function(index, item){
+						professor_box.prepend('<option value=' + item.professor_id + '>' + item.professor_name + '</option>');
+					});
+					professor_box.prepend('<option value=0></option>');
+				} catch(e) {
+					Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+e.message+')');
+				}
+			}, this),
+			error: function(xhr) {
+				if (suppress_ajax_errors)
+					return;
+				if (xhr.status == 403) {
+					Notifier.setErrorMsg(gettext('로그인 해야합니다.'));
+				}
+				else {
+					Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+gettext('요청 실패')+':'+xhr.status+')');
+				}
+			}
+		});
+	},
+	addToSemester:function(obj){
+		var semester_box = $('#new-comment-semester');
+	    $.each(obj, function(index, item) {
+			semester_box.prepend('<option value=' + (item.year*10+item.semester) + '>' + item.year + " " +  item.semester + '</option>');
+		});
+		semester_box.prepend('<option value=0></option>');
+	},
 	onChangeProfessor:function(e,obj)
 	{
 		this.clearComment();
 		this.clearSummary();
+		this.clearBox();
 		if (obj===null) {
 			Data.current_professor_id = -1;
 		}
@@ -743,7 +803,7 @@ var DictionaryCommentList = {
 		}
 		$.ajax({
 			type: 'POST',
-			url: '/dictionary/get_summary/',
+			url: '/dictionary/get_summary_and_semester/',
 			data: {'professor_id': Data.current_professor_id,  'course_id' : Data.Course.id},
 			dataType: 'json',
 			success: $.proxy(function(resObj) {
@@ -757,10 +817,11 @@ var DictionaryCommentList = {
 					}
 					Data.comment_id = -1;
 					this.showMoreComments();
+					this.addToSemester(resObj.semester);
 				}
 				catch(e) {
 					Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+e.message+')');
-				}	
+				}
 			}, this),
 			error: function(xhr) {
 				if (suppress_ajax_errors)
