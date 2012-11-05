@@ -13,11 +13,6 @@
 $(document).ready(function () {
 	Data.DictionaryComment = [];
 	Data.Course = {{course|safe}};
-	{% if result == 'OK' %}
-		Data.Summary = {{summary|safe}};
-	{% else %}
-		Data.Summary = null;
-	{% endif %}
 	Data.Lectures = {{lectures|safe}};
     Data.Professors = {{professors|safe}};
 	Data.current_professor_id = -1;
