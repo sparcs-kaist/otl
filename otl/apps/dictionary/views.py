@@ -531,6 +531,7 @@ def get_summary(request):
     average = {'avg_score':0, 'avg_gain':0, 'avg_load':0}
     comment_num = 0
     lang=request.session.get('django_language','ko')
+    professor_name = ""
     try:
 	prof_id = int(request.POST.get('professor_id',-1))
 	course_id = int(request.POST.get('course_id',-1))
@@ -546,6 +547,7 @@ def get_summary(request):
                 result = 'GEN_EMPTY'
 	else:
 	    professor = Professor.objects.get(professor_id=prof_id) 
+	    professor_name = professor.professor_name
 	    lectures = Lecture.objects.filter(professor=professor, course=course).order_by('-id')
 	    lecture = lectures[0]
 	    summary = LectureSummary.objects.filter(lecture=lecture).order_by('-id')
@@ -570,7 +572,8 @@ def get_summary(request):
 	'result': result,
 	'summary': summary_output,
 	'average': average,
-	'comment_num': comment_num}))
+	'comment_num': comment_num,
+	'prof_name': professor_name}))
 
 @login_required
 def add_favorite(request):

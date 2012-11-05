@@ -788,11 +788,13 @@ var DictionaryCommentList = {
 			var output_mainbook = obj.summary.main_material.replace(/\n/g,'<br />');
 			var output_subbook = obj.summary.sub_material.replace(/\n/g,'<br />');
 		}
-		$('<div>', {'id': 'lecture-subject'}).text(Data.Course.title).appendTo(left_div);
-		$('<hr>', {'id': 'lecture-line'}).appendTo(left_div);
+		$('<div>', {'id': 'lecture-subject'}).text(Data.Course.title).appendTo(top_div);
+		$('<hr>', {'id': 'lecture-line'}).appendTo(top_div);
 		
+		var left_left_div = $('<div>', {'id': 'lecture-prof-photo'});
 		var prof_img = $('<img>', {'id': 'lecture-prof-img', 'src':'http://cais.kaist.ac.kr/static_files/photo/1990/'+Data.current_professor_id+'.jpg'});
-		prof_img.appendTo(left_div);
+		prof_img.appendTo(left_left_div);
+		$('<div>', {'id': 'lecture-professor-name'}).text(gettext("prof. ")+obj.prof_name).appendTo(left_left_div);
 
 		$('<div>', {'id': 'lecture-homepage-title'}).text(gettext("과목 홈페이지")).appendTo(left_div);
 		$('<div>', {'id': 'lecture-homepage'}).html(output_homepage).appendTo(left_div);
@@ -804,20 +806,32 @@ var DictionaryCommentList = {
 		$('<div>', {'id': 'lecture-subbook'}).html(output_subbook).appendTo(left_div);
 		$('<textarea>', {'id': 'lecture-subbook-add'}).text(output_subbook).appendTo(left_div);
 
-		var right_div = $('<div>', {'id': 'lecture-score'});
-		$('<div>', {'id': 'lecture-eval-title'}).text("TOTAL SCORE").appendTo(right_div);
-
+		var right_div = $('<div>', {'id': 'lecture-eval-score'});
 		var right_div_eval = $('<div>', {'id': 'lecture-eval'});
+		$('<div>', {'id': 'lecture-eval-title'}).text("TOTAL SCORE").appendTo(right_div_eval);
 		$('<div>', {'class': 'lecture-eval-score'}).text(gettext("학 점 ") + obj.average['avg_score'].toFixed(1)).appendTo(right_div_eval);
 		$('<div>', {'class': 'lecture-eval-score'}).text(gettext("로 드 ") + obj.average['avg_load'].toFixed(1)).appendTo(right_div_eval);
 		$('<div>', {'class': 'lecture-eval-score'}).text(gettext("남는거 ") + obj.average['avg_gain'].toFixed(1)).appendTo(right_div_eval);
+
+		$('<div>', {'id': 'lecture-eval-average'}).text(((obj.average['avg_score']+obj.average['avg_load']+obj.average['avg_gain'])/3).toFixed(1)).appendTo(right_div_eval);
+		$('<div>', {'id': 'lecture-eval-count'}).text(gettext("평가자 수 : ") +obj.comment_num + gettext("명")).appendTo(right_div_eval);
+
 		right_div_eval.appendTo(right_div);
+	
+		var right_right_div = $('<div>', {'id': 'lecture-lec-eval-score'});
+		var right_div_lec_eval = $('<div>', {'id': 'lecture-lec-eval'});
+		$('<div>', {'id': 'lecture-lec-eval-title'}).text(gettext("강의평가결과")).appendTo(right_div_lec_eval);
 
-		$('<div>', {'id': 'lecture-eval-average'}).text(((obj.average['avg_score']+obj.average['avg_load']+obj.average['avg_gain'])/3).toFixed(1)).appendTo(right_div);
-		$('<div>', {'id': 'lecture-eval-count'}).text(gettext("평가자 수 : ") +obj.comment_num + gettext("명")).appendTo(right_div);
+		$('<div>', {'class': 'lecture-lec-eval-ratio'}).text(gettext("응답률 ")+gettext("0")+gettext("%")+gettext(" (")+gettext("0")+gettext("/")+gettext("1")+gettext(")")).appendTo(right_div_lec_eval);
+		$('<div>', {'class': 'lecture-lec-eval-standard-deviation'}).text(gettext("표준편차 ")+gettext("0")).appendTo(right_div_lec_eval);
+		$('<div>', {'id': 'lecture-lec-eval-rating'}).text(gettext("3.3")).appendTo(right_div_lec_eval);
+		$('<div>', {'id': 'lecture-lec-eval-count'}).text(gettext("평가자 수 : ") +gettext("1")+gettext("명")).appendTo(right_div_lec_eval); 
+		right_div_lec_eval.appendTo(right_right_div);
 
+		left_left_div.appendTo(top_div);
 		left_div.appendTo(top_div);
 		right_div.appendTo(top_div);
+		right_right_div.appendTo(top_div);
 		var bottom_div = $('<div>', {'id': 'lecture-summary-bottom'});
 		var add_img = $('<img>', {'src': 'http://bit.sparcs.org/~seal/OTL_project/%ea%b3%a0%ec%b9%a8%eb%b2%84%ed%8a%bc.gif', 'id': 'lecture-summary-add-img'});
 		var complete_img = $('<img>', {'src': 'http://bit.sparcs.org/~seal/OTL_project/%ea%b3%a0%ec%b9%a8%eb%b2%84%ed%8a%bc.gif', 'id': 'lecture-summary-complete-img'});
