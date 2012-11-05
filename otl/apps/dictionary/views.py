@@ -547,8 +547,6 @@ def get_summary(request):
 	else:
 	    professor = Professor.objects.get(professor_id=prof_id) 
 	    lectures = Lecture.objects.filter(professor=professor, course=course).order_by('-id')
-	    if lectures.count() == 0 :
-		raise ValidationError()
 	    lecture = lectures[0]
 	    summary = LectureSummary.objects.filter(lecture=lecture).order_by('-id')
 	    q=Q()
@@ -564,9 +562,8 @@ def get_summary(request):
 		result = 'PROF'
 	    else:
 		result = 'PROF_EMPTY'
-
-    except ValidationError:
-	return HttpResponseBadRequest()
+    except ObjectDoesNotExist:
+	result='NOT_EXIST'
     except:
 	return HttpResponseServerError()
     return HttpResponse(json.dumps({
