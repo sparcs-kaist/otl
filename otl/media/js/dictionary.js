@@ -836,16 +836,134 @@ var ProfessorCommentList = {
 	initialize:function() 
 	{
 		this.timeline = $('#course-comment-view');
+		this.profInfo = $('#professor-info');
 		this.registerHandles();
 		this.showComment();
+		this.onLoad();
+	},
+	onLoad:function()
+	{
+		this.addProfInfo();
 	},
 	registerHandles:function()
 	{
 	},
+	addProfInfo:function()
+	{
+		var top_div = $('<div>', {'id': 'professor-info-top'});
+		var bottom_div = $('<div>', {'id': 'professor-info-bottom'});
+		top_div.appendTo(this.profInfo);
+		bottom_div.appendTo(this.profInfo);
+		
+		var top_left_div = $('<div>', {'id': 'professor-info-left'});
+		var prof_img = $('<img>', {'src':'http://cais.kaist.ac.kr/static_files/photo/1990/'+Data.Professor[0].professor_id+'.jpg'}).appendTo(top_left_div);
+		top_left_div.appendTo(top_div);
+		var top_right_div = $('<div>', {'id': 'professor-info-right'});
+		top_right_div.appendTo(top_div);
+
+        var prof_name_line = $('<div>', {'class': 'professor_info_line'});
+		$('<div>', {'id': 'professor-info-name-title'}).text(gettext("Name : " )).appendTo(prof_name_line);
+		$('<div>', {'id': 'professor-info-name'}).text(Data.Professor[0].professor_name).appendTo(prof_name_line);
+        prof_name_line.appendTo(top_right_div);
+        
+        var prof_major_line = $('<div>', {'class': 'professor_info_line'});
+		$('<div>', {'id': 'professor-info-major-title'}).text(gettext("Major : " )).appendTo(prof_major_line);
+		$('<div>', {'id': 'professor-info-major'}).text(Data.ProfInfo.major).appendTo(prof_major_line);
+        $('<textarea>', {'id': 'professor-info-major-change'}).text(Data.ProfInfo.major).appendTo(prof_major_line);
+        prof_major_line.appendTo(top_right_div);
+        
+        var prof_email_line = $('<div>', {'class': 'professor_info_line'});
+		$('<div>', {'id': 'professor-info-email-title'}).text(gettext("E-mail : " )).appendTo(prof_email_line);
+		$('<div>', {'id': 'professor-info-email'}).text(Data.ProfInfo.email).appendTo(prof_email_line);
+        $('<textarea>', {'id': 'professor-info-email-change'}).text(Data.ProfInfo.email).appendTo(prof_email_line);
+        prof_email_line.appendTo(top_right_div);
+
+        var prof_homepage_line = $('<div>', {'class': 'professor_info_line'});
+		$('<div>', {'id': 'professor-info-homepage-title'}).text(gettext("Homepage : " )).appendTo(prof_homepage_line);
+		$('<div>', {'id': 'professor-info-homepage'}).text(Data.ProfInfo.homepage).appendTo(prof_homepage_line);
+        $('<textarea>', {'id': 'professor-info-homepage-change'}).text(Data.ProfInfo.homepage).appendTo(prof_homepage_line);
+        prof_homepage_line.appendTo(top_right_div);
+
+		
+		var change_img = $('<img>', {'src': 'http://bit.sparcs.org/~seal/OTL_project/%ea%b3%a0%ec%b9%a8%eb%b2%84%ed%8a%bc.gif', 'id': 'prof-info-change-img'});
+		var complete_img = $('<img>', {'src': 'http://bit.sparcs.org/~seal/OTL_project/%ea%b3%a0%ec%b9%a8%eb%b2%84%ed%8a%bc.gif', 'id': 'prof-info-complete-img'});
+
+        var bottom_text = $('<div>', {'id': 'prof-info-change-user'});
+
+        if ( Data.ProfInfo.written_datetime != '')
+		    bottom_text.html(gettext("마지막 고침 : ") + Data.ProfInfo.written_datetime+ " " + Data.ProfInfo.writer + " ");
+		
+		change_img.appendTo(bottom_text);
+		complete_img.appendTo(bottom_text);
+		bottom_text.appendTo(bottom_div);
+		change_img.bind('click', $.proxy(this.showProfInfo, this));
+		complete_img.bind('click', $.proxy(this.changeProfInfo, this));
+
+        $('#professor-info-major-change').hide();
+        $('#professor-info-email-change').hide();
+        $('#professor-info-homepage-change').hide();
+        $('#prof-info-complete-img').hide();
+	},
+	showProfInfo:function()
+	{
+        $('#professor-info-major').hide();
+        $('#professor-info-email').hide();
+        $('#professor-info-homepage').hide();
+        $('#prof-info-change-img').hide();
+        $('#professor-info-major-change').show();
+        $('#professor-info-email-change').show();
+        $('#professor-info-homepage-change').show();
+        $('#prof-info-complete-img').show();
+	},
+	changeProfInfo:function()
+	{
+        var new_major_content = $('#professor-info-major-change').val();
+        var new_email_content = $('#professor-info-email-change').val();
+        var new_homepage_content = $('#professor-info-homepage-change').val();
+        var prof_id = Data.Professor[0].professor_id;
+        var conditions = { 'major': new_major_content, 'email': new_email_content, 'homepage': new_homepage_content, 'prof_id': prof_id};
+
+        $.ajax({
+            type: 'POST',
+            url: '/dictionary/add_professor_info/',
+            data: conditions,
+            dataType: 'json',
+            success: $.proxy(function(resObj){
+                try {
+                    if (resObj.result == 'OK') {
+                        Data.ProfInfo = resObj.prof_info
+                    }else{
+                    }
+                } catch(e) {
+                    Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+e.message+')');
+                }
+            }, this),
+            error: function(xhr){
+                if (suppress_ajax_errors)
+                    return;
+                if (xhr.status == 403){
+                    Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+gettext('요청 실패')+':'+xhr.status+')');
+                } 
+            }
+        });
+        
+        $('#professor-info-major').text(new_major_content);
+        $('#professor-info-email').text(new_email_content);
+        $('#professor-info-homepage').text(new_homepage_content);
+        $('#professor-info-major').show();
+        $('#professor-info-email').show();
+        $('#professor-info-homepage').show();
+        $('#prof-info-change-img').show();
+        $('#professor-info-major-change').hide();
+        $('#professor-info-email-change').hide();
+        $('#professor-info-homepage-change').hide();
+        $('#prof-info-complete-img').hide();
+	},
 	showComment:function()
 	{
 		var max = NUM_ITEMS_PER_PROF_COMMENT;
-		var conditions = {'count': max, 'prof_id': Data.ProfID};
+        var prof_id = Data.Professor[0].professor_id
+		var conditions = {'count': max, 'prof_id': prof_id};
 		$.ajax ({
 			type: 'POST',
 			url: '/dictionary/professor_comment/',
@@ -870,13 +988,12 @@ var ProfessorCommentList = {
 			} 
 		});
 	},
-        addToMultipleComment:function(obj)
+	addToMultipleComment:function(obj)
 	{
                 var total = $(obj).length;
 		$.each(obj, function(index, item) {
 			var div_comment = $('<div>', {'class': 'professor_comment'});
 			div_comment.appendTo(ProfessorCommentList.timeline);
-                        console.log(item);
 
                         var top_div = $('<div>',{'class': 'professor_comment_top'});
                         var top_div_title = $('<div>',{'class':'professor_comment_top_title'});

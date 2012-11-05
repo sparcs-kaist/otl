@@ -4,7 +4,8 @@
 <script type="text/javascript">
 //<![CDATA[
 $(document).ready(function () {
-    Data.ProfID = {{professor.professor_id|safe}};
+    Data.Professor = {{professor|safe}};
+	Data.ProfInfo = {{prof_info|safe}};
     Data.Comments = [];
     ProfessorCommentList.initialize();
 });
@@ -18,14 +19,6 @@ $(document).ready(function () {
         <div id="professor-info-title"> 교수정보 </div>
         <div id="professor-info-back">
             <div id="professor-info">
-                <table>
-                    <tr>
-                        <td class="professor_info_photo" rowspan=4><img src="http://cais.kaist.ac.kr/static_files/photo/1990/{{professor.professor_id}}.jpg"/></td>
-                        <td class="professor_info_table"><b>Name : </b>{{professor.professor_name}}</td></tr>
-                    <tr><td class="professor_info_table"><b>Major : </b>{{professor.major}}</td></tr>
-                    <tr><td class="professor_info_table"><b>E-mail : </b>{{professor.email}}</td></tr>
-                    <tr><td class="professor_info_table"><b>Homepage : </b>{{professor.homepage}}</td></tr>
-                </table>
             </div>
         </div>
         <div id="Notifier">

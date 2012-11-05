@@ -178,25 +178,155 @@
 }
 #professor-info
 {
+	height:145px;
 	background:white;
 	padding:5px
 }
-.professor_info_table
+#professor-info-top
 {
-	text-align:left;
-	width:720px;
-	border:hidden;
-	padding:0px;
-    padding-left:5px;
-	padding-top:10px;
-	height:25px;
-    font-family:'돋움';
+	width:750px;
+	height:130px;
 }
-.professor_info_photo
+#professor-info-bottom
 {
+	width:750px;
+	float:right;
+	font-size:11px;
+	line-height:15px;
+	text-align:right;
+	height:15px;
+}
+#professor-info-left
+{
+	float:left;
 	padding:15px;
 	padding-bottom:0px;
-	border:hidden;
+	width:92px;
+	height:115px;
+}
+#professor-info-right
+{
+	float:left;
+	margin-left:5px;
+	padding-top:15px;
+	width:623px;
+	height:115px;
+}
+.professor_info_line
+{
+	float:left;
+	height:20px;
+	padding-top:4px;
+	padding-bottom:4px;
+	width:623px;
+}
+#professor-info-name-title
+{
+	float:left;
+	text-align:left;
+	width:50px;
+	height:20px;
+	line-height:20px;
+	font-weight:bold;
+    font-family:'돋움';
+	font-size:11px;
+}
+#professor-info-name
+{
+	float:left;	
+	line-height:20px;
+	text-align:left;
+	width:50px;
+	height:20px;
+    font-family:'돋움';
+	font-size:11px;
+}
+#professor-info-major-title
+{
+	float:left;
+	text-align:left;
+	width:50px;
+	height:20px;
+	line-height:20px;
+	font-weight:bold;
+    font-family:'돋움';
+	font-size:11px;
+}
+#professor-info-major
+{
+	float:left;	
+	line-height:20px;
+	text-align:left;
+	width:573px;
+	height:20px;
+    font-family:'돋움';
+	font-size:11px;
+}
+#professor-info-major-change
+{
+	height:18px;
+	width:571px;
+	max-height:18px;
+	max-width:571px;
+	line-height:18px;
+}
+#professor-info-email-title
+{
+	float:left;
+	text-align:left;
+	width:55px;
+	height:20px;
+	line-height:20px;
+	font-weight:bold;
+    font-family:'돋움';
+	font-size:11px;
+}
+#professor-info-email
+{
+	float:left;	
+	line-height:20px;
+	text-align:left;
+	width:568px;
+	height:20px;
+    font-family:'돋움';
+	font-size:11px;
+}
+#professor-info-email-change
+{
+	height:18px;
+	width:566px;
+	max-height:18px;
+	max-width:566px;
+	line-height:18px;
+}
+#professor-info-homepage-title
+{
+	float:left;
+	text-align:left;
+	width:80px;
+	height:20px;
+	line-height:20px;
+	font-weight:bold;
+    font-family:'돋움';
+	font-size:11px;
+}
+#professor-info-homepage
+{
+	float:left;	
+	line-height:20px;
+	text-align:left;
+	width:543px;
+	height:20px;
+    font-family:'돋움';
+	font-size:11px;
+}
+#professor-info-homepage-change
+{
+	height:18px;
+	width:541px;
+	max-height:18px;
+	max-width:541px;
+	line-height:18px;
 }
 #Notifier
 {

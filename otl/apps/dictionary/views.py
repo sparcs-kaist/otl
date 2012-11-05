@@ -225,7 +225,17 @@ def view_professor(request, prof_id):
         in_category = request.GET.get('in_category', json.dumps(False))
         active_tab = int(request.GET.get('active_tab', -1))
 
+        professor = Professor.objects.filter(professor_id=int(prof_id))
+        professor_output = _professors_to_output(professor,True,'ko')
+
         professor = Professor.objects.get(professor_id=int(prof_id))
+        prof_info = ProfessorInfor.objects.filter(professor = professor).order_by('-id')
+        if prof_info.count() > 0 :
+            recent_prof_info = prof_info[0]
+        else:
+            recent_prof_info = None
+            
+
         lang=request.session.get('django_language','ko')
 
         courses = Course.objects.filter(professors=professor)
@@ -239,13 +249,37 @@ def view_professor(request, prof_id):
         'lang' : request.session.get('django_language', 'ko'),
         'departments': Department.objects.filter(visible=True).order_by('name'),
         'courses' : courses,
-        'professor' : professor,
+        'professor' : professor_output,
+        'prof_info' : _professor_info_to_output(recent_prof_info,True,'ko'),
         'dept': dept,
         'classification': classification,
         'keyword': keyword,
         'in_category': in_category,
         'active_tab': active_tab
         }, context_instance=RequestContext(request))
+
+@login_required
+def add_professor_info(request):
+    try:
+        major = request.POST.get('major', None)
+        email = request.POST.get('email', None)
+        homepage = request.POST.get('homepage', None)
+        prof_id = int(request.POST.get('prof_id', -1))
+        if major == None or email == None or homepage == None or prof_id < 0:
+            raise ValidationError()
+        professor = Professor.objects.get(professor_id = prof_id)
+        writer = request.user
+        written_datetime = datetime.datetime.now()
+        new_prof_info = ProfessorInfor(major=major, email=email, homepage=homepage, writer=writer, written_datetime=written_datetime, professor=professor)
+        new_prof_info.save()
+        result = 'OK'
+    except ValidationError():
+        return HttpResponseBadReqeust()
+    except:
+        return HttpResponseServerError()
+    return HttpResponse(json.dumps({
+        'result': result,
+        'prof_info': _professor_info_to_output(new_prof_info,False,'ko')}))
 
 def interesting_courses(request):
     # login이 되있든, 안되있든 교양과목은 추천에 들어간다
@@ -456,8 +490,10 @@ def professor_comment(request):
         q['professor'] = Professor.objects.get(professor_id=prof_id)
         comments = _update_comment(count, **q)
         
-        comments = comments[len(comments)-1::-1]
-        comments = comments[0:6]
+        if len(comments) > 0:
+            comments = comments[len(comments)-1::-1]
+            comments = comments[0:6]
+
         result = 'OK'
 
     except ObjectDoesNotExist:
@@ -792,6 +828,35 @@ def _summary_to_output(summaries,conv_to_json=True,lang='ko'):
         return io.getvalue()
     else :
         return all
+
+def _professor_info_to_output(prof_info,conv_to_json=True,lang='ko'):
+    if prof_info == None:
+        item = {
+                'major': '',
+                'email': '',
+                'homepage': '',
+                'writer': '',
+                'written_datetime': '',
+                'professor_id': -1
+                }
+    else:
+        item = {
+                'major': prof_info.major,
+                'email': prof_info.email,
+                'homepage': prof_info.homepage,
+                'writer': UserProfile.objects.get(user = prof_info.writer).nickname,
+                'written_datetime': prof_info.written_datetime.isoformat()[:10],
+                'professor_id': prof_info.professor.professor_id
+                }
+    if conv_to_json:
+        io = StringIO()
+        if settings.DEBUG:
+            json.dump(item,io,ensure_ascii=False,indent=4, cls=DjangoJSONEncoder)
+        else:
+            json.dump(item,io,ensure_ascii=False,sort_keys=False,separators=(',',':'), cls=DjangoJSONEncoder)
+        return io.getvalue()
+    else:
+        return item
 
 def _get_professor_by_lecture(lecture):
     if lecture == None:
