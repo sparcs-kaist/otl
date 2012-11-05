@@ -301,21 +301,20 @@ def view_comment_by_professor(request):
 @login_required_ajax
 def add_comment(request):
     try:
-        lecture_id = int(request.POST.get('lecture_id', -1)) 
-        new_comment= Comment.objects.none()
-        if lecture_id >= 0:
-            lecture = Lecture.objests.get(id=lecture_id)
-            course = lecture.course
+        new_comment = Comment.objects.none()
+        course_id = int(request.POST.get('course_id',-1))
+        year = int(request.POST.get('year',-1))
+        semester = int(request.POST.get('semester',-1))
+        professor_id = int(request.POST.get('professor_id',-1))
+
+        if course_id >= 0 and year >=0 and semester >=0 and professor_id >=0:
+            course = Course.objects.get(id=course_id)
         else:
-            lecture = None
-            course_id = int(request.POST.get('course_id', -1))
-            if course_id >= 0:
-                course = Course.objects.get(id=course_id)
-            else:
-                raise ValidationError()
- 
-        lectures = _get_taken_lecture_by_db(request.user, course)
-        
+            raise ValidationError()
+
+        professor= Professor.objects.get(professor_id = professor_id)
+        lectures = Lecture.objects.filter(course=course, professor=professor,year=year,semester=semester).order_by('class_no')
+
         if not lectures:
             lecture = None
         else:
@@ -495,15 +494,41 @@ def add_summary(request):
         'summary': _summary_to_output(new_summary,False,'ko')}))
 
 @login_required
-def get_summary(request):
+def get_year_list(request):
+    try:
+        course_id = int(request.POST.get('course_id',-1))
+        year = int(request.POST.get('year',-1))
+        semester = int(request.POST.get('semester',-1))
+        course = Course.objects.get(id=course_id)
+        lang=request.session.get('django_language','ko')
+        lectures = Lecture.objects.filter(course=course,year=year,semester=semester)
+        if lectures.count()>0:
+            q = Q()
+            for lecture in lectures:
+                q |= Q(lecture_professor=lecture)
+            professor = Professor.objects.filter(q)
+        else:
+            professor = []
+        result = 'OK'
+    except ObjectDoesNotExist:
+        result='NOT_EXIST'
+    except:
+        return HttpResponseServerError()
+    return HttpResponse(json.dumps({
+        'result': result,
+        'professor': _professors_to_output(professor,False,lang)}))
+
+@login_required
+def get_summary_and_semester(request):
     summary_output = None
     try:
         prof_id = int(request.POST.get('professor_id',-1))
         course_id = int(request.POST.get('course_id',-1))
         course = Course.objects.get(id=course_id)
+        lang=request.session.get('django_language','ko')
         if prof_id == -1:       # General
             summary = Summary.objects.filter(course=course).order_by('-id')
-            lang=request.session.get('django_language','ko')
+            semester = Lecture.objects.filter(course=course).order_by('-year','-semester').values('year', 'semester').distinct()
             if summary.count() > 0:
                 recent_summary = summary[0]
                 summary_output = _summary_to_output(recent_summary,False,lang);
@@ -511,6 +536,8 @@ def get_summary(request):
             else:
                 result = 'EMPTY'
         else:
+            professor = Professor.objects.get(professor_id=prof_id)
+            semester = Lecture.objects.filter(course=course,professor=professor).order_by('-year','-semester').values('year', 'semester').distinct()
             result='ERROR'
     except ObjectDoesNotExist:
         result='NOT_EXIST'
@@ -518,6 +545,7 @@ def get_summary(request):
         return HttpResponseServerError()
     return HttpResponse(json.dumps({
         'result': result,
+        'semester': _semesters_to_output(semester,False,lang),
         'summary': summary_output}))
 @login_required
 def add_favorite(request):
@@ -749,6 +777,25 @@ def _professors_to_output(professors,conv_to_json=True,lang='ko'):
         return io.getvalue()
     else :
         return all
+
+def _semesters_to_output(semesters,conv_to_json=True,lang='ko'):
+    all = []
+    for semester in semesters:
+        item = {
+                'semester': semester['semester'],
+                'year': semester['year']
+                }
+        all.append(item)
+    if conv_to_json:
+        io = StringIO()
+        if settings.DEBUG:
+            json.dump(all,io,ensure_ascii=False,indent=4)
+        else:
+            json.dump(all,io,ensure_ascii=False,sort_keys=False,separators=(',',':'))
+        return io.getvalue()
+    else:
+        return all
+
 
 def _courses_to_output(courses,conv_to_json=True,lang='ko'):
     all = []

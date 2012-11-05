@@ -17,6 +17,7 @@ urlpatterns = patterns('',
     (ur'^add_favorite/$', views.add_favorite),
     (ur'^delete_favorite/$', views.delete_favorite),
     (ur'^get_recommend/$', views.interesting_courses),
-    (ur'^get_summary/$', views.get_summary),
+    (ur'^get_summary_and_semester/$', views.get_summary_and_semester),
+    (ur'^get_year_list/$', views.get_year_list),
 )
 
