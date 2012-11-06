@@ -113,7 +113,7 @@
 {
 
     background:#C3DAFB;
-    line-height: 29px;
+    line-height: 25px;
     padding-left:18px;
     font-size : 15px;
 }
@@ -373,4 +373,73 @@
       color:#c3dafb;
       background-color:#c3dafb;
       margin:0px;
-}  
+}
+#course-comment-add-title
+{
+    margin-top:20px;
+}
+#course-comment-add
+{
+    margin-top:20px;
+    font-size:11px;
+    font-family: 돋움;
+    font-weight: bold;
+    height:180px;
+}
+#course-comment-add-semester
+{
+    float:left;
+}
+#new-comment-semester
+{
+    height:20px;
+    width:80px;
+    margin-left:10px;
+}
+#course-comment-add-professor
+{
+    float:left;
+    margin-left:20px;
+}
+#new-comment-professor
+{
+    height:20px;
+    width:90px;
+    margin-left:10px;
+}
+.course-comment-add-eval
+{
+    float:right;
+    margin-left:10px;
+}
+#new-comment-score
+{
+    width:60px;
+    height:20px;
+    margin-left:10px;
+}
+#new-comment-load
+{
+    width:60px;
+    height:20px;
+    margin-left:10px;
+}
+#new-comment-gain
+{
+    width:60px;
+    height:20px;
+    margin-left:10px;
+}
+#course-comment-add-text
+{
+    width:750px;
+    height:105px;
+    margin-top:10px;
+    resize: none;
+}
+#course-comment-add-submit
+{
+    float:right;
+    width:70px;
+    height:20px;
+}

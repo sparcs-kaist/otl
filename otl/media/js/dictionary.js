@@ -797,9 +797,11 @@ var DictionaryCommentList = {
 		this.clearBox();
 		if (obj===null) {
 			Data.current_professor_id = -1;
+			$('#course-comment-add-professor').show();
 		}
 		else {
 			Data.current_professor_id = obj.professor_id;
+			$('#course-comment-add-professor').hide();
 		}
 		$.ajax({
 			type: 'POST',
