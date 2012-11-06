@@ -233,7 +233,7 @@
 }
 #professor-info-name
 {
-	float:left;	
+	float:left;
 	line-height:20px;
 	text-align:left;
 	width:50px;
@@ -254,7 +254,7 @@
 }
 #professor-info-major
 {
-	float:left;	
+	float:left;
 	line-height:20px;
 	text-align:left;
 	width:573px;
@@ -283,7 +283,7 @@
 }
 #professor-info-email
 {
-	float:left;	
+	float:left;
 	line-height:20px;
 	text-align:left;
 	width:568px;
@@ -312,7 +312,7 @@
 }
 #professor-info-homepage
 {
-	float:left;	
+	float:left;
 	line-height:20px;
 	text-align:left;
 	width:543px;
@@ -365,7 +365,7 @@
 	height:65px;
 	padding-left:15px;
     float:left;
-    width :750px; 
+    width :750px;
 }
 .professor_comment_top
 {
@@ -390,7 +390,7 @@
     height:30px;
     width:750px;
 }
-.professor_comment_mid_comment 
+.professor_comment_mid_comment
 {
     height:30px;
     float:left;
@@ -513,7 +513,7 @@
     background-color:#cecece;
     height:1px;
 }
-.professor_comment_line 
+.professor_comment_line
 {
     width:770px;
     margin-top:15px;

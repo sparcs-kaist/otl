@@ -41,7 +41,7 @@ function roundD(n, digits) {
 var NUM_ITEMS_PER_LIST = 15;
 var NUM_ITEMS_PER_DICT_COMMENT = 10;
 var NUM_ITEMS_PER_INDEX_COMMENT = 15;
-var NUM_ITEMS_PER_PROF_COMMENT = 15;
+var NUM_ITEMS_PER_PROF_COMMENT = 6;
 var NUMBER_OF_TABS = 3;
 var Data = {};
 var Mootabs = function(tabContainer, contents, trigerEvent, useAsTimetable)
@@ -829,11 +829,11 @@ var IndexCommentList = {
 			}
 	});
 	}
-};	
+};
 
 
 var ProfessorCommentList = {
-	initialize:function() 
+	initialize:function()
 	{
 		this.timeline = $('#course-comment-view');
 		this.profInfo = $('#professor-info');
@@ -854,7 +854,7 @@ var ProfessorCommentList = {
 		var bottom_div = $('<div>', {'id': 'professor-info-bottom'});
 		top_div.appendTo(this.profInfo);
 		bottom_div.appendTo(this.profInfo);
-		
+
 		var top_left_div = $('<div>', {'id': 'professor-info-left'});
 		var prof_img = $('<img>', {'src':'http://cais.kaist.ac.kr/static_files/photo/1990/'+Data.Professor[0].professor_id+'.jpg'}).appendTo(top_left_div);
 		top_left_div.appendTo(top_div);
@@ -865,13 +865,13 @@ var ProfessorCommentList = {
 		$('<div>', {'id': 'professor-info-name-title'}).text(gettext("Name : " )).appendTo(prof_name_line);
 		$('<div>', {'id': 'professor-info-name'}).text(Data.Professor[0].professor_name).appendTo(prof_name_line);
         prof_name_line.appendTo(top_right_div);
-        
+
         var prof_major_line = $('<div>', {'class': 'professor_info_line'});
 		$('<div>', {'id': 'professor-info-major-title'}).text(gettext("Major : " )).appendTo(prof_major_line);
 		$('<div>', {'id': 'professor-info-major'}).text(Data.ProfInfo.major).appendTo(prof_major_line);
         $('<textarea>', {'id': 'professor-info-major-change'}).text(Data.ProfInfo.major).appendTo(prof_major_line);
         prof_major_line.appendTo(top_right_div);
-        
+
         var prof_email_line = $('<div>', {'class': 'professor_info_line'});
 		$('<div>', {'id': 'professor-info-email-title'}).text(gettext("E-mail : " )).appendTo(prof_email_line);
 		$('<div>', {'id': 'professor-info-email'}).text(Data.ProfInfo.email).appendTo(prof_email_line);
@@ -884,7 +884,6 @@ var ProfessorCommentList = {
         $('<textarea>', {'id': 'professor-info-homepage-change'}).text(Data.ProfInfo.homepage).appendTo(prof_homepage_line);
         prof_homepage_line.appendTo(top_right_div);
 
-		
 		var change_img = $('<img>', {'src': 'http://bit.sparcs.org/~seal/OTL_project/%ea%b3%a0%ec%b9%a8%eb%b2%84%ed%8a%bc.gif', 'id': 'prof-info-change-img'});
 		var complete_img = $('<img>', {'src': 'http://bit.sparcs.org/~seal/OTL_project/%ea%b3%a0%ec%b9%a8%eb%b2%84%ed%8a%bc.gif', 'id': 'prof-info-complete-img'});
 
@@ -892,7 +891,7 @@ var ProfessorCommentList = {
 
         if ( Data.ProfInfo.written_datetime != '')
 		    bottom_text.html(gettext("마지막 고침 : ") + Data.ProfInfo.written_datetime+ " " + Data.ProfInfo.writer + " ");
-		
+
 		change_img.appendTo(bottom_text);
 		complete_img.appendTo(bottom_text);
 		bottom_text.appendTo(bottom_div);
@@ -943,10 +942,10 @@ var ProfessorCommentList = {
                     return;
                 if (xhr.status == 403){
                     Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+gettext('요청 실패')+':'+xhr.status+')');
-                } 
+                }
             }
         });
-        
+
         $('#professor-info-major').text(new_major_content);
         $('#professor-info-email').text(new_email_content);
         $('#professor-info-homepage').text(new_homepage_content);
@@ -985,7 +984,7 @@ var ProfessorCommentList = {
                                 if (suppress_ajax_errors)
                                         return;
 				Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+gettext('요청 실패')+':'+xhr.status+')');
-			} 
+			}
 		});
 	},
 	addToMultipleComment:function(obj)
@@ -1024,22 +1023,20 @@ var ProfessorCommentList = {
 
                         bot_div_writer.text('작성자 : '+ item.writer_nickname).appendTo(bot_div);
                         bot_div_date.text(item.written_date).appendTo(bot_div);
-                        
+
                         bot_div.appendTo(div_comment);
                         bot_div_date.appendTo(bot_div);
                         bot_div_writer.appendTo(bot_div);
+
                         if (index != total -1){
                             $('<hr>',{'class': 'professor_comment_line'}).appendTo(ProfessorCommentList.timeline);
                         }
-                        // comment_line이 위치가 이상함
-                        // comment의 길이가 길면 줄이는 방법이 예전이랑 맞지 않음 
-                        
 		});
 	}
 }
 
 var FavoriteList = {
-	initialize:function() 
+	initialize:function()
 	{
 		this.favorites = $('#favorite_view_contents');
 		this.addToMultipleFavorite(Data.Favorites);

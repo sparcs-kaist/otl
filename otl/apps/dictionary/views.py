@@ -234,7 +234,6 @@ def view_professor(request, prof_id):
             recent_prof_info = prof_info[0]
         else:
             recent_prof_info = None
-            
 
         lang=request.session.get('django_language','ko')
 
@@ -242,7 +241,7 @@ def view_professor(request, prof_id):
         result = 'OK'
 
     except ObjectDoesNotExist:
-        result = 'NOT_EXIST' 
+        result = 'NOT_EXIST'
 
     return render_to_response('dictionary/professor.html', {
         'result' : result,
@@ -489,10 +488,6 @@ def professor_comment(request):
         q = {}
         q['professor'] = Professor.objects.get(professor_id=prof_id)
         comments = _update_comment(count, **q)
-        
-        if len(comments) > 0:
-            comments = comments[len(comments)-1::-1]
-            comments = comments[0:6]
 
         result = 'OK'
 
@@ -637,10 +632,11 @@ def _update_comment(count, **conditions):
                 q |= Q(course__department=department)
         comments = Comment.objects.filter(q).distinct()
     elif professor != None:
-        comments = Comment.objects.filter(course__professors=professor)
+        comments = Comment.objects.filter(course__professors=professor).order_by('-id')
     else:
         comments = Comment.objects.all().order_by('-id')
     comments_size = comments.count()
+
     if comments_size < count:
         return comments[0:comments_size]
     return comments[0:count]
