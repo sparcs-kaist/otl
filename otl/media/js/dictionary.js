@@ -471,9 +471,9 @@ var DictionaryCommentList = {
 	},
 	showLectureSummary:function()
 	{
-		$('#lecture-homepage').hide();
-		$('#lecture-mainbook').hide();
-		$('#lecture-subbook').hide();
+		$('#lecture-homepage-html').hide();
+		$('#lecture-mainbook-html').hide();
+		$('#lecture-subbook-html').hide();
 		$('#lecture-summary-add-img').hide();
 		$('#lecture-homepage-add').show();
 		$('#lecture-mainbook-add').show();
@@ -561,16 +561,16 @@ var DictionaryCommentList = {
 		var output_mainbook = new_mainbook_content.replace(/\n/g,'<br />');
 		var output_subbook = new_subbook_content.replace(/\n/g,'<br />');
 
-		$('#lecture-homepage').html(output_homepage);
-		$('#lecture-mainbook').html(output_mainbook);
-		$('#lecture-subbook').html(output_subbook);
+		$('#lecture-homepage-html').html(output_homepage);
+		$('#lecture-mainbook-html').html(output_mainbook);
+		$('#lecture-subbook-html').html(output_subbook);
 		$('#lecture-homepage-add').hide();
 		$('#lecture-mainbook-add').hide();
 		$('#lecture-subbook-add').hide();
 		$('#lecture-summary-complete-img').hide();
-		$('#lecture-homepage').show();
-		$('#lecture-mainbook').show();
-		$('#lecture-subbook').show();
+		$('#lecture-homepage-html').show();
+		$('#lecture-mainbook-html').show();
+		$('#lecture-subbook-html').show();
 		$('#lecture-summary-add-img').show();
 	},
 
@@ -838,47 +838,58 @@ var DictionaryCommentList = {
 			var output_mainbook = obj.summary.main_material.replace(/\n/g,'<br />');
 			var output_subbook = obj.summary.sub_material.replace(/\n/g,'<br />');
 		}
-		$('<div>', {'id': 'lecture-subject'}).text(Data.Course.title).appendTo(top_div);
-		$('<hr>', {'id': 'lecture-line'}).appendTo(top_div);
+		$('<div>', {'id': 'lecture-subject'}).text(Data.Course.title).appendTo(left_div);
+		$('<hr>', {'id': 'lecture-line'}).appendTo(left_div);
 		
 		var left_left_div = $('<div>', {'id': 'lecture-prof-photo'});
 		var prof_img = $('<img>', {'id': 'lecture-prof-img', 'src':'http://cais.kaist.ac.kr/static_files/photo/1990/'+Data.current_professor_id+'.jpg'});
 		prof_img.appendTo(left_left_div);
-		$('<div>', {'id': 'lecture-professor-name'}).text(gettext("prof. ")+obj.prof_name).appendTo(left_left_div);
 
-		$('<div>', {'id': 'lecture-homepage-title'}).text(gettext("과목 홈페이지")).appendTo(left_div);
-		$('<div>', {'id': 'lecture-homepage'}).html(output_homepage).appendTo(left_div);
-		$('<textarea>', {'id': 'lecture-homepage-add'}).text(output_homepage).appendTo(left_div);
-		$('<div>', {'id': 'lecture-mainbook-title'}).text(gettext("주교재")).appendTo(left_div);
-		$('<div>', {'id': 'lecture-mainbook'}).html(output_mainbook).appendTo(left_div);
-		$('<textarea>', {'id': 'lecture-mainbook-add'}).text(output_mainbook).appendTo(left_div);
-		$('<div>', {'id': 'lecture-subbook-title'}).text(gettext("부교재")).appendTo(left_div);
-		$('<div>', {'id': 'lecture-subbook'}).html(output_subbook).appendTo(left_div);
-		$('<textarea>', {'id': 'lecture-subbook-add'}).text(output_subbook).appendTo(left_div);
+		left_left_div.appendTo(left_div);
+		$('<div>', {'id': 'lecture-prof-name'}).text(gettext("prof. ")+obj.prof_name).appendTo(left_left_div);
 
-		var right_div = $('<div>', {'id': 'lecture-eval-score'});
+		var lec_homepage = $('<div>', {'id': 'lecture-homepage'});
+		$('<div>', {'id': 'lecture-homepage-title'}).text(gettext("과목 홈페이지")).appendTo(lec_homepage);
+		$('<div>', {'id': 'lecture-homepage-html'}).html(output_homepage).appendTo(lec_homepage);
+		$('<textarea>', {'id': 'lecture-homepage-add'}).text(output_homepage).appendTo(lec_homepage);	
+		lec_homepage.appendTo(left_div);
+		
+		var lec_mainbook = $('<div>', {'id': 'lecture-mainbook'});
+		$('<div>', {'id': 'lecture-mainbook-title'}).text(gettext("주교재")).appendTo(lec_mainbook);
+		$('<div>', {'id': 'lecture-mainbook-html'}).html(output_mainbook).appendTo(lec_mainbook);
+		$('<textarea>', {'id': 'lecture-mainbook-add'}).text(output_mainbook).appendTo(lec_mainbook);
+		lec_mainbook.appendTo(left_div);
+
+		var lec_subbook = $('<div>', {'id': 'lecture-subbook'});
+		$('<div>', {'id': 'lecture-subbook-title'}).text(gettext("부교재")).appendTo(lec_subbook);
+		$('<div>', {'id': 'lecture-subbook-html'}).html(output_subbook).appendTo(lec_subbook);
+		$('<textarea>', {'id': 'lecture-subbook-add'}).text(output_subbook).appendTo(lec_subbook);
+		lec_subbook.appendTo(left_div);
+
+		var right_div = $('<div>', {'id': 'lecture-score'});
 		var right_div_eval = $('<div>', {'id': 'lecture-eval'});
-		$('<div>', {'id': 'lecture-eval-title'}).text("TOTAL SCORE").appendTo(right_div_eval);
+		$('<div>', {'id': 'lecture-eval-title'}).text("TOTAL SCORE").appendTo(right_div);
 		$('<div>', {'class': 'lecture-eval-score'}).text(gettext("학 점 ") + obj.average['avg_score'].toFixed(1)).appendTo(right_div_eval);
 		$('<div>', {'class': 'lecture-eval-score'}).text(gettext("로 드 ") + obj.average['avg_load'].toFixed(1)).appendTo(right_div_eval);
 		$('<div>', {'class': 'lecture-eval-score'}).text(gettext("남는거 ") + obj.average['avg_gain'].toFixed(1)).appendTo(right_div_eval);
 
-		$('<div>', {'id': 'lecture-eval-average'}).text(((obj.average['avg_score']+obj.average['avg_load']+obj.average['avg_gain'])/3).toFixed(1)).appendTo(right_div_eval);
-		$('<div>', {'id': 'lecture-eval-count'}).text(gettext("평가자 수 : ") +obj.comment_num + gettext("명")).appendTo(right_div_eval);
-
 		right_div_eval.appendTo(right_div);
-	
-		var right_right_div = $('<div>', {'id': 'lecture-lec-eval-score'});
+		
+		$('<div>', {'id': 'lecture-eval-average'}).text(((obj.average['avg_score']+obj.average['avg_load']+obj.average['avg_gain'])/3).toFixed(1)).appendTo(right_div);
+		$('<div>', {'id': 'lecture-eval-count'}).text(gettext("평가자 수 : ") +obj.comment_num + gettext("명")).appendTo(right_div);
+
+		var right_right_div = $('<div>', {'id': 'lecture-lec-score'});
 		var right_div_lec_eval = $('<div>', {'id': 'lecture-lec-eval'});
-		$('<div>', {'id': 'lecture-lec-eval-title'}).text(gettext("강의평가결과")).appendTo(right_div_lec_eval);
+		$('<div>', {'id': 'lecture-lec-eval-title'}).text(gettext("강의평가결과")).appendTo(right_right_div);
 
-		$('<div>', {'class': 'lecture-lec-eval-ratio'}).text(gettext("응답률 ")+gettext("0")+gettext("%")+gettext(" (")+gettext("0")+gettext("/")+gettext("1")+gettext(")")).appendTo(right_div_lec_eval);
-		$('<div>', {'class': 'lecture-lec-eval-standard-deviation'}).text(gettext("표준편차 ")+gettext("0")).appendTo(right_div_lec_eval);
-		$('<div>', {'id': 'lecture-lec-eval-rating'}).text(gettext("3.3")).appendTo(right_div_lec_eval);
-		$('<div>', {'id': 'lecture-lec-eval-count'}).text(gettext("평가자 수 : ") +gettext("1")+gettext("명")).appendTo(right_div_lec_eval); 
+		$('<div>', {'class': 'lecture-lec-eval-score'}).text(gettext("응답률 ")+gettext("0")+gettext("%")+gettext(" (")+gettext("0")+gettext("/")+gettext("1")+gettext(")")).appendTo(right_div_lec_eval);
+		$('<div>', {'class': 'lecture-lec-eval-score'}).text(gettext("표준편차 ")+gettext("0")).appendTo(right_div_lec_eval);
+
 		right_div_lec_eval.appendTo(right_right_div);
-
-		left_left_div.appendTo(top_div);
+	
+		$('<div>', {'id': 'lecture-lec-eval-rating'}).text(gettext("3.3")).appendTo(right_right_div);
+		$('<div>', {'id': 'lecture-lec-eval-count'}).text(gettext("평가자 수 : ") +gettext("1")+gettext("명")).appendTo(right_right_div); 
+		
 		left_div.appendTo(top_div);
 		right_div.appendTo(top_div);
 		right_right_div.appendTo(top_div);
@@ -896,8 +907,8 @@ var DictionaryCommentList = {
 		add_img.bind('click', $.proxy(this.showLectureSummary, this));
 		complete_img.bind('click', $.proxy(this.addLectureSummary, this));
 
-		top_div.appendTo(this.lecture_summary);
-		bottom_div.appendTo(this.lecture_summary);
+		top_div.appendTo(this.summary);
+		bottom_div.appendTo(this.summary);
 
 		$('#lecture-homepage-add').hide();
 		$('#lecture-mainbook-add').hide();
@@ -951,13 +962,14 @@ var DictionaryCommentList = {
 		this.clearSummary();
 		this.clearBox();
 		this.clearLectureSummary();
+		Data.comment_id = -1;
 		if(obj==null) {
 			Data.current_professor_id = -1;
-			Data.comment_id = -1;
+			$('#course-comment-add-professor').show();
 		}
 		else {
 			Data.current_professor_id = obj.professor_id;
-			Data.comment_id = -1;
+			$('#course-comment-add-professor').hide();
 		}
 		$.ajax({
 			type: 'POST',
