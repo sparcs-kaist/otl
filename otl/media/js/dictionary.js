@@ -542,6 +542,8 @@ var DictionaryCommentList = {
 							$($("#course-eval").children()[0]).text("학점 : "+resObj.average['avg_score'].toFixed(1));
 							$($("#course-eval").children()[1]).text("로드 : "+resObj.average['avg_load'].toFixed(1));
 							$($("#course-eval").children()[2]).text("남는거 : "+resObj.average['avg_gain'].toFixed(1));
+							$("#course-eval-average").text(((resObj.average['avg_score']+resObj.average['avg_load']+resObj.average['avg_gain'])/3).toFixed(1));
+							$("#course-eval-count").text(gettext("평가자 수 : ") + resObj.comment_num + gettext("명"));
 						} else if (resObj.result='ALREADY_WRITTEN') {
 							Notifier.setErrorMsg(gettext('이미 등록하셨습니다.'));
 						}
@@ -573,10 +575,12 @@ var DictionaryCommentList = {
 			success: $.proxy(function(resObj) {
 				try {
 					if (resObj.result=='DELETE') {
-                                            comment.remove();
-                                            $($("#course-eval").children()[0]).text("학점 : "+resObj.average['avg_score'].toFixed(1));
-                                            $($("#course-eval").children()[1]).text("로드 : "+resObj.average['avg_load'].toFixed(1));
-                                            $($("#course-eval").children()[2]).text("남는거 : "+resObj.average['avg_gain'].toFixed(1));
+						comment.remove();
+						$($("#course-eval").children()[0]).text("학점 : "+resObj.average['avg_score'].toFixed(1));
+						$($("#course-eval").children()[1]).text("로드 : "+resObj.average['avg_load'].toFixed(1));
+						$($("#course-eval").children()[2]).text("남는거 : "+resObj.average['avg_gain'].toFixed(1));
+						$("#course-eval-average").text(((resObj.average['avg_score']+resObj.average['avg_load']+resObj.average['avg_gain'])/3).toFixed(1));
+						$("#course-eval-count").text(gettext("평가자 수 : ") + resObj.comment_num + gettext("명"));
 					} else if (resObj=='REMOVE_NOT_EXIST') {
 						Notifier.setErrorMsg(gettext('잘못된 접근입니다.'));
 					}
@@ -590,7 +594,7 @@ var DictionaryCommentList = {
 					return;
 				if (xhr.status == 403) {
 					Notifier.setErrorMsg(gettext('로그인 해야합니다.'));
-				}	
+				}
 				else {
 					Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+gettext('요청 실패')+':'+xhr.status+')');
 				}
@@ -632,14 +636,15 @@ var DictionaryCommentList = {
 
 			var right_bot_div = $('<div>',{'class':'dictionary_comment_right_bot'});
 			right_bot_div.appendTo(right_div_comment);
-			$('<div>',{'class':'dictionary_comment_date'}).text(item.written_date).appendTo(right_bot_div);
-			$('<div>',{'class':'dictionary_comment_writer'}).text(gettext("작성자") + " : " + item.writer_nickname).appendTo(right_bot_div);
-
 			if (enableDelete) {
 				var deletelink = $('<div>', {'class': 'dictionary_comment_delete'}).text("X")
 				deletelink.appendTo(right_bot_div);
 				deletelink.bind('click', $.proxyWithArgs(DictionaryCommentList.deleteComment, DictionaryCommentList, item, comment));
 			}
+			$('<div>',{'class':'dictionary_comment_date'}).text(item.written_date).appendTo(right_bot_div);
+			$('<div>',{'class':'dictionary_comment_writer'}).text(gettext("작성자") + " : " + item.writer_nickname).appendTo(right_bot_div);
+
+
    			if (index != total-1){
    				$('<hr>',{'class': 'dictionary_comment_line'}).appendTo(comment);
    			}
@@ -663,7 +668,7 @@ var DictionaryCommentList = {
 	clearComment:function()
 	{
 		this.comments.empty();
-		Data.DictionaryComment=[];
+		Data.DictionaryComment = [];
 	},
 	clearEval: function()
 	{
@@ -839,15 +844,15 @@ var DictionaryCommentList = {
 	},
     addNewComment:function(obj){
 	    $.each(obj, function(index, item) {
-	        var enableDelete = (item.writer_id == Data.user_id);
-	        var comment = $('<div>', {'class': 'dictionary_comment'});
+			var enableDelete = (item.writer_id == Data.user_id);
+			var comment = $('<div>', {'class': 'dictionary_comment'});
 			var comment_output = item.comment.replace(/\n/g,'<br />');
-	        comment.prependTo(DictionaryCommentList.comments);
-   
+			comment.prependTo(DictionaryCommentList.comments);
+
 			var left_div_comment = $('<div>', {'class': 'dictionary_comment_left'});
-   			var right_div_comment = $('<div>', {'class': 'dictionary_comment_right'});
-   			left_div_comment.appendTo(comment);
-   			right_div_comment.appendTo(comment);
+			var right_div_comment = $('<div>', {'class': 'dictionary_comment_right'});
+			left_div_comment.appendTo(comment);
+			right_div_comment.appendTo(comment);
 
 			$('<img>', {'class': 'dictionary_comment_prof_photo', 'src':'http://cais.kaist.ac.kr/static_files/photo/1990/'+item.professor[0].professor_id+'.jpg'}).appendTo(left_div_comment);
 
@@ -870,14 +875,14 @@ var DictionaryCommentList = {
 
 			var right_bot_div = $('<div>',{'class':'dictionary_comment_right_bot'});
 			right_bot_div.appendTo(right_div_comment);
-			$('<div>',{'class':'dictionary_comment_date'}).text(item.written_date).appendTo(right_bot_div);
-			$('<div>',{'class':'dictionary_comment_writer'}).text(gettext("작성자") + " : " + item.writer_nickname).appendTo(right_bot_div);
-
 			if (enableDelete) {
 				var deletelink = $('<div>', {'class': 'dictionary_comment_delete'}).text("X")
 				deletelink.appendTo(right_bot_div);
 				deletelink.bind('click', $.proxyWithArgs(DictionaryCommentList.deleteComment, DictionaryCommentList, item, comment));
 			}
+			$('<div>',{'class':'dictionary_comment_date'}).text(item.written_date).appendTo(right_bot_div);
+			$('<div>',{'class':'dictionary_comment_writer'}).text(gettext("작성자") + " : " + item.writer_nickname).appendTo(right_bot_div);
+
 			$('<hr>',{'class': 'dictionary_comment_line'}).appendTo(comment);
 	    });
 	},
@@ -1071,7 +1076,7 @@ var FavoriteList = {
 			var favorite = $('<div>', {'class': 'dictionary_favorite'});
 			favorite.appendTo(FavoriteList.favorites);
 			$('<a>', {'href': item.url}).text(item.code + ' - ' + item.title).appendTo(favorite);
-			
+
 			var deletelink = $('<a>').text(" X")
 			deletelink.appendTo(favorite);
 			deletelink.bind('click', $.proxyWithArgs(FavoriteList.deleteFavorite, FavoriteList, item, favorite));
@@ -1101,7 +1106,7 @@ var FavoriteList = {
 					return;
 				if (xhr.status == 403) {
 					Notifier.setErrorMsg(gettext('로그인 해야합니다.'));
-				}	
+				}
 				else {
 					Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+gettext('요청 실패')+':'+xhr.status+')');
 				}

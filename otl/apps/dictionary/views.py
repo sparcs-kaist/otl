@@ -208,7 +208,6 @@ def view(request, course_code):
         'course' : course_output,
         'lectures' : lectures_output,
         'professors' : professors_output,
-        'summary' : summary_output,
         'dept': dept,
         'classification': classification,
         'keyword': keyword,
@@ -300,6 +299,7 @@ def view_comment_by_professor(request):
 
 @login_required_ajax
 def add_comment(request):
+    comment_num = 0
     try:
         new_comment = Comment.objects.none()
         course_id = int(request.POST.get('course_id',-1))
@@ -339,6 +339,7 @@ def add_comment(request):
         new_comment = Comment.objects.filter(id=new_comment.id)  
         average = comments.aggregate(avg_score=Avg('score'),avg_gain=Avg('gain'),avg_load=Avg('load'))
         Course.objects.filter(id=course.id).update(score_average=average['avg_score'], load_average=average['avg_load'], gain_average=average['avg_gain'])
+        comment_num = comments.count()
 
         result = 'ADD'
 
@@ -354,11 +355,13 @@ def add_comment(request):
     return HttpResponse(json.dumps({
         'result': result,
         'average': average,
+        'comment_num': comment_num,
         'comment': _comments_to_output(new_comment, False, request.session.get('django_language','ko'),False)}, ensure_ascii=False, indent=4))
             
 @login_required_ajax
 def delete_comment(request):
     average = {'avg_score':0, 'avg_gain':0, 'avg_load':0}
+    comment_num = 0
     try:
         user = request.user
         comment_id = int(request.POST.get('comment_id', -1))
@@ -374,17 +377,13 @@ def delete_comment(request):
         lecture = comment.lecture
         comments = Comment.objects.filter(course=course)
         average = {'score':0, 'gain':0, 'load':0}
+        comment_num = comments.count()
         if comments.count() != 0 :
             average = comments.aggregate(avg_score=Avg('score'),avg_gain=Avg('gain'),avg_load=Avg('load'))
             Course.objects.filter(id=course.id).update(score_average=average['avg_score'],load_average=average['avg_load'],gain_average=average['avg_gain'])
         else :
+            average = {'avg_score':0, 'avg_gain':0, 'avg_load':0}
             Course.objects.filter(id=course.id).update(score_average=0,load_average=0,gain_average=0)
-
-        # update writer score
-        user_profile = UserProfile.objects.get(user=user)
-        user_profile.score = user_profile.score - COMMENT_SCORE
-        user_profile.recent_score = user_profile.recent_score - COMMENT_SCORE
-        user_profile.save()
 
     except ObjectDoesNotExist:
         result = 'REMOVE_NOT_EXIST'
@@ -394,7 +393,7 @@ def delete_comment(request):
     #    return HttpResponseServerError()
 
     return HttpResponse(json.dumps({
-        'result': result, 'average': average}, ensure_ascii=False, indent=4)) 
+        'result': result, 'average': average, 'comment_num': comment_num}, ensure_ascii=False, indent=4)) 
 
 @login_required_ajax
 def delete_favorite(request):
