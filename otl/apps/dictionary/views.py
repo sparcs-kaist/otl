@@ -335,7 +335,7 @@ def add_comment(request):
         new_comment = Comment(course=course, lecture=lecture, writer=writer, comment=comment, load=load, score=score, gain=gain)
         new_comment.save()
 
-        comments = Comment.objects.filter(course=course)      
+        comments = Comment.objects.filter(course=course) 
         new_comment = Comment.objects.filter(id=new_comment.id)  
         average = comments.aggregate(avg_score=Avg('score'),avg_gain=Avg('gain'),avg_load=Avg('load'))
         Course.objects.filter(id=course.id).update(score_average=average['avg_score'], load_average=average['avg_load'], gain_average=average['avg_gain'])
@@ -476,7 +476,7 @@ def add_summary(request):
         require = request.POST.get('require', None)
         course_id = int(request.POST.get('course_id', -1))
         course = Course.objects.get(id=course_id)
-        if content == None or course_id < 0:
+        if content == None or require == None or course_id < 0:
             raise ValidationError()
         writer = request.user
         written_datetime = datetime.datetime.now()
@@ -491,6 +491,36 @@ def add_summary(request):
     return HttpResponse(json.dumps({
         'result': result,
         'summary': _summary_to_output(new_summary,False,'ko')}))
+
+@login_required
+def add_lecture_summary(request):
+    try:
+        homepage = request.POST.get('homepage', None)
+        mainbook = request.POST.get('mainbook', None)
+	subbook = request.POST.get('subbook', None)
+        course_id = int(request.POST.get('course_id', -1))
+	prof_id = int(request.POST.get('professor_id', -1))
+        course = Course.objects.get(id=course_id)
+	if homepage == None or mainbook == None or course == None  or course_id < 0 or prof_id < 0:	
+            raise ValidationError()
+	professor = Professor.objects.get(professor_id=prof_id) 
+	lectures = Lecture.objects.filter(professor=professor, course=course).order_by('-id')
+	if lectures.count() == 0 :
+	    raise ValidationError()
+	lecture = lectures[0]
+        writer = request.user
+        written_datetime = datetime.datetime.now()
+        new_summary = LectureSummary(homepage=homepage, main_material=mainbook, sub_material=subbook, writer=writer, written_datetime=written_datetime, lecture=lecture)
+        new_summary.save()
+        result = 'OK'
+    except ValidationError:
+        return HttpResponseBadRequest()
+    except:
+        return HttpResponseServerError()
+    
+    return HttpResponse(json.dumps({
+        'result': result,
+        'summary': _lecture_summary_to_output(new_summary,False,'ko')}))
 
 @login_required
 def get_year_list(request):
@@ -520,24 +550,43 @@ def get_year_list(request):
 @login_required
 def get_summary_and_semester(request):
     summary_output = None
+    average = {'avg_score':0, 'avg_gain':0, 'avg_load':0}
+    comment_num = 0
+    lang=request.session.get('django_language','ko')
+    professor_name = ""
     try:
         prof_id = int(request.POST.get('professor_id',-1))
         course_id = int(request.POST.get('course_id',-1))
         course = Course.objects.get(id=course_id)
-        lang=request.session.get('django_language','ko')
         if prof_id == -1:       # General
             summary = Summary.objects.filter(course=course).order_by('-id')
             semester = Lecture.objects.filter(course=course).order_by('-year','-semester').values('year', 'semester').distinct()
             if summary.count() > 0:
                 recent_summary = summary[0]
                 summary_output = _summary_to_output(recent_summary,False,lang);
-                result = 'OK'
+                result = 'GENERAL'
             else:
-                result = 'EMPTY'
+                result = 'GEN_EMPTY'
         else:
             professor = Professor.objects.get(professor_id=prof_id)
             semester = Lecture.objects.filter(course=course,professor=professor).order_by('-year','-semester').values('year', 'semester').distinct()
-            result='ERROR'
+	    professor_name = professor.professor_name
+	    lectures = Lecture.objects.filter(professor=professor, course=course).order_by('-id')
+	    lecture = lectures[0]
+	    summary = LectureSummary.objects.filter(lecture=lecture).order_by('-id')
+	    q=Q()
+	    for lec in lectures:
+		q |= Q(lecture=lec)
+	    comments = Comment.objects.filter(q)
+	    comment_num = comments.count()
+	    if comments.count() != 0:
+		average=comments.aggregate(avg_score=Avg('score'),avg_gain=Avg('gain'),avg_load=Avg('load'))
+	    if summary.count() > 0:
+		recent_summary = summary[0]
+		summary_output = _lecture_summary_to_output(recent_summary,False,lang)
+		result = 'PROF'
+	    else:
+		result = 'PROF_EMPTY'
     except ObjectDoesNotExist:
         result='NOT_EXIST'
     except:
@@ -545,7 +594,12 @@ def get_summary_and_semester(request):
     return HttpResponse(json.dumps({
         'result': result,
         'semester': _semesters_to_output(semester,False,lang),
+	'average': average,
+	'comment_num': comment_num,
+	'prof_name': professor_name,
         'summary': summary_output}))
+
+
 @login_required
 def add_favorite(request):
     try:
@@ -850,6 +904,25 @@ def _summary_to_output(summary,conv_to_json=True,lang='ko'):
         'writer': UserProfile.objects.get(user = summary.writer).nickname,
         'written_datetime': summary.written_datetime.isoformat()[:10],
         'course_id': summary.course.id
+        }
+    if conv_to_json:
+        io = StringIO()
+        if settings.DEBUG:
+            json.dump(item,io,ensure_ascii=False,indent=4, cls=DjangoJSONEncoder)
+        else:
+            json.dump(item,io,ensure_ascii=False,sort_keys=False,separators=(',',':'), cls=DjangoJSONEncoder)
+        return io.getvalue()
+    else :
+        return item
+
+def _lecture_summary_to_output(summary,conv_to_json=True,lang='ko'):
+    item = {
+        'homepage': summary.homepage,
+        'main_material': summary.main_material,
+	'sub_material': summary.sub_material,
+        'writer': UserProfile.objects.get(user = summary.writer).nickname,
+        'written_datetime': summary.written_datetime.isoformat()[:10],
+        'lecture_id': summary.lecture.id
         }
     if conv_to_json:
         io = StringIO()

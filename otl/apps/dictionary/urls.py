@@ -19,5 +19,6 @@ urlpatterns = patterns('',
     (ur'^get_recommend/$', views.interesting_courses),
     (ur'^get_summary_and_semester/$', views.get_summary_and_semester),
     (ur'^get_year_list/$', views.get_year_list),
+    (ur'^add_lecture_summary/$', views.add_lecture_summary),
 )
 
