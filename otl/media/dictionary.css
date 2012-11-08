@@ -116,6 +116,14 @@
     font-weight:bold;
     font-family:'돋움';
 }
+.professor-title
+{
+    background:#C3D9FF;
+    font-size:12px;
+    font-weight:bold;
+    font-family:'돋움';
+    width:770px;
+}
 .dictionary-title div.tl
 {
     background:transparent url('images/corner_tl.gif') top left no-repeat;
@@ -132,6 +140,25 @@
 {
     background:transparent url('images/corner_br.gif') bottom right no-repeat;
     padding: 3px 12px 1px;
+}
+.professor-title div.tl
+{
+    background:transparent url('images/corner_tl.gif') top left no-repeat;
+}
+.professor-title div.tr
+{
+    background:transparent url('images/corner_tr.gif') top right no-repeat;
+}
+.professor-title div.bl
+{
+    background:transparent url('images/corner_bl.gif') bottom left no-repeat;
+}
+.professor-title div.br
+{
+    background:transparent url('images/corner_br.gif') bottom right no-repeat;
+	padding-left:15px;
+	height:25px;
+	line-height:25px;
 }
 #center
 {
@@ -351,6 +378,7 @@
 #prof-recent-comments
 {
 	margin-top : 20px;
+        float:left;
 }
 
 .timeline_comment 
