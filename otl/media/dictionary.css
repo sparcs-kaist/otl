@@ -5,9 +5,9 @@
 }
 #left-side
 {
-    float:left;
-    width:200px;
-    margin:10px;
+        float:left;
+        width:200px;
+        margin:10px;
 }
 #lecturelist-range h4
 {
@@ -111,10 +111,10 @@
 }
 .dictionary-title
 {
-    background:#C3D9FF;
-    font-size:12px;
-    font-weight:bold;
-    font-family:'돋움';
+    background:#C3DAFB;
+    line-height: 25px;
+    padding-left:18px;
+    font-size : 15px;
 }
 .professor-title
 {
@@ -537,8 +537,8 @@
     width:548px;
     margin-top:15px;
     margin-bottom:15px;
-    color:#cecece;
-    background-color:#cecece;
+    color:#c3dafb;
+    background-color:#c3dafb;
     height:1px;
 }
 .professor_comment_line
@@ -599,4 +599,630 @@
     margin-right:5px;
     padding-left:10px;
     padding-bottom:10px;
+}
+.dictionary_comment
+{
+      height:76px;
+      margin:0px;
+      margin-top:15px;
+}
+.dictionary_comment_left
+{
+      float:left;
+      height:75px;
+      margin-left:25px;
+}
+.dictionary_comment_prof_photo
+{
+      height:65px;
+      width:55px;
+}
+.dictionary_comment_right
+{
+      float:right;
+      width:650px;
+      height:75px;
+      margin-left:15px;
+      margin-right:25px;
+}
+.dictionary_comment_right_top
+{
+      height:20px;
+      font-size:10pt;
+      font-family:돋움;
+      font-weight:bold;
+}
+.dictionary_comment_semester
+{
+      float:left;
+}
+.dictionary_comment_prof_name
+{
+      float:left;
+      margin-left:25px;
+}
+.dictionary_comment_right_top_eval
+{
+      float:right;
+}
+.dictionary_comment_eval
+{
+      float:left;
+      width:70px;
+      margin-left:15px;
+}
+.dictionary_comment_right_mid
+{
+      height:32px;
+}
+.dictionary_comment_content
+{
+      font-size:9pt;
+      font-family:돋움;
+      margin:0px;
+}
+.dictionary_comment_right_bot
+{
+      height:23px;
+      font-size:8pt;
+}
+.dictionary_comment_writer
+{
+      float:right;
+}
+.dictionary_comment_date
+{
+      float:right;
+      margin-left:10px;
+}
+.dictionary_comment_line
+{
+      height:1px;
+      color:#c3dafb;
+      background-color:#c3dafb;
+      margin:0px;
+}
+.dictionary_comment_delete
+{
+        float:right;
+        height:20px;
+        width:10px;
+}
+#course-favorite
+{
+	height:28px;
+	float:right;
+	margin-left:688px;
+}
+#course-favorite input
+{
+	margin-top:8px;
+}
+
+#course-description
+{
+	margin-top:28px;
+}
+#course-professor
+{
+	height:20px;
+        margin-left:5px;
+	width:770px;
+}
+
+.course-professor-tab
+{
+        cursor:pointer;
+        float: left;
+	font-family:돋움;
+	font-size:11px;
+        background: white;
+        width:45px;
+        height:18px;
+        text-align:center;
+        border-width:1px;
+        border-style:ridge;
+}
+#course-summary-boundary
+{
+        width:760px;
+        height:158px;
+        padding:5px;
+        background: #C3DAFB;
+        border-radius:3px;
+}
+#course-summary
+{
+        background:white;
+        height:158px;
+        padding-bottom: 5px;
+        border-radius: 5px;
+        border-width: 5px;
+        border-style: solid;
+        border-color: #C3D9FF;
+
+}
+#course-summary-top
+{
+        width:760px;
+        height:138px;
+}
+#course-summary-bottom
+{
+        float: right;
+}
+#course-intro
+{
+        margin-left:20px;
+        float: left;
+}
+#course-score
+{
+        float: right;
+        margin-right:20px;
+        width:138px;
+}
+#course-change
+{
+        float: right;
+        margin-right:20px;
+}
+#course-subject
+{
+        font-size:12px;
+        width:562px;
+        font-weight:bold;
+        line-height:30px;
+        font-family:돋움;
+        height:30px;
+        text-align:left;
+}
+#course-line
+{
+        height:3px;
+        background:black;
+        width: 562px;
+}
+#course-explain-title
+{
+        margin-top:10px;
+        margin-left:5px;
+        font-size:12px;
+        font-family:돋움;
+        font-weight:bold;
+}
+#course-explain
+{
+         margin-left:5px;
+         margin-top:8px;
+         line-height:19px;
+         height:19px;
+}
+#course-explain-add
+{
+         height:19px;
+         width:577px;
+         max-height:32px;
+         max-width:562px;
+}
+#course-require-title
+{
+        font-family:돋움;
+        font-size:12px;
+        font-weight:bold;
+        margin-top:10px;
+        margin-left:5px;
+}
+#course-require
+{
+        line-height:19px;
+        height:19px;
+        margin-top:8px;
+        margin-left:5px;
+}
+#course-require-add
+{
+        height:19px;
+        width:577px;
+        max-height:32px;
+        max-width:562px;
+}
+#course-eval-title
+{
+        margin-top:17px;
+        line-height:25px;
+        font-family:돋움;
+        font-weight:bold;
+        font-size:12px;
+        width:138px;
+        height:25px;
+        text-align:center;
+        background: #C3DAFB;
+        border-radius:5px;
+        box-shadow: 2px 2px 2px #000;
+}
+#course-eval
+{
+        margin:0px;
+        float:left;
+        margin-top:13px;
+        width:71px;
+        height:50px;
+}
+.course-eval-score
+{
+        margin:0px;
+        font-weight:bold;
+        font-size:10px;
+}
+#course-eval-average
+{
+        margin:0px;
+        float:right;
+        height:50px;
+        line-height:50px;
+        text-align: center;
+        width:50px;
+        margin:6px;
+        margin-top:13px;
+}
+#course-eval-count
+{
+        margin-top:13px; 
+        margin-left:10px;
+        float:right;
+        line-height:10px;
+        font-size:10px;
+        height:10px;
+}
+#course-change-user
+{
+        font-family:돋움;
+        font-weight:bold;
+        font-size:10px;
+        line-height:10px;
+        height:10px;
+        margin-bottom:10px;
+        margin-right:20px;
+}
+#course-change-user img
+{
+        width:10px;
+        height:10px;
+}
+#course-comment-add-title
+{
+    margin-top:20px;
+}
+#course-comment-add
+{
+    margin-top:20px;
+    font-size:11px;
+    font-family: 돋움;
+    font-weight: bold;
+    height:180px;
+}
+#course-comment-add-semester
+{
+    float:left;
+}
+#new-comment-semester
+{
+    height:20px;
+    width:80px;
+    margin-left:10px;
+}
+#course-comment-add-professor
+{
+    float:left;
+    margin-left:20px;
+}
+#new-comment-professor
+{
+    height:20px;
+    width:90px;
+    margin-left:10px;
+}
+.course-comment-add-eval
+{
+    float:right;
+    margin-left:10px;
+}
+#new-comment-score
+{
+    width:60px;
+    height:20px;
+    margin-left:10px;
+}
+#new-comment-load
+{
+    width:60px;
+    height:20px;
+    margin-left:10px;
+}
+#new-comment-gain
+{
+    width:60px;
+    height:20px;
+    margin-left:10px;
+}
+#course-comment-add-text
+{
+    width:750px;
+    height:105px;
+    margin-top:10px;
+    resize: none;
+}
+#course-comment-add-submit
+{
+    float:right;
+    width:70px;
+    height:20px;
+}
+#lecture-summary
+{
+      background:white;
+      height:160px;
+}
+#lecture-summary-top
+{
+      width:760px;
+      height:138px;
+}
+#lecture-summary-bottom
+{
+      float:right;
+}
+#lecture-intro
+{
+      margin-left:20px;
+      width:440px;
+      float:left;
+}
+#lecture-subject
+{
+      font-size:12px;
+      width:440px;
+      font-weight:bold;
+      line-height:30px;
+      font-family:돋움;
+      height:30px;
+      text-align:left;
+}
+#lecture-line
+{
+      margin-right:0px;
+      height:3px;
+      background:black;
+      width:440px;
+}
+#lecture-prof-photo
+{
+      height:103px;
+      width:68px;
+      margin:0px;
+      margin-top:10px;
+      display: inline;
+      float:left; 
+}
+#lecture-prof-img
+{
+      height:83px;
+      width:68px;
+}
+#lecture-prof-name
+{
+      font-family:돋움;
+      font-size:10px;
+      font-weight:bold;
+      text-align:center;
+}
+#lecture-homepage
+{
+      width:372px;
+      margin-left:0px;
+      margin-top:8px;
+      height:10px;
+      float:left;
+}
+#lecture-homepage-title
+{
+      font-family:돋움;
+      font-size:10px;
+      font-weight:bold;
+      text-align:center;
+      width:102px;
+      display: inline;
+      float:left;
+}
+#lecture-homepage-html
+{
+      width:250px;
+      height:10px;
+      float:left;
+}
+#lecture-homepage-add
+{
+      height:15px;
+      width:200px;
+      max-height:18px;
+      max-width:250px;
+}
+#lecture-mainbook
+{
+      width:372px;
+      margin-left:0px;
+      margin-top:8px;
+      height:44px;
+      float:left;
+}
+#lecture-mainbook-title
+{
+      font-family:돋움;
+      font-size:10px;
+      font-weight:bold;
+      text-align:center;
+      vertical-align:middle;
+      width:102px;
+      height:44px;
+      display: inline;
+      float:left;
+}
+#lecture-mainbook-add
+{
+      height:30px;
+      width:200px;
+      max-height:40px;
+      max-width:250px;
+}
+#lecture-subbook
+{
+      width:372px;
+      margin-left:0px;
+      margin-top:8px;
+      height:44px;
+      float:left;
+}
+#lecture-subbook-title
+{
+      font-family:돋움;
+      font-size:10px;
+      font-weight:bold;
+      text-align:center;
+      width:102px;
+      display: inline;
+      float: left;
+}
+#lecture-subbook-add
+{
+      height:30px;
+      width:200px;
+      max-height:60px;
+      max-width:250px;
+}
+#lecture-score
+{
+      float:left;
+      margin-left:15px;
+      margin-right:15px;
+      width:137px;
+      display: inline;
+}
+#lecture-eval-title
+{
+      margin-top:17px;
+      line-height:25px;
+      font-family:돋움;
+      font-weight:bold;
+      font-size:11px;
+      width:137px;
+      height:25px;
+      text-align:center;
+      background: #C3DAFB;
+      display: inline;
+      float:left;
+      border-radius:5px;
+      box-shadow: 2px 2px 2px #000;
+}
+#lecture-eval
+{
+      margin:0px;
+      float:left;
+      margin-top:17px;
+      width:71px;
+      height:50px;
+}
+.lecture-eval-score
+{
+      margin:0px;
+      font-weight:bold;
+      font-size:10px;
+}
+#lecture-eval-average
+{
+      margin:0px;
+      float:right;
+      height:50px;
+      line-height:50px;
+      text-align: center;
+      width:50px;
+      margin-top:13px;
+}
+#lecture-eval-count
+{
+      margin-top:13px;
+      float:right;
+      line-height:10px;
+      font-size:10px;
+      height:10px;
+}
+#lecture-lec-score
+{
+      display: inline;
+      width:125px;
+      float:left;
+}
+#lecture-lec-eval-title
+{
+      margin-top:17px;
+      line-height:25px;
+      font-family:돋움;
+      font-weight:bold;
+      font-size:11px;
+      width:125px;
+      height:25px;
+      text-align:center;
+      background: #C3DAFB;
+      display: inline;
+      float:left;
+      border-radius:5px;
+      box-shadow: 2px 2px 2px #000;
+}
+#lecture-lec-eval
+{
+      margin:0px;
+      float:left;
+      margin-top:17px;
+      margin-left:0px;
+      width:71px;
+      height:50px;
+}
+.lecture-lec-eval-score
+{
+      margin:0px;
+      font-weight:bold;
+      font-size:10px;
+}
+#lecture-lec-eval-rating
+{
+      margin:0px;
+      float:right;
+      height:50px;
+      line-height:50px;
+      text-align: center;
+      width:50px;
+      margin-top:13px;
+}
+#lecture-lec-eval-count
+{
+      margin-top:13px;
+      float:right;
+      line-height:10px;
+      font-size:10px;
+      height:10px;
+}
+#lecture-change-user
+{
+      font-family:돋움;
+      font-weight:bold;
+      font-size:10px;
+      line-height:10px;
+      height:10px;
+      margin-bottom:10px;
+      margin-right:20px;
+}
+#lecture-change-user img
+{
+      width:10px;
+      height:10px;
 }

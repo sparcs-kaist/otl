@@ -89,6 +89,14 @@ class LectureRating(models.Model):
     def rate_of_effective_responds(self):
         return str(100.0 * self.number_of_effective_respondents / self.number_of_students) + "%"
 
+class LectureSummary(models.Model):
+    homepage = models.CharField(max_length=200)
+    main_material = models.CharField(max_length=512)
+    sub_material = models.CharField(max_length=512)
+    writer = models.ForeignKey(User)
+    written_datetime = models.DateTimeField(auto_now=True)
+    lecture = models.ForeignKey(Lecture)
+
 class LectureRatingAdmin(admin.ModelAdmin):
     list_display = ('lecture', 'number_of_students', 'number_of_respondents', 'number_of_effective_respondents','rating', 'standard_deviation')
 
