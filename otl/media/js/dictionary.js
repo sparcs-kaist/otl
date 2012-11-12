@@ -1475,3 +1475,57 @@ var FavoriteController = {
 	},
 
 };
+
+var RecommendController = {
+	initialize:function()
+	{
+		this.courses = [];
+		this.recommendArea=$('#recommend-area-professors');
+		this.getRecommend(this);
+	},
+	getRecommend:function(obj)
+	{
+		$.ajax({
+			type:'GET',
+			url: '/dictionary/get_recommend/',
+			dataType:'json',
+			success: $.proxy(function(resObj) {
+				try{
+					obj.courses = resObj.courses_sorted;
+					this.addToMultipleRecommend(resObj.courses_sorted);
+				}
+				catch(e){
+					Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+e.message+')');
+				}
+			},this),
+			error: function(xhr) {
+				if (suppress_ajax_errors)
+					return;
+				if (xhr.status == 403){
+					Notifier.setErrorMsg(gettext('로그인해야 합니다.'));
+				}
+				else{
+					Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+gettext('요청 실패')+':'+xhr.status+')');
+				}
+			}
+		});
+	},
+	addToMultipleRecommend:function(obj)
+	{
+		var total = $(obj).length;
+		$.each(obj, function(index,item) {
+			var div_recommend = $('<div>',{'class':'recommend_subject'});
+			var div_recommend_a = $('<a>',{'href':'/dictionary/view/'+item.course_code});
+			var div_recommend_image = $('<img>',{'src':'http://cais.kaist.ac.kr/static_files/photo/1990/285.jpg','class':'content_prof_photo'});
+			var div_recommend_subject_code = $('<div>',{'class':'recommend_subject_code'}).text(item.course_code);
+			var div_recommend_subject_title = $('<div>',{'class':'recommend_subject_title'}).text(item.course_title);
+			var div_recommend_profname = $('<div>',{'class':'recommend_subject_profname'}).text(item.professor_name);
+			div_recommend_a.appendTo(div_recommend);
+			div_recommend_image.appendTo(div_recommend_a);
+			div_recommend_subject_code.appendTo(div_recommend_a);
+			div_recommend_subject_title.appendTo(div_recommend_a);
+			div_recommend_profname.appendTo(div_recommend_a);
+			div_recommend.appendTo(RecommendController.recommendArea);	
+		});
+	}
+};

@@ -173,9 +173,11 @@
 }
 #recommend-area-professors
 {
-    height:202px;
+    height:172px;
     margin-top : 15px;
     background:#ECF1F9;
+    padding-top:20px;
+    padding-left:6px;
 }
 #recent-comments
 {
@@ -380,7 +382,17 @@
 	margin-top : 20px;
         float:left;
 }
-
+.recommend_subject
+{
+    margin-left:24px;
+    float:left;
+    display:inline;
+    text-align:center;
+}
+.recommend_subject_profname
+{
+    text-align:center;
+}
 .timeline_comment 
 {
     margin-top : 15px;

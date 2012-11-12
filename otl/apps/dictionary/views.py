@@ -68,17 +68,6 @@ def index(request):
         'my_lectures': my_lectures_output,
         'lang' : request.session.get('django_language', 'ko'),
         'semester_info' : semester_info,
-        'username' : u'넘겨줘',
-        'nickname' : u'넘겨줘',
-        'studentno' : u'넘겨줘',
-        'department' : u'넘겨줘',
-        'score' : u'넘겨줘',
-        'rank' : u'넘겨줘',
-        'taken_credits' : u'넘겨줘',
-        'taken_au' : u'넘겨줘',
-        'planned_credits' : u'넘겨줘',
-        'planned_au' : u'넘겨줘',
-        'todo_comment_list' : todo_comment_list,
         'dept': -1,
         'classification': 0,
         'keyword': json.dumps('',ensure_ascii=False,indent=4), 
@@ -474,9 +463,11 @@ def update_comment(request):
     except ObjectDoesNotExist:
         result = 'ERROR'
 
+    comments_to_output = _comments_to_output(comments,False,request.session.get('django_language','ko'),True)
+    comments_to_output.reverse()
     return HttpResponse(json.dumps({
         'result': result,
-        'comments': _comments_to_output(comments,False,request.session.get('django_language','ko'),True) }, ensure_ascii=False, indent=4))
+        'comments': comments_to_output}, ensure_ascii=False, indent=4))
 
 def professor_comment(request):
     comments = []
@@ -1059,15 +1050,15 @@ def _get_courses_sorted(courses):
            
         lecture = Lecture.objects.filter(course=course).order_by('-year', '-semester')[0]
         num_people = lecture.num_people
+        professor_name = lecture.professor.all()[0].professor_name
 
         interesting_score = average_sum * num_people
 
         item = {
-             'course_id': course.id,
              'course_code': course.old_code,
-             'average_sum': average_sum,
-             'num_people': num_people,
              'interesting_score': interesting_score,
+             'course_title':course.title,
+             'professor_name':professor_name,
              }
         all.append(item)
 
