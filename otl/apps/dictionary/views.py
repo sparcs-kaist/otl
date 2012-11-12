@@ -326,7 +326,7 @@ def add_comment(request):
         year = int(request.POST.get('year',-1))
         semester = int(request.POST.get('semester',-1))
         professor_id = int(request.POST.get('professor_id',-1))
-
+	status = int(request.POST.get('status',-1))
         if course_id >= 0 and year >=0 and semester >=0 and professor_id >=0:
             course = Course.objects.get(id=course_id)
         else:
@@ -354,8 +354,17 @@ def add_comment(request):
 
         new_comment = Comment(course=course, lecture=lecture, writer=writer, comment=comment, load=load, score=score, gain=gain)
         new_comment.save()
-
-        comments = Comment.objects.filter(course=course) 
+	
+	lectures = Lecture.objects.filter(course=course, professor=professor).order_by('class_no')
+	q=Q()
+	if status == -1:
+	    q = Q(course=course)
+        else:
+	    q=Q()
+	    for lec in lectures:
+		q |= Q(lecture=lec)
+	    q &= Q(course=course) 
+	comments = Comment.objects.filter(q) 
         new_comment = Comment.objects.filter(id=new_comment.id)  
         average = comments.aggregate(avg_score=Avg('score'),avg_gain=Avg('gain'),avg_load=Avg('load'))
         Course.objects.filter(id=course.id).update(score_average=average['avg_score'], load_average=average['avg_load'], gain_average=average['avg_gain'])
@@ -385,17 +394,24 @@ def delete_comment(request):
     try:
         user = request.user
         comment_id = int(request.POST.get('comment_id', -1))
-
+	prof_id = int(request.POST.get('prof_id', -1))
         if comment_id < 0:
             raise ValidationError()
         comment = Comment.objects.get(pk=comment_id, writer=user)
         comment.delete()
-
-        result = 'DELETE'
-
-        course = comment.course
-        lecture = comment.lecture
-        comments = Comment.objects.filter(course=course)
+	course = comment.course
+        professor= Professor.objects.get(professor_id = prof_id)
+        lectures = Lecture.objects.filter(course=course, professor=professor).order_by('class_no')
+        
+	result = 'DELETE'
+        q=Q()
+	if prof_id == -1:
+	    q=Q(course=course)
+	else:
+	    for lec in lectures:
+		q |= Q(lecture=lec)
+	    q &= Q(course=course)
+	comments = Comment.objects.filter(q)
         average = {'score':0, 'gain':0, 'load':0}
         comment_num = comments.count()
         if comments.count() != 0 :
@@ -583,6 +599,10 @@ def get_summary_and_semester(request):
         if prof_id == -1:       # General
             summary = Summary.objects.filter(course=course).order_by('-id')
             semester = Lecture.objects.filter(course=course).order_by('-year','-semester').values('year', 'semester').distinct()
+	    comments = Comment.objects.filter(course=course)
+	    comment_num = comments.count()
+	    if comments.count() != 0:
+		average=comments.aggregate(avg_score=Avg('score'),avg_gain=Avg('gain'),avg_load=Avg('load'))
             if summary.count() > 0:
                 recent_summary = summary[0]
                 summary_output = _summary_to_output(recent_summary,False,lang);
