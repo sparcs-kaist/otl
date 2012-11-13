@@ -708,7 +708,7 @@ var DictionaryCommentList = {
 			var right_top_div_eval = $('<div>',{'class':'dictionary_comment_right_top_eval'});
 
 			right_top_div.appendTo(right_div_comment);
-			$('<div>', {'class': 'dictionary_comment_semester'}).text('<' + item.year + ' ' + item.semester + '>').appendTo(right_top_div);
+			$('<div>', {'class': 'dictionary_comment_semester'}).text('<' + item.year + ' ' + gettext(item.semester==1?"봄":"가을") + '>').appendTo(right_top_div);
 			$('<div>', {'class': 'dictionary_comment_prof_name'}).text(gettext("담당교수 : ") + item.professor[0].professor_name).appendTo(right_top_div);
 			right_top_div_eval.appendTo(right_top_div);
 
@@ -981,7 +981,7 @@ var DictionaryCommentList = {
 	addToSemester:function(obj){
 		var semester_box = $('#new-comment-semester');
 	    $.each(obj, function(index, item) {
-			semester_box.prepend('<option value=' + (item.year*10+item.semester) + '>' + item.year + " " +  item.semester + '</option>');
+			semester_box.prepend('<option value=' + (item.year*10+item.semester) + '>' + item.year + " " + gettext(item.semester==1?"봄":"가을") + '</option>');
 		});
 		semester_box.prepend('<option value=0></option>');
 	},
@@ -1060,7 +1060,7 @@ var DictionaryCommentList = {
 			var right_top_div_eval = $('<div>',{'class':'dictionary_comment_right_top_eval'});
 
 			right_top_div.appendTo(right_div_comment);
-			$('<div>', {'class': 'dictionary_comment_semester'}).text('<' + item.year + ' ' + item.semester + '>').appendTo(right_top_div);
+			$('<div>', {'class': 'dictionary_comment_semester'}).text('<' + item.year + ' ' + gettext(item.semester==1?"봄":"가을")+ '>').appendTo(right_top_div);
 			$('<div>', {'class': 'dictionary_comment_prof_name'}).text(gettext("담당교수 : ") + item.professor[0].professor_name).appendTo(right_top_div);
 			right_top_div_eval.appendTo(right_top_div);
 
