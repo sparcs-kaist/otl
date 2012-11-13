@@ -494,13 +494,13 @@ var DictionaryCommentList = {
                     success: $.proxy(function(resObj) {
                         try {
                             if (resObj.result=='OK') {
-				Data.summary = resObj.summary
-                            }
+				$($("#course-change-user")).html(gettext("마지막 고침 : ")+resObj.summary.written_datetime + " " + resObj.summary.writer + " ");
+			    }
                         }
                         catch(e) {
                             Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+e.message+')');
                                 }
-				}, this),
+			    }, this),
 		    error: function(xhr) {
 			if (suppress_ajax_errors)
                             return;
@@ -539,7 +539,8 @@ var DictionaryCommentList = {
                     success: $.proxy(function(resObj) {
                         try {
                             if (resObj.result=='OK') {
-                                Data.lecturesummary = resObj.summary
+				 $($("#lecture-change-user")).html(gettext("마지막 고침 : ")+resObj.summary.written_datetime + " " + resObj.summary.writer + " ");
+
                             }
                         }
                         catch(e) {
@@ -827,6 +828,7 @@ var DictionaryCommentList = {
 		left_div.appendTo(top_div);
 		right_div.appendTo(top_div);
 		var bottom_div = $('<div>', {'id': 'course-summary-bottom'});
+		var bottom_img = $('<div>', {'id': 'course-bottom-img'});
 		var add_img = $('<img>', {'src': 'http://bit.sparcs.org/~seal/OTL_project/%ea%b3%a0%ec%b9%a8%eb%b2%84%ed%8a%bc.gif', 'id': 'course-summary-add-img'});
 		var complete_img = $('<img>', {'src': 'http://bit.sparcs.org/~seal/OTL_project/%ea%b3%a0%ec%b9%a8%eb%b2%84%ed%8a%bc.gif', 'id': 'course-summary-complete-img'});
 		if(general_summary==null)
@@ -834,9 +836,10 @@ var DictionaryCommentList = {
 		else
 			var bottom_text = $('<div>', {'id': 'course-change-user'}).html(gettext("마지막 고침 : ") + general_summary.written_datetime + " " + general_summary.writer + " ");
 
-		add_img.appendTo(bottom_text);
-		complete_img.appendTo(bottom_text);
 		bottom_text.appendTo(bottom_div);
+		add_img.appendTo(bottom_img);
+		complete_img.appendTo(bottom_img);
+		bottom_img.appendTo(bottom_div);
 		add_img.bind('click', $.proxy(this.showSummary, this));
 		complete_img.bind('click', $.proxy(this.addSummary, this));
 
@@ -911,22 +914,25 @@ var DictionaryCommentList = {
 		right_div_lec_eval.appendTo(right_right_div);
 	
 		$('<div>', {'id': 'lecture-lec-eval-rating'}).text(gettext("3.3")).appendTo(right_right_div);
-		$('<div>', {'id': 'lecture-lec-eval-count'}).text(gettext("평가자 수 : ") +gettext("1")+gettext("명")).appendTo(right_right_div); 
+		$('<div>', {'id': 'lecture-lec-eval-count'}).text(gettext("평가자 수 : ") +gettext("1")+gettext("명")).appendTo(right_right_div);
 		
 		left_div.appendTo(top_div);
 		right_div.appendTo(top_div);
 		right_right_div.appendTo(top_div);
+
 		var bottom_div = $('<div>', {'id': 'lecture-summary-bottom'});
+		var bottom_img = $('<div>', {'id': 'lecture-bottom-img'});
 		var add_img = $('<img>', {'src': 'http://bit.sparcs.org/~seal/OTL_project/%ea%b3%a0%ec%b9%a8%eb%b2%84%ed%8a%bc.gif', 'id': 'lecture-summary-add-img'});
 		var complete_img = $('<img>', {'src': 'http://bit.sparcs.org/~seal/OTL_project/%ea%b3%a0%ec%b9%a8%eb%b2%84%ed%8a%bc.gif', 'id': 'lecture-summary-complete-img'});
 		if(obj.summary==null)
 			var bottom_text = $('<div>', {'id': 'lecture-change-user'}).html("");
 		else
 			var bottom_text = $('<div>', {'id': 'lecture-change-user'}).html(gettext("마지막 고침 : ") + obj.summary.written_datetime + " " + obj.summary.writer + " ");
-		
-		add_img.appendTo(bottom_text);
-		complete_img.appendTo(bottom_text);
+
 		bottom_text.appendTo(bottom_div);
+		add_img.appendTo(bottom_img);
+		complete_img.appendTo(bottom_img);
+		bottom_img.appendTo(bottom_div);
 		add_img.bind('click', $.proxy(this.showLectureSummary, this));
 		complete_img.bind('click', $.proxy(this.addLectureSummary, this));
 
