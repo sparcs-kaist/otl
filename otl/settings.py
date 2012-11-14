@@ -181,7 +181,7 @@ PORTAL_SSO_WSDL_ADDRESS = 'https://ksso.kaist.ac.kr/kstsso/services/simpleAuthSr
 
 COMMENT_NUM = 10
 HSS_DEPARTMENT_ID = 2044
-INTERESTING_COURSE_NUM = 10
+INTERESTING_COURSE_NUM = 5
 
 try:
     from otl.settings_local import *

@@ -177,7 +177,7 @@
     margin-top : 15px;
     background:#ECF1F9;
     padding-top:20px;
-    padding-left:6px;
+    padding-left:15px;
 }
 #recent-comments
 {
@@ -379,12 +379,12 @@
 }
 #prof-recent-comments
 {
-	margin-top : 20px;
-        float:left;
+    margin-top : 20px;
+    float:left;
 }
 .recommend_subject
 {
-    margin-left:24px;
+    margin-left:15px;
     float:left;
     display:inline;
     text-align:center;
@@ -392,6 +392,10 @@
 .recommend_subject_profname
 {
     text-align:center;
+}
+.recommend_subject_title
+{
+    width:85px;
 }
 .timeline_comment 
 {
@@ -456,7 +460,7 @@
 }
 .content_prof_photo
 {
-    width:66px;
+    width:65px;
     margin:0px;
 }
 .content_prof_photo img
