@@ -1071,6 +1071,7 @@ def _get_courses_sorted(courses):
         lecture = Lecture.objects.filter(course=course).order_by('-year', '-semester')[0]
         num_people = lecture.num_people
         professor_name = lecture.professor.all()[0].professor_name
+        professor_id = lecture.professor.all()[0].professor_id
 
         interesting_score = average_sum * num_people
 
@@ -1079,6 +1080,7 @@ def _get_courses_sorted(courses):
              'interesting_score': interesting_score,
              'course_title':course.title,
              'professor_name':professor_name,
+             'professor_id':professor_id,
              }
         all.append(item)
 

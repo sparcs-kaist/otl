@@ -1545,9 +1545,15 @@ var RecommendController = {
 		$.each(obj, function(index,item) {
 			var div_recommend = $('<div>',{'class':'recommend_subject'});
 			var div_recommend_a = $('<a>',{'href':'/dictionary/view/'+item.course_code});
-			var div_recommend_image = $('<img>',{'src':'http://cais.kaist.ac.kr/static_files/photo/1990/285.jpg','class':'content_prof_photo'});
+			var div_recommend_image = $('<img>',{'src':'http://cais.kaist.ac.kr/static_files/photo/1990/'+item.professor_id+'.jpg','class':'content_prof_photo'});
 			var div_recommend_subject_code = $('<div>',{'class':'recommend_subject_code'}).text(item.course_code);
 			var div_recommend_subject_title = $('<div>',{'class':'recommend_subject_title'}).text(item.course_title);
+			var course_title = ''
+			if (item.course_title.length > 14)
+				course_title = item.course_title.substring(0,14) + "..";
+			else 
+				course_title = item.course_title;
+			var div_recommend_subject_title = $('<div>',{'class':'recommend_subject_title'}).text(course_title);
 			var div_recommend_profname = $('<div>',{'class':'recommend_subject_profname'}).text(item.professor_name);
 			div_recommend_a.appendTo(div_recommend);
 			div_recommend_image.appendTo(div_recommend_a);
