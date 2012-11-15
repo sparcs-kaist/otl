@@ -34,6 +34,13 @@ $(document).ready(function () {
 		<div id="course-summary">
 		</div>
 	</div>
+	<div id="Notifier">
+            <div class="left" id="message-wrap">
+                <div class="bl"><div class="br">
+                        <div id="message">{% trans "안녕하세요. 이 서비스는 <strong>SPARCS</strong>에서 제공하고 있습니다." %}</div>
+                </div></div>
+	    </div>
+	</div>
 	<div id="course-comment">
 		{% if user.is_authenticated %}
 		<div class="dictionary-title">
@@ -98,12 +105,6 @@ $(document).ready(function () {
 			<div id="course-comment-view-title">최근 코멘트</div>
 		</div>
 		<div id="course-comment-view">
-		</div>
-	</div>
-	<div id="Notifier">
-		<div id="indicator"></div>
-		<div id="message-wrap">
-			<div id="message"></div>
 		</div>
 	</div>
 </div>
