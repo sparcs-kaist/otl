@@ -1012,7 +1012,8 @@ var DictionaryCommentList = {
 					}
 					else if(resObj.result=="GEN_EMPTY")
 					{
-				            this.addToGeneralSummary(null);
+					    resObj.summary=null;	
+				            this.addToGeneralSummary(resObj);
 					}
 					else if(resObj.result=="PROF")
 					{
