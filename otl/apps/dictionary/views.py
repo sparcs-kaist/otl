@@ -91,7 +91,7 @@ def search(request):
         q = {}
         for key, value in request.GET.iteritems():
             q[str(key)] = value
-        output = _search(**q)
+	output = _search(**q)
         lang = request.session.get('django_language','ko') 
         
         courses = _courses_to_output(output['courses'],False,lang)
@@ -356,7 +356,6 @@ def add_comment(request):
         new_comment.save()
 	
 	lectures = Lecture.objects.filter(course=course, professor=professor).order_by('class_no')
-	q=Q()
 	if status == -1:
 	    q = Q(course=course)
         else:
@@ -764,7 +763,6 @@ def _search(**conditions):
     lang = conditions.get('lang', 'ko')
     keyword = conditions.get('keyword', None)
     output = None
-
     if department != None and type != None and keyword != None:
         keyword = keyword.strip()
         courses= _search_by_dt(department, type) 
@@ -782,7 +780,8 @@ def _search(**conditions):
                 elif lang=='en':
                     courses= courses.filter(Q(old_code__icontains=word) | Q(title_en__icontains=word) | Q(professors__professor_name_en__icontains=word)).distinct()
                     professors= professors.filter(professor_name_en__icontains=word)
-        output = {'courses':courses, 'professors':professors}
+	courses = courses.order_by('type','old_code').select_related()
+	output = {'courses':courses, 'professors':professors}
     else:
         raise ValidationError()
 
