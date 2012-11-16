@@ -74,7 +74,7 @@
 			"department": 2044, 
 			"type": "\uad50\uc591\uc120\ud0dd", 
 			"num_classes": 3, 
-			"course": 2
+			"course": 3
 		}
 	}, 
  	{
@@ -87,7 +87,7 @@
 			"class_no": "E", 
 			"title": "\uc77c\ubc18\ubb3c\ub9ac\ud559I", 
 			"type_en": "Basic Required", 
-			"professor": [1], 
+			"professor": [2], 
 			"num_labs": 2, 
 			"title_en": "General Physics I", 
 			"audience": 0, 
@@ -100,7 +100,7 @@
 			"department": 110, 
 			"type": "\uae30\ucd08\ud544\uc218", 
 			"num_classes": 3, 
-			"course": 3
+			"course": 4
 		}
 	},
  	{
@@ -113,7 +113,7 @@
 			"class_no": "", 
 			"title": "CEO \uc138\ubbf8\ub098", 
 			"type_en": "Major Elective", 
-			"professor": [1], 
+			"professor": [3], 
 			"num_labs": 0, 
 			"title_en": "CEO Seminar", 
 			"audience": 7, 
@@ -126,7 +126,7 @@
 			"department": 3540, 
 			"type": "\uc790\uc720\uc120\ud0dd", 
 			"num_classes": 1, 
-			"course": 4
+			"course": 5
 		}
 	}, 
  	{
@@ -152,7 +152,7 @@
 			"department": 3540, 
 			"type": "\uc790\uc720\uc120\ud0dd", 
 			"num_classes": 1, 
-			"course": 4
+			"course": 5
 		}
 	}, 
  	{
@@ -178,7 +178,7 @@
 			"department": 3540, 
 			"type": "\uc790\uc720\uc120\ud0dd", 
 			"num_classes": 1, 
-			"course": 4
+			"course": 5
 		}
 	}, 
 	{

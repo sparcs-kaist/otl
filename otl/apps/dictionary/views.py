@@ -584,7 +584,6 @@ def get_year_list(request):
         'result': result,
         'professor': _professors_to_output(professor,False,lang)}))
 
-@login_required
 def get_summary_and_semester(request):
     summary_output = None
     average = {'avg_score':0, 'avg_gain':0, 'avg_load':0}
@@ -595,7 +594,7 @@ def get_summary_and_semester(request):
         prof_id = int(request.POST.get('professor_id',-1))
         course_id = int(request.POST.get('course_id',-1))
         course = Course.objects.get(id=course_id)
-        if prof_id == -1:       # General
+	if prof_id == -1:       # General
             summary = Summary.objects.filter(course=course).order_by('-id')
             semester = Lecture.objects.filter(course=course).order_by('-year','-semester').values('year', 'semester').distinct()
 	    comments = Comment.objects.filter(course=course)
@@ -609,8 +608,8 @@ def get_summary_and_semester(request):
             else:
                 result = 'GEN_EMPTY'
         else:
-            professor = Professor.objects.get(professor_id=prof_id)
-            semester = Lecture.objects.filter(course=course,professor=professor).order_by('-year','-semester').values('year', 'semester').distinct()
+	    professor = Professor.objects.get(professor_id=prof_id)
+	    semester = Lecture.objects.filter(course=course,professor=professor).order_by('-year','-semester').values('year', 'semester').distinct()
 	    professor_name = professor.professor_name
 	    lectures = Lecture.objects.filter(professor=professor, course=course).order_by('-id')
 	    lecture = lectures[0]
