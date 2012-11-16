@@ -512,8 +512,8 @@ var DictionaryCommentList = {
 			}
 		    }
 		});
-		var output_explain = new_explain_content.replace(/\n/g,'<br />');
-		var output_require = new_require_content.replace(/\n/g,'<br />');
+		var output_explain = new_explain_content.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/ /g,'&nbsp;').replace(/\n/g,'<br />');
+		var output_require = new_require_content.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/ /g,'&nbsp;').replace(/\n/g,'<br />');
 		$("#course-require").html(output_require);
 		$("#course-explain").html(output_explain);
 		$('#course-explain-add').hide();
@@ -558,9 +558,9 @@ var DictionaryCommentList = {
 			}
 		    }
 		});
-		var output_homepage = new_homepage_content.replace(/\n/g,'<br />');
-		var output_mainbook = new_mainbook_content.replace(/\n/g,'<br />');
-		var output_subbook = new_subbook_content.replace(/\n/g,'<br />');
+		var output_homepage = new_homepage_content.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/ /g,'&nbsp;').replace(/\n/g,'<br />');
+		var output_mainbook = new_mainbook_content.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/ /g,'&nbsp;').replace(/\n/g,'<br />');
+		var output_subbook = new_subbook_content.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/ /g,'&nbsp;').replace(/\n/g,'<br />');
 
 		$('#lecture-homepage-html').html(output_homepage);
 		$('#lecture-mainbook-html').html(output_mainbook);
@@ -694,7 +694,7 @@ var DictionaryCommentList = {
 		$.each(obj, function(index, item) {
 			var enableDelete = (item.writer_id == Data.user_id);
 			var comment = $('<div>', {'class': 'dictionary_comment'});
-			var comment_output = item.comment.replace(/\n/g,'<br />');
+			var comment_output = item.comment.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/ /g,'&nbsp;').replace(/\n/g,'<br />');
 			comment.appendTo(DictionaryCommentList.comments);
 
 			var left_div_comment = $('<div>', {'class': 'dictionary_comment_left'});
@@ -719,7 +719,7 @@ var DictionaryCommentList = {
 
 			var right_mid_div = $('<div>', {'class': 'dictionary_comment_right_mid'});
 			right_mid_div.appendTo(right_div_comment);
-			$('<div>', {'class': 'dictionary_comment_content'}).html(comment_output).appendTo(right_mid_div);
+			$('<div>', {'class': 'dictionary_comment_content'}).html('<p>' + comment_output + '</p>').appendTo(right_mid_div);
 
 			var right_bot_div = $('<div>',{'class':'dictionary_comment_right_bot'});
 			right_bot_div.appendTo(right_div_comment);
@@ -800,8 +800,8 @@ var DictionaryCommentList = {
 			var output_require = "";
 		}
 		else{
-			var output_explain = general_summary.summary.replace(/\n/g,'<br />');
-			var output_require = general_summary.prerequisite.replace(/\n/g,'<br />');
+			var output_explain = general_summary.summary.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/ /g,'&nbsp;').replace(/\n/g,'<br />');
+			var output_require = general_summary.prerequisite.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/ /g,'&nbsp;').replace(/\n/g,'<br />');
 		}
 
 		$('<div>', {'id': 'course-subject'}).text(Data.Course.title).appendTo(left_div);
@@ -860,9 +860,9 @@ var DictionaryCommentList = {
 			var output_subbook = "";
 		}
 		else{
-			var output_homepage = obj.summary.homepage.replace(/\n/g,'<br />');
-			var output_mainbook = obj.summary.main_material.replace(/\n/g,'<br />');
-			var output_subbook = obj.summary.sub_material.replace(/\n/g,'<br />');
+			var output_homepage = obj.summary.homepage.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/ /g,'&nbsp;').replace(/\n/g,'<br />');
+			var output_mainbook = obj.summary.main_material.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/ /g,'&nbsp;').replace(/\n/g,'<br />');
+			var output_subbook = obj.summary.sub_material.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/ /g,'&nbsp;').replace(/\n/g,'<br />');
 		}
 		$('<div>', {'id': 'lecture-subject'}).text(Data.Course.title).appendTo(left_div);
 		$('<hr>', {'id': 'lecture-line'}).appendTo(left_div);
@@ -1047,7 +1047,7 @@ var DictionaryCommentList = {
 	    $.each(obj, function(index, item) {
 			var enableDelete = (item.writer_id == Data.user_id);
 			var comment = $('<div>', {'class': 'dictionary_comment'});
-			var comment_output = item.comment.replace(/\n/g,'<br />');
+			var comment_output = item.comment.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/ /g,'&nbsp;').replace(/\n/g,'<br />');
 			comment.prependTo(DictionaryCommentList.comments);
 
 			var left_div_comment = $('<div>', {'class': 'dictionary_comment_left'});
@@ -1181,7 +1181,7 @@ var IndexCommentList = {
 			right_mid_div.appendTo(right_div_comment);
 			right_mid_div_comment.appendTo(right_mid_div);
 
-			var comment_output = item.comment.replace(/\n/g,'<br/>');
+			var comment_output = item.comment.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/ /g,'&nbsp;').replace(/\n/g,'<br/>');
 
 			$('<a>', {'class': 'content_subject','href':'view/'+item.course_code+"/"}).text(item.course_title).appendTo(right_top_div_title);
 			$('<div>', {'class': 'content_comment'}).html(comment_output).appendTo(right_mid_div_comment);
@@ -1382,7 +1382,7 @@ var ProfessorCommentList = {
                         mid_div.appendTo(div_comment);
                         mid_div_comment.appendTo(mid_div);
 
-                        var comment_output = item.comment.replace(/\n/g,'<br/>');
+                        var comment_output = item.comment.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/ /g,'&nbsp;').replace(/\n/g,'<br/>');
 
                         $('<a>', {'class' : 'content_subject'}).text("<"+item.year+" "+(item.semester==1?"봄":"가을")+"학기> ").appendTo(top_div_title);
                         $('<a>', {'class' : 'content_subject', 'href':'/dictionary/view/'+item.course_code+"/"}).text(item.course_title).appendTo(top_div_title);
