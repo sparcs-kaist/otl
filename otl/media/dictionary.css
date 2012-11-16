@@ -793,6 +793,9 @@
         font-family:돋움;
         height:30px;
         text-align:left;
+	text-overflow:ellipsis;
+	overflow:hidden;
+	white-space:nowrap;
 }
 #course-line
 {
@@ -1012,6 +1015,9 @@
       font-family:돋움;
       height:30px;
       text-align:left;
+      text-overflow:ellipsis;
+      overflow:hidden;
+      white-space:nowrap;
 }
 #lecture-line
 {
