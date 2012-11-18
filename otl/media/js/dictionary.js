@@ -38,6 +38,13 @@ function roundD(n, digits) {
 	return parseFloat(t.toFixed(0));
 }
 
+var img_existance = function(img){
+	img.error(function(){
+		$(this).attr('src','http://bit.sparcs.org/~seal/OTL_project/nophoto.jpg');
+	});
+}
+
+
 var NUM_ITEMS_PER_LIST = 15;
 var NUM_ITEMS_PER_DICT_COMMENT = 10;
 var NUM_ITEMS_PER_INDEX_COMMENT = 15;
@@ -702,8 +709,9 @@ var DictionaryCommentList = {
 			var right_div_comment = $('<div>', {'class': 'dictionary_comment_right'});
 			left_div_comment.appendTo(comment);
 			right_div_comment.appendTo(comment);
-
-			$('<img>', {'class': 'dictionary_comment_prof_photo', 'src':'http://cais.kaist.ac.kr/static_files/photo/1990/'+item.professor[0].professor_id+'.jpg'}).appendTo(left_div_comment);
+			var prof_img = $('<img>', {'class': 'dictionary_comment_prof_photo', 'src':'http://cais.kaist.ac.kr/static_files/photo/1990/'+item.professor[0].professor_id+'.jpg'});
+			img_existance(prof_img);
+			prof_img.appendTo(left_div_comment);
 
 			var right_top_div = $('<div>', {'class': 'dictionary_comment_right_top'});
 			var right_top_div_eval = $('<div>',{'class':'dictionary_comment_right_top_eval'});
@@ -871,6 +879,7 @@ var DictionaryCommentList = {
 		
 		var left_left_div = $('<div>', {'id': 'lecture-prof-photo'});
 		var prof_img = $('<img>', {'id': 'lecture-prof-img', 'src':'http://cais.kaist.ac.kr/static_files/photo/1990/'+Data.current_professor_id+'.jpg'});
+		img_existance(prof_img);
 		prof_img.appendTo(left_left_div);
 
 		left_left_div.appendTo(left_div);
@@ -1060,8 +1069,9 @@ var DictionaryCommentList = {
 			var right_div_comment = $('<div>', {'class': 'dictionary_comment_right'});
 			left_div_comment.appendTo(comment);
 			right_div_comment.appendTo(comment);
-
-			$('<img>', {'class': 'dictionary_comment_prof_photo', 'src':'http://cais.kaist.ac.kr/static_files/photo/1990/'+item.professor[0].professor_id+'.jpg'}).appendTo(left_div_comment);
+			var prof_img=$('<img>', {'class': 'dictionary_comment_prof_photo', 'src':'http://cais.kaist.ac.kr/static_files/photo/1990/'+item.professor[0].professor_id+'.jpg'});
+			img_existance(prof_img);
+			prof_img.appendTo(left_div_comment);
 
 			var right_top_div = $('<div>', {'class': 'dictionary_comment_right_top'});
 			var right_top_div_eval = $('<div>',{'class':'dictionary_comment_right_top_eval'});
@@ -1170,8 +1180,9 @@ var IndexCommentList = {
 
 			left_div_comment.appendTo(div_comment);
 			right_div_comment.appendTo(div_comment);
-
-			$('<img>', {'class': 'content_prof_photo', 'src':'http://cais.kaist.ac.kr/static_files/photo/1990/'+item.professor[0].professor_id+'.jpg'}).appendTo(left_div_comment);
+			var prof_img=$('<img>', {'class': 'content_prof_photo', 'src':'http://cais.kaist.ac.kr/static_files/photo/1990/'+item.professor[0].professor_id+'.jpg'});
+			img_existance(prof_img);
+			prof_img.appendTo(left_div_comment);
 			$('<div>', {'class': 'content_prof_name'}).text(item.professor[0].professor_name).appendTo(left_div_comment);
 			var right_top_div = $('<div>', {'class': 'timeline_comment_right_top'});
 			var right_top_div_title = $('<div>',{'class':'timeline_comment_right_top_title'});
@@ -1211,7 +1222,6 @@ var IndexCommentList = {
 	}
 };
 
-
 var ProfessorCommentList = {
 	initialize:function()
 	{
@@ -1240,7 +1250,9 @@ var ProfessorCommentList = {
 		bottom_div.appendTo(this.profInfo);
 
 		var top_left_div = $('<div>', {'id': 'professor-info-left'});
-		var prof_img = $('<img>', {'src':'http://cais.kaist.ac.kr/static_files/photo/1990/'+Data.Professor[0].professor_id+'.jpg'}).appendTo(top_left_div);
+		var prof_img = $('<img>', {'src':'http://cais.kaist.ac.kr/static_files/photo/1990/'+Data.Professor[0].professor_id+'.jpg'});
+		img_existance(prof_img);
+		prof_img.appendTo(top_left_div);
 		top_left_div.appendTo(top_div);
 		var top_right_div = $('<div>', {'id': 'professor-info-right'});
 		top_right_div.appendTo(top_div);
@@ -1560,6 +1572,7 @@ var RecommendController = {
 			var div_recommend = $('<div>',{'class':'recommend_subject'});
 			var div_recommend_a = $('<a>',{'href':'/dictionary/view/'+item.course_code});
 			var div_recommend_image = $('<img>',{'src':'http://cais.kaist.ac.kr/static_files/photo/1990/'+item.professor_id+'.jpg','class':'content_prof_photo'});
+			img_existance(div_recommend_image);
 			var div_recommend_subject_code = $('<div>',{'class':'recommend_subject_code'}).text(item.course_code);
 			var div_recommend_subject_title = $('<div>',{'class':'recommend_subject_title'}).text(item.course_title);
 			var course_title = ''
