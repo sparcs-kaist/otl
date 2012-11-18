@@ -404,6 +404,7 @@ var DictionaryCommentList = {
 		this.onLoad();
 		this.registerHandles();
                 this.loading=true;
+				this.last_index=-1;
 	},
 	onLoad:function()
 	{
@@ -748,6 +749,7 @@ var DictionaryCommentList = {
 		$.each(obj, function(index, item) {
 			var professor_tab = $('<div>', {'class': 'course-professor-tab'}).text(item.professor_name);
 			professor_tab.appendTo(professor_tabs);
+			item.index=index;
 
 			professor_tab.bind('click', $.proxyWithArgs(DictionaryCommentList.onChangeProfessor, DictionaryCommentList, item));
 		});
@@ -990,16 +992,20 @@ var DictionaryCommentList = {
 		this.clearComment();
 		this.clearSummary();
 		this.clearBox();
-		this.clearLectureSummary();
-		Data.comment_id = -1;
+		this.clearLectureSummary()
+		Data.comment_id = -1;		
+		$($('.course-professor-tab')[this.last_index+1]).css({"color":"#555555","border-color":"#EEEEEE","background-color":"#FFFFFF"});
 		if(obj==null) {
+			this.last_index=-1;
 			Data.current_professor_id = -1;
 			$('#course-comment-add-professor').show();
 		}
 		else {
+			this.last_index=obj.index;
 			Data.current_professor_id = obj.professor_id;
 			$('#course-comment-add-professor').hide();
 		}
+		$($('.course-professor-tab')[this.last_index+1]).css({"color":"#FFFFFF","border-color":"#C3D9FF","background-color":"#C3D9FF"});
 		$.ajax({
 			type: 'POST',
 			url: '/dictionary/get_summary_and_semester/',

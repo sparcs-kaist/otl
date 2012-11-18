@@ -572,7 +572,7 @@ def get_year_list(request):
             q = Q()
             for lecture in lectures:
                 q |= Q(lecture_professor=lecture)
-            professor = Professor.objects.filter(q)
+            professor = Professor.objects.filter(q).distinct()
         else:
             professor = []
         result = 'OK'
