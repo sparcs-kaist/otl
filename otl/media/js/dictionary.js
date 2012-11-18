@@ -494,7 +494,7 @@ var DictionaryCommentList = {
                     success: $.proxy(function(resObj) {
                         try {
                             if (resObj.result=='OK') {
-				$($("#course-change-user")).html(gettext("마지막 고침 : ")+resObj.summary.written_datetime + " " + resObj.summary.writer + " ");
+				$($("#course-change-user")).text(gettext("마지막 고침 : ")+resObj.summary.written_datetime + " " + resObj.summary.writer + " ");
 			    }
                         }
                         catch(e) {
@@ -512,10 +512,10 @@ var DictionaryCommentList = {
 			}
 		    }
 		});
-		var output_explain = new_explain_content.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/ /g,'&nbsp;').replace(/\n/g,'<br />');
-		var output_require = new_require_content.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/ /g,'&nbsp;').replace(/\n/g,'<br />');
-		$("#course-require").html(output_require);
-		$("#course-explain").html(output_explain);
+		var output_explain = new_explain_content
+		var output_require = new_require_content;
+		$("#course-require").text(output_require);
+		$("#course-explain").text(output_explain);
 		$('#course-explain-add').hide();
 		$('#course-require-add').hide();
 		$('#course-summary-complete-img').hide();
@@ -539,7 +539,7 @@ var DictionaryCommentList = {
                     success: $.proxy(function(resObj) {
                         try {
                             if (resObj.result=='OK') {
-				 $($("#lecture-change-user")).html(gettext("마지막 고침 : ")+resObj.summary.written_datetime + " " + resObj.summary.writer + " ");
+				 $($("#lecture-change-user")).text(gettext("마지막 고침 : ")+resObj.summary.written_datetime + " " + resObj.summary.writer + " ");
 
                             }
                         }
@@ -558,13 +558,13 @@ var DictionaryCommentList = {
 			}
 		    }
 		});
-		var output_homepage = new_homepage_content.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/ /g,'&nbsp;').replace(/\n/g,'<br />');
-		var output_mainbook = new_mainbook_content.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/ /g,'&nbsp;').replace(/\n/g,'<br />');
-		var output_subbook = new_subbook_content.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/ /g,'&nbsp;').replace(/\n/g,'<br />');
+		var output_homepage = new_homepage_content
+		var output_mainbook = new_mainbook_content
+		var output_subbook = new_subbook_content
 
-		$('#lecture-homepage-html').html(output_homepage);
-		$('#lecture-mainbook-html').html(output_mainbook);
-		$('#lecture-subbook-html').html(output_subbook);
+		$('#lecture-homepage-html').text(output_homepage);
+		$('#lecture-mainbook-html').text(output_mainbook);
+		$('#lecture-subbook-html').text(output_subbook);
 		$('#lecture-homepage-add').hide();
 		$('#lecture-mainbook-add').hide();
 		$('#lecture-subbook-add').hide();
@@ -694,7 +694,7 @@ var DictionaryCommentList = {
 		$.each(obj, function(index, item) {
 			var enableDelete = (item.writer_id == Data.user_id);
 			var comment = $('<div>', {'class': 'dictionary_comment'});
-			var comment_output = item.comment.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/ /g,'&nbsp;').replace(/\n/g,'<br />');
+			var comment_output = item.comment
 			comment.appendTo(DictionaryCommentList.comments);
 
 			var left_div_comment = $('<div>', {'class': 'dictionary_comment_left'});
@@ -719,7 +719,7 @@ var DictionaryCommentList = {
 
 			var right_mid_div = $('<div>', {'class': 'dictionary_comment_right_mid'});
 			right_mid_div.appendTo(right_div_comment);
-			$('<div>', {'class': 'dictionary_comment_content'}).html('<p>' + comment_output + '</p>').appendTo(right_mid_div);
+			$('<pre>', {'class': 'dictionary_comment_content'}).text(comment_output).appendTo(right_mid_div);
 
 			var right_bot_div = $('<div>',{'class':'dictionary_comment_right_bot'});
 			right_bot_div.appendTo(right_div_comment);
@@ -800,17 +800,17 @@ var DictionaryCommentList = {
 			var output_require = "";
 		}
 		else{
-			var output_explain = general_summary.summary.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/ /g,'&nbsp;').replace(/\n/g,'<br />');
-			var output_require = general_summary.prerequisite.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/ /g,'&nbsp;').replace(/\n/g,'<br />');
+			var output_explain = general_summary.summary;
+			var output_require = general_summary.prerequisite;
 		}
 
 		$('<div>', {'id': 'course-subject'}).text(Data.Course.title).appendTo(left_div);
 		$('<hr>',{'id': 'course-line'}).appendTo(left_div);
 		$('<div>', {'id': 'course-explain-title'}).text(gettext("과목 설명")).appendTo(left_div);
-		$('<div>', {'id': 'course-explain'}).html(output_explain).appendTo(left_div);
+		$('<pre>', {'id': 'course-explain'}).text(output_explain).appendTo(left_div);
 		$('<textarea>', {'id': 'course-explain-add'}).text(output_explain).appendTo(left_div);
 		$('<div>', {'id': 'course-require-title'}).text(gettext("선수 과목")).appendTo(left_div);
-		$('<div>', {'id': 'course-require'}).html(output_require).appendTo(left_div);
+		$('<pre>', {'id': 'course-require'}).text(output_require).appendTo(left_div);
 		$('<textarea>', {'id': 'course-require-add'}).text(output_require).appendTo(left_div);
 
 		var right_div = $('<div>', {'id': 'course-score'});
@@ -832,9 +832,9 @@ var DictionaryCommentList = {
 		var add_img = $('<img>', {'src': 'http://bit.sparcs.org/~seal/OTL_project/%ea%b3%a0%ec%b9%a8%eb%b2%84%ed%8a%bc.gif', 'id': 'course-summary-add-img'});
 		var complete_img = $('<img>', {'src': 'http://bit.sparcs.org/~seal/OTL_project/%ea%b3%a0%ec%b9%a8%eb%b2%84%ed%8a%bc.gif', 'id': 'course-summary-complete-img'});
 		if(general_summary==null)
-			var bottom_text = $('<div>', {'id': 'course-change-user'}).html("");
+			var bottom_text = $('<div>', {'id': 'course-change-user'}).text("");
 		else
-			var bottom_text = $('<div>', {'id': 'course-change-user'}).html(gettext("마지막 고침 : ") + general_summary.written_datetime + " " + general_summary.writer + " ");
+			var bottom_text = $('<div>', {'id': 'course-change-user'}).text(gettext("마지막 고침 : ") + general_summary.written_datetime + " " + general_summary.writer + " ");
 
 		bottom_text.appendTo(bottom_div);
 		add_img.appendTo(bottom_img);
@@ -860,9 +860,9 @@ var DictionaryCommentList = {
 			var output_subbook = "";
 		}
 		else{
-			var output_homepage = obj.summary.homepage.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/ /g,'&nbsp;').replace(/\n/g,'<br />');
-			var output_mainbook = obj.summary.main_material.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/ /g,'&nbsp;').replace(/\n/g,'<br />');
-			var output_subbook = obj.summary.sub_material.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/ /g,'&nbsp;').replace(/\n/g,'<br />');
+			var output_homepage = obj.summary.homepage
+			var output_mainbook = obj.summary.main_material
+			var output_subbook = obj.summary.sub_material
 		}
 		$('<div>', {'id': 'lecture-subject'}).text(Data.Course.title).appendTo(left_div);
 		$('<hr>', {'id': 'lecture-line'}).appendTo(left_div);
@@ -876,19 +876,19 @@ var DictionaryCommentList = {
 
 		var lec_homepage = $('<div>', {'id': 'lecture-homepage'});
 		$('<div>', {'id': 'lecture-homepage-title'}).text(gettext("과목 홈페이지")).appendTo(lec_homepage);
-		$('<div>', {'id': 'lecture-homepage-html'}).html(output_homepage).appendTo(lec_homepage);
+		$('<pre>', {'id': 'lecture-homepage-html'}).text(output_homepage).appendTo(lec_homepage);
 		$('<textarea>', {'id': 'lecture-homepage-add'}).text(output_homepage).appendTo(lec_homepage);	
 		lec_homepage.appendTo(left_div);
 		
 		var lec_mainbook = $('<div>', {'id': 'lecture-mainbook'});
 		$('<div>', {'id': 'lecture-mainbook-title'}).text(gettext("주교재")).appendTo(lec_mainbook);
-		$('<div>', {'id': 'lecture-mainbook-html'}).html(output_mainbook).appendTo(lec_mainbook);
+		$('<pre>', {'id': 'lecture-mainbook-html'}).text(output_mainbook).appendTo(lec_mainbook);
 		$('<textarea>', {'id': 'lecture-mainbook-add'}).text(output_mainbook).appendTo(lec_mainbook);
 		lec_mainbook.appendTo(left_div);
 
 		var lec_subbook = $('<div>', {'id': 'lecture-subbook'});
 		$('<div>', {'id': 'lecture-subbook-title'}).text(gettext("부교재")).appendTo(lec_subbook);
-		$('<div>', {'id': 'lecture-subbook-html'}).html(output_subbook).appendTo(lec_subbook);
+		$('<pre>', {'id': 'lecture-subbook-html'}).text(output_subbook).appendTo(lec_subbook);
 		$('<textarea>', {'id': 'lecture-subbook-add'}).text(output_subbook).appendTo(lec_subbook);
 		lec_subbook.appendTo(left_div);
 
@@ -925,9 +925,9 @@ var DictionaryCommentList = {
 		var add_img = $('<img>', {'src': 'http://bit.sparcs.org/~seal/OTL_project/%ea%b3%a0%ec%b9%a8%eb%b2%84%ed%8a%bc.gif', 'id': 'lecture-summary-add-img'});
 		var complete_img = $('<img>', {'src': 'http://bit.sparcs.org/~seal/OTL_project/%ea%b3%a0%ec%b9%a8%eb%b2%84%ed%8a%bc.gif', 'id': 'lecture-summary-complete-img'});
 		if(obj.summary==null)
-			var bottom_text = $('<div>', {'id': 'lecture-change-user'}).html("");
+			var bottom_text = $('<div>', {'id': 'lecture-change-user'}).text("");
 		else
-			var bottom_text = $('<div>', {'id': 'lecture-change-user'}).html(gettext("마지막 고침 : ") + obj.summary.written_datetime + " " + obj.summary.writer + " ");
+			var bottom_text = $('<div>', {'id': 'lecture-change-user'}).text(gettext("마지막 고침 : ") + obj.summary.written_datetime + " " + obj.summary.writer + " ");
 
 		bottom_text.appendTo(bottom_div);
 		add_img.appendTo(bottom_img);
@@ -1047,7 +1047,7 @@ var DictionaryCommentList = {
 	    $.each(obj, function(index, item) {
 			var enableDelete = (item.writer_id == Data.user_id);
 			var comment = $('<div>', {'class': 'dictionary_comment'});
-			var comment_output = item.comment.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/ /g,'&nbsp;').replace(/\n/g,'<br />');
+			var comment_output = item.comment
 			comment.prependTo(DictionaryCommentList.comments);
 
 			var left_div_comment = $('<div>', {'class': 'dictionary_comment_left'});
@@ -1072,7 +1072,7 @@ var DictionaryCommentList = {
 
 			var right_mid_div = $('<div>', {'class': 'dictionary_comment_right_mid'});
 			right_mid_div.appendTo(right_div_comment);
-			$('<div>', {'class': 'dictionary_comment_content'}).html(comment_output).appendTo(right_mid_div);
+			$('<pre>', {'class': 'dictionary_comment_content'}).text(comment_output).appendTo(right_mid_div);
 
 			var right_bot_div = $('<div>',{'class':'dictionary_comment_right_bot'});
 			right_bot_div.appendTo(right_div_comment);
@@ -1181,10 +1181,10 @@ var IndexCommentList = {
 			right_mid_div.appendTo(right_div_comment);
 			right_mid_div_comment.appendTo(right_mid_div);
 
-			var comment_output = item.comment.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/ /g,'&nbsp;').replace(/\n/g,'<br/>');
+			var comment_output = item.comment
 
 			$('<a>', {'class': 'content_subject','href':'view/'+item.course_code+"/"}).text(item.course_title).appendTo(right_top_div_title);
-			$('<div>', {'class': 'content_comment'}).html(comment_output).appendTo(right_mid_div_comment);
+			$('<pre>', {'class': 'content_comment'}).text(comment_output).appendTo(right_mid_div_comment);
 			$('<div>', {'class': 'a_spec'}).text('학점 :' + item.score).appendTo(right_top_div_spec);
 			$('<div>', {'class': 'a_spec'}).text('로드 :' + item.load).appendTo(right_top_div_spec);
 			$('<div>', {'class': 'a_spec'}).text('남는거 :' + item.gain).appendTo(right_top_div_spec);
@@ -1268,7 +1268,7 @@ var ProfessorCommentList = {
         	var bottom_text = $('<div>', {'id': 'prof-info-change-user'});
 
         	if ( Data.ProfInfo.written_datetime != '')
-		    bottom_text.html(gettext("마지막 고침 : ") + Data.ProfInfo.written_datetime+ " " + Data.ProfInfo.writer + " ");
+		    bottom_text.text(gettext("마지막 고침 : ") + Data.ProfInfo.written_datetime+ " " + Data.ProfInfo.writer + " ");
 
 		bottom_text.appendTo(bottom_div);
 		change_img.appendTo(bottom_img);
@@ -1389,11 +1389,11 @@ var ProfessorCommentList = {
                         mid_div.appendTo(div_comment);
                         mid_div_comment.appendTo(mid_div);
 
-                        var comment_output = item.comment.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/ /g,'&nbsp;').replace(/\n/g,'<br/>');
+                        var comment_output = item.comment
 
                         $('<a>', {'class' : 'content_subject'}).text("<"+item.year+" "+(item.semester==1?"봄":"가을")+"학기> ").appendTo(top_div_title);
                         $('<a>', {'class' : 'content_subject', 'href':'/dictionary/view/'+item.course_code+"/"}).text(item.course_title).appendTo(top_div_title);
-                        $('<div>', {'class': 'professor_content_comment'}).html(comment_output).appendTo(mid_div_comment);
+                        $('<pre>', {'class': 'professor_content_comment'}).text(comment_output).appendTo(mid_div_comment);
                         $('<div>', {'class': 'a_spec'}).text('학점' + item.score).appendTo(top_div_spec);
                         $('<div>', {'class': 'a_spec'}).text('로드' + item.load).appendTo(top_div_spec);
                         $('<div>', {'class': 'a_spec'}).text('남는거' + item.gain).appendTo(top_div_spec);
