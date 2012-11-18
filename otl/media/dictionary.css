@@ -233,6 +233,10 @@
 	width:92px;
 	height:115px;
 }
+#professor-info-left img
+{
+	max-width:92px;
+}
 #professor-info-right
 {
 	float:left;
@@ -257,7 +261,7 @@
 	height:20px;
 	line-height:20px;
 	font-weight:bold;
-    font-family:'돋움';
+  font-family:'돋움';
 	font-size:11px;
 }
 #professor-info-name
@@ -265,9 +269,9 @@
 	float:left;
 	line-height:20px;
 	text-align:left;
-	width:50px;
+	width:100px;
 	height:20px;
-    font-family:'돋움';
+	font-family:'돋움';
 	font-size:11px;
 }
 #professor-info-major-title
