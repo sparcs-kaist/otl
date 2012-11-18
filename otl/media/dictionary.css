@@ -218,12 +218,12 @@
 }
 #professor-info-bottom
 {
-	width:750px;
 	float:right;
 	font-size:11px;
 	line-height:15px;
 	text-align:right;
 	height:15px;
+	display: table;
 }
 #professor-info-left
 {
@@ -356,6 +356,26 @@
 	max-height:18px;
 	max-width:541px;
 	line-height:18px;
+}
+#prof-info-bottom-img
+{
+	margin-right:10px;
+	margin-left:5px;
+	float:left;
+}
+#prof-info-change-user
+{
+	font-family:돋움;
+	font-weight:bold;
+	font-size:10px;
+	line-height:10px;
+	height:10px;
+	float:left;
+}
+#prof-info-change-user img
+{
+	width:10px;
+	height:10px;
 }
 #Notifier
 {
