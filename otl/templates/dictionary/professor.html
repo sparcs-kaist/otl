@@ -36,7 +36,7 @@ $(document).ready(function () {
             </div>
 	    <div id="course-view">
                 {% for course in courses %}
-				<div class="course"> <a href="/dictionary/view/{{course.old_code}}/">{{ course.title }} </a> </div>
+				<li class="course"> <a href="/dictionary/view/{{course.old_code}}/">{{ course.title }} </a> </li>
                 {% endfor %}
             </div>
         </div>
