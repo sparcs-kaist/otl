@@ -1252,19 +1252,19 @@ var ProfessorCommentList = {
 
         	var prof_major_line = $('<div>', {'class': 'professor_info_line'});
 		$('<div>', {'id': 'professor-info-major-title'}).text(gettext("Major : " )).appendTo(prof_major_line);
-		$('<div>', {'id': 'professor-info-major'}).text(Data.ProfInfo.major).appendTo(prof_major_line);
+		$('<pre>', {'id': 'professor-info-major'}).text(Data.ProfInfo.major).appendTo(prof_major_line);
         	$('<textarea>', {'id': 'professor-info-major-change'}).text(Data.ProfInfo.major).appendTo(prof_major_line);
         	prof_major_line.appendTo(top_right_div);
 
         	var prof_email_line = $('<div>', {'class': 'professor_info_line'});
 		$('<div>', {'id': 'professor-info-email-title'}).text(gettext("E-mail : " )).appendTo(prof_email_line);
-		$('<div>', {'id': 'professor-info-email'}).text(Data.ProfInfo.email).appendTo(prof_email_line);
+		$('<pre>', {'id': 'professor-info-email'}).text(Data.ProfInfo.email).appendTo(prof_email_line);
         	$('<textarea>', {'id': 'professor-info-email-change'}).text(Data.ProfInfo.email).appendTo(prof_email_line);
         	prof_email_line.appendTo(top_right_div);
 
         	var prof_homepage_line = $('<div>', {'class': 'professor_info_line'});
 		$('<div>', {'id': 'professor-info-homepage-title'}).text(gettext("Homepage : " )).appendTo(prof_homepage_line);
-		$('<div>', {'id': 'professor-info-homepage'}).text(Data.ProfInfo.homepage).appendTo(prof_homepage_line);
+		$('<pre>', {'id': 'professor-info-homepage'}).text(Data.ProfInfo.homepage).appendTo(prof_homepage_line);
         	$('<textarea>', {'id': 'professor-info-homepage-change'}).text(Data.ProfInfo.homepage).appendTo(prof_homepage_line);
         	prof_homepage_line.appendTo(top_right_div);
 		var bottom_img = $('<div>', {'id': 'prof-info-bottom-img'});
