@@ -399,14 +399,14 @@ def delete_comment(request):
         comment = Comment.objects.get(pk=comment_id, writer=user)
         comment.delete()
 	course = comment.course
-        professor= Professor.objects.get(professor_id = prof_id)
-        lectures = Lecture.objects.filter(course=course, professor=professor).order_by('class_no')
         
 	result = 'DELETE'
         q=Q()
 	if prof_id == -1:
 	    q=Q(course=course)
 	else:
+            professor= Professor.objects.get(professor_id = prof_id)
+            lectures = Lecture.objects.filter(course=course, professor=professor).order_by('class_no')
 	    for lec in lectures:
 		q |= Q(lecture=lec)
 	    q &= Q(course=course)
