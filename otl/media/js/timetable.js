@@ -69,6 +69,23 @@ Mootabs.prototype.setData = function(index,data)
 Mootabs.prototype.updateData = function()
 	{
 		if (this.is_timetable) {
+			Data.MyLectures[this.activeKey].sort(function(x,y){if(x.examtime!=null&&y.examtime!=null)return x.examtime.start-y.examtime.start; else if(x.examtime!=null&&y.examtime==null) return 0; else return 9999;});
+			$('#examlist1').empty();
+			$('#examlist2').empty();
+			$('#examlist3').empty();
+			$('#examlist4').empty();
+			$('#examlist5').empty();
+			$.each(Data.MyLectures[this.activeKey], function(index,item) {
+	 	      		var t = item['examtime']; //examtime
+				if (t != null) {
+					var time = Utils.NumericTimeToReadable(t.start) + ' ~ ' + Utils.NumericTimeToReadable(t.end);
+					var name_and_time = item.title+'<br>'+time;
+					var code_and_class = item.code+item.class_no;
+					LAST_MOUSE_ON = code_and_class;
+					$('#examlist'+(t.day+1)).append('<li id="'+code_and_class+ '">'+name_and_time+'</li>');
+				}
+			});
+
 			$('#total_credit').text(Data.Timetables[this.activeKey].credit);
 			$('#total_au').text(Data.Timetables[this.activeKey].au);
 			$('total_credit').highlight('#FFFF00');
@@ -100,7 +117,6 @@ Mootabs.prototype.cleanTab = function(key)
 Mootabs.prototype.cleanActiveTab = function()
 	{
 		$(this.contents[this.activeKey]).empty();
-                $('#examtable ul li').remove();
 	};
 Mootabs.prototype.getActiveTab = function()
 	{
@@ -646,6 +662,7 @@ var Timetable = {
 		$.each(initData, function(index, item) {
 			var credit=0,au=0;
 			var wrap = Timetable.tabs.getTabByKey(index);
+			
 			var deleted_count = 0;
 			$.each(item, function(index, item) {
 				credit += item.credit;
@@ -660,7 +677,7 @@ var Timetable = {
 					Timetable.buildlmodules(wrap,item,bgcolor,true);
 				}
 				var t = item['examtime']; //examtime
-				if (t != null) {
+				if (t != null && wrap.id == 'timetable1') {
 					var time = Utils.NumericTimeToReadable(t.start) + ' ~ ' + Utils.NumericTimeToReadable(t.end);
 					var name_and_time = item.title+'<br>'+time;
 					var code_and_class = item.code+item.class_no;
@@ -708,9 +725,10 @@ var Timetable = {
 			{
 				try {
 					if (resObj.result=='OK') {
+						Data.MyLectures[table_id].push(obj);
 						Timetable.update(resObj);
 						this.overlap.stop(true,true).animate({'opacity':0}, 200, 'linear');
-						
+							
 
 						Notifier.setMsg('<strong>'+obj.title+'</strong> '+gettext('추가되었습니다.'));
 					} else {
@@ -787,6 +805,25 @@ var Timetable = {
 					try {
 						switch (resObj.result) {
 						case 'OK':
+							if(obj!=null)
+							{
+								var i = -1, j;
+								$.each(Data.MyLectures[table_id], function(index,item)
+								{
+									if(obj.code == item.code && obj.class_no == item.class_no)
+										i = index;
+								});
+								if(i!=-1)Data.MyLectures[table_id].splice(i,1);
+							}
+							else
+							{
+								Data.MyLectures[table_id].splice(0,Data.MyLectures[table_id].length);
+								$('#examlist1').empty();
+								$('#examlist2').empty();
+								$('#examlist3').empty();
+								$('#examlist4').empty();
+								$('#examlist5').empty();
+							}
 							Timetable.update(resObj);
 							Notifier.setMsg(successMsg);
 							break;
@@ -837,7 +874,7 @@ var Timetable = {
 	},
 	update:function(resObj)
 	{
-		var credit=0,au=0;
+		var credit=0,au=0;	
 		Timetable.tabs.cleanActiveTab();
 		$.each(resObj.data, function(index,item) {
 			credit += item.credit;
@@ -845,21 +882,13 @@ var Timetable = {
 			var bgcolor = Utils.getColorByIndex(index);
 			Data.CompRates[''+Data.ViewYear+Data.ViewTerm+item.course_no+item.class_no] = buildCompRate(item.num_people, item.limit);
 			Timetable.buildlmodules(Timetable.tabs.getActiveTab(), item, bgcolor, true);
-            var t = item['examtime']; //examtime
-			if (t != null) {
-				var time = Utils.NumericTimeToReadable(t.start) + ' ~ ' + Utils.NumericTimeToReadable(t.end);
-				var name_and_time = item.title+'<br>'+time;
-				var code_and_class = item.code+item.class_no;
-				LAST_MOUSE_ON = code_and_class;
-				$('#examlist'+(t.day+1)).append('<li id="'+code_and_class+ '">'+name_and_time+'</li>');
-			}
 		});
 		
 		Data.Timetables[Timetable.tabs.getTableId()] = {credit:credit,au:au};
 		Timetable.tabs.updateData();
 	},
 	updateTab:function(resObj, key)
-	{
+	{	
 		var credit=0,au=0;
 		Timetable.tabs.cleanTab(key);
 		$.each(resObj.data, function(index,item) {
