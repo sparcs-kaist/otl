@@ -47,7 +47,7 @@ var img_existance = function(img){
 
 var NUM_ITEMS_PER_LIST = 15;
 var NUM_ITEMS_PER_DICT_COMMENT = 10;
-var NUM_ITEMS_PER_INDEX_COMMENT = 15;
+var NUM_ITEMS_PER_INDEX_COMMENT = 5;
 var NUM_ITEMS_PER_PROF_COMMENT = 6;
 var NUMBER_OF_TABS = 3;
 var Data = {};
