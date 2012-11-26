@@ -469,17 +469,15 @@ def update_comment(request):
             q['fav_dept'].append(hss)
             for department in userprofile.favorite_departments.all():
                 q['fav_dept'].append(department)
-            comments = _update_comment(count, **q)
         else:
             q['dept'] = hss
-            comments = _update_comment(count, **q)
-        result = 'OK'
+	comments = _update_comment(count, **q)
+	result = 'OK'
 
     except ObjectDoesNotExist:
         result = 'ERROR'
 
     comments_to_output = _comments_to_output(comments,False,request.session.get('django_language','ko'),True)
-    comments_to_output.reverse()
     return HttpResponse(json.dumps({
         'result': result,
         'comments': comments_to_output}, ensure_ascii=False, indent=4))
@@ -750,7 +748,8 @@ def _update_comment(count, **conditions):
     elif professor != None:
         comments = Comment.objects.filter(course__professors=professor)
     else:
-        comments = Comment.objects.all().order_by('-id')
+        comments = Comment.objects.all()
+    comments = comments.order_by('-id')
     comments_size = comments.count()
     if comments_size < count:
         return comments[0:comments_size]
