@@ -732,8 +732,8 @@ var DictionaryCommentList = {
 
 			var right_bot_div = $('<div>',{'class':'dictionary_comment_right_bot'});
 			right_bot_div.appendTo(right_div_comment);
-			if (enableDelete) {
-				var deletelink = $('<div>', {'class': 'dictionary_comment_delete'}).text("X")
+			if (enableDelete) {	
+				var deletelink = $('<img>', {'class': 'dictionary_comment_delete','src':'http://bit.sparcs.org/~seal/OTL_project/엑스표.jpg'});
 				deletelink.appendTo(right_bot_div);
 				deletelink.bind('click', $.proxyWithArgs(DictionaryCommentList.deleteComment, DictionaryCommentList, item, comment));
 			}
@@ -1093,7 +1093,7 @@ var DictionaryCommentList = {
 			var right_bot_div = $('<div>',{'class':'dictionary_comment_right_bot'});
 			right_bot_div.appendTo(right_div_comment);
 			if (enableDelete) {
-				var deletelink = $('<div>', {'class': 'dictionary_comment_delete'}).text("X")
+				var deletelink = $('<img>', {'class': 'dictionary_comment_delete','src':'http://bit.sparcs.org/~seal/OTL_project/엑스표.jpg'});
 				deletelink.appendTo(right_bot_div);
 				deletelink.bind('click', $.proxyWithArgs(DictionaryCommentList.deleteComment, DictionaryCommentList, item, comment));
 			}
@@ -1446,8 +1446,7 @@ var FavoriteList = {
 			var favorite = $('<div>', {'class': 'dictionary_favorite'});
 			favorite.appendTo(FavoriteList.favorites);
 			$('<a>', {'href': item.url}).text(item.code + ' - ' + item.title).appendTo(favorite);
-
-			var deletelink = $('<a>').text(" X")
+			var deletelink = $('<a>', {'src':'http://bit.sparcs.org/~seal/OTL_project/엑스표.jpg'});
 			deletelink.appendTo(favorite);
 			deletelink.bind('click', $.proxyWithArgs(FavoriteList.deleteFavorite, FavoriteList, item, favorite));
 		});

@@ -115,6 +115,7 @@
     line-height: 25px;
     padding-left:18px;
     font-size : 15px;
+    border-radius: 5px;
 }
 .professor-title
 {
@@ -736,8 +737,10 @@
 .dictionary_comment_delete
 {
         float:right;
-        height:20px;
-        width:10px;
+        height:12px;
+        width:12px;
+	margin-left:3px;
+	margin-top:3px;
 }
 #course-favorite
 {
@@ -841,7 +844,7 @@
 }
 #course-explain-title
 {
-        margin-top:10px;
+        margin-top:4px;
         margin-left:5px;
         font-size:12px;
         font-family:돋움;
@@ -850,38 +853,48 @@
 #course-explain
 {
          margin-left:5px;
-         margin-top:8px;
-         line-height:19px;
-         height:19px;
+         margin-top:4px;
+         line-height:15px;
+         height:30px;
+	 font-size:11px;
 }
 #course-explain-add
 {
-         height:19px;
-         width:577px;
-         max-height:32px;
-         max-width:562px;
+         height:23px;
+         width:558px;
+         max-height:23px;
+         max-width:558px;
+	 font-size:11px;
+	 line-height:15px;
+	 margin-top:4px;
+	 margin-left:3px;
 }
 #course-require-title
 {
         font-family:돋움;
         font-size:12px;
         font-weight:bold;
-        margin-top:10px;
+        margin-top:4px;
         margin-left:5px;
 }
 #course-require
 {
-        line-height:19px;
-        height:19px;
-        margin-top:8px;
+        line-height:15px;
+        height:30px;
+        margin-top:4px;
         margin-left:5px;
+	font-size:11px;
 }
 #course-require-add
 {
-        height:19px;
-        width:577px;
-        max-height:32px;
-        max-width:562px;
+        height:23px;
+        width:558px;
+        max-height:23px;
+        max-width:558px;
+	font-size:11px;
+	line-height:15px;
+	margin-top:4px;
+	margin-left:3px;
 }
 #course-eval-title
 {
@@ -1010,7 +1023,7 @@
 }
 #course-comment-add-text
 {
-    width:750px;
+    width:770px;
     height:105px;
     margin-top:10px;
     resize: none;
