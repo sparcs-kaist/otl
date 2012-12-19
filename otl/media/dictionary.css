@@ -506,7 +506,7 @@
 .timeline_comment_left
 {
     float:left;
-    margin-left:19px;
+    margin-left:15px;
     width:66px;
     padding:0px;
 }
@@ -514,19 +514,19 @@
 .timeline_comment_right
 {
     float:left;
-    margin-left: 19px;
-    width :444px; 
+    margin-left: 15px;
+    width :451px; 
 }
 
 .timeline_comment_right_top
 {
     float:left;
-    width: 444px;
+    width: 451px;
 }
 
 .timeline_comment_right_top_title
 {
-    width: 234px;
+    width: 135px;
     font-size:11px;
     float:left;
     text-overflow:ellipsis;
@@ -542,7 +542,8 @@
 
 .a_spec
 {
-    margin-left: 20px;
+    margin-left: 15px;
+    margin-right: 5px;
     float:left;
 }
 
@@ -559,7 +560,7 @@
 .content_comment
 {
     height:55px;
-    width:444px;
+    width:451px;
     word-break:break-all;
     word-wrap:break-word;
     text-overflow: ellipsis;
@@ -652,6 +653,10 @@
     padding-left:10px;
     padding-bottom:10px;
 }
+.star_pictures
+{
+      float:left;
+}
 .dictionary_comment
 {
       height:76px;
@@ -700,8 +705,13 @@
 .dictionary_comment_eval
 {
       float:left;
-      width:70px;
       margin-left:15px;
+}
+.dictionary_comment_names
+{
+      float:left;
+      margin-left:20px;
+      margin-right:10px;
 }
 .dictionary_comment_right_mid
 {
@@ -781,7 +791,7 @@
 #course-summary-boundary
 {
         width:760px;
-        height:158px;
+        height:167px;
         padding:5px;
         background: #C3DAFB;
         border-radius:3px;
@@ -789,7 +799,7 @@
 #course-summary
 {
         background:white;
-        height:158px;
+        height:167px;
         padding-bottom: 5px;
         border-radius: 5px;
         border-width: 5px;

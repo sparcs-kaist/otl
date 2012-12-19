@@ -43,7 +43,16 @@ var img_existance = function(img){
 		$(this).attr('src','http://bit.sparcs.org/~seal/OTL_project/nophoto.jpg');
 	});
 }
-
+function get_star_picture(n,base) {
+	var x=parseInt(n/2);
+	var y=n%2;
+	var z=3-x-y;
+	// x : 별한개, y: 별반개, z:별0개 갯수
+	var i;
+	for(i=0;i<x;i++) $('<img>',{'class':'star_pictures','src':'http://bit.sparcs.org/~seal/OTL_project/별.jpg','height':'15px'}).appendTo(base);
+	for(i=0;i<y;i++) $('<img>',{'class':'star_pictures','src':'http://bit.sparcs.org/~seal/OTL_project/별_반쪽.jpg','height':'15px'}).appendTo(base);
+	for(i=0;i<z;i++) $('<img>',{'class':'star_pictures','src':'http://bit.sparcs.org/~seal/OTL_project/별_없음.jpg','height':'15px'}).appendTo(base);
+}
 
 var NUM_ITEMS_PER_LIST = 15;
 var NUM_ITEMS_PER_DICT_COMMENT = 10;
@@ -721,9 +730,14 @@ var DictionaryCommentList = {
 			$('<div>', {'class': 'dictionary_comment_prof_name'}).text(gettext("담당교수 : ") + item.professor[0].professor_name).appendTo(right_top_div);
 			right_top_div_eval.appendTo(right_top_div);
 
-			$('<div>', {'class': 'dictionary_comment_eval'}).text(gettext("학점") + ':' + item.score).appendTo(right_top_div_eval);
-			$('<div>', {'class': 'dictionary_comment_eval'}).text(gettext("로드") + ':' + item.load).appendTo(right_top_div_eval);
-			$('<div>', {'class': 'dictionary_comment_eval'}).text(gettext("남는거") + ':' + item.gain).appendTo(right_top_div_eval);
+			var comment_eval = $('<div>', {'class': 'dictionary_comment_eval'});
+			$('<div>',{'class':'dictionary_comment_names'}).text(gettext("학점 :")).appendTo(comment_eval);
+			get_star_picture(item.score,comment_eval);
+			$('<div>',{'class':'dictionary_comment_names'}).text(gettext("로드 :")).appendTo(comment_eval);
+			get_star_picture(item.load,comment_eval);
+			$('<div>',{'class':'dictionary_comment_names'}).text(gettext("남는거 :")).appendTo(comment_eval);
+			get_star_picture(item.gain,comment_eval);
+			comment_eval.appendTo(right_top_div_eval);
 
 
 			var right_mid_div = $('<div>', {'class': 'dictionary_comment_right_mid'});
@@ -1081,10 +1095,14 @@ var DictionaryCommentList = {
 			$('<div>', {'class': 'dictionary_comment_prof_name'}).text(gettext("담당교수 : ") + item.professor[0].professor_name).appendTo(right_top_div);
 			right_top_div_eval.appendTo(right_top_div);
 
-			$('<div>', {'class': 'dictionary_comment_eval'}).text(gettext("학점") + ':' + item.score).appendTo(right_top_div_eval);
-			$('<div>', {'class': 'dictionary_comment_eval'}).text(gettext("로드") + ':' + item.load).appendTo(right_top_div_eval);
-			$('<div>', {'class': 'dictionary_comment_eval'}).text(gettext("남는거") + ':' + item.gain).appendTo(right_top_div_eval);
-
+			var comment_eval = $('<div>', {'class': 'dictionary_comment_eval'});
+			$('<div>',{'class':'dictionary_comment_names'}).text(gettext("학점 :")).appendTo(comment_eval);
+			get_star_picture(item.score,comment_eval);
+			$('<div>',{'class':'dictionary_comment_names'}).text(gettext("로드 :")).appendTo(comment_eval);
+			get_star_picture(item.load,comment_eval);
+			$('<div>',{'class':'dictionary_comment_names'}).text(gettext("남는거 :")).appendTo(comment_eval);
+			get_star_picture(item.gain,comment_eval);
+			comment_eval.appendTo(right_top_div_eval);
 
 			var right_mid_div = $('<div>', {'class': 'dictionary_comment_right_mid'});
 			right_mid_div.appendTo(right_div_comment);
@@ -1202,9 +1220,15 @@ var IndexCommentList = {
 
 			$('<a>', {'class': 'content_subject','href':'view/'+item.course_code+"/"}).text(item.course_title).appendTo(right_top_div_title);
 			$('<pre>', {'class': 'content_comment'}).text(comment_output).appendTo(right_mid_div_comment);
-			$('<div>', {'class': 'a_spec'}).text('학점 :' + item.score).appendTo(right_top_div_spec);
-			$('<div>', {'class': 'a_spec'}).text('로드 :' + item.load).appendTo(right_top_div_spec);
-			$('<div>', {'class': 'a_spec'}).text('남는거 :' + item.gain).appendTo(right_top_div_spec);
+
+			var comment_eval = $('<div>', {'class': 'comment_eval'});
+			$('<div>',{'class':'a_spec'}).text(gettext("학점 :")).appendTo(comment_eval);
+			get_star_picture(item.score,comment_eval);
+			$('<div>',{'class':'a_spec'}).text(gettext("로드 :")).appendTo(comment_eval);
+			get_star_picture(item.load,comment_eval);
+			$('<div>',{'class':'a_spec'}).text(gettext("남는거 :")).appendTo(comment_eval);
+			get_star_picture(item.gain,comment_eval);
+			comment_eval.appendTo(right_top_div_spec);
 
 			var right_bot_div = $('<div>',{'class':'timeline_comment_right_bot'});
     		var right_bot_div_writer = $('<div>',{'class':'timeline_comment_right_bot_writer'});
