@@ -49,9 +49,9 @@ function get_star_picture(n,base) {
 	var z=3-x-y;
 	// x : 별한개, y: 별반개, z:별0개 갯수
 	var i;
-	for(i=0;i<x;i++) $('<img>',{'class':'star_pictures','src':'http://bit.sparcs.org/~seal/OTL_project/별.jpg','height':'15px'}).appendTo(base);
-	for(i=0;i<y;i++) $('<img>',{'class':'star_pictures','src':'http://bit.sparcs.org/~seal/OTL_project/별_반쪽.jpg','height':'15px'}).appendTo(base);
-	for(i=0;i<z;i++) $('<img>',{'class':'star_pictures','src':'http://bit.sparcs.org/~seal/OTL_project/별_없음.jpg','height':'15px'}).appendTo(base);
+	for(i=0;i<x;i++) $('<img>',{'class':'star_pictures','src':'http://bit.sparcs.org/~seal/OTL_project/별.png','height':'15px'}).appendTo(base);
+	for(i=0;i<y;i++) $('<img>',{'class':'star_pictures','src':'http://bit.sparcs.org/~seal/OTL_project/별_half.png','height':'15px'}).appendTo(base);
+	for(i=0;i<z;i++) $('<img>',{'class':'star_pictures','src':'http://bit.sparcs.org/~seal/OTL_project/별_blank.png','height':'15px'}).appendTo(base);
 }
 
 var NUM_ITEMS_PER_LIST = 15;
@@ -1436,9 +1436,15 @@ var ProfessorCommentList = {
                         $('<a>', {'class' : 'content_subject'}).text("<"+item.year+" "+(item.semester==1?"봄":"가을")+"학기> ").appendTo(top_div_title);
                         $('<a>', {'class' : 'content_subject', 'href':'/dictionary/view/'+item.course_code+"/"}).text(item.course_title).appendTo(top_div_title);
                         $('<pre>', {'class': 'professor_content_comment'}).text(comment_output).appendTo(mid_div_comment);
-                        $('<div>', {'class': 'a_spec'}).text('학점' + item.score).appendTo(top_div_spec);
-                        $('<div>', {'class': 'a_spec'}).text('로드' + item.load).appendTo(top_div_spec);
-                        $('<div>', {'class': 'a_spec'}).text('남는거' + item.gain).appendTo(top_div_spec);
+
+			var comment_eval = $('<div>', {'class': 'comment_eval'});
+			$('<div>',{'class':'a_spec'}).text(gettext("학점 :")).appendTo(comment_eval);
+			get_star_picture(item.score,comment_eval);
+			$('<div>',{'class':'a_spec'}).text(gettext("로드 :")).appendTo(comment_eval);
+			get_star_picture(item.load,comment_eval);
+			$('<div>',{'class':'a_spec'}).text(gettext("남는거 :")).appendTo(comment_eval);
+			get_star_picture(item.gain,comment_eval);
+			comment_eval.appendTo(top_div_spec);
 
                         var bot_div = $('<div>',{'class':'professor_comment_bot'});
                         var bot_div_writer = $('<div>',{'class':'professor_comment_bot_writer'});
