@@ -40,7 +40,7 @@ function roundD(n, digits) {
 
 var img_existance = function(img){
 	img.error(function(){
-		$(this).attr('src','http://bit.sparcs.org/~seal/OTL_project/nophoto.jpg');
+		$(this).attr('src',Data.MediaUrl+'images/dictionary/nophoto.jpg');
 	});
 }
 function get_star_picture(n,base) {
@@ -49,9 +49,9 @@ function get_star_picture(n,base) {
 	var z=3-x-y;
 	// x : 별한개, y: 별반개, z:별0개 갯수
 	var i;
-	for(i=0;i<x;i++) $('<img>',{'class':'star_pictures','src':'http://bit.sparcs.org/~seal/OTL_project/별.png','height':'15px'}).appendTo(base);
-	for(i=0;i<y;i++) $('<img>',{'class':'star_pictures','src':'http://bit.sparcs.org/~seal/OTL_project/별_half.png','height':'15px'}).appendTo(base);
-	for(i=0;i<z;i++) $('<img>',{'class':'star_pictures','src':'http://bit.sparcs.org/~seal/OTL_project/별_blank.png','height':'15px'}).appendTo(base);
+	for(i=0;i<x;i++) $('<img>',{'class':'star_pictures','src':Data.MediaUrl+'images/dictionary/star.png','height':'15px'}).appendTo(base);
+	for(i=0;i<y;i++) $('<img>',{'class':'star_pictures','src':Data.MediaUrl+'images/dictionary/star_half.png','height':'15px'}).appendTo(base);
+	for(i=0;i<z;i++) $('<img>',{'class':'star_pictures','src':Data.MediaUrl+'images/dictionary/star_blank.png','height':'15px'}).appendTo(base);
 }
 
 var NUM_ITEMS_PER_LIST = 15;
@@ -747,7 +747,7 @@ var DictionaryCommentList = {
 			var right_bot_div = $('<div>',{'class':'dictionary_comment_right_bot'});
 			right_bot_div.appendTo(right_div_comment);
 			if (enableDelete) {	
-				var deletelink = $('<img>', {'class': 'dictionary_comment_delete','src':'http://bit.sparcs.org/~seal/OTL_project/엑스표.jpg'});
+				var deletelink = $('<img>', {'class': 'dictionary_comment_delete','src':Data.MediaUrl+'images/dictionary/x_sign.jpg'});
 				deletelink.appendTo(right_bot_div);
 				deletelink.bind('click', $.proxyWithArgs(DictionaryCommentList.deleteComment, DictionaryCommentList, item, comment));
 			}
@@ -853,8 +853,8 @@ var DictionaryCommentList = {
 		right_div.appendTo(top_div);
 		var bottom_div = $('<div>', {'id': 'course-summary-bottom'});
 		var bottom_img = $('<div>', {'id': 'course-bottom-img'});
-		var add_img = $('<img>', {'src': 'http://bit.sparcs.org/~seal/OTL_project/%ea%b3%a0%ec%b9%a8%eb%b2%84%ed%8a%bc.gif', 'id': 'course-summary-add-img'});
-		var complete_img = $('<img>', {'src': 'http://bit.sparcs.org/~seal/OTL_project/%ea%b3%a0%ec%b9%a8%eb%b2%84%ed%8a%bc.gif', 'id': 'course-summary-complete-img'});
+		var add_img = $('<img>', {'src': Data.MediaUrl+'images/dictionary/fix.gif', 'id': 'course-summary-add-img'});
+		var complete_img = $('<img>', {'src': Data.MediaUrl+'images/dictionary/fix.gif', 'id': 'course-summary-complete-img'});
 		if(general_summary==null)
 			var bottom_text = $('<div>', {'id': 'course-change-user'}).text("");
 		else
@@ -947,8 +947,8 @@ var DictionaryCommentList = {
 
 		var bottom_div = $('<div>', {'id': 'lecture-summary-bottom'});
 		var bottom_img = $('<div>', {'id': 'lecture-bottom-img'});
-		var add_img = $('<img>', {'src': 'http://bit.sparcs.org/~seal/OTL_project/%ea%b3%a0%ec%b9%a8%eb%b2%84%ed%8a%bc.gif', 'id': 'lecture-summary-add-img'});
-		var complete_img = $('<img>', {'src': 'http://bit.sparcs.org/~seal/OTL_project/%ea%b3%a0%ec%b9%a8%eb%b2%84%ed%8a%bc.gif', 'id': 'lecture-summary-complete-img'});
+		var add_img = $('<img>', {'src': Data.MediaUrl+'images/dictionary/fix.gif', 'id': 'lecture-summary-add-img'});
+		var complete_img = $('<img>', {'src': Data.MediaUrl+'images/dictionary/fix.gif', 'id': 'lecture-summary-complete-img'});
 		if(obj.summary==null)
 			var bottom_text = $('<div>', {'id': 'lecture-change-user'}).text("");
 		else
@@ -1111,7 +1111,7 @@ var DictionaryCommentList = {
 			var right_bot_div = $('<div>',{'class':'dictionary_comment_right_bot'});
 			right_bot_div.appendTo(right_div_comment);
 			if (enableDelete) {
-				var deletelink = $('<img>', {'class': 'dictionary_comment_delete','src':'http://bit.sparcs.org/~seal/OTL_project/엑스표.jpg'});
+				var deletelink = $('<img>', {'class': 'dictionary_comment_delete','src':Data.MediaUrl+'images/dictionary/x_sign.jpg'});
 				deletelink.appendTo(right_bot_div);
 				deletelink.bind('click', $.proxyWithArgs(DictionaryCommentList.deleteComment, DictionaryCommentList, item, comment));
 			}
@@ -1304,8 +1304,8 @@ var ProfessorCommentList = {
         	$('<textarea>', {'id': 'professor-info-homepage-change'}).text(Data.ProfInfo.homepage).appendTo(prof_homepage_line);
         	prof_homepage_line.appendTo(top_right_div);
 		var bottom_img = $('<div>', {'id': 'prof-info-bottom-img'});
-		var change_img = $('<img>', {'src': 'http://bit.sparcs.org/~seal/OTL_project/%ea%b3%a0%ec%b9%a8%eb%b2%84%ed%8a%bc.gif', 'id': 'prof-info-change-img'});
-		var complete_img = $('<img>', {'src': 'http://bit.sparcs.org/~seal/OTL_project/%ea%b3%a0%ec%b9%a8%eb%b2%84%ed%8a%bc.gif', 'id': 'prof-info-complete-img'});
+		var change_img = $('<img>', {'src': Data.MediaUrl+'images/dictionary/fix.gif', 'id': 'prof-info-change-img'});
+		var complete_img = $('<img>', {'src': Data.MediaUrl+'images/dictionary/fix.gif', 'id': 'prof-info-complete-img'});
 
         	var bottom_text = $('<div>', {'id': 'prof-info-change-user'});
 
@@ -1476,7 +1476,7 @@ var FavoriteList = {
 			var favorite = $('<div>', {'class': 'dictionary_favorite'});
 			favorite.appendTo(FavoriteList.favorites);
 			$('<a>', {'href': item.url}).text(item.code + ' - ' + item.title).appendTo(favorite);
-			var deletelink = $('<a>', {'src':'http://bit.sparcs.org/~seal/OTL_project/엑스표.jpg'});
+			var deletelink = $('<a>', {'src':Data.MediaUrl+'images/dictionary/x_sign.jpg'});
 			deletelink.appendTo(favorite);
 			deletelink.bind('click', $.proxyWithArgs(FavoriteList.deleteFavorite, FavoriteList, item, favorite));
 		});
