@@ -319,8 +319,9 @@ var CourseList = {
 				count=0;
 			} else
 				count++;
-
-			var el = $('<a>').text(item.title).appendTo(content);
+			var temp_1 = item.title.split("<");
+			var temp_2 = temp_1[0].split("[");
+			var el = $('<a>').text(temp_2[0]).appendTo(content);
 			Utils.clickable(el);
 
 			el.bind('mousedown', $.proxyWithArgs(CourseList.seeCourseComments, CourseList, item));
@@ -827,8 +828,9 @@ var DictionaryCommentList = {
 			var output_explain = general_summary.summary;
 			var output_require = general_summary.prerequisite;
 		}
-
-		$('<div>', {'id': 'course-subject'}).text(Data.Course.title).appendTo(left_div);
+		var temp_1 = Data.Course.title.split("<");
+		var temp_2 = temp_1[0].split("[");
+		$('<div>', {'id': 'course-subject'}).text(temp_2[0]).appendTo(left_div);
 		$('<hr>',{'id': 'course-line'}).appendTo(left_div);
 		$('<div>', {'id': 'course-explain-title'}).text(gettext("과목 설명")).appendTo(left_div);
 		$('<pre>', {'id': 'course-explain'}).text(output_explain).appendTo(left_div);
@@ -884,11 +886,11 @@ var DictionaryCommentList = {
 			var output_subbook = "";
 		}
 		else{
-			var output_homepage = obj.summary.homepage
-			var output_mainbook = obj.summary.main_material
-			var output_subbook = obj.summary.sub_material
+			var output_homepage = obj.summary.homepage;
+			var output_mainbook = obj.summary.main_material;
+			var output_subbook = obj.summary.sub_material;
 		}
-		$('<div>', {'id': 'lecture-subject'}).text(Data.Course.title).appendTo(left_div);
+		$('<div>', {'id': 'lecture-subject'}).text(obj.lecture_title).appendTo(left_div);
 		$('<hr>', {'id': 'lecture-line'}).appendTo(left_div);
 		
 		var left_left_div = $('<div>', {'id': 'lecture-prof-photo'});

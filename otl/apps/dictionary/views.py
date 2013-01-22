@@ -588,6 +588,7 @@ def get_summary_and_semester(request):
     comment_num = 0
     lang=request.session.get('django_language','ko')
     professor_name = ""
+    lecture_title = ""
     try:
         prof_id = int(request.POST.get('professor_id',-1))
         course_id = int(request.POST.get('course_id',-1))
@@ -611,6 +612,7 @@ def get_summary_and_semester(request):
 	    professor_name = professor.professor_name
 	    lectures = Lecture.objects.filter(professor=professor, course=course).order_by('-id')
 	    lecture = lectures[0]
+            lecture_title = _trans(lecture.title,lecture.title_en,lang)
 	    summary = LectureSummary.objects.filter(lecture=lecture).order_by('-id')
 	    q=Q()
 	    for lec in lectures:
@@ -635,7 +637,8 @@ def get_summary_and_semester(request):
 	'average': average,
 	'comment_num': comment_num,
 	'prof_name': professor_name,
-        'summary': summary_output}))
+        'summary': summary_output,
+        'lecture_title': lecture_title}))
 
 
 @login_required
@@ -962,7 +965,7 @@ def _lecture_summary_to_output(summary,conv_to_json=True,lang='ko'):
 	'sub_material': summary.sub_material,
         'writer': UserProfile.objects.get(user = summary.writer).nickname,
         'written_datetime': summary.written_datetime.isoformat()[:10],
-        'lecture_id': summary.lecture.id
+        'lecture_id': summary.lecture.id,
         }
     if conv_to_json:
         io = StringIO()
