@@ -180,7 +180,7 @@ PORTAL_SSO_TOKEN = ''
 PORTAL_SSO_WSDL_ADDRESS = 'https://ksso.kaist.ac.kr/kstsso/services/simpleAuthSrv?wsdl'
 
 COMMENT_NUM = 10
-HSS_DEPARTMENT_ID = 2044
+HSS_DEPARTMENT_CODE = 'HSS'
 INTERESTING_COURSE_NUM = 5
 
 try:
