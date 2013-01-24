@@ -401,6 +401,7 @@
     float:left;
     width:248px;
     padding-bottom:8px;
+    margin-right:10px;
 }
 #prof-recent-comments
 {
@@ -468,6 +469,7 @@
 {
     height:30px;
     line-height:30px;
+    font-size:10pt;
 }
 .professor_comment_bot
 {

@@ -1443,7 +1443,7 @@ var ProfessorCommentList = {
 
                         var comment_output = item.comment
 
-                        $('<a>', {'class' : 'content_subject'}).text("<"+item.year+" "+(item.semester==1?"봄":"가을")+"학기> ").appendTo(top_div_title);
+                        $('<span>', {'class' : 'content_subject'}).text("<"+item.year+" "+(item.semester==1?"봄":"가을")+"학기> ").appendTo(top_div_title);
                         $('<a>', {'class' : 'content_subject', 'href':'/dictionary/view/'+item.course_code+"/"}).text(item.course_title).appendTo(top_div_title);
                         $('<pre>', {'class': 'professor_content_comment'}).text(comment_output).appendTo(mid_div_comment);
 
