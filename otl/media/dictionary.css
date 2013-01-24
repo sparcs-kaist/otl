@@ -693,10 +693,15 @@
 {
       float:left;
 }
-.dictionary_comment_prof_name
+.dictionary_comment_prof
 {
       float:left;
       margin-left:25px;
+}
+.dictionary_comment_prof_name
+{
+      float:left;
+      margin-left:5px;
 }
 .dictionary_comment_right_top_eval
 {

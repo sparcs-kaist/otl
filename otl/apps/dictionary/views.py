@@ -566,13 +566,12 @@ def get_year_list(request):
         course = Course.objects.get(id=course_id)
         lang=request.session.get('django_language','ko')
         lectures = Lecture.objects.filter(course=course,year=year,semester=semester)
+	professor = []
         if lectures.count()>0:
-            q = Q()
-            for lecture in lectures:
-                q |= Q(lecture_professor=lecture)
-            professor = Professor.objects.filter(q).distinct()
-        else:
-            professor = []
+	    for lecture in lectures:
+		prof = lecture.professor.all()
+		name = (', '.join(prof.values_list('professor_name', flat=True)))
+		professor.append(Professor(professor_id=prof[0].professor_id,professor_name=name))
         result = 'OK'
     except ObjectDoesNotExist:
         result='NOT_EXIST'

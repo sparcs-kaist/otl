@@ -728,7 +728,11 @@ var DictionaryCommentList = {
 
 			right_top_div.appendTo(right_div_comment);
 			$('<div>', {'class': 'dictionary_comment_semester'}).text('<' + item.year + ' ' + gettext(item.semester==1?"봄":"가을") + '>').appendTo(right_top_div);
-			$('<div>', {'class': 'dictionary_comment_prof_name'}).text(gettext("담당교수 : ") + item.professor[0].professor_name).appendTo(right_top_div);
+			$('<div>', {'class': 'dictionary_comment_prof'}).text(gettext("담당교수 : ")).appendTo(right_top_div);
+			for(var i=0;i<item.professor.length;i++)
+			{
+				$('<div>', {'class': 'dictionary_comment_prof_name'}).text(item.professor[i].professor_name + ((i!=item.professor.length-1)?gettext(","):gettext(""))).appendTo(right_top_div);
+			}
 			right_top_div_eval.appendTo(right_top_div);
 
 			var comment_eval = $('<div>', {'class': 'dictionary_comment_eval'});
@@ -1094,7 +1098,11 @@ var DictionaryCommentList = {
 
 			right_top_div.appendTo(right_div_comment);
 			$('<div>', {'class': 'dictionary_comment_semester'}).text('<' + item.year + ' ' + gettext(item.semester==1?"봄":"가을")+ '>').appendTo(right_top_div);
-			$('<div>', {'class': 'dictionary_comment_prof_name'}).text(gettext("담당교수 : ") + item.professor[0].professor_name).appendTo(right_top_div);
+			$('<div>', {'class': 'dictionary_comment_prof'}).text(gettext("담당교수 : ")).appendTo(right_top_div);
+			for(var i=0;i<item.professor.length;i++)
+			{
+				$('<div>', {'class': 'dictionary_comment_prof_name'}).text(item.professor[i].professor_name + ((i!=item.professor.length-1)?gettext(","):gettext(""))).appendTo(right_top_div);
+			}
 			right_top_div_eval.appendTo(right_top_div);
 
 			var comment_eval = $('<div>', {'class': 'dictionary_comment_eval'});
