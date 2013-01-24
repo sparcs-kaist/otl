@@ -460,7 +460,7 @@ def update_comment(request):
     try:
         count = int(request.POST.get('count', -1))
         q = {}
-        hss = Department.objects.filter(code=settings.HSS_DEPARTMENT_CODE).all()
+        hss = list(Department.objects.filter(code=settings.HSS_DEPARTMENT_CODE))
         if request.user.is_authenticated():
             user = request.user
             userprofile = UserProfile.objects.get(user=user)
@@ -470,7 +470,8 @@ def update_comment(request):
                 q['fav_dept'].append(department)
         else:
             q['dept'] = hss[0]
-            q['fav_dept'] = hss[1:]
+            if len(hss)>1:
+                q['fav_dept'] = hss[1:]
 	comments = _update_comment(count, **q)
 	result = 'OK'
 
