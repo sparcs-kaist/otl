@@ -714,7 +714,7 @@ def taken_lecture_list(request):
 # -- Private functions   
 def _taken_lectures_to_output(user, lecture_list, lang='ko'):
     try:
-        written_list=[comment.lecture for comment in Comment.objects.filter(writer=user)]
+        written_list=[comment.lecture.code for comment in Comment.objects.filter(writer=user,lecture__year__exact=lecture_list[0].year,lecture__semester__exact=lecture_list[0].semester)]
     except ObjectDoesNotExist:
         written_list=[]
 
@@ -722,7 +722,7 @@ def _taken_lectures_to_output(user, lecture_list, lang='ko'):
 
     for lecture in lecture_list:
         written=False
-        if lecture in written_list:
+        if lecture.code in written_list:
             written=True
         item= {
                 'url': "/dictionary/view/" + lecture.old_code + "/",
