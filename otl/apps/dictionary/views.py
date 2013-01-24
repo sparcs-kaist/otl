@@ -271,22 +271,22 @@ def add_professor_info(request):
 
 def interesting_courses(request):
     # login이 되있든, 안되있든 교양과목은 추천에 들어간다
-    hss = Department.objects.get(id=settings.HSS_DEPARTMENT_ID)
-    q = Q(department=hss)
+    hss = Department.objects.filter(code=settings.HSS_DEPARTMENT_CODE)
+    q = Q()
+    for dept in hss:
+        q |= Q(department=dept)
     try:
         user = request.user
-    	userprofile = UserProfile.objects.get(user=user)    
+    	userprofile = UserProfile.objects.get(user=user)
 	favorite_departments = userprofile.favorite_departments.all()
         user_department_id = 0
 
         if user.is_authenticated():
             user_profile = UserProfile.objects.get(user=user)
             department = user_profile.department
-	    q |= Q(department=department)	    
+	    q |= Q(department=department)
         
 	for department in favorite_departments:
-	    if department.id == settings.HSS_DEPARTMENT_ID or department.id == user_department_id:
-	        continue
 	    q |= Q(department=department)
     except:
 	user_department_id = 0 #Means Nothing
@@ -460,17 +460,17 @@ def update_comment(request):
     try:
         count = int(request.POST.get('count', -1))
         q = {}
-        hss = Department.objects.get(id=settings.HSS_DEPARTMENT_ID)
+        hss = Department.objects.filter(code=settings.HSS_DEPARTMENT_CODE).all()
         if request.user.is_authenticated():
             user = request.user
             userprofile = UserProfile.objects.get(user=user)
             q['dept'] = userprofile.department
-            q['fav_dept'] = []
-            q['fav_dept'].append(hss)
+            q['fav_dept'] = hss
             for department in userprofile.favorite_departments.all():
                 q['fav_dept'].append(department)
         else:
-            q['dept'] = hss
+            q['dept'] = hss[0]
+            q['fav_dept'] = hss[1:]
 	comments = _update_comment(count, **q)
 	result = 'OK'
 
