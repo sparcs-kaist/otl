@@ -528,7 +528,7 @@
 
 .timeline_comment_right_top_title
 {
-    width: 135px;
+    width: 130px;
     font-size:11px;
     float:left;
     text-overflow:ellipsis;
@@ -539,7 +539,7 @@
 .timeline_comment_right_top_spec
 {
     float:right;
-    margin-right:15px;
+    padding-right:15px;
 }
 
 .a_spec
@@ -653,6 +653,7 @@
     margin-left:5px;
     margin-right:5px;
     padding-left:10px;
+    padding-right:10px;
     padding-bottom:10px;
 }
 .star_pictures
@@ -758,6 +759,29 @@
         width:12px;
 	margin-left:3px;
 	margin-top:3px;
+}
+.dictionary_favorite
+{
+    overflow:hidden;
+    position:relative;
+}
+.dictionary_favorite_empty
+{
+    text-align:center;
+    width:161px;
+}
+.dictionary_favorite_name
+{
+    float:left;
+    width:139px;
+}
+.dictionary_favorite_delete
+{
+    position:absolute;
+    top:50%;
+    float:right;
+    margin-left:10px;
+    margin-top:-6px;
 }
 #course-favorite
 {

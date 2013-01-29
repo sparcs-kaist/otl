@@ -191,6 +191,7 @@ def view(request, course_code):
         result = 'NOT_EXIST'
 
     return render_to_response('dictionary/view.html', {
+        'section' : 'dictionary',
         'result' : result,
         'lang' : request.session.get('django_language', 'ko'),
         'departments': Department.objects.filter(visible=True).order_by('name'),
@@ -233,6 +234,7 @@ def view_professor(request, prof_id):
         result = 'NOT_EXIST'
 
     return render_to_response('dictionary/professor.html', {
+        'section' : 'dictionary',
         'result' : result,
         'lang' : request.session.get('django_language', 'ko'),
         'departments': Department.objects.filter(visible=True).order_by('name'),

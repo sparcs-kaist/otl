@@ -1478,15 +1478,26 @@ var FavoriteList = {
 	initialize:function()
 	{
 		this.favorites = $('#favorite_view_contents');
+		this.total = $(Data.Favorites).length;
 		this.addToMultipleFavorite(Data.Favorites);
+	},
+	showEmptyNotice:function()
+	{
+		var notice = $('<div>', {'class': 'dictionary_favorite_empty'}).text('추가해 주세요');
+		notice.appendTo(this.favorites);
 	},
 	addToMultipleFavorite:function(obj)
 	{
+		if(this.total == 0){
+			this.showEmptyNotice();
+		}
 		$.each(obj, function(index, item) {
 			var favorite = $('<div>', {'class': 'dictionary_favorite'});
+			var favorite_name = $('<div>', {'class': 'dictionary_favorite_name'});
 			favorite.appendTo(FavoriteList.favorites);
-			$('<a>', {'href': item.url}).text(item.code + ' - ' + item.title).appendTo(favorite);
-			var deletelink = $('<a>', {'src':Data.MediaUrl+'images/dictionary/x_sign.jpg'});
+			favorite_name.appendTo(favorite);
+			$('<a>', {'href': item.url}).text(item.code + ' - ' + item.title).appendTo(favorite_name);
+			var deletelink = $('<img>', {'class': 'dictionary_favorite_delete','src':Data.MediaUrl+'images/dictionary/x_sign.jpg'});
 			deletelink.appendTo(favorite);
 			deletelink.bind('click', $.proxyWithArgs(FavoriteList.deleteFavorite, FavoriteList, item, favorite));
 		});
@@ -1502,6 +1513,10 @@ var FavoriteList = {
 				try {
 					if (resObj.result=='DELETE') {
                         favorite.remove();
+						this.total--;
+						if(this.total==0){
+							this.showEmptyNotice();
+						}
 					} else if (resObj=='REMOVE_NOT_EXIST') {
 						Notifier.setErrorMsg(gettext('잘못된 접근입니다.'));
 					}
