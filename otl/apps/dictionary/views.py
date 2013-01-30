@@ -507,7 +507,7 @@ def professor_comment(request):
 def like_comment(request, comment_id):
     return
 
-@login_required
+@login_required_ajax
 def add_summary(request):
     try:
         content = request.POST.get('content', None)
@@ -530,7 +530,7 @@ def add_summary(request):
         'result': result,
         'summary': _summary_to_output(new_summary,False,'ko')}))
 
-@login_required
+@login_required_ajax
 def add_lecture_summary(request):
     try:
         homepage = request.POST.get('homepage', None)

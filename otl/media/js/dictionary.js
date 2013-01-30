@@ -480,23 +480,31 @@ var DictionaryCommentList = {
 	},
 	showSummary:function()
 	{
-		$('#course-explain').hide();
-		$('#course-require').hide();
-		$('#course-summary-add-img').hide();
-		$('#course-explain-add').show();
-		$('#course-require-add').show();
-		$('#course-summary-complete-img').show();
+		if(Data.user_id==null)
+			Notifier.setErrorMsg(gettext('과목 정보를 수정하기 위해서는 로그인해야 합니다.'));
+		else{
+			$('#course-explain').hide();
+			$('#course-require').hide();
+			$('#course-summary-add-img').hide();
+			$('#course-explain-add').show();
+			$('#course-require-add').show();
+			$('#course-summary-complete-img').show();
+		}
 	},
 	showLectureSummary:function()
 	{
-		$('#lecture-homepage-html').hide();
-		$('#lecture-mainbook-html').hide();
-		$('#lecture-subbook-html').hide();
-		$('#lecture-summary-add-img').hide();
-		$('#lecture-homepage-add').show();
-		$('#lecture-mainbook-add').show();
-		$('#lecture-subbook-add').show();
-		$('#lecture-summary-complete-img').show();
+		if(Data.user_id==null)
+			Notifier.setErrorMsg(gettext('강의 정보를 수정하기 위해서는 로그인해야 합니다.'));
+		else{
+			$('#lecture-homepage-html').hide();
+			$('#lecture-mainbook-html').hide();
+			$('#lecture-subbook-html').hide();
+			$('#lecture-summary-add-img').hide();
+			$('#lecture-homepage-add').show();
+			$('#lecture-mainbook-add').show();
+			$('#lecture-subbook-add').show();
+			$('#lecture-summary-complete-img').show();
+		}
 	},
 	addSummary:function()
 	{
@@ -622,6 +630,12 @@ var DictionaryCommentList = {
 						if (resObj.result=='ADD') {
 							DictionaryCommentList.addToFront(resObj.comment);
 							DictionaryCommentList.addNewComment(resObj.comment);
+							$('#course-comment-add-text').val("");
+							$('#new-comment-load').val(0);
+							$('#new-comment-score').val(0);
+							$('#new-comment-gain').val(0);
+							$('#new-comment-semester').val(0);
+							$('#new-comment-professor').val(0);
 							if(Data.current_professor_id == -1)
 							{
 								$($("#course-eval").children()[0]).text("학점 : "+resObj.average['avg_score'].toFixed(1));
@@ -698,7 +712,7 @@ var DictionaryCommentList = {
 				if (suppress_ajax_errors)
 					return;
 				if (xhr.status == 403) {
-					Notifier.setErrorMsg(gettext('로그인 해야합니다.'));
+					Notifier.setErrorMsg(gettext('로그인해야 합니다.'));
 				}
 				else {
 					Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+gettext('요청 실패')+':'+xhr.status+')');
@@ -1001,7 +1015,7 @@ var DictionaryCommentList = {
 				if (suppress_ajax_errors)
 					return;
 				if (xhr.status == 403) {
-					Notifier.setErrorMsg(gettext('로그인 해야합니다.'));
+					Notifier.setErrorMsg(gettext('로그인해야 합니다.'));
 				}
 				else {
 					Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+gettext('요청 실패')+':'+xhr.status+')');
@@ -1529,7 +1543,7 @@ var FavoriteList = {
 				if (suppress_ajax_errors)
 					return;
 				if (xhr.status == 403) {
-					Notifier.setErrorMsg(gettext('로그인 해야합니다.'));
+					Notifier.setErrorMsg(gettext('로그인해야 합니다.'));
 				}
 				else {
 					Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+gettext('요청 실패')+':'+xhr.status+')');

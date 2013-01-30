@@ -36,8 +36,12 @@ $(document).ready(function () {
 	</div>
 	<div id="Notifier">
             <div class="left" id="message-wrap">
-                <div class="bl"><div class="br">
-                        <div id="message">{% trans "안녕하세요. 이 서비스는 <strong>SPARCS</strong>에서 제공하고 있습니다." %}</div>
+				<div class="bl"><div class="br">
+						{% if user.is_authenticated %}
+						<div id="message">{% trans "안녕하세요. 이 서비스는 <strong>SPARCS</strong>에서 제공하고 있습니다." %}</div>
+						{% else %}
+						<div id="message">{% trans "로그인을 하셔야 코멘트를 남길 수 있습니다." %}</div>
+						{% endif %}
                 </div></div>
 	    </div>
 	</div>
@@ -96,10 +100,6 @@ $(document).ready(function () {
 			<textarea id="course-comment-add-text"></textarea>
 			<input type="submit" id="course-comment-add-submit" value="{% trans "남기기" %}" />
 		</div>
-		{% else %}
-			<div>
-				{% trans "로그인을 하셔야 코멘트를 남길 수 있습니다." %}
-			</div>
 		{% endif %}
 		<div class="dictionary-title">
 			<div id="course-comment-view-title">최근 코멘트</div>

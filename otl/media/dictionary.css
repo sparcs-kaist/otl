@@ -1,6 +1,7 @@
 #main-side
 {
 	float:left;
+        margin-left:10px;
 	width:770px;
 }
 #left-side
@@ -113,6 +114,7 @@
 {
     background:#C3DAFB;
     line-height: 25px;
+    margin-top:10px;
     padding-left:18px;
     font-size : 15px;
     border-radius: 5px;
@@ -841,7 +843,7 @@
 #course-summary-top
 {
         width:760px;
-        height:138px;
+        height:146px;
 }
 #course-summary-bottom
 {
@@ -963,22 +965,28 @@
 {
         margin:0px;
         font-weight:bold;
-        font-size:10px;
+        font-size:11px;
 }
 #course-eval-average
 {
-        margin:0px;
         float:right;
-        height:50px;
-        line-height:50px;
+        height:60px;
+        line-height:60px;
         text-align: center;
-        width:50px;
-        margin:6px;
+        width:60px;
+        margin:3px;
+        margin-top:11px;
+        font-size:18px;
+        font-weight:bold;
         margin-top:13px;
+        font-family:tahoma;
+        background-image:url('images/dictionary/back_circle.png');
+        background-repeat:no-repeat;
+        background-position:center;
 }
 #course-eval-count
 {
-        margin-top:13px; 
+        margin-top:13px;
         margin-left:10px;
         float:right;
         line-height:10px;
@@ -1013,6 +1021,8 @@
 #course-comment-add
 {
     margin-top:20px;
+    margin-left:25px;
+    margin-right:25px;
     font-size:11px;
     font-family: 돋움;
     font-weight: bold;
@@ -1064,7 +1074,7 @@
 }
 #course-comment-add-text
 {
-    width:770px;
+    width:718px;
     height:105px;
     margin-top:10px;
     resize: none;
@@ -1267,24 +1277,30 @@
       margin:0px;
       float:left;
       margin-top:17px;
-      width:71px;
+      width:68px;
       height:50px;
 }
 .lecture-eval-score
 {
       margin:0px;
       font-weight:bold;
-      font-size:10px;
+      font-size:11px;
 }
 #lecture-eval-average
 {
       margin:0px;
       float:right;
-      height:50px;
-      line-height:50px;
+      height:60px;
+      line-height:60px;
       text-align: center;
-      width:50px;
-      margin-top:13px;
+      width:60px;
+      margin-top:11px;
+      font-size:18px;
+      font-weight:bold;
+      font-family:tahoma;
+      background-image:url('images/dictionary/back_circle.png');
+      background-repeat:no-repeat;
+      background-position:center;
 }
 #lecture-eval-count
 {
@@ -1322,7 +1338,7 @@
       float:left;
       margin-top:17px;
       margin-left:0px;
-      width:71px;
+      width:62px;
       height:50px;
 }
 .lecture-lec-eval-score
@@ -1335,11 +1351,14 @@
 {
       margin:0px;
       float:right;
-      height:50px;
-      line-height:50px;
+      height:60px;
+      line-height:60px;
       text-align: center;
-      width:50px;
-      margin-top:13px;
+      width:60px;
+      margin-top:11px;
+      font-size:18px;
+      font-weight:bold;
+      font-family:tahoma;
 }
 #lecture-lec-eval-count
 {
