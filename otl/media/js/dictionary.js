@@ -613,7 +613,7 @@ var DictionaryCommentList = {
 		var new_comment_professor = Data.current_professor_id;
 		if(new_comment_professor == -1)
 			new_comment_professor = $('#new-comment-professor').val();
-		if (new_comment_load==0 || new_comment_score==0 || new_comment_gain==0) {
+		if (new_comment_load==-1 || new_comment_score==-1 || new_comment_gain==-1) {
 			Notifier.setErrorMsg(gettext('로드, 학점, 남는거를 선택하세요.'));
 		}
 		else if(new_comment_semester==0 || new_comment_professor==0){

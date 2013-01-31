@@ -759,7 +759,7 @@
         float:right;
         height:12px;
         width:12px;
-	margin-left:3px;
+        margin-left:7px;
 	margin-top:3px;
 }
 .dictionary_favorite
@@ -1042,6 +1042,11 @@
 {
     float:left;
     margin-left:20px;
+    margin-right:80px;
+}
+#course-comment-add-select
+{
+    float:right;
 }
 #new-comment-professor
 {
@@ -1051,7 +1056,7 @@
 }
 .course-comment-add-eval
 {
-    float:right;
+    float:left;
     margin-left:10px;
 }
 #new-comment-score
