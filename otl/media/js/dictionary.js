@@ -1205,6 +1205,8 @@ var IndexCommentList = {
 				//}	
 			},
 			error: function (xhr) {
+                                if(suppress_ajax_errors)
+                                    return;
 				Notifier.setErrorMsg(gettext('오류가 발생했습니다.'));
 			}
 		});
