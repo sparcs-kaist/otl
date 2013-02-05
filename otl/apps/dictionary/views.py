@@ -480,7 +480,7 @@ def update_comment(request):
     except ObjectDoesNotExist:
         result = 'ERROR'
 
-    comments_to_output = _comments_to_output(comments,False,request.session.get('django_language','ko'),True)
+    comments_to_output = _comments_to_output(comments,False,request.session.get('django_language','ko'),False)
     return HttpResponse(json.dumps({
         'result': result,
         'comments': comments_to_output}, ensure_ascii=False, indent=4))
@@ -501,7 +501,7 @@ def professor_comment(request):
 
     return HttpResponse(json.dumps({
         'result': result,
-        'comments': _comments_to_output(comments,False,request.session.get('django_language','ko')) }, ensure_ascii=False, indent=4))
+        'comments': _comments_to_output(comments,False,request.session.get('django_language','ko'),False) }, ensure_ascii=False, indent=4))
 
 @login_required
 def like_comment(request, comment_id):

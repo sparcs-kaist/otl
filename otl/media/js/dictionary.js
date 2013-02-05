@@ -1452,16 +1452,14 @@ var ProfessorCommentList = {
                         top_div_spec.appendTo(top_div);
 
                         var mid_div = $('<div>', {'class': 'professor_comment_mid'});
-                        var mid_div_comment = $('<div>',{'class':'professor_comment_mid_comment'});
 
                         mid_div.appendTo(div_comment);
-                        mid_div_comment.appendTo(mid_div);
 
                         var comment_output = item.comment
 
                         $('<span>', {'class' : 'content_subject'}).text("<"+item.year+" "+(item.semester==1?"봄":"가을")+"학기> ").appendTo(top_div_title);
                         $('<a>', {'class' : 'content_subject', 'href':'/dictionary/view/'+item.course_code+"/"}).text(item.course_title).appendTo(top_div_title);
-                        $('<pre>', {'class': 'professor_content_comment'}).text(comment_output).appendTo(mid_div_comment);
+                        $('<pre>', {'class': 'professor_content_comment'}).text(comment_output).appendTo(mid_div);
 
 			var comment_eval = $('<div>', {'class': 'comment_eval'});
 			$('<div>',{'class':'a_spec'}).text(gettext("학점 :")).appendTo(comment_eval);
