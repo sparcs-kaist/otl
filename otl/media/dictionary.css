@@ -664,13 +664,13 @@
 }
 .dictionary_comment
 {
-      height:76px;
       margin:0px;
       margin-top:15px;
 }
 .dictionary_comment_left
 {
       float:left;
+      vertical-align:middle;
       height:75px;
       margin-left:25px;
 }
@@ -683,7 +683,6 @@
 {
       float:right;
       width:650px;
-      height:75px;
       margin-left:15px;
       margin-right:25px;
 }
@@ -723,20 +722,19 @@
       margin-left:20px;
       margin-right:10px;
 }
-.dictionary_comment_right_mid
-{
-      height:32px;
-}
 .dictionary_comment_content
 {
-      font-size:9pt;
+      font-size:11px;
       font-family:돋움;
+      word-wrap:break-word;
+      min-height:32px;
       margin:0px;
 }
 .dictionary_comment_right_bot
 {
-      height:23px;
+      float:right;
       font-size:8pt;
+      margin-bottom:5px;
 }
 .dictionary_comment_writer
 {
