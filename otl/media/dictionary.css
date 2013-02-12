@@ -401,9 +401,9 @@
 .course
 {
     float:left;
-    width:248px;
+    width:230px;
     padding-bottom:8px;
-    margin-right:10px;
+    padding-right:10px;
 }
 #prof-recent-comments
 {
@@ -463,7 +463,7 @@
 .professor_content_comment
 {
     min-height:32px;
-    font-size:10pt;
+    font-size:11px;
     word-wrap:break-word;
 }
 .professor_comment_bot
