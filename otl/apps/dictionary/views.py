@@ -830,6 +830,7 @@ def _comments_to_output(comments,conv_to_json=True, lang='ko',preview=True):
             'course_id': comment.course.id,
             'course_code': comment.course.old_code, 
             'course_title': _trans(comment.course.title,comment.course.title_en,lang),
+            'lecture_title': _trans(comment.lecture.title,comment.lecture.title_en,lang),
             'lecture_id': lecture_id,
             'writer_id': comment.writer.id,
             'writer_nickname': nickname,

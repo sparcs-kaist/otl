@@ -731,7 +731,10 @@ var DictionaryCommentList = {
 
 			var left_div_comment = $('<div>', {'class': 'dictionary_comment_left'});
 			var right_div_comment = $('<div>', {'class': 'dictionary_comment_right'});
-			left_div_comment.appendTo(comment);
+			if(Data.current_professor_id==-1)
+				left_div_comment.appendTo(comment);
+			else
+				right_div_comment.css("width","750px");
 			right_div_comment.appendTo(comment);
 			var prof_img = $('<img>', {'class': 'dictionary_comment_prof_photo', 'src':'http://cais.kaist.ac.kr/static_files/photo/1990/'+item.professor[0].professor_id+'.jpg'});
 			img_existance(prof_img);
@@ -742,11 +745,15 @@ var DictionaryCommentList = {
 
 			right_top_div.appendTo(right_div_comment);
 			$('<div>', {'class': 'dictionary_comment_semester'}).text('<' + item.year + ' ' + gettext(item.semester==1?"봄":"가을") + '>').appendTo(right_top_div);
-			$('<div>', {'class': 'dictionary_comment_prof'}).text(gettext("담당교수 : ")).appendTo(right_top_div);
-			for(var i=0;i<item.professor.length;i++)
-			{
-				$('<div>', {'class': 'dictionary_comment_prof_name'}).text(item.professor[i].professor_name + ((i!=item.professor.length-1)?gettext(","):gettext(""))).appendTo(right_top_div);
+			if(Data.current_professor_id==-1){
+				$('<div>', {'class': 'dictionary_comment_prof'}).text(gettext("담당교수 : ")).appendTo(right_top_div);
+				for(var i=0;i<item.professor.length;i++)
+				{
+					$('<div>', {'class': 'dictionary_comment_prof_name'}).text(item.professor[i].professor_name + ((i!=item.professor.length-1)?gettext(","):gettext(""))).appendTo(right_top_div);
+				}
 			}
+			else
+				$('<div>', {'class': 'dictionary_comment_lecture'}).text(item.lecture_title).appendTo(right_top_div);
 			right_top_div_eval.appendTo(right_top_div);
 
 			var comment_eval = $('<div>', {'class': 'dictionary_comment_eval'});
@@ -835,7 +842,6 @@ var DictionaryCommentList = {
 	},
 	addToGeneralSummary:function(obj)
 	{
-		var top_div = $('<div>', {'id': 'course-summary-top'});
 		var left_div = $('<div>', {'id': 'course-intro'});
 		var general_summary = obj.summary;
 		if (general_summary==null){
@@ -869,8 +875,6 @@ var DictionaryCommentList = {
 		$('<div>', {'id': 'course-eval-average'}).text(((obj.average['avg_score']+obj.average['avg_load']+obj.average['avg_gain'])/3).toFixed(1)).appendTo(right_div);
 		$('<div>', {'id': 'course-eval-count'}).text(gettext("평가자 수 : ") +obj.comment_num + gettext("명")).appendTo(right_div);
 
-		left_div.appendTo(top_div);
-		right_div.appendTo(top_div);
 		var bottom_div = $('<div>', {'id': 'course-summary-bottom'});
 		var bottom_img = $('<div>', {'id': 'course-bottom-img'});
 		var add_img = $('<img>', {'src': Data.MediaUrl+'images/dictionary/fix.gif', 'id': 'course-summary-add-img'});
@@ -886,9 +890,10 @@ var DictionaryCommentList = {
 		bottom_img.appendTo(bottom_div);
 		add_img.bind('click', $.proxy(this.showSummary, this));
 		complete_img.bind('click', $.proxy(this.addSummary, this));
+		bottom_div.appendTo(left_div);
 
-		top_div.appendTo(this.summary);
-		bottom_div.appendTo(this.summary);
+		left_div.appendTo(this.summary);
+		right_div.appendTo(this.summary);
 
 		$('#course-explain-add').hide();
 		$('#course-require-add').hide();
@@ -896,7 +901,6 @@ var DictionaryCommentList = {
 	},
 	addToLectureSummary:function(obj)
 	{
-		var top_div = $('<div>', {'id': 'lecture-summary-top'});
 		var left_div = $('<div>', {'id': 'lecture-intro'});
 		if(obj.summary==null){
 			var output_homepage = "";
@@ -957,13 +961,9 @@ var DictionaryCommentList = {
 		$('<div>', {'class': 'lecture-lec-eval-score'}).text(gettext("표준편차 ")+gettext("0")).appendTo(right_div_lec_eval);
 
 		right_div_lec_eval.appendTo(right_right_div);
-	
+
 		$('<div>', {'id': 'lecture-lec-eval-rating'}).text(gettext("3.3")).appendTo(right_right_div);
 		$('<div>', {'id': 'lecture-lec-eval-count'}).text(gettext("평가자 수 : ") +gettext("1")+gettext("명")).appendTo(right_right_div);
-		
-		left_div.appendTo(top_div);
-		right_div.appendTo(top_div);
-		right_right_div.appendTo(top_div);
 
 		var bottom_div = $('<div>', {'id': 'lecture-summary-bottom'});
 		var bottom_img = $('<div>', {'id': 'lecture-bottom-img'});
@@ -981,8 +981,10 @@ var DictionaryCommentList = {
 		add_img.bind('click', $.proxy(this.showLectureSummary, this));
 		complete_img.bind('click', $.proxy(this.addLectureSummary, this));
 
-		top_div.appendTo(this.summary);
-		bottom_div.appendTo(this.summary);
+		bottom_div.appendTo(left_div);
+		left_div.appendTo(this.summary);
+		right_div.appendTo(this.summary);
+		right_right_div.appendTo(this.summary);
 
 		$('#lecture-homepage-add').hide();
 		$('#lecture-mainbook-add').hide();
@@ -1042,11 +1044,13 @@ var DictionaryCommentList = {
 			this.last_index=-1;
 			Data.current_professor_id = -1;
 			$('#course-comment-add-professor').show();
+			$('#course-comment-add-semester').css("margin-right","0px");
 		}
 		else {
 			this.last_index=obj.index;
 			Data.current_professor_id = obj.professor_id;
 			$('#course-comment-add-professor').hide();
+			$('#course-comment-add-semester').css("margin-right","272px");
 		}
 		$($('.course-professor-tab')[this.last_index+1]).css({"color":"#FFFFFF","border-color":"#C3D9FF","background-color":"#C3D9FF"});
 		$.ajax({
@@ -1101,7 +1105,10 @@ var DictionaryCommentList = {
 
 			var left_div_comment = $('<div>', {'class': 'dictionary_comment_left'});
 			var right_div_comment = $('<div>', {'class': 'dictionary_comment_right'});
-			left_div_comment.appendTo(comment);
+			if(Data.current_professor_id==-1)
+				left_div_comment.appendTo(comment);
+			else
+				right_div_comment.css("width","750px");
 			right_div_comment.appendTo(comment);
 			var prof_img=$('<img>', {'class': 'dictionary_comment_prof_photo', 'src':'http://cais.kaist.ac.kr/static_files/photo/1990/'+item.professor[0].professor_id+'.jpg'});
 			img_existance(prof_img);
@@ -1112,11 +1119,15 @@ var DictionaryCommentList = {
 
 			right_top_div.appendTo(right_div_comment);
 			$('<div>', {'class': 'dictionary_comment_semester'}).text('<' + item.year + ' ' + gettext(item.semester==1?"봄":"가을")+ '>').appendTo(right_top_div);
-			$('<div>', {'class': 'dictionary_comment_prof'}).text(gettext("담당교수 : ")).appendTo(right_top_div);
-			for(var i=0;i<item.professor.length;i++)
-			{
-				$('<div>', {'class': 'dictionary_comment_prof_name'}).text(item.professor[i].professor_name + ((i!=item.professor.length-1)?gettext(","):gettext(""))).appendTo(right_top_div);
+			if(Data.current_professor_id==-1){
+				$('<div>', {'class': 'dictionary_comment_prof'}).text(gettext("담당교수 : ")).appendTo(right_top_div);
+				for(var i=0;i<item.professor.length;i++)
+				{
+					$('<div>', {'class': 'dictionary_comment_prof_name'}).text(item.professor[i].professor_name + ((i!=item.professor.length-1)?gettext(","):gettext(""))).appendTo(right_top_div);
+				}
 			}
+			else
+				$('<div>', {'class': 'dictionary_comment_lecture'}).text(item.lecture_title).appendTo(right_top_div);
 			right_top_div_eval.appendTo(right_top_div);
 
 			var comment_eval = $('<div>', {'class': 'dictionary_comment_eval'});
