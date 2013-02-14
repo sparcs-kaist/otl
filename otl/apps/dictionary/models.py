@@ -75,6 +75,15 @@ class CommentAdmin(admin.ModelAdmin):
     list_display = ('course', 'comment', 'load', 'score', 'gain')
     ordering = ('-id',)
 
+class Score(models.Model):
+    composition = models.FloatField()
+    understand = models.FloatField()
+    creative = models.FloatField()
+    support = models.FloatField()
+
+class ScoreAdmin(admin.ModelAdmin):
+    list_display = ('composition','understand','creative','support')
+
 class LectureRating(models.Model):
     lecture = models.ForeignKey(Lecture)                            # 과목 (분반 포함)
     number_of_students = models.IntegerField()                      # 평가자 수
@@ -82,6 +91,7 @@ class LectureRating(models.Model):
     number_of_effective_respondents = models.IntegerField()         # 유효응답자 수
     rating = models.FloatField()                                    # 점수
     standard_deviation = models.FloatField()                        # 표준편가
+    rated_score = models.ForeignKey(Score, null=True, blank=True)   # 강의평가 항목별 점수
 
     def rate_of_responds(self):
         return str(100.0 * self.number_of_respondents / self.number_of_students) + "%"
