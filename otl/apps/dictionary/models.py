@@ -21,7 +21,11 @@ class ProfessorInfor(models.Model):
     professor = models.ForeignKey(Professor)
 
 class ProfessorAdmin(admin.ModelAdmin):
-    list_display = ('professor', 'professor_en', 'professor_id')
+    list_display = ('professor_name', 'professor_name_en', 'professor_id')
+
+class ProfessorInforAdmin(admin.ModelAdmin):
+    list_display = ('professor','major','email','homepage','writer', 'written_datetime')
+    ordering = ('-id',)
 
 class Course(models.Model):
 # *이 붙은 항목은 Lecture가 업데이트될때 함께 업데이트 되어야 할 것
@@ -47,7 +51,7 @@ class Summary(models.Model):
     course = models.ForeignKey(Course)
 
 class SummaryAdmin(admin.ModelAdmin):
-    list_display = ('summary', 'writer', 'written_datetime', 'course')
+    list_display = ('summary', 'prerequisite', 'writer', 'written_datetime', 'course')
 
 class Comment(models.Model):
     course = models.ForeignKey(Course)                      # 과목
@@ -108,13 +112,20 @@ class LectureSummary(models.Model):
     lecture = models.ForeignKey(Lecture)
 
 class LectureRatingAdmin(admin.ModelAdmin):
-    list_display = ('lecture', 'number_of_students', 'number_of_respondents', 'number_of_effective_respondents','rating', 'standard_deviation')
+    list_display = ('lecture', 'number_of_students', 'number_of_respondents', 'number_of_effective_respondents','rating', 'standard_deviation', 'rated_score')
+
+class LectureSummaryAdmin(admin.ModelAdmin):
+    list_display = ('lecture', 'homepage', 'main_material', 'sub_material', 'writer', 'written_datetime')
+    ordering = ('-id',)
 
 class AlreadyWrittenError(Exception):
     pass
 
-
+admin.site.register(Professor, ProfessorAdmin)
+admin.site.register(ProfessorInfor, ProfessorInforAdmin)
 admin.site.register(Comment, CommentAdmin)
 admin.site.register(Course, CourseAdmin)
 admin.site.register(Summary, SummaryAdmin)
+admin.site.register(Score, ScoreAdmin)
 admin.site.register(LectureRating, LectureRatingAdmin)
+admin.site.register(LectureSummary, LectureSummaryAdmin)
