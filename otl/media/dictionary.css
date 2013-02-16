@@ -1333,8 +1333,13 @@
 #lecture-lec-score
 {
     display: inline;
-    width:122px;
+    width:128px;
     float:left;
+}
+#lecture-lec-score a:hover
+{
+    text-decoration:none;
+    color:#999999;
 }
 #lecture-lec-eval-title
 {
@@ -1343,7 +1348,7 @@
     font-family:돋움;
     font-weight:bold;
     font-size:11px;
-    width:122px;
+    width:125px;
     height:25px;
     text-align:center;
     background: #C3DAFB;
@@ -1358,7 +1363,7 @@
     float:left;
     margin-top:17px;
     margin-left:0px;
-    width:62px;
+    width:68px;
     height:50px;
 }
 .lecture-lec-eval-score
@@ -1379,14 +1384,10 @@
     font-size:18px;
     font-weight:bold;
     font-family:tahoma;
-}
-#lecture-lec-eval-count
-{
-    margin-top:13px;
-    float:right;
-    line-height:10px;
-    font-size:10px;
-    height:10px;
+    cursor:pointer;
+    background-image:url('images/dictionary/back_circle.png');
+    background-repeat:no-repeat;
+    background-position:center;
 }
 #lecture-summary-add-img
 {
@@ -1419,4 +1420,27 @@
 {
     width:10px;
     height:10px;
+}
+#lecture-rating
+{
+    background:#FFFFFF;
+    border-radius:5px;
+    border:solid 1px #BBBBBB;
+    box-shadow: 0px 0px 15px #999;
+}
+#lecture-rating-table
+{
+    width:700px;
+    margin:25px;
+    margin-top:40px;
+}
+#lecture-rating-table-firstrow
+{
+    background-color:#C3DAFB;
+}
+#lecture-rating-close
+{
+    float:right;
+    margin:10px;
+    cursor:pointer;
 }

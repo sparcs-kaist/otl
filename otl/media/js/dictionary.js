@@ -418,6 +418,7 @@ var DictionaryCommentList = {
 		this.summary = $('#course-summary');
 		this.lecture_summary = $('#lecture-summary');
 		this.comments = $('#course-comment-view');
+		this.lecture_rating = $('#lecture-rating');
 		this.onLoad();
 		this.registerHandles();
                 this.loading=true;
@@ -819,6 +820,11 @@ var DictionaryCommentList = {
 	{
 		this.lecture_summary.empty();
 	},
+	clearLectureRating:function()
+	{
+		this.lecture_rating.empty();
+		this.lecture_rating.hide();
+	},
 	clearBox:function()
 	{
 		$('#new-comment-semester').empty();
@@ -957,13 +963,15 @@ var DictionaryCommentList = {
 		var right_div_lec_eval = $('<div>', {'id': 'lecture-lec-eval'});
 		$('<div>', {'id': 'lecture-lec-eval-title'}).text(gettext("강의평가결과")).appendTo(right_right_div);
 
-		$('<div>', {'class': 'lecture-lec-eval-score'}).text(gettext("응답률 ")+gettext("0")+gettext("%")+gettext(" (")+gettext("0")+gettext("/")+gettext("1")+gettext(")")).appendTo(right_div_lec_eval);
-		$('<div>', {'class': 'lecture-lec-eval-score'}).text(gettext("표준편차 ")+gettext("0")).appendTo(right_div_lec_eval);
+		$('<div>', {'class': 'lecture-lec-eval-score'}).text(gettext("응답률 ")+obj.rating.rate+gettext(" (")+obj.rating.num_effective+gettext("/")+obj.rating.num_students+gettext(")")).appendTo(right_div_lec_eval);
+		$('<div>', {'class': 'lecture-lec-eval-score'}).text(gettext("표준편차 ")+obj.rating.deviation).appendTo(right_div_lec_eval);
 
 		right_div_lec_eval.appendTo(right_right_div);
 
-		$('<div>', {'id': 'lecture-lec-eval-rating'}).text(gettext("3.3")).appendTo(right_right_div);
-		$('<div>', {'id': 'lecture-lec-eval-count'}).text(gettext("평가자 수 : ") +gettext("1")+gettext("명")).appendTo(right_right_div);
+		var lecture_rating_href = $('<a>', {'id': 'lecture-lec-eval-rating'}).text(obj.rating.score);
+		lecture_rating_href.appendTo(right_right_div);
+		lecture_rating_href.bind('click',function() {
+			$('#lecture-rating').show();});
 
 		var bottom_div = $('<div>', {'id': 'lecture-summary-bottom'});
 		var bottom_img = $('<div>', {'id': 'lecture-bottom-img'});
@@ -992,7 +1000,36 @@ var DictionaryCommentList = {
 		$('#lecture-summary-complete-img').hide();
 
 	},
+	addToLectureRating:function(obj){
+		var close = $('<div>', {'id':'lecture-rating-close'});
+		$('<img>', {'src':Data.MediaUrl+'images/dictionary/x_sign.jpg'}).appendTo(close);
+		close.appendTo(this.lecture_rating);
+		close.bind('click',function() {
+			$('#lecture-rating').hide();});
 
+		var table = $('<table>', {'id':'lecture-rating-table'});
+		var first_row = $('<tr>', {'id':'lecture-rating-table-firstrow'});
+		$('<td>').text(gettext("연도")).appendTo(first_row);
+		$('<td>').text(gettext("학기")).appendTo(first_row);
+		$('<td>').text(gettext("체계적 구성")).appendTo(first_row);
+		$('<td>').text(gettext("강의의 이해도")).appendTo(first_row);
+		$('<td>').text(gettext("창의적 사고 장려")).appendTo(first_row);
+		$('<td>').text(gettext("강의의 도움정도")).appendTo(first_row);
+		$('<td>').text(gettext("평균")).appendTo(first_row);
+		first_row.appendTo(table);
+	    $.each(obj, function(index, item) {
+			var row = $('<tr>', {'class':'lecture-rating-table-row'});
+			$('<td>').text(item.year).appendTo(row);
+			$('<td>').text(gettext(item.semester==1?"봄":"가을")).appendTo(row);
+			$('<td>').text(item.composition).appendTo(row);
+			$('<td>').text(item.understand).appendTo(row);
+			$('<td>').text(item.creative).appendTo(row);
+			$('<td>').text(item.support).appendTo(row);
+			$('<td>').text(item.average).appendTo(row);
+			row.appendTo(table);
+		});
+		table.appendTo(this.lecture_rating);
+	},
 	addToProfessor:function(){
 		this.clearProfessorBox();
 		var new_comment_year = parseInt($('#new-comment-semester').val()/10);
@@ -1037,7 +1074,8 @@ var DictionaryCommentList = {
 		this.clearComment();
 		this.clearSummary();
 		this.clearBox();
-		this.clearLectureSummary()
+		this.clearLectureSummary();
+		this.clearLectureRating();
 		Data.comment_id = -1;		
 		$($('.course-professor-tab')[this.last_index+1]).css({"color":"#555555","border-color":"#EEEEEE","background-color":"#FFFFFF"});
 		if(obj==null) {
@@ -1071,11 +1109,13 @@ var DictionaryCommentList = {
 					else if(resObj.result=="PROF")
 					{
 					    this.addToLectureSummary(resObj);
+						this.addToLectureRating(resObj.rating_all);
 					}
 					else if(resObj.result=="PROF_EMPTY")
 					{
 					    resObj.summary=null;
 					    this.addToLectureSummary(resObj);
+						this.addToLectureRating(resObj.rating_all);
 					}
 					this.showMoreComments();
 					this.addToSemester(resObj.semester);

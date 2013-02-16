@@ -98,10 +98,10 @@ class LectureRating(models.Model):
     rated_score = models.ForeignKey(Score, null=True, blank=True)   # 강의평가 항목별 점수
 
     def rate_of_responds(self):
-        return str(100.0 * self.number_of_respondents / self.number_of_students) + "%"
+        return str(100 * self.number_of_respondents / self.number_of_students) + "%"
 
     def rate_of_effective_responds(self):
-        return str(100.0 * self.number_of_effective_respondents / self.number_of_students) + "%"
+        return str(100 * self.number_of_effective_respondents / self.number_of_students) + "%"
 
 class LectureSummary(models.Model):
     homepage = models.CharField(max_length=200)

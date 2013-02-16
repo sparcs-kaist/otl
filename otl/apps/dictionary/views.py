@@ -591,6 +591,8 @@ def get_summary_and_semester(request):
     lang=request.session.get('django_language','ko')
     professor_name = ""
     lecture_title = ""
+    lecture_rating = {'rate':"0%",'score':"0.0",'num_effective':0,'num_students':0,'deviation':"0.0"}
+    rating_all = []
     try:
         prof_id = int(request.POST.get('professor_id',-1))
         course_id = int(request.POST.get('course_id',-1))
@@ -613,9 +615,25 @@ def get_summary_and_semester(request):
 	    semester = Lecture.objects.filter(course=course,professor=professor).order_by('-year','-semester').values('year', 'semester').distinct()
 	    professor_name = professor.professor_name
 	    lectures = Lecture.objects.filter(professor=professor, course=course).order_by('-id')
+            for lecture in lectures:
+                if not lecture.rating is None:
+                    item = {'year':lecture.year,
+                            'semester':lecture.semester,
+                            'composition':round(lecture.rating.rated_score.composition,1),
+                            'understand':round(lecture.rating.rated_score.understand,1),
+                            'creative':round(lecture.rating.rated_score.creative,1),
+                            'support':round(lecture.rating.rated_score.support,1),
+                            'average':round(lecture.rating.rating,1)}
+                    rating_all.append(item)
 	    lecture = lectures[0]
             lecture_title = _trans(lecture.title,lecture.title_en,lang)
 	    summary = LectureSummary.objects.filter(lecture=lecture).order_by('-id')
+            if not lecture.rating is None:
+                lecture_rating = {'rate':lecture.rating.rate_of_effective_responds(),
+                        'score':round(lecture.rating.rating,1),
+                        'num_effective':lecture.rating.number_of_effective_respondents,
+                        'num_students':lecture.rating.number_of_students,
+                        'deviation':round(lecture.rating.standard_deviation,1)}
 	    q=Q()
 	    for lec in lectures:
 		q |= Q(lecture=lec)
@@ -640,6 +658,8 @@ def get_summary_and_semester(request):
 	'comment_num': comment_num,
 	'prof_name': professor_name,
         'summary': summary_output,
+        'rating': lecture_rating,
+        'rating_all': rating_all,
         'lecture_title': lecture_title}))
 
 

@@ -19,6 +19,13 @@ $(document).ready(function () {
 	Data.comment_id = -1;
 	DictionaryCommentList.initialize();
 	FavoriteController.initialize();
+	$(function() {
+		$("#lecture-rating").dialog();
+		$(".ui-dialog-titlebar").remove();
+		$('#lecture-rating').dialog().parent().css('position','absolute');
+		$('#lecture-rating').dialog({ closeOnEscape: false, width:750, position:[$(this).outerWidth()/2-260,180]});
+		$('#lecture-rating').hide();
+	});
 });
 </script>
 
@@ -111,5 +118,6 @@ $(document).ready(function () {
 		</div>
 	</div>
 </div>
+<div id='lecture-rating'></div>
 <div class="clear"></div>
 {% endblock %}
