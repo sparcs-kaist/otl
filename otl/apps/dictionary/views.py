@@ -1089,12 +1089,15 @@ def _favorites_to_output(favorites,conv_to_json=True,lang='ko'):
 def _get_courses_sorted(courses):
     all = []
     for course in courses:
-        average_sum = (course.score_average + course.load_average + course.gain_average) / 3
-           
-        lecture = Lecture.objects.filter(course=course).order_by('-year', '-semester')[0]
+        lectures = Lecture.objects.filter(course=course,year=settings.NEXT_YEAR,semester=settings.NEXT_SEMESTER)
+        if lectures.count()==0:
+            continue
+
+        lecture = lectures[0]
         num_people = lecture.num_people
         professor_name = lecture.professor.all()[0].professor_name
         professor_id = lecture.professor.all()[0].professor_id
+        average_sum = (course.score_average + course.load_average + course.gain_average) / 3
 
         interesting_score = average_sum * num_people
 
