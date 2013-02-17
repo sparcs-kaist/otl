@@ -117,6 +117,7 @@
     margin-top:10px;
     padding-left:18px;
     font-size : 15px;
+    font-weight: bold;
     border-radius: 5px;
 }
 .professor-title
@@ -369,6 +370,19 @@
     margin-right:10px;
     margin-left:5px;
     float:left;
+    cursor:pointer;
+}
+#prof-info-change-img
+{
+    width:10px;
+    height:10px;
+    vertical-align:top;
+}
+#prof-info-complete-img
+{
+    width:10px;
+    height:10px;
+    vertical-align:top;
 }
 #prof-info-change-user
 {
@@ -757,6 +771,7 @@
     width:12px;
     margin-left:7px;
     margin-top:3px;
+    cursor:pointer;
 }
 .dictionary_favorite
 {
@@ -780,6 +795,7 @@
     float:right;
     margin-left:10px;
     margin-top:-6px;
+    cursor:pointer;
 }
 #course-favorite
 {
@@ -1003,6 +1019,7 @@
     height:10px;
     margin-right:10px;
     float:right;
+    cursor:pointer;
 }
 #course-change-user img
 {
@@ -1098,6 +1115,7 @@
     float:right;
     width:70px;
     height:20px;
+    cursor:pointer;
 }
 #lecture-summary
 {
@@ -1406,6 +1424,7 @@
     margin-right:10px;
     margin-left:5px;
     float:right;
+    cursor:pointer;
 }
 
 #lecture-change-user
