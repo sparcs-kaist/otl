@@ -590,7 +590,6 @@ def get_summary_and_semester(request):
     comment_num = 0
     lang=request.session.get('django_language','ko')
     professor_name = ""
-    lecture_title = ""
     lecture_rating = {'rate':"0%",'score':"0.0",'num_effective':0,'num_students':0,'deviation':"0.0"}
     rating_all = []
     try:
@@ -627,7 +626,6 @@ def get_summary_and_semester(request):
                             'average':round(lecture.rating.rating,1)}
                     rating_all.append(item)
 	    lecture = lectures[0]
-            lecture_title = _trans(lecture.title,lecture.title_en,lang)
 	    summary = LectureSummary.objects.filter(lecture=lecture).order_by('-id')
             if not lecture.rating is None:
                 lecture_rating = {'rate':lecture.rating.rate_of_effective_responds(),
@@ -660,8 +658,7 @@ def get_summary_and_semester(request):
 	'prof_name': professor_name,
         'summary': summary_output,
         'rating': lecture_rating,
-        'rating_all': rating_all,
-        'lecture_title': lecture_title}))
+        'rating_all': rating_all}))
 
 
 @login_required
