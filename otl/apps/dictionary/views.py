@@ -619,6 +619,7 @@ def get_summary_and_semester(request):
                 if not lecture.rating is None:
                     item = {'year':lecture.year,
                             'semester':lecture.semester,
+                            'class_no':lecture.class_no,
                             'composition':round(lecture.rating.rated_score.composition,1),
                             'understand':round(lecture.rating.rated_score.understand,1),
                             'creative':round(lecture.rating.rated_score.creative,1),

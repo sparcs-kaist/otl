@@ -1011,6 +1011,7 @@ var DictionaryCommentList = {
 		var first_row = $('<tr>', {'id':'lecture-rating-table-firstrow'});
 		$('<td>').text(gettext("연도")).appendTo(first_row);
 		$('<td>').text(gettext("학기")).appendTo(first_row);
+		$('<td>').text(gettext("분반")).appendTo(first_row);
 		$('<td>').text(gettext("체계적 구성")).appendTo(first_row);
 		$('<td>').text(gettext("강의의 이해도")).appendTo(first_row);
 		$('<td>').text(gettext("창의적 사고 장려")).appendTo(first_row);
@@ -1021,6 +1022,7 @@ var DictionaryCommentList = {
 			var row = $('<tr>', {'class':'lecture-rating-table-row'});
 			$('<td>').text(item.year).appendTo(row);
 			$('<td>').text(gettext(item.semester==1?"봄":"가을")).appendTo(row);
+			$('<td>').text(item.class_no).appendTo(row);
 			$('<td>').text(item.composition).appendTo(row);
 			$('<td>').text(item.understand).appendTo(row);
 			$('<td>').text(item.creative).appendTo(row);
