@@ -745,11 +745,13 @@ var DictionaryCommentList = {
 			right_top_div.appendTo(right_div_comment);
 			$('<div>', {'class': 'dictionary_comment_semester'}).text('<' + item.year + ' ' + gettext(item.semester==1?"봄":"가을") + '>').appendTo(right_top_div);
 			if(Data.current_professor_id==-1){
-				$('<div>', {'class': 'dictionary_comment_prof'}).text(gettext("담당교수 : ")).appendTo(right_top_div);
+				var prof_info = $('<div>', {'class': 'dictionary_comment_prof_info'});
+				var prof_info_text = "담당교수 : ";
 				for(var i=0;i<item.professor.length;i++)
 				{
-					$('<div>', {'class': 'dictionary_comment_prof_name'}).text(item.professor[i].professor_name + ((i!=item.professor.length-1)?gettext(","):gettext(""))).appendTo(right_top_div);
+					prof_info_text += item.professor[i].professor_name + ((i!=item.professor.length-1)?gettext(","):gettext(""));
 				}
+				prof_info.text(prof_info_text).appendTo(right_top_div);
 			}
 			else
 				$('<div>', {'class': 'dictionary_comment_lecture'}).text(item.lecture_title).appendTo(right_top_div);
@@ -1507,7 +1509,7 @@ var ProfessorCommentList = {
                         var comment_output = item.comment
 
                         $('<span>', {'class' : 'content_subject'}).text("<"+item.year+" "+(item.semester==1?"봄":"가을")+"학기> ").appendTo(top_div_title);
-                        $('<a>', {'class' : 'content_subject', 'href':'/dictionary/view/'+item.course_code+"/"}).text(item.course_title).appendTo(top_div_title);
+                        $('<a>', {'class' : 'content_subject', 'href':'/dictionary/view/'+item.course_code+"/"}).text(item.lecture_title).appendTo(top_div_title);
                         $('<pre>', {'class': 'professor_content_comment'}).text(comment_output).appendTo(mid_div);
 
 			var comment_eval = $('<div>', {'class': 'comment_eval'});

@@ -462,6 +462,10 @@
 {
     font-size:11px;
     float:left;
+    width:425px;
+    text-overflow:ellipsis;
+    overflow:hidden;
+    white-space:nowrap;
 }
 
 .professor_comment_top_spec
@@ -704,10 +708,23 @@
 {
     float:left;
 }
+.dictionary_comment_prof_info
+{
+    float:left;
+    margin-left:25px;
+    width:195px;
+    text-overflow:ellipsis;
+    overflow:hidden;
+    white-space:nowrap;
+}
 .dictionary_comment_lecture
 {
     float:left;
     margin-left:25px;
+    width:280px;
+    text-overflow:ellipsis;
+    overflow:hidden;
+    white-space:nowrap;
 }
 .dictionary_comment_prof
 {
