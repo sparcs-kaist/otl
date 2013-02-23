@@ -1667,34 +1667,38 @@ var FavoriteController = {
 	},
 	addFavorite:function(obj)
 	{
-		$.ajax({
-			type: 'POST', 
-			url: '/dictionary/add_favorite/',
-			data: {'course_id': this.course_id},
-			dataType: 'json',
-			success: $.proxy(function(resObj) {
-				try {
-					if (resObj.result=='ADD') {
-						Notifier.setErrorMsg(gettext('추가되었습니다.'));
-					} else if (resObj.result='ALREADY_ADDED') {
-						Notifier.setErrorMsg(gettext('이미 추가하셨습니다.'));
+		if(Data.user_id==null)
+			Notifier.setErrorMsg(gettext('즐겨찾기를 추가하기 위해서는 로그인해야 합니다.'));
+		else{
+			$.ajax({
+				type: 'POST', 
+				url: '/dictionary/add_favorite/',
+				data: {'course_id': this.course_id},
+				dataType: 'json',
+				success: $.proxy(function(resObj) {
+					try {
+						if (resObj.result=='ADD') {
+							Notifier.setErrorMsg(gettext('추가되었습니다.'));
+						} else if (resObj.result='ALREADY_ADDED') {
+							Notifier.setErrorMsg(gettext('이미 추가하셨습니다.'));
+						}
+					}
+					catch(e) {
+						Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+e.message+')');
+					}
+				}, this),
+				error: function(xhr) {
+					if (suppress_ajax_errors)
+						return;
+					if (xhr.status == 403){
+						Notifier.setErrorMsg(gettext('로그인해야 합니다.'));
+					}
+					else{
+						Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+gettext('요청 실패')+':'+xhr.status+')');
 					}
 				}
-				catch(e) {
-					Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+e.message+')');
-				}
-			}, this),
-			error: function(xhr) {
-				if (suppress_ajax_errors)
-					return;
-				if (xhr.status == 403){
-					Notifier.setErrorMsg(gettext('로그인해야 합니다.'));
-				}
-				else{
-					Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+gettext('요청 실패')+':'+xhr.status+')');
-				}
-			}
-		});
+			});
+		}
 	},
 
 };
