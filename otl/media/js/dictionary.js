@@ -58,6 +58,7 @@ var NUM_ITEMS_PER_LIST = 15;
 var NUM_ITEMS_PER_DICT_COMMENT = 10;
 var NUM_ITEMS_PER_INDEX_COMMENT = 5;
 var NUM_ITEMS_PER_PROF_COMMENT = 6;
+var NUM_PROF_PER_LIST = 10;
 var NUMBER_OF_TABS = 3;
 var Data = {};
 var Mootabs = function(tabContainer, contents, trigerEvent, useAsTimetable)
@@ -419,8 +420,9 @@ var DictionaryCommentList = {
 		this.lecture_rating = $('#lecture-rating');
 		this.onLoad();
 		this.registerHandles();
-                this.loading=true;
-				this.last_index=-1;
+		this.loading=true;
+		this.last_index=-1;
+		this.last_prof=0;
 	},
 	onLoad:function()
 	{
@@ -790,19 +792,66 @@ var DictionaryCommentList = {
 	addToMultipleProfessor:function(obj)
 	{
 		var professor_tabs = $('#course-professor');
-		var default_tab = $('<div>', {'class': 'course-professor-tab'}).text('일반');
 
+		var default_left = $('<img>', {'class': 'course-professor-tab','src':Data.MediaUrl+'images/dictionary/point_left.png'});
+		default_left.hide();
+		default_left.appendTo(professor_tabs);
+
+		var count=1;
+		var default_tab = $('<div>', {'class': 'course-professor-tab'}).text('일반');
 		default_tab.appendTo(professor_tabs);
 		default_tab.bind('click', $.proxyWithArgs(DictionaryCommentList.onChangeProfessor, DictionaryCommentList, null));
-
 		$.each(obj, function(index, item) {
 			var professor_tab = $('<div>', {'class': 'course-professor-tab'}).text(item.professor_name);
 			professor_tab.appendTo(professor_tabs);
 			item.index=index;
 
 			professor_tab.bind('click', $.proxyWithArgs(DictionaryCommentList.onChangeProfessor, DictionaryCommentList, item));
+			count++;
+			if(count!=obj.length+1 && count%NUM_PROF_PER_LIST==0) {
+				var tab_right = $('<img>', {'class':'course-professor-tab','src':Data.MediaUrl+'images/dictionary/point_right.png'});
+				tab_right.css({'padding-left':'4px','padding-right':'3px','height':'12px','padding-top':'3px','padding-bottom':'3px'});
+				tab_right.bind('click', $.proxyWithArgs(DictionaryCommentList.onChangePageRight));
+				var tab_left = $('<img>', {'class':'course-professor-tab','src':Data.MediaUrl+'images/dictionary/point_left.png'});
+				tab_left.css({'padding-left':'3px','padding-right':'4px','height':'12px','padding-top':'3px','padding-bottom':'3px'});
+				tab_left.bind('click', $.proxyWithArgs(DictionaryCommentList.onChangePageLeft));
+				tab_right.appendTo(professor_tabs);
+				tab_left.appendTo(professor_tabs);
+			}
 		});
+		for(var i=NUM_PROF_PER_LIST+2;i<$('.course-professor-tab').length;i++) $($('.course-professor-tab')[i]).hide();
 	},
+	onChangePageLeft:function()
+	{
+		var i;
+		for(i=(NUM_PROF_PER_LIST+2)*DictionaryCommentList.last_prof;i<(NUM_PROF_PER_LIST+2)*(DictionaryCommentList.last_prof+1)&&i<$('.course-professor-tab').length;i++) {
+			if(i==0) continue;
+			$($('.course-professor-tab')[i]).hide();
+		}
+		for(i=(NUM_PROF_PER_LIST+2)*(DictionaryCommentList.last_prof-1);i<(NUM_PROF_PER_LIST+2)*(DictionaryCommentList.last_prof)&&i<$('.course-professor-tab').length;i++) {
+			if(i==0) continue;
+			$($('.course-professor-tab')[i]).show();
+		}
+		DictionaryCommentList.last_prof--;
+	},
+	onChangePageRight:function()
+	{
+		var i;
+		for(i=(NUM_PROF_PER_LIST+2)*DictionaryCommentList.last_prof;i<(NUM_PROF_PER_LIST+2)*(DictionaryCommentList.last_prof+1)&&i<$('.course-professor-tab').length;i++) {
+			if(i==0) continue;
+			$($('.course-professor-tab')[i]).hide();
+		}
+		for(i=(NUM_PROF_PER_LIST+2)*(DictionaryCommentList.last_prof+1);i<(NUM_PROF_PER_LIST+2)*(DictionaryCommentList.last_prof+1+1)&&i<$('.course-professor-tab').length;i++) {
+			if(i==0) continue;
+			$($('.course-professor-tab')[i]).show();
+		}
+		DictionaryCommentList.last_prof++;
+	},
+	getIndexOfProfessor:function(index)
+	{
+		return parseInt((index+1)/NUM_PROF_PER_LIST)*(NUM_PROF_PER_LIST+2)+1+(index+1)%NUM_PROF_PER_LIST;
+	},
+
 	clearComment:function()
 	{
 		this.comments.empty();
@@ -1077,7 +1126,7 @@ var DictionaryCommentList = {
 		this.clearLectureSummary();
 		this.clearLectureRating();
 		Data.comment_id = -1;		
-		$($('.course-professor-tab')[this.last_index+1]).css({"color":"#555555","border-color":"#EEEEEE","background-color":"#FFFFFF"});
+		$($('.course-professor-tab')[this.getIndexOfProfessor(this.last_index)]).css({"color":"#555555","border-color":"#EEEEEE","background-color":"#FFFFFF"});
 		if(obj==null) {
 			this.last_index=-1;
 			Data.current_professor_id = -1;
@@ -1090,7 +1139,7 @@ var DictionaryCommentList = {
 			$('#course-comment-add-professor').hide();
 			$('#course-comment-add-semester').css("margin-right","272px");
 		}
-		$($('.course-professor-tab')[this.last_index+1]).css({"color":"#FFFFFF","border-color":"#C3D9FF","background-color":"#C3D9FF"});
+		$($('.course-professor-tab')[this.getIndexOfProfessor(this.last_index)]).css({"color":"#FFFFFF","border-color":"#C3D9FF","background-color":"#C3D9FF"});
 		$.ajax({
 			type: 'POST',
 			url: '/dictionary/get_summary_and_semester/',

@@ -884,6 +884,7 @@ def _professors_to_output(professors,conv_to_json=True,lang='ko'):
                 'professor_id': professor.professor_id
                 }
         all.append(item)
+    all = sorted(all, key=lambda k:k['professor_name'])
     if conv_to_json:
         io = StringIO()
         if settings.DEBUG:
