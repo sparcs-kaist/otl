@@ -257,7 +257,13 @@ var Map = {
 	{
 		var arr = $.grep(Data.Map, function(item)
 		{
-			return item.name==name;
+			var namewithoutcode = "";
+			var temp = name.split(')');
+			if(temp.length==1)
+				namewithoutcode = name;
+			else if(temp.length==2)
+				namewithoutcode = temp[1];
+			return item.name==namewithoutcode;
 		});
 		if (arr.length==0) return;
 
@@ -265,7 +271,10 @@ var Map = {
 		var x = item.x;
 		var y = item.y;
 		$(this.maptext).css({'left': (x-6)+'px', 'top':(y-60)+'px'});
-		$('#map-name').text(item.code+' '+item.name);
+		if(item.name.split(')').length==2)
+			$('#map-name').text(item.name);
+		else
+			$('#map-name').text('('+item.code+')'+item.name);
 		if (this.previous_target != item.name)
 			this.move(x,y);
 		this.previous_target = item.name;
