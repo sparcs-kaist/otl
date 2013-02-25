@@ -615,7 +615,7 @@ var DictionaryCommentList = {
 		if(new_comment_professor == -1)
 			new_comment_professor = $('#new-comment-professor').val();
 		if (new_comment_load==-1 || new_comment_score==-1 || new_comment_gain==-1) {
-			Notifier.setErrorMsg(gettext('로드, 학점, 남는거를 선택하세요.'));
+			Notifier.setErrorMsg(gettext('학점, 로드, 남는거를 선택하세요.'));
 		}
 		else if(new_comment_semester==0 || new_comment_professor==0){
 			Notifier.setErrorMsg(gettext('학기, 담당교수를 선택하세요.'));
@@ -639,17 +639,18 @@ var DictionaryCommentList = {
 							$('#new-comment-professor').val(0);
 							if(Data.current_professor_id == -1)
 							{
-								$($("#course-eval").children()[0]).text("학점 : "+resObj.average['avg_score'].toFixed(1));
-								$($("#course-eval").children()[1]).text("로드 : "+resObj.average['avg_load'].toFixed(1));
-								$($("#course-eval").children()[2]).text("남는거 : "+resObj.average['avg_gain'].toFixed(1));
+								$($($($("#course-eval").children()[0]).children()[1]).children()[0]).css('width',resObj.average['avg_score'].toFixed(1)*7.5);
+								$($($($("#course-eval").children()[1]).children()[1]).children()[0]).css('width',resObj.average['avg_load'].toFixed(1)*7.5);
+								$($($($("#course-eval").children()[2]).children()[1]).children()[0]).css('width',resObj.average['avg_gain'].toFixed(1)*7.5);
+
 								$("#course-eval-average").text(((resObj.average['avg_score']+resObj.average['avg_load']+resObj.average['avg_gain'])/3).toFixed(1));
 								$("#course-eval-count").text(gettext("평가자 수 : ") + resObj.comment_num + gettext("명"));
 							}
 							else
 							{
-								$($("#lecture-eval").children()[0]).text("학점 : "+resObj.average['avg_score'].toFixed(1));
-								$($("#lecture-eval").children()[1]).text("로드 : "+resObj.average['avg_load'].toFixed(1));
-								$($("#lecture-eval").children()[2]).text("남는거 : "+resObj.average['avg_gain'].toFixed(1));
+								$($($($("#lecture-eval").children()[0]).children()[1]).children()[0]).css('width',resObj.average['avg_score'].toFixed(1)*7.5);
+								$($($($("#lecture-eval").children()[1]).children()[1]).children()[0]).css('width',resObj.average['avg_load'].toFixed(1)*7.5);
+								$($($($("#lecture-eval").children()[2]).children()[1]).children()[0]).css('width',resObj.average['avg_gain'].toFixed(1)*7.5);
 								$("#lecture-eval-average").text(((resObj.average['avg_score']+resObj.average['avg_load']+resObj.average['avg_gain'])/3).toFixed(1));
 								$("#lecture-eval-count").text(gettext("평가자 수 : ") + resObj.comment_num + gettext("명"));
 							}
@@ -687,17 +688,17 @@ var DictionaryCommentList = {
 						comment.remove();
 						if(Data.current_professor_id == -1)
 						{
-							$($("#course-eval").children()[0]).text("학점 : "+resObj.average['avg_score'].toFixed(1));
-							$($("#course-eval").children()[1]).text("로드 : "+resObj.average['avg_load'].toFixed(1));
-							$($("#course-eval").children()[2]).text("남는거 : "+resObj.average['avg_gain'].toFixed(1));
+							$($($($("#course-eval").children()[0]).children()[1]).children()[0]).css('width',resObj.average['avg_score'].toFixed(1)*7.5);
+							$($($($("#course-eval").children()[1]).children()[1]).children()[0]).css('width',resObj.average['avg_load'].toFixed(1)*7.5);
+							$($($($("#course-eval").children()[2]).children()[1]).children()[0]).css('width',resObj.average['avg_gain'].toFixed(1)*7.5);
 							$("#course-eval-average").text(((resObj.average['avg_score']+resObj.average['avg_load']+resObj.average['avg_gain'])/3).toFixed(1));
 							$("#course-eval-count").text(gettext("평가자 수 : ") + resObj.comment_num + gettext("명"));
 						}
 						else
 						{
-							$($("#lecture-eval").children()[0]).text("학점 : "+resObj.average['avg_score'].toFixed(1));
-							$($("#lecture-eval").children()[1]).text("로드 : "+resObj.average['avg_load'].toFixed(1));
-							$($("#lecture-eval").children()[2]).text("남는거 : "+resObj.average['avg_gain'].toFixed(1));
+							$($($($("#lecture-eval").children()[0]).children()[1]).children()[0]).css('width',resObj.average['avg_score'].toFixed(1)*7.5);
+							$($($($("#lecture-eval").children()[1]).children()[1]).children()[0]).css('width',resObj.average['avg_load'].toFixed(1)*7.5);
+							$($($($("#lecture-eval").children()[2]).children()[1]).children()[0]).css('width',resObj.average['avg_gain'].toFixed(1)*7.5);
 							$("#lecture-eval-average").text(((resObj.average['avg_score']+resObj.average['avg_load']+resObj.average['avg_gain'])/3).toFixed(1));
 							$("#lecture-eval-count").text(gettext("평가자 수 : ") + resObj.comment_num + gettext("명"));
 						}
@@ -920,9 +921,19 @@ var DictionaryCommentList = {
 		$('<div>', {'id': 'course-eval-title'}).text("TOTAL SCORE").appendTo(right_div);
 
 		var right_div_eval = $('<div>', {'id': 'course-eval'});
-		$('<div>', {'class': 'course-eval-score'}).text(gettext("학 점 ") + obj.average['avg_score'].toFixed(1)).appendTo(right_div_eval);
-		$('<div>', {'class': 'course-eval-score'}).text(gettext("로 드 ") + obj.average['avg_load'].toFixed(1)).appendTo(right_div_eval);
-		$('<div>', {'class': 'course-eval-score'}).text(gettext("남는거 ") + obj.average['avg_gain'].toFixed(1)).appendTo(right_div_eval);
+		var avg_score_div = $('<div>', {'class': 'course-eval-score'}).appendTo(right_div_eval);
+		var avg_load_div = $('<div>', {'class': 'course-eval-score'}).appendTo(right_div_eval);
+		var avg_gain_div = $('<div>', {'class': 'course-eval-score'}).appendTo(right_div_eval);
+
+		$('<div>', {'class': 'course-eval-score-title'}).text(gettext("학 점")).appendTo(avg_score_div);
+		var score_star = $('<div>', {'class': 'course-eval-score-star'}).appendTo(avg_score_div);
+		$('<div>',{'class':'star_full','width':obj.average['avg_score']*7.5}).appendTo(score_star);
+		$('<div>', {'class': 'course-eval-score-title'}).text(gettext("로 드")).appendTo(avg_load_div);
+		var load_star = $('<div>', {'class': 'course-eval-score-star'}).appendTo(avg_load_div);
+		$('<div>',{'class':'star_full','width':obj.average['avg_load']*7.5}).appendTo(load_star);
+		$('<div>', {'class': 'course-eval-score-title'}).text(gettext("남는거")).appendTo(avg_gain_div);
+		var gain_star = $('<div>', {'class': 'course-eval-score-star'}).appendTo(avg_gain_div);
+		$('<div>',{'class':'star_full','width':obj.average['avg_gain']*7.5}).appendTo(gain_star);
 		right_div_eval.appendTo(right_div);
 
 		$('<div>', {'id': 'course-eval-average'}).text(((obj.average['avg_score']+obj.average['avg_load']+obj.average['avg_gain'])/3).toFixed(1)).appendTo(right_div);
@@ -986,7 +997,7 @@ var DictionaryCommentList = {
 		$('<div>', {'id': 'lecture-prof-name'}).text(gettext("prof. ")+obj.prof_name).appendTo(left_left_div);
 
 		var lec_homepage = $('<div>', {'id': 'lecture-homepage'});
-		$('<div>', {'id': 'lecture-homepage-title'}).text(gettext("과목 홈페이지")).appendTo(lec_homepage);
+		$('<div>', {'id': 'lecture-homepage-title'}).text(gettext("홈페이지")).appendTo(lec_homepage);
 		$('<pre>', {'id': 'lecture-homepage-html'}).text(output_homepage).appendTo(lec_homepage);
 		$('<textarea>', {'id': 'lecture-homepage-add'}).text(output_homepage).appendTo(lec_homepage);	
 		lec_homepage.appendTo(left_div);
@@ -1006,12 +1017,21 @@ var DictionaryCommentList = {
 		var right_div = $('<div>', {'id': 'lecture-score'});
 		var right_div_eval = $('<div>', {'id': 'lecture-eval'});
 		$('<div>', {'id': 'lecture-eval-title'}).text("TOTAL SCORE").appendTo(right_div);
-		$('<div>', {'class': 'lecture-eval-score'}).text(gettext("학 점 ") + obj.average['avg_score'].toFixed(1)).appendTo(right_div_eval);
-		$('<div>', {'class': 'lecture-eval-score'}).text(gettext("로 드 ") + obj.average['avg_load'].toFixed(1)).appendTo(right_div_eval);
-		$('<div>', {'class': 'lecture-eval-score'}).text(gettext("남는거 ") + obj.average['avg_gain'].toFixed(1)).appendTo(right_div_eval);
+		var avg_score_div= $('<div>', {'class': 'lecture-eval-score'}).appendTo(right_div_eval);
+		var avg_load_div = $('<div>', {'class': 'lecture-eval-score'}).appendTo(right_div_eval);
+		var avg_gain_div = $('<div>', {'class': 'lecture-eval-score'}).appendTo(right_div_eval);
 
+        $('<div>', {'class': 'lecture-eval-score-title'}).text(gettext("로 드")).appendTo(avg_load_div);
+        var load_star = $('<div>', {'class': 'lecture-eval-score-star'}).appendTo(avg_load_div);
+        $('<div>',{'class':'star_full','width':obj.average['avg_load']*7.5}).appendTo(load_star);
+        $('<div>', {'class': 'lecture-eval-score-title'}).text(gettext("학 점")).appendTo(avg_score_div);
+        var score_star = $('<div>', {'class': 'lecture-eval-score-star'}).appendTo(avg_score_div);
+        $('<div>',{'class':'star_full','width':obj.average['avg_score']*7.5}).appendTo(score_star);
+        $('<div>', {'class': 'lecture-eval-score-title'}).text(gettext("남는거")).appendTo(avg_gain_div);
+        var gain_star = $('<div>', {'class': 'lecture-eval-score-star'}).appendTo(avg_gain_div);
+        $('<div>',{'class':'star_full','width':obj.average['avg_gain']*7.5}).appendTo(gain_star);
 		right_div_eval.appendTo(right_div);
-		
+
 		$('<div>', {'id': 'lecture-eval-average'}).text(((obj.average['avg_score']+obj.average['avg_load']+obj.average['avg_gain'])/3).toFixed(1)).appendTo(right_div);
 		$('<div>', {'id': 'lecture-eval-count'}).text(gettext("평가자 수 : ") +obj.comment_num + gettext("명")).appendTo(right_div);
 

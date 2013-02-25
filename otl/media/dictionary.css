@@ -673,6 +673,14 @@
 {
     float:left;
 }
+.star_full
+{
+    height:15px;
+    background-image:url('images/dictionary/star_full.png');
+    background-position:left;
+    background-size:45px 15px;
+    background-repeat:no-repeat;
+}
 .dictionary_comment
 {
     margin:0px;
@@ -883,13 +891,13 @@
 {
     margin-left:20px;
     float: left;
-    width:577px;
+    width:565px;
 }
 #course-score
 {
     float: right;
     margin-right:20px;
-    width:138px;
+    width:150px;
 }
 #course-change
 {
@@ -900,7 +908,7 @@
 {
     font-size:12px;
     margin-top:3px;
-    width:562px;
+    width:550px;
     font-weight:bold;
     line-height:30px;
     font-family:돋움;
@@ -914,7 +922,7 @@
 {
     height:3px;
     background:black;
-    width: 562px;
+    width: 550px;
 }
 #course-explain-title
 {
@@ -935,9 +943,9 @@
 #course-explain-add
 {
     height:27px;
-    width:558px;
+    width:546px;
     max-height:27px;
-    max-width:558px;
+    max-width:546px;
     font-size:11px;
     line-height:15px;
     margin-left:3px;
@@ -961,9 +969,9 @@
 #course-require-add
 {
     height:27px;
-    width:558px;
+    width:546px;
     max-height:27px;
-    max-width:558px;
+    max-width:546px;
     font-size:11px;
     line-height:15px;
     margin-left:3px;
@@ -975,7 +983,7 @@
     font-family:돋움;
     font-weight:bold;
     font-size:12px;
-    width:138px;
+    width:150px;
     height:25px;
     text-align:center;
     background: #C3DAFB;
@@ -987,14 +995,31 @@
     margin:0px;
     float:left;
     margin-top:13px;
-    width:71px;
-    height:50px;
+    width:85px;
 }
 .course-eval-score
 {
     margin:0px;
     font-weight:bold;
     font-size:11px;
+    overflow:hidden;
+}
+.course-eval-score-title
+{
+    float:left;
+    width:40px;
+    height:20px;
+}
+.course-eval-score-star
+{
+    float:right;
+    width:45px;
+    height:15px;
+    background-image:url('images/dictionary/star_empty.png');
+    background-position:center;
+    background-size:45px 15px;
+    background-repeat:no-repeat;
+    margin-top:2px;
 }
 #course-eval-average
 {
@@ -1003,7 +1028,7 @@
     line-height:60px;
     text-align: center;
     width:60px;
-    margin:3px;
+    margin-left:5px;
     margin-top:11px;
     font-size:18px;
     font-weight:bold;
@@ -1152,12 +1177,12 @@
 #lecture-intro
 {
     margin-left:20px;
-    width:440px;
+    width:415px;
     float:left;
 }
 #lecture-subject
 {
-    width:440px;
+    width:415px;
     height:32px;
 }
 #lecture-subject-title
@@ -1193,7 +1218,7 @@
     margin-right:0px;
     height:3px;
     background:black;
-    width:440px;
+    width:415px;
 }
 #lecture-prof-photo
 {
@@ -1219,7 +1244,7 @@
 }
 #lecture-homepage
 {
-    width:367px;
+    width:342px;
     margin-left:0px;
     margin-top:6px;
     height:18px;
@@ -1231,14 +1256,14 @@
     font-size:11px;
     font-weight:bold;
     text-align:right;
-    width:94px;
+    width:75px;
     margin-right:8px;
     display: inline;
     float:left;
 }
 #lecture-homepage-html
 {
-    width:260px;
+    width:255px;
     height:18px;
     font-size:11px;
     max-width:260px;
@@ -1247,14 +1272,14 @@
 #lecture-homepage-add
 {
     height:18px;
-    width:260px;
+    width:255px;
     max-height:18px;
-    max-width:260px;
+    max-width:255px;
     float:left;
 }
 #lecture-mainbook
 {
-    width:367px;
+    width:342px;
     margin-left:0px;
     margin-top:6px;
     height:40px;
@@ -1266,14 +1291,14 @@
     font-size:11px;
     font-weight:bold;
     text-align:right;
-    width:94px;
+    width:75px;
     margin-right:8px;
     display: inline;
     float:left;
 }
 #lecture-mainbook-html
 {
-    width:260px;
+    width:255px;
     height:40px;
     font-size:11px;
     float:left;
@@ -1282,14 +1307,14 @@
 #lecture-mainbook-add
 {
     height:40px;
-    width:260px;
+    width:255px;
     max-height:42px;
-    max-width:260px;
+    max-width:255px;
     float:left;
 }
 #lecture-subbook
 {
-    width:367px;
+    width:342px;
     margin-left:0px;
     margin-bottom:4px;
     margin-top:6px;
@@ -1303,13 +1328,13 @@
     font-weight:bold;
     text-align:right;
     margin-right:8px;
-    width:94px;
+    width:75px;
     display: inline;
     float: left;
 }
 #lecture-subbook-html
 {
-    width:260px;
+    width:255px;
     height:40px;
     font-size:11px;
     float:left;
@@ -1318,9 +1343,9 @@
 #lecture-subbook-add
 {
     height:40px;
-    width:260px;
+    width:255px;
     max-height:40px;
-    max-width:260px;
+    max-width:255px;
     float:left;
 }
 #lecture-score
@@ -1328,7 +1353,7 @@
     float:left;
     margin-left:15px;
     margin-right:15px;
-    width:128px;
+    width:150px;
     display: inline;
 }
 #lecture-eval-title
@@ -1338,7 +1363,7 @@
     font-family:돋움;
     font-weight:bold;
     font-size:11px;
-    width:128px;
+    width:150px;
     height:25px;
     text-align:center;
     background: #C3DAFB;
@@ -1352,23 +1377,40 @@
     margin:0px;
     float:left;
     margin-top:17px;
-    width:68px;
-    height:50px;
+    width:85px;
 }
 .lecture-eval-score
 {
     margin:0px;
     font-weight:bold;
     font-size:11px;
+    overflow:hidden;
+}
+.lecture-eval-score-title
+{
+    float:left;
+    width:40px;
+    height:20px;
+}
+.lecture-eval-score-star
+{
+    float:right;
+    width:45px;
+    height:15px;
+    background-image:url('images/dictionary/star_empty.png');
+    background-position:center;
+    background-size:45px 15px;
+    background-repeat:no-repeat;
+    margin-top:2px;
 }
 #lecture-eval-average
 {
-    margin:0px;
     float:right;
     height:60px;
     line-height:60px;
     text-align: center;
     width:60px;
+    margin-left:5px;
     margin-top:11px;
     font-size:18px;
     font-weight:bold;
@@ -1388,7 +1430,7 @@
 #lecture-lec-score
 {
     display: inline;
-    width:128px;
+    width:130px;
     float:left;
 }
 #lecture-lec-score a:hover
@@ -1403,7 +1445,7 @@
     font-family:돋움;
     font-weight:bold;
     font-size:11px;
-    width:125px;
+    width:130px;
     height:25px;
     text-align:center;
     background: #C3DAFB;
@@ -1418,8 +1460,7 @@
     float:left;
     margin-top:17px;
     margin-left:0px;
-    width:68px;
-    height:50px;
+    width:70px;
 }
 .lecture-lec-eval-score
 {
