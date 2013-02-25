@@ -592,6 +592,7 @@ def get_summary_and_semester(request):
     professor_name = ""
     lecture_rating = {'rate':"0%",'score':"0.0",'num_effective':0,'num_students':0,'deviation':"0.0"}
     rating_all = []
+    lecture_output = {}
     try:
         prof_id = int(request.POST.get('professor_id',-1))
         course_id = int(request.POST.get('course_id',-1))
@@ -626,6 +627,12 @@ def get_summary_and_semester(request):
                             'average':round(lecture.rating.rating,1)}
                     rating_all.append(item)
 	    lecture = lectures[0]
+            lecture_output = {'year':lecture.year,
+                    'semester':lecture.semester,
+                    'code':lecture.code,
+                    'class_no':lecture.class_no,
+                    'dept_id':lecture.department.id
+                    }
 	    summary = LectureSummary.objects.filter(lecture=lecture).order_by('-id')
             if not lecture.rating is None:
                 lecture_rating = {'rate':lecture.rating.rate_of_effective_responds(),
@@ -653,6 +660,7 @@ def get_summary_and_semester(request):
     return HttpResponse(json.dumps({
         'result': result,
         'semester': _semesters_to_output(semester,False,lang),
+        'lecture': lecture_output,
 	'average': average,
 	'comment_num': comment_num,
 	'prof_name': professor_name,

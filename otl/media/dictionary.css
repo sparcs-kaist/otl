@@ -1157,8 +1157,13 @@
 }
 #lecture-subject
 {
-    font-size:12px;
     width:440px;
+    height:32px;
+}
+#lecture-subject-title
+{
+    font-size:12px;
+    max-width:420px;
     font-weight:bold;
     line-height:32px;
     font-family:돋움;
@@ -1166,6 +1171,22 @@
     text-overflow:ellipsis;
     overflow:hidden;
     white-space:nowrap;
+    float:left;
+}
+#lecture-subject-syllabus
+{
+    width:15px;
+    height:15px;
+    margin-left:5px;
+    float:left;
+    margin-top:8px;
+}
+#syllabus
+{
+    width:15px;
+    height:15px;
+    border:0px;
+    cursor:pointer;
 }
 #lecture-line
 {

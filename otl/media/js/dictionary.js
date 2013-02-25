@@ -965,7 +965,16 @@ var DictionaryCommentList = {
 			var output_mainbook = obj.summary.main_material;
 			var output_subbook = obj.summary.sub_material;
 		}
-		$('<div>', {'id': 'lecture-subject'}).text(Data.Course.title).appendTo(left_div);
+		var lecture = obj.lecture;
+		var lecture_subject = $('<div>', {'id': 'lecture-subject'});
+		$('<div>', {'id': 'lecture-subject-title'}).text(Data.Course.title).appendTo(lecture_subject);
+		var syllabus = $('<div>', {'id':'lecture-subject-syllabus'});
+		var syllabus_url = 'https://cais.kaist.ac.kr/syllabusInfo?year='+lecture.year+'&term='+lecture.semester+'&subject_no='+lecture.code+'&lecture_class='+lecture.class_no+'&dept_id='+lecture.dept_id;
+		var syllabus_a = $('<a>', {'href':syllabus_url, 'target':'_blank'});
+		$('<img>', {'src':'/media/images/syllabus.png', 'id':'syllabus'}).appendTo(syllabus_a);
+		syllabus_a.appendTo(syllabus);
+		syllabus.appendTo(lecture_subject);
+		lecture_subject.appendTo(left_div);
 		$('<hr>', {'id': 'lecture-line'}).appendTo(left_div);
 		
 		var left_left_div = $('<div>', {'id': 'lecture-prof-photo'});
