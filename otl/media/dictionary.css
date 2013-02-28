@@ -116,7 +116,7 @@
     line-height: 25px;
     margin-top:10px;
     padding-left:18px;
-    font-size : 15px;
+    font-size : 13px;
     font-weight: bold;
     border-radius: 5px;
 }
@@ -434,6 +434,7 @@
 .recommend_subject_profname
 {
     text-align:center;
+    font-weight:bold;
 }
 .recommend_subject_title
 {
@@ -501,6 +502,7 @@
 .content_prof_photo
 {
     width:65px;
+    height:81px;
     margin:0px;
 }
 .content_prof_photo img
@@ -622,49 +624,80 @@
     float:left;
     width: 191px;
     margin-top:36px;
-    margin-left:21px;
+    margin-left:15px;
 }
 .taken_lecture_title
 {
     margin-left:18px;
-    height:20px;
+    height: 25px;
+    font-size:9pt;
 }
 .taken_lecture_title td
 {
+    padding:0px;
+    padding-left:15px;
     text-align:left;
     background-color:#DFE0E4;
+    font-family:돋움;
 }
 .taken_lecture_list
 {
     margin-left:10px;
     margin-top:12px;
     margin-bottom:12px;
+    font-size:8pt;
+    font-family:돋움;
+}
+.taken_lecture_list ul
+{
+    padding:0px;
+    list-style-position:inside;
 }
 .taken_lecture_list td
 {
+    padding:10px 15px;
     text-align:left;
 }
-.taken_lecture_list a
+.taken_lecture
 {
-    margin-left:10px;
+    position:relative;
+}
+.taken_lecture_name
+{
+    width:145px;
+}
+.taken_lecture_image
+{
+    position:absolute;
+    top:50%;
+    width:12px;
+    height:12px;
+    float:right;
+    margin-left:150px;
+    margin-top:-6px;
 }
 #favorite_view
 {
     margin-top:30px;
     background-color:#C0D9FD;
     padding-bottom:5px;
+    font-family:돋움;
 }
 #favorite_view_title
 {
     margin-left:15px;
     line-height:25px;
+    font-size:9pt;
+    font-weight:bold;
 }
 #favorite_view_contents
 {
     padding-top:10px;
     background-color:#FFFFFF;
+    list-style-position:inside;
     margin-left:5px;
     margin-right:5px;
+    font-size:8pt;
     padding-left:10px;
     padding-right:10px;
     padding-bottom:10px;
@@ -810,15 +843,14 @@
 }
 .dictionary_favorite_name
 {
-    float:left;
-    width:139px;
+    width:144px;
 }
 .dictionary_favorite_delete
 {
     position:absolute;
     top:50%;
     float:right;
-    margin-left:10px;
+    margin-left:149px;
     margin-top:-6px;
     cursor:pointer;
 }

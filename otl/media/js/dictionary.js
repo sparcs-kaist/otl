@@ -1294,10 +1294,10 @@ var IndexLectureList = {
 	showLectures:function(e, obj)
 	{
 		$(IndexLectureList.lecture_lists[IndexLectureList.current_open]).hide();
-		$(IndexLectureList.lecture_titles[IndexLectureList.current_open]).find('td').css("background-color","#DFE0E4")
+		$(IndexLectureList.lecture_titles[IndexLectureList.current_open]).find('td').css({"background-color":"#DFE0E4","font-weight":"normal"})
 		IndexLectureList.current_open = parseInt(obj.id)-1;
 		$(IndexLectureList.lecture_lists[IndexLectureList.current_open]).show();
-		$(IndexLectureList.lecture_titles[IndexLectureList.current_open]).find('td').css("background-color","#C0D9FD");
+		$(IndexLectureList.lecture_titles[IndexLectureList.current_open]).find('td').css({"background-color":"#C0D9FD","font-weight":"bold"});
 	}
 };
 
@@ -1635,7 +1635,7 @@ var FavoriteList = {
 			this.showEmptyNotice();
 		}
 		$.each(obj, function(index, item) {
-			var favorite = $('<div>', {'class': 'dictionary_favorite'});
+			var favorite = $('<li>', {'class': 'dictionary_favorite'});
 			var favorite_name = $('<div>', {'class': 'dictionary_favorite_name'});
 			favorite.appendTo(FavoriteList.favorites);
 			favorite_name.appendTo(favorite);
@@ -1774,7 +1774,6 @@ var RecommendController = {
 			var div_recommend_a = $('<a>',{'href':'/dictionary/view/'+item.course_code});
 			var div_recommend_image = $('<img>',{'src':'http://cais.kaist.ac.kr/static_files/photo/1990/'+item.professor_id+'.jpg','class':'content_prof_photo'});
 			img_existance(div_recommend_image);
-			var div_recommend_subject_code = $('<div>',{'class':'recommend_subject_code'}).text(item.course_code);
 			var div_recommend_subject_title = $('<div>',{'class':'recommend_subject_title'}).text(item.course_title);
 			var course_title = ''
 			if (item.course_title.length > 14)
@@ -1782,10 +1781,9 @@ var RecommendController = {
 			else 
 				course_title = item.course_title;
 			var div_recommend_subject_title = $('<div>',{'class':'recommend_subject_title'}).text(course_title);
-			var div_recommend_profname = $('<div>',{'class':'recommend_subject_profname'}).text(item.professor_name);
+			var div_recommend_profname = $('<div>',{'class':'recommend_subject_profname'}).text('Prof.' + item.professor_name);
 			div_recommend_a.appendTo(div_recommend);
 			div_recommend_image.appendTo(div_recommend_a);
-			div_recommend_subject_code.appendTo(div_recommend_a);
 			div_recommend_subject_title.appendTo(div_recommend_a);
 			div_recommend_profname.appendTo(div_recommend_a);
 			div_recommend.appendTo(RecommendController.recommendArea);	
