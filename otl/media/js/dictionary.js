@@ -449,9 +449,12 @@ var DictionaryCommentList = {
 
 	},
 
-	showMoreComments:function()
+	showMoreComments:function(forceremove)
 	{
+		forceremove = (typeof(forceremove) != 'undefined')?forceremove:false;
 		if (Data.comment_id!=0){
+			if(forceremove)
+				Data.comment_id = -1;
 			var conditions = {'course_id': Data.Course.id, 'next_comment_id': Data.comment_id, 'professor_id': Data.current_professor_id};
 			$.ajax({
 				type: 'GET',
@@ -460,9 +463,11 @@ var DictionaryCommentList = {
 				dataType: 'json',
 				success: $.proxy(function(resObj) {
 					try {
+						if(forceremove)
+							this.clearComment();
 						Data.comment_id = resObj.next_comment_id;
 						DictionaryCommentList.addToMultipleComment(resObj.comments);
-                                                Data.DictionaryComment = Data.DictionaryComment.concat(resObj.comments);
+						Data.DictionaryComment = Data.DictionaryComment.concat(resObj.comments);
 					} catch(e) {
 						Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+e.message+')');
 					}
@@ -1149,12 +1154,7 @@ var DictionaryCommentList = {
 	},
 	onChangeProfessor:function(e,obj)
 	{
-		this.clearComment();
-		this.clearSummary();
-		this.clearBox();
-		this.clearLectureSummary();
-		this.clearLectureRating();
-		Data.comment_id = -1;		
+		Data.comment_id = -1;
 		$($('.course-professor-tab')[this.getIndexOfProfessor(this.last_index)]).css({"color":"#555555","border-color":"#EEEEEE","background-color":"#FFFFFF"});
 		if(obj==null) {
 			this.last_index=-1;
@@ -1176,6 +1176,10 @@ var DictionaryCommentList = {
 			dataType: 'json',
 			success: $.proxy(function(resObj) {
 				try {
+					this.clearSummary();
+					this.clearBox();
+					this.clearLectureSummary();
+					this.clearLectureRating();
 					if(resObj.result=="GENERAL"){
 					    this.addToGeneralSummary(resObj);
 					}
@@ -1195,7 +1199,7 @@ var DictionaryCommentList = {
 					    this.addToLectureSummary(resObj);
 						this.addToLectureRating(resObj.rating_all);
 					}
-					this.showMoreComments();
+					this.showMoreComments(true);
 					this.addToSemester(resObj.semester);
 				}
 				catch(e) {
