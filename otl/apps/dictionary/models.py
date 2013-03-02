@@ -63,8 +63,6 @@ class Comment(models.Model):
     load = models.SmallIntegerField(choices=LOAD_TYPES)                       # 로드
     score = models.SmallIntegerField(choices=SCORE_TYPES)                      # 학점
     gain = models.SmallIntegerField(choices=GAIN_TYPES)                       # 남는 거
-    like = models.IntegerField(default=0)
-    like_list = models.ManyToManyField(User, related_name='comment_likelist', null=True)
 
     @staticmethod
     def course_average(courses):
@@ -89,7 +87,6 @@ class ScoreAdmin(admin.ModelAdmin):
     list_display = ('composition','understand','creative','support')
 
 class LectureRating(models.Model):
-    lecture = models.ForeignKey(Lecture)                            # 과목 (분반 포함)
     number_of_students = models.IntegerField()                      # 평가자 수
     number_of_respondents = models.IntegerField()                   # 응답자 수
     number_of_effective_respondents = models.IntegerField()         # 유효응답자 수
@@ -112,7 +109,7 @@ class LectureSummary(models.Model):
     lecture = models.ForeignKey(Lecture)
 
 class LectureRatingAdmin(admin.ModelAdmin):
-    list_display = ('lecture', 'number_of_students', 'number_of_respondents', 'number_of_effective_respondents','rating', 'standard_deviation', 'rated_score')
+    list_display = ('number_of_students', 'number_of_respondents', 'number_of_effective_respondents','rating', 'standard_deviation', 'rated_score')
 
 class LectureSummaryAdmin(admin.ModelAdmin):
     list_display = ('lecture', 'homepage', 'main_material', 'sub_material', 'writer', 'written_datetime')
