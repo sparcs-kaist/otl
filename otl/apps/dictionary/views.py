@@ -613,7 +613,7 @@ def get_summary_and_semester(request):
 	    professor = Professor.objects.get(professor_id=prof_id)
 	    semester = Lecture.objects.filter(course=course,professor=professor).order_by('-year','-semester').values('year', 'semester').distinct()
 	    professor_name = professor.professor_name
-	    lectures = Lecture.objects.filter(professor=professor, course=course).order_by('-id')
+	    lectures = Lecture.objects.filter(professor=professor, course=course).order_by('-year','-semester')
             for lecture in lectures:
                 if not lecture.rating is None:
                     item = {'year':lecture.year,
@@ -625,7 +625,10 @@ def get_summary_and_semester(request):
                             'support':round(lecture.rating.rated_score.support,1),
                             'average':round(lecture.rating.rating,1)}
                     rating_all.append(item)
-	    lecture = lectures[0]
+            index = 0
+            if lectures[0].year == settings.NEXT_YEAR and lectures[0].semester == settings.NEXT_SEMESTER and lectures.count() > 1:
+                index = 1
+	    lecture = lectures[index]
             lecture_output = {'year':lecture.year,
                     'semester':lecture.semester,
                     'code':lecture.code,
@@ -650,8 +653,16 @@ def get_summary_and_semester(request):
 		recent_summary = summary[0]
 		summary_output = _lecture_summary_to_output(recent_summary,False,lang)
 		result = 'PROF'
-	    else:
-		result = 'PROF_EMPTY'
+            else:
+            	result = 'PROF_EMPTY'
+                if lectures.count() > index+1:
+                    past_summary = LectureSummary.objects.filter(lecture=lectures[index+1]).order_by('-id')
+                    if past_summary.count() > 0:
+                        new_summary = LectureSummary(homepage=past_summary[0].homepage, main_material=past_summary[0].main_material, sub_material=past_summary[0].sub_material, writer=past_summary[0].writer, written_datetime=past_summary[0].written_datetime, lecture=lecture)
+                        new_summary.save()
+                        summary_output = _lecture_summary_to_output(new_summary,False,lang)
+                        result = 'PROF'
+
     except ObjectDoesNotExist:
         result='NOT_EXIST'
     except:
@@ -776,7 +787,7 @@ def _update_comment(count, **conditions):
                 q |= Q(course__department=department)
         comments = Comment.objects.filter(q).distinct()
     elif professor != None:
-        comments = Comment.objects.filter(course__professors=professor)
+        comments = Comment.objects.filter(lecture__professor=professor)
     else:
         comments = Comment.objects.all()
     comments = comments.order_by('-id')
