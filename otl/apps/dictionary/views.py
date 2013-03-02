@@ -503,10 +503,6 @@ def professor_comment(request):
         'result': result,
         'comments': _comments_to_output(comments,False,request.session.get('django_language','ko'),False) }, ensure_ascii=False, indent=4))
 
-@login_required
-def like_comment(request, comment_id):
-    return
-
 @login_required_ajax
 def add_summary(request):
     try:
@@ -870,7 +866,6 @@ def _comments_to_output(comments,conv_to_json=True, lang='ko',preview=True):
             'score': comment.score,
             'gain': comment.gain,
             'load': comment.load,
-            'like': comment.like,
             'semester': comment.lecture.semester,
             'year': comment.lecture.year
         }
