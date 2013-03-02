@@ -332,6 +332,7 @@ var LectureList = {
 			dataType: 'json',
 			success: $.proxy(function(resObj) {
 				try {
+                                        resObj.sort();
 					this.keyword.flushCache();
 					this.keyword.autocomplete(resObj, {
 						matchContains: true,
