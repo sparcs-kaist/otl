@@ -148,7 +148,6 @@
 	"pk":1,
 	"model":"dictionary.lecturerating",
 	"fields":{
-		"lecture":1,
 		"number_of_students":20,
 		"number_of_respondents":17,
 		"number_of_effective_respondents":13,

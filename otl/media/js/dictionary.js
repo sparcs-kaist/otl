@@ -515,97 +515,103 @@ var DictionaryCommentList = {
 	},
 	addSummary:function()
 	{
-		var new_explain_content = $("#course-explain-add").val();
-		var new_require_content = $('#course-require-add').val();
-		var course_id = Data.Course.id;
-                var writer_id = Data.user_id;
-                $.ajax({
-                    type: 'POST',
-                    url: '/dictionary/add_summary/',
-  					data: {'content': new_explain_content, 'require': new_require_content, 'course_id': course_id, 'writer_id': writer_id},
-                    dataType: 'json',
-                    success: $.proxy(function(resObj) {
-                        try {
-                            if (resObj.result=='OK') {
-				$($("#course-change-user")).text(gettext("마지막 고침 : ")+resObj.summary.written_datetime + " " + resObj.summary.writer + " ");
-			    }
-                        }
-                        catch(e) {
-                            Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+e.message+')');
-                                }
-			    }, this),
-		    error: function(xhr) {
-			if (suppress_ajax_errors)
-                            return;
-			if (xhr.status == 403){
-		            Notifier.setErrorMsg(gettext('로그인해야 합니다.'));
-			}
-			else{
-			    Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+gettext('요청 실패')+':'+xhr.status+')');
-			}
-		    }
-		});
-		var output_explain = new_explain_content
-		var output_require = new_require_content;
-		$("#course-require").text(output_require);
-		$("#course-explain").text(output_explain);
-		$('#course-explain-add').hide();
-		$('#course-require-add').hide();
-		$('#course-summary-complete-img').hide();
-		$('#course-explain').show();
-		$('#course-require').show();
-		$('#course-summary-add-img').show();
+		var confirm_register = confirm("과목정보를 수정하시겠습니까?");
+		if (confirm_register == true){
+			var new_explain_content = $("#course-explain-add").val();
+			var new_require_content = $('#course-require-add').val();
+			var course_id = Data.Course.id;
+					var writer_id = Data.user_id;
+					$.ajax({
+						type: 'POST',
+						url: '/dictionary/add_summary/',
+						data: {'content': new_explain_content, 'require': new_require_content, 'course_id': course_id, 'writer_id': writer_id},
+						dataType: 'json',
+						success: $.proxy(function(resObj) {
+							try {
+								if (resObj.result=='OK') {
+					$($("#course-change-user")).text(gettext("마지막 고침 : ")+resObj.summary.written_datetime + " " + resObj.summary.writer + " ");
+					}
+							}
+							catch(e) {
+								Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+e.message+')');
+									}
+					}, this),
+				error: function(xhr) {
+				if (suppress_ajax_errors)
+								return;
+				if (xhr.status == 403){
+						Notifier.setErrorMsg(gettext('로그인해야 합니다.'));
+				}
+				else{
+					Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+gettext('요청 실패')+':'+xhr.status+')');
+				}
+				}
+			});
+			var output_explain = new_explain_content
+			var output_require = new_require_content;
+			$("#course-require").text(output_require);
+			$("#course-explain").text(output_explain);
+			$('#course-explain-add').hide();
+			$('#course-require-add').hide();
+			$('#course-summary-complete-img').hide();
+			$('#course-explain').show();
+			$('#course-require').show();
+			$('#course-summary-add-img').show();
+		}
 	},
 	addLectureSummary:function()
 	{
-		var new_homepage_content = $("#lecture-homepage-add").val();
-		var new_mainbook_content = $('#lecture-mainbook-add').val();
-		var new_subbook_content = $('#lecture-subbook-add').val();
-		var course_id = Data.Course.id;
-		var prof_id = Data.current_professor_id;
-                var writer_id = Data.user_id;
-                $.ajax({
-                    type: 'POST',
-                    url: '/dictionary/add_lecture_summary/',
-  					data: {'homepage': new_homepage_content, 'mainbook': new_mainbook_content, 'subbook': new_subbook_content, 'course_id': course_id, 'writer_id': writer_id, 'professor_id':prof_id},
-                    dataType: 'json',
-                    success: $.proxy(function(resObj) {
-                        try {
-                            if (resObj.result=='OK') {
-				 $($("#lecture-change-user")).text(gettext("마지막 고침 : ")+resObj.summary.written_datetime + " " + resObj.summary.writer + " ");
+		var confirm_register = confirm("과목정보를 수정하시겠습니까?");
+		if (confirm_register == true){
+			var new_homepage_content = $("#lecture-homepage-add").val();
+			var new_mainbook_content = $('#lecture-mainbook-add').val();
+			var new_subbook_content = $('#lecture-subbook-add').val();
+			var course_id = Data.Course.id;
+			var prof_id = Data.current_professor_id;
+					var writer_id = Data.user_id;
+					$.ajax({
+						type: 'POST',
+						url: '/dictionary/add_lecture_summary/',
+						data: {'homepage': new_homepage_content, 'mainbook': new_mainbook_content, 'subbook': new_subbook_content, 'course_id': course_id, 'writer_id': writer_id, 'professor_id':prof_id},
+						dataType: 'json',
+						success: $.proxy(function(resObj) {
+							try {
+								if (resObj.result=='OK') {
+					 $($("#lecture-change-user")).text(gettext("마지막 고침 : ")+resObj.summary.written_datetime + " " + resObj.summary.writer + " ");
 
-                            }
-                        }
-                        catch(e) {
-                            Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+e.message+')');
-                                }
-				}, this),
-		    error: function(xhr) {
-			if (suppress_ajax_errors)
-                            return;
-			if (xhr.status == 403){
-		            Notifier.setErrorMsg(gettext('로그인해야 합니다.'));
-			}
-			else{
-			    Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+gettext('요청 실패')+':'+xhr.status+')');
-			}
-		    }
-		});
-		var output_homepage = new_homepage_content
-		var output_mainbook = new_mainbook_content
-		var output_subbook = new_subbook_content
+								}
+							}
+							catch(e) {
+								Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+e.message+')');
+									}
+					}, this),
+				error: function(xhr) {
+				if (suppress_ajax_errors)
+								return;
+				if (xhr.status == 403){
+						Notifier.setErrorMsg(gettext('로그인해야 합니다.'));
+				}
+				else{
+					Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+gettext('요청 실패')+':'+xhr.status+')');
+				}
+				}
+			});
+			var output_homepage = new_homepage_content
+			var output_mainbook = new_mainbook_content
+			var output_subbook = new_subbook_content
 
-		$('#lecture-homepage-html').text(output_homepage);
-		$('#lecture-mainbook-html').text(output_mainbook);
-		$('#lecture-subbook-html').text(output_subbook);
-		$('#lecture-homepage-add').hide();
-		$('#lecture-mainbook-add').hide();
-		$('#lecture-subbook-add').hide();
-		$('#lecture-summary-complete-img').hide();
-		$('#lecture-homepage-html').show();
-		$('#lecture-mainbook-html').show();
-		$('#lecture-subbook-html').show();
-		$('#lecture-summary-add-img').show();
+			$('#lecture-homepage-html').text(output_homepage);
+			$('#lecture-mainbook-html').text(output_mainbook);
+			$('#lecture-subbook-html').text(output_subbook);
+			$('#lecture-homepage-add').hide();
+			$('#lecture-mainbook-add').hide();
+			$('#lecture-subbook-add').hide();
+			$('#lecture-summary-complete-img').hide();
+			$('#lecture-homepage-html').show();
+			$('#lecture-mainbook-html').show();
+			$('#lecture-subbook-html').show();
+			$('#lecture-summary-add-img').show();
+		}
 	},
 
 
@@ -1497,49 +1503,52 @@ var ProfessorCommentList = {
 	},
 	changeProfInfo:function()
 	{
-        var new_major_content = $('#professor-info-major-change').val();
-        var new_email_content = $('#professor-info-email-change').val();
-        var new_homepage_content = $('#professor-info-homepage-change').val();
-        var prof_id = Data.Professor[0].professor_id;
-        var conditions = { 'major': new_major_content, 'email': new_email_content, 'homepage': new_homepage_content, 'prof_id': prof_id};
+		var confirm_register = confirm("과목정보를 수정하시겠습니까?");
+		if (confirm_register == true){
+			var new_major_content = $('#professor-info-major-change').val();
+			var new_email_content = $('#professor-info-email-change').val();
+			var new_homepage_content = $('#professor-info-homepage-change').val();
+			var prof_id = Data.Professor[0].professor_id;
+			var conditions = { 'major': new_major_content, 'email': new_email_content, 'homepage': new_homepage_content, 'prof_id': prof_id};
 
-        $.ajax({
-            type: 'POST',
-            url: '/dictionary/add_professor_info/',
-            data: conditions,
-            dataType: 'json',
-            success: $.proxy(function(resObj){
-                try {
-                    if (resObj.result == 'OK') {
-                        Data.ProfInfo = resObj.prof_info;
-			this.clearProfInfo();
-			this.addProfInfo();
-                    }else{
-                    }
-                } catch(e) {
-                    Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+e.message+')');
-                }
-            }, this),
-            error: function(xhr){
-                if (suppress_ajax_errors)
-                    return;
-                if (xhr.status == 403){
-                    Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+gettext('요청 실패')+':'+xhr.status+')');
-                }
-            }
-        });
+			$.ajax({
+				type: 'POST',
+				url: '/dictionary/add_professor_info/',
+				data: conditions,
+				dataType: 'json',
+				success: $.proxy(function(resObj){
+					try {
+						if (resObj.result == 'OK') {
+							Data.ProfInfo = resObj.prof_info;
+				this.clearProfInfo();
+				this.addProfInfo();
+						}else{
+						}
+					} catch(e) {
+						Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+e.message+')');
+					}
+				}, this),
+				error: function(xhr){
+					if (suppress_ajax_errors)
+						return;
+					if (xhr.status == 403){
+						Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+gettext('요청 실패')+':'+xhr.status+')');
+					}
+				}
+			});
 
-        $('#professor-info-major').text(new_major_content);
-        $('#professor-info-email').text(new_email_content);
-        $('#professor-info-homepage').text(new_homepage_content);
-        $('#professor-info-major').show();
-        $('#professor-info-email').show();
-        $('#professor-info-homepage').show();
-        $('#prof-info-change-img').show();
-        $('#professor-info-major-change').hide();
-        $('#professor-info-email-change').hide();
-        $('#professor-info-homepage-change').hide();
-        $('#prof-info-complete-img').hide();
+			$('#professor-info-major').text(new_major_content);
+			$('#professor-info-email').text(new_email_content);
+			$('#professor-info-homepage').text(new_homepage_content);
+			$('#professor-info-major').show();
+			$('#professor-info-email').show();
+			$('#professor-info-homepage').show();
+			$('#prof-info-change-img').show();
+			$('#professor-info-major-change').hide();
+			$('#professor-info-email-change').hide();
+			$('#professor-info-homepage-change').hide();
+			$('#prof-info-complete-img').hide();
+		}
 	},
 	showComment:function()
 	{
