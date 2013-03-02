@@ -187,8 +187,8 @@ def view(request, course_code):
         lectures_output = _lectures_to_output(Lecture.objects.filter(course=course), True, lang)
         professors_output = _professors_to_output(course.professors,True,lang)
         result = 'OK'
-    except ObjectDoesNotExist:
-        result = 'NOT_EXIST'
+    except:
+        return HttpResponseBadRequest()
 
     return render_to_response('dictionary/view.html', {
         'section' : 'dictionary',
@@ -230,8 +230,8 @@ def view_professor(request, prof_id):
         courses = Course.objects.filter(professors=professor)
         result = 'OK'
 
-    except ObjectDoesNotExist:
-        result = 'NOT_EXIST'
+    except:
+        return HttpResponseBadRequet()
 
     return render_to_response('dictionary/professor.html', {
         'section' : 'dictionary',
