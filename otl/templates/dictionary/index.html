@@ -65,10 +65,12 @@ $(document).ready(function() {
 			{% endfor %}
 		</table>
 	</div>
-	<div id="favorite_view">
-		<div id="favorite_view_title">즐겨찾기</div>
-		<ul id="favorite_view_contents"></div>
-	</div>
+	{% if user.is_authenticated %}
+		<div id="favorite_view">
+			<div id="favorite_view_title">즐겨찾기</div>
+			<ul id="favorite_view_contents"></div>
+		</div>
+	{% endif %}
 </div>
 
 {% endblock %}
