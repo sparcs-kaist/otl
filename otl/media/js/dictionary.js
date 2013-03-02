@@ -795,11 +795,7 @@ var DictionaryCommentList = {
 			}
 			$('<div>',{'class':'dictionary_comment_date'}).text(item.written_date).appendTo(right_bot_div);
 			$('<div>',{'class':'dictionary_comment_writer'}).text(gettext("작성자") + " : " + item.writer_nickname).appendTo(right_bot_div);
-
-
-   			if (index != total-1){
-   				$('<hr>',{'class': 'dictionary_comment_line'}).appendTo(comment);
-   			}
+   			$('<hr>',{'class': 'dictionary_comment_line'}).appendTo(comment);
 		});
 	},
 	addToMultipleProfessor:function(obj)
