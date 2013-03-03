@@ -530,6 +530,10 @@ var DictionaryCommentList = {
 							try {
 								if (resObj.result=='OK') {
 					$($("#course-change-user")).text(gettext("마지막 고침 : ")+resObj.summary.written_datetime + " " + resObj.summary.writer + " ");
+							var output_explain = resObj.summary.summary;
+							var output_require = resObj.summary.prerequisite;
+							$("#course-require").text(output_require);
+							$("#course-explain").text(output_explain);
 					}
 							}
 							catch(e) {
@@ -547,10 +551,6 @@ var DictionaryCommentList = {
 				}
 				}
 			});
-			var output_explain = new_explain_content
-			var output_require = new_require_content;
-			$("#course-require").text(output_require);
-			$("#course-explain").text(output_explain);
 			$('#course-explain-add').hide();
 			$('#course-require-add').hide();
 			$('#course-summary-complete-img').hide();
@@ -577,8 +577,17 @@ var DictionaryCommentList = {
 						success: $.proxy(function(resObj) {
 							try {
 								if (resObj.result=='OK') {
-					 $($("#lecture-change-user")).text(gettext("마지막 고침 : ")+resObj.summary.written_datetime + " " + resObj.summary.writer + " ");
-
+								 $($("#lecture-change-user")).text(gettext("마지막 고침 : ")+resObj.summary.written_datetime + " " + resObj.summary.writer + " ");
+									var output_homepage = resObj.summary.homepage;
+									var output_mainbook = resObj.summary.main_material;
+									var output_subbook = resObj.summary.sub_material;
+									$('#lecture-homepage-html').attr("href",output_homepage);
+									if (output_homepage.length > 30){
+										output_homepage = output_homepage.substr(0,40)+"..."
+									}
+									$('#lecture-homepage-html').text(output_homepage);
+									$('#lecture-mainbook-html').text(output_mainbook);
+									$('#lecture-subbook-html').text(output_subbook);
 								}
 							}
 							catch(e) {
@@ -596,13 +605,6 @@ var DictionaryCommentList = {
 				}
 				}
 			});
-			var output_homepage = new_homepage_content
-			var output_mainbook = new_mainbook_content
-			var output_subbook = new_subbook_content
-
-			$('#lecture-homepage-html').text(output_homepage);
-			$('#lecture-mainbook-html').text(output_mainbook);
-			$('#lecture-subbook-html').text(output_subbook);
 			$('#lecture-homepage-add').hide();
 			$('#lecture-mainbook-add').hide();
 			$('#lecture-subbook-add').hide();
@@ -981,6 +983,9 @@ var DictionaryCommentList = {
 		}
 		else{
 			var output_homepage = obj.summary.homepage;
+			if (output_homepage.length > 30) {
+				output_homepage = output_homepage.substr(0,30)+"...";
+			}
 			var output_mainbook = obj.summary.main_material;
 			var output_subbook = obj.summary.sub_material;
 		}
@@ -1006,8 +1011,15 @@ var DictionaryCommentList = {
 
 		var lec_homepage = $('<div>', {'id': 'lecture-homepage'});
 		$('<div>', {'id': 'lecture-homepage-title'}).text(gettext("홈페이지")).appendTo(lec_homepage);
-		$('<pre>', {'id': 'lecture-homepage-html'}).text(output_homepage).appendTo(lec_homepage);
-		$('<textarea>', {'id': 'lecture-homepage-add'}).text(output_homepage).appendTo(lec_homepage);	
+		if(obj.summary!=null){
+			$('<a>',{'id':'lecture-homepage-html','href':obj.summary.homepage}).text(output_homepage).appendTo(lec_homepage);
+			$('<textarea>', {'id': 'lecture-homepage-add'}).text(obj.summary.homepage).appendTo(lec_homepage);	
+		}
+		else{
+			$('<textarea>', {'id': 'lecture-homepage-add'}).appendTo(lec_homepage);	
+		}
+
+
 		lec_homepage.appendTo(left_div);
 		
 		var lec_mainbook = $('<div>', {'id': 'lecture-mainbook'});
@@ -1462,9 +1474,14 @@ var ProfessorCommentList = {
 
         	var prof_homepage_line = $('<div>', {'class': 'professor_info_line'});
 		$('<div>', {'id': 'professor-info-homepage-title'}).text(gettext("Homepage : " )).appendTo(prof_homepage_line);
-		$('<pre>', {'id': 'professor-info-homepage'}).text(Data.ProfInfo.homepage).appendTo(prof_homepage_line);
-        	$('<textarea>', {'id': 'professor-info-homepage-change'}).text(Data.ProfInfo.homepage).appendTo(prof_homepage_line);
-        	prof_homepage_line.appendTo(top_right_div);
+
+		var output_homepage = Data.ProfInfo.homepage;
+		if (output_homepage.length > 50) {
+			output_homepage = output_homepage.substr(0,50)+"..."
+		}
+		$('<a>',{'id': 'professor-info-homepage','href':Data.ProfInfo.homepage}).text(output_homepage).appendTo(prof_homepage_line);
+		$('<textarea>', {'id': 'professor-info-homepage-change'}).text(Data.ProfInfo.homepage).appendTo(prof_homepage_line);
+		prof_homepage_line.appendTo(top_right_div);
 		var bottom_img = $('<div>', {'id': 'prof-info-bottom-img'});
 		var change_img = $('<img>', {'src': Data.MediaUrl+'images/dictionary/fix.gif', 'id': 'prof-info-change-img'});
 		var complete_img = $('<img>', {'src': Data.MediaUrl+'images/dictionary/fix.gif', 'id': 'prof-info-complete-img'});

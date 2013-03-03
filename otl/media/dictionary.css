@@ -969,8 +969,9 @@
     margin-left:5px;
     margin-top:3px;
     line-height:15px;
-    height:30px;
+    height:45px;
     font-size:11px;
+    word-wrap:break-word;
 }
 #course-explain-add
 {
@@ -993,7 +994,7 @@
 #course-require
 {
     line-height:15px;
-    height:30px;
+    height:15px;
     margin-top:3px;
     margin-left:5px;
     font-size:11px;
@@ -1281,6 +1282,7 @@
     margin-top:6px;
     height:18px;
     float:left;
+    word-wrap:break-word;
 }
 #lecture-homepage-title
 {
@@ -1316,6 +1318,7 @@
     margin-top:6px;
     height:40px;
     float:left;
+    word-wrap:break-word;
 }
 #lecture-mainbook-title
 {
@@ -1352,6 +1355,7 @@
     margin-top:6px;
     height:40px;
     float:left;
+    word-wrap:break-word;
 }
 #lecture-subbook-title
 {

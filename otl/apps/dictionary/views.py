@@ -252,6 +252,9 @@ def view_professor(request, prof_id):
 def add_professor_info(request):
     try:
         major = request.POST.get('major', None)
+        major = major.replace("\n"," ")
+        if len(major) > 70 :
+                major = major[:70]
         email = request.POST.get('email', None)
         homepage = request.POST.get('homepage', None)
         prof_id = int(request.POST.get('prof_id', -1))
@@ -507,7 +510,14 @@ def professor_comment(request):
 def add_summary(request):
     try:
         content = request.POST.get('content', None)
+        content = content.replace("\n"," ")
+        if len(content) >150 :
+            content = content[:150]     
+
         require = request.POST.get('require', None)
+        require = require.replace("\n"," ")
+        if len(require) > 45 :
+            require = require[:45]
         course_id = int(request.POST.get('course_id', -1))
         course = Course.objects.get(id=course_id)
         if content == None or require == None or course_id < 0:
@@ -531,17 +541,24 @@ def add_lecture_summary(request):
     try:
         homepage = request.POST.get('homepage', None)
         mainbook = request.POST.get('mainbook', None)
-	subbook = request.POST.get('subbook', None)
+        mainbook = mainbook.replace("\n"," ")
+        if len(mainbook) > 50 :
+            mainbook = mainbook[:50]
+        subbook = request.POST.get('subbook', None)
+        subbook = subbook.replace("\n"," ")
+        if len(subbook) > 50 :
+            subbook = subbook[:50]
+        subbook = request.POST.get('subbook', None)
         course_id = int(request.POST.get('course_id', -1))
-	prof_id = int(request.POST.get('professor_id', -1))
+        prof_id = int(request.POST.get('professor_id', -1))
         course = Course.objects.get(id=course_id)
-	if homepage == None or mainbook == None or course == None  or course_id < 0 or prof_id < 0:	
+        if homepage == None or mainbook == None or course == None  or course_id < 0 or prof_id < 0:	
+                raise ValidationError()
+        professor = Professor.objects.get(professor_id=prof_id) 
+        lectures = Lecture.objects.filter(professor=professor, course=course).order_by('-id')
+        if lectures.count() == 0 :
             raise ValidationError()
-	professor = Professor.objects.get(professor_id=prof_id) 
-	lectures = Lecture.objects.filter(professor=professor, course=course).order_by('-id')
-	if lectures.count() == 0 :
-	    raise ValidationError()
-	lecture = lectures[0]
+        lecture = lectures[0]
         writer = request.user
         written_datetime = datetime.datetime.now()
         new_summary = LectureSummary(homepage=homepage, main_material=mainbook, sub_material=subbook, writer=writer, written_datetime=written_datetime, lecture=lecture)
