@@ -354,8 +354,8 @@ def add_comment(request):
         if load < 0 or gain < 0 or score < 0:
             raise ValidationError()
 
-        #if Comment.objects.filter(course=course, lecture=lecture, writer=writer).count() > 0:
-        #    raise AlreadyWrittenError()
+        if Comment.objects.filter(course=course, lecture=lecture, writer=writer).count() > 0:
+            raise AlreadyWrittenError()
 
         new_comment = Comment(course=course, lecture=lecture, writer=writer, comment=comment, load=load, score=score, gain=gain)
         new_comment.save()
