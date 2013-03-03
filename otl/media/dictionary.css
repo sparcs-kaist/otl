@@ -975,9 +975,9 @@
 }
 #course-explain-add
 {
-    height:27px;
+    height:40px;
     width:546px;
-    max-height:27px;
+    max-height:40px;
     max-width:546px;
     font-size:11px;
     line-height:15px;
@@ -1001,9 +1001,9 @@
 }
 #course-require-add
 {
-    height:27px;
+    height:15px;
     width:546px;
-    max-height:27px;
+    max-height:15px;
     max-width:546px;
     font-size:11px;
     line-height:15px;
