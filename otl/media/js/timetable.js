@@ -251,7 +251,7 @@ var Map = {
 		this.dragmap.stop(true).animate({
 			'left': (-left),
 			'top':(-top)
-		}, 250, 'easeInOutQuad');
+		}, 250);
 	},
 	find:function(name)
 	{
