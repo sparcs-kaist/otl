@@ -45,7 +45,7 @@ $(document).ready(function() {
 			{% for y in lecture_list %}
 			<tr class="taken_lecture_title">
 				<td  {% if forloop.last %} style="background-color:#C0D9FD; font-weight:bold;" {% endif %}>
-						<a href='#' id="{{ forloop.counter }}" class="show_taken_lecture"> {{  y.0.year }} {{ y.0.semester|term2str }}</a>
+						<a id="{{ forloop.counter }}" class="show_taken_lecture"> {{  y.0.year }} {{ y.0.semester|term2str }}</a>
 					</td>
 				</tr>
 				<tr class="taken_lecture_list" {% if not forloop.last %} hidden="true"{% endif %}>
