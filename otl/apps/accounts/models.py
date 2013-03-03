@@ -12,7 +12,7 @@ class Department(models.Model):
     visible = models.BooleanField(default=True)
 
     def __unicode__(self):
-        return u'%s(%d) "%s"' % (self.code, self.num_id, self.name)
+        return u'%s(%s) "%s"' % (self.code, self.num_id, self.name)
 
 class DepartmentAdmin(admin.ModelAdmin):
     ordering = ('num_id',)
