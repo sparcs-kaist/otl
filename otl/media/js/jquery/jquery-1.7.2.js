@@ -8984,10 +8984,13 @@ jQuery.extend( jQuery.fx, {
 		},
 
 		_default: function( fx ) {
-			if ( fx.elem.style && fx.elem.style[ fx.prop ] != null ) {
-				fx.elem.style[ fx.prop ] = fx.now + fx.unit;
-			} else {
-				fx.elem[ fx.prop ] = fx.now;
+			if (!(jQuery.browser.msie && jQuery.browser.version == 8.0))
+			{
+				if ( fx.elem.style && fx.elem.style[ fx.prop ] != null ) {
+					fx.elem.style[ fx.prop ] = fx.now + fx.unit;
+				} else {
+					fx.elem[ fx.prop ] = fx.now;
+				}
 			}
 		}
 	}

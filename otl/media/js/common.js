@@ -22,7 +22,12 @@ var suppress_ajax_errors = false;
 			j.stop(true,true);
 			var originalBackColor = j.css('background-color');
 			j.css('background-color', color)
-			.animate({'background-color':originalBackColor}, theOptions);
+			.animate({'background-color':originalBackColor}, theOptions); // TODO: jquery 1.7.2 has bug of animating background Color. Have to update jquery version.
+			// Temporal color change
+			window.setTimeout($.proxy(function() {
+				j.css('background-color',originalBackColor);
+			}, this), 500);
+
 		});
 		return this;
 	};
