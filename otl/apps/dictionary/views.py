@@ -53,11 +53,6 @@ def index(request):
     else:
         my_lectures_output = json.dumps(my_lectures, ensure_ascii=False, sort_keys=False, separators=(',',':'))
 
-    todo_comment_list = []
-    if request.user.is_authenticated():
-        comment_lecture_list = _get_unwritten_lecture_by_db(request.user)
-        todo_comment_list = _lectures_to_output(comment_lecture_list, False, request.session.get('django_language','ko'))
-
     taken_lectures = taken_lecture_list(request)
     taken_lectures.reverse()
 
@@ -754,7 +749,8 @@ def taken_lecture_list(request):
                     result.append(_taken_lectures_to_output(request.user, separate_list, request.session.get('django_language','ko')))
                     separate_list = []
                 separate_list.append(lecture)
-            result.append(_taken_lectures_to_output(request.user, separate_list, request.session.get('django_language','ko')))
+            if len(separate_list)!=0:
+                result.append(_taken_lectures_to_output(request.user, separate_list, request.session.get('django_language','ko')))
         except ObjectDoesNotExist:
             result = []
             take_year_list = []
