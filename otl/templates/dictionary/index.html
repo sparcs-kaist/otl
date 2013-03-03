@@ -48,7 +48,7 @@ $(document).ready(function() {
 						<a id="{{ forloop.counter }}" class="show_taken_lecture"> {{  y.0.year }} {{ y.0.semester|term2str }}</a>
 					</td>
 				</tr>
-				<tr class="taken_lecture_list" {% if not forloop.last %} hidden="true"{% endif %}>
+				<tr class="taken_lecture_list" {% if not forloop.last %} style="display:none"{% endif %}>
 					<td>
 						<ul>
 						{% for lecture in y.1 %}
