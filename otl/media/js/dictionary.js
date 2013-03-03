@@ -49,9 +49,9 @@ function get_star_picture(n,base) {
 	var z=3-x-y;
 	// x : 별한개, y: 별반개, z:별0개 갯수
 	var i;
-	for(i=0;i<x;i++) $('<img>',{'class':'star_pictures','src':Data.MediaUrl+'images/dictionary/star.png','height':'15px'}).appendTo(base);
-	for(i=0;i<y;i++) $('<img>',{'class':'star_pictures','src':Data.MediaUrl+'images/dictionary/star_half.png','height':'15px'}).appendTo(base);
-	for(i=0;i<z;i++) $('<img>',{'class':'star_pictures','src':Data.MediaUrl+'images/dictionary/star_blank.png','height':'15px'}).appendTo(base);
+	for(i=0;i<x;i++) $('<img>',{'class':'star_pictures','src':Data.MediaUrl+'images/dictionary/star.png','height':'15px','width':'15px'}).appendTo(base);
+	for(i=0;i<y;i++) $('<img>',{'class':'star_pictures','src':Data.MediaUrl+'images/dictionary/star_half.png','height':'15px','width':'15px'}).appendTo(base);
+	for(i=0;i<z;i++) $('<img>',{'class':'star_pictures','src':Data.MediaUrl+'images/dictionary/star_blank.png','height':'15px','width':'15px'}).appendTo(base);
 }
 
 var NUM_ITEMS_PER_LIST = 15;
@@ -1024,6 +1024,7 @@ var DictionaryCommentList = {
 			$('<textarea>', {'id': 'lecture-homepage-add'}).text(obj.summary.homepage).appendTo(lec_homepage);	
 		}
 		else{
+			$('<a>',{'id':'lecture-homepage-html'}).appendTo(lec_homepage);
 			$('<textarea>', {'id': 'lecture-homepage-add'}).appendTo(lec_homepage);	
 		}
 
@@ -1671,10 +1672,8 @@ var FavoriteList = {
 		}
 		$.each(obj, function(index, item) {
 			var favorite = $('<li>', {'class': 'dictionary_favorite'});
-			var favorite_name = $('<div>', {'class': 'dictionary_favorite_name'});
 			favorite.appendTo(FavoriteList.favorites);
-			favorite_name.appendTo(favorite);
-			$('<a>', {'href': item.url}).text(item.code + ' - ' + item.title).appendTo(favorite_name);
+			$('<a>', {'class':'dictionary_favorite_name', 'href': item.url}).text(item.code + ' - ' + item.title).appendTo(favorite);
 			var deletelink = $('<img>', {'class': 'dictionary_favorite_delete','src':Data.MediaUrl+'images/dictionary/x_sign.jpg'});
 			deletelink.appendTo(favorite);
 			deletelink.bind('click', $.proxyWithArgs(FavoriteList.deleteFavorite, FavoriteList, item, favorite));

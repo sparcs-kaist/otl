@@ -53,9 +53,7 @@ $(document).ready(function() {
 						<ul>
 						{% for lecture in y.1 %}
 							<li class="taken_lecture">
-								<div class="taken_lecture_name">
-									<a href={{lecture.url}}>{{lecture.code}} - {{lecture.title}}</a>
-								</div>
+								<a class="taken_lecture_name" href={{lecture.url}}>{{lecture.code}} - {{lecture.title}}</a>
 								{% if lecture.written %} <img src="{{MEDIA_URL}}images/dictionary/write.png" class="taken_lecture_image">  {% else %} <img src="{{MEDIA_URL}}images/dictionary/not_write.png" class="taken_lecture_image"> {% endif %}
 							</li>
 						{% endfor %}
@@ -67,8 +65,18 @@ $(document).ready(function() {
 	</div>
 	{% if user.is_authenticated %}
 		<div id="favorite_view">
-			<div id="favorite_view_title">즐겨찾기</div>
-			<ul id="favorite_view_contents"></div>
+			<table>
+				<tr id="favorite_title">
+					<td>
+						<div id="favorite_view_title">즐겨찾기</div>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<ul id="favorite_view_contents"></ul>
+					</td>
+				</tr>
+			</table>
 		</div>
 	{% endif %}
 </div>

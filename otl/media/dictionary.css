@@ -504,6 +504,7 @@
     width:65px;
     height:81px;
     margin:0px;
+    border:none;
 }
 .content_prof_photo img
 {
@@ -655,7 +656,7 @@
 }
 .taken_lecture_list td
 {
-    padding:10px 15px;
+    padding:10px 18px;
     text-align:left;
 }
 .taken_lecture
@@ -672,9 +673,8 @@
     top:50%;
     width:12px;
     height:12px;
-    float:right;
-    margin-left:150px;
     margin-top:-6px;
+    right:-8%;
 }
 #favorite_view
 {
@@ -683,12 +683,27 @@
     padding-bottom:5px;
     font-family:돋움;
 }
+#favorite_view tr td
+{
+    border:none;
+    padding:0px;
+    text-align:left;
+}
+#favorite_view table
+{
+    margin-bottom:0px;
+}
+#favorite_title
+{
+    height:25px;
+    font-size:9pt;
+}
 #favorite_view_title
 {
     margin-left:15px;
-    line-height:25px;
     font-size:9pt;
     font-weight:bold;
+    text-align:left;
 }
 #favorite_view_contents
 {
@@ -699,7 +714,7 @@
     margin-right:5px;
     font-size:8pt;
     padding-left:10px;
-    padding-right:10px;
+    padding-right:5px;
     padding-bottom:10px;
 }
 .star_pictures
@@ -843,14 +858,16 @@
 }
 .dictionary_favorite_name
 {
-    width:144px;
+    display:inline-block;
+    vertical-align:middle;
+    width:135px;
 }
 .dictionary_favorite_delete
 {
     position:absolute;
     top:50%;
     float:right;
-    margin-left:149px;
+    right:0%;
     margin-top:-6px;
     cursor:pointer;
 }
@@ -858,6 +875,7 @@
 {
     height:28px;
     float:right;
+    position:relative;
 }
 #course-favorite input
 {
@@ -887,7 +905,8 @@
     height:18px;
     text-align:center;
     border-width:1px;
-    border-style:ridge;
+    border-style:solid;
+    border-color:#EEEEEE;
 }
 #course-summary-boundary
 {
