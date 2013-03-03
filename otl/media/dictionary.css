@@ -908,6 +908,10 @@
     border-style:solid;
     border-color:#EEEEEE;
 }
+.course-professor-tab-cursor
+{
+    width:6px !important;
+}
 #course-summary-boundary
 {
     width:760px;

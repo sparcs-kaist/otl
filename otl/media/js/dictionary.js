@@ -808,7 +808,7 @@ var DictionaryCommentList = {
 	{
 		var professor_tabs = $('#course-professor');
 
-		var default_left = $('<img>', {'class': 'course-professor-tab','src':Data.MediaUrl+'images/dictionary/point_left.png'});
+		var default_left = $('<img>', {'class': 'course-professor-tab course-professor-tab-cursor','src':Data.MediaUrl+'images/dictionary/point_left.png'});
 		default_left.hide();
 		default_left.appendTo(professor_tabs);
 
@@ -824,10 +824,10 @@ var DictionaryCommentList = {
 			professor_tab.bind('click', $.proxyWithArgs(DictionaryCommentList.onChangeProfessor, DictionaryCommentList, item));
 			count++;
 			if(count!=obj.length+1 && count%NUM_PROF_PER_LIST==0) {
-				var tab_right = $('<img>', {'class':'course-professor-tab','src':Data.MediaUrl+'images/dictionary/point_right.png'});
+				var tab_right = $('<img>', {'class':'course-professor-tab course-professor-tab-cursor','src':Data.MediaUrl+'images/dictionary/point_right.png'});
 				tab_right.css({'padding-left':'4px','padding-right':'3px','height':'12px','padding-top':'3px','padding-bottom':'3px'});
 				tab_right.bind('click', $.proxyWithArgs(DictionaryCommentList.onChangePageRight));
-				var tab_left = $('<img>', {'class':'course-professor-tab','src':Data.MediaUrl+'images/dictionary/point_left.png'});
+				var tab_left = $('<img>', {'class':'course-professor-tab course-professor-tab-cursor','src':Data.MediaUrl+'images/dictionary/point_left.png'});
 				tab_left.css({'padding-left':'3px','padding-right':'4px','height':'12px','padding-top':'3px','padding-bottom':'3px'});
 				tab_left.bind('click', $.proxyWithArgs(DictionaryCommentList.onChangePageLeft));
 				tab_right.appendTo(professor_tabs);
