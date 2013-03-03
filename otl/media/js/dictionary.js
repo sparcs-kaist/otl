@@ -587,7 +587,7 @@ var DictionaryCommentList = {
 									var output_subbook = resObj.summary.sub_material;
 									$('#lecture-homepage-html').attr("href",output_homepage);
 									if (output_homepage.length > 30){
-										output_homepage = output_homepage.substr(0,40)+"..."
+										output_homepage = output_homepage.substr(0,30)+"..."
 									}
 									$('#lecture-homepage-html').text(output_homepage);
 									$('#lecture-mainbook-html').text(output_mainbook);

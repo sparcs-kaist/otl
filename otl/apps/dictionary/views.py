@@ -251,6 +251,9 @@ def add_professor_info(request):
         if len(major) > 70 :
                 major = major[:70]
         email = request.POST.get('email', None)
+	email = email.replace("\n"," ")
+	if len(email) > 50 :
+		email = email[:50]
         homepage = request.POST.get('homepage', None)
         prof_id = int(request.POST.get('prof_id', -1))
         if major == None or email == None or homepage == None or prof_id < 0:
@@ -543,7 +546,6 @@ def add_lecture_summary(request):
         subbook = subbook.replace("\n"," ")
         if len(subbook) > 50 :
             subbook = subbook[:50]
-        subbook = request.POST.get('subbook', None)
         course_id = int(request.POST.get('course_id', -1))
         prof_id = int(request.POST.get('professor_id', -1))
         course = Course.objects.get(id=course_id)
