@@ -496,6 +496,8 @@ var DictionaryCommentList = {
 			$('#course-explain-add').show();
 			$('#course-require-add').show();
 			$('#course-summary-complete-img').show();
+			$('#course-explain-title').text(gettext("과목 설명 ("+$('#course-explain-add').val().length+gettext("/150)")));
+			$('#course-require-title').text(gettext("선수 과목 ("+$('#course-require-add').val().length+gettext("/45)")));
 		}
 	},
 	showLectureSummary:function()
@@ -557,6 +559,8 @@ var DictionaryCommentList = {
 			$('#course-explain').show();
 			$('#course-require').show();
 			$('#course-summary-add-img').show();
+			$('#course-explain-title').text(gettext("과목 설명"));
+			$('#course-require-title').text(gettext("선수 과목"));
 		}
 	},
 	addLectureSummary:function()
@@ -906,6 +910,10 @@ var DictionaryCommentList = {
 	{
 		Data.DictionaryComment = obj.concat(Data.DictionaryComment);
 	},
+	checklen:function(obj,target,base,limit)
+	{
+		target.text(base+gettext(" (")+obj.value.length+gettext("/")+limit+gettext(")"));
+	},
 	addToGeneralSummary:function(obj)
 	{
 		var left_div = $('<div>', {'id': 'course-intro'});
@@ -922,10 +930,10 @@ var DictionaryCommentList = {
 		$('<hr>',{'id': 'course-line'}).appendTo(left_div);
 		$('<div>', {'id': 'course-explain-title'}).text(gettext("과목 설명")).appendTo(left_div);
 		$('<pre>', {'id': 'course-explain'}).text(output_explain).appendTo(left_div);
-		$('<textarea>', {'id': 'course-explain-add'}).text(output_explain).appendTo(left_div);
+		$('<textarea>', {'id': 'course-explain-add','onkeyup':"DictionaryCommentList.checklen(this,$('#course-explain-title'),'과목 설명',150)"}).text(output_explain).appendTo(left_div);
 		$('<div>', {'id': 'course-require-title'}).text(gettext("선수 과목")).appendTo(left_div);
 		$('<pre>', {'id': 'course-require'}).text(output_require).appendTo(left_div);
-		$('<textarea>', {'id': 'course-require-add'}).text(output_require).appendTo(left_div);
+		$('<textarea>', {'id': 'course-require-add','onkeyup':"DictionaryCommentList.checklen(this,$('#course-require-title'),'선수 과목',45)"}).text(output_require).appendTo(left_div);
 
 		var right_div = $('<div>', {'id': 'course-score'});
 		$('<div>', {'id': 'course-eval-title'}).text("TOTAL SCORE").appendTo(right_div);
