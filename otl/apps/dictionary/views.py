@@ -278,10 +278,13 @@ def interesting_courses(request):
     q = Q()
     for dept in hss:
         q |= Q(department=dept)
+
+    department = None
+    favorite_departments = []
     try:
         user = request.user
-    	userprofile = UserProfile.objects.get(user=user)
-	favorite_departments = userprofile.favorite_departments.all()
+        userprofile = UserProfile.objects.get(user=user)
+        favorite_departments = userprofile.favorite_departments.all()
         user_department_id = 0
 
         if user.is_authenticated():
@@ -289,15 +292,25 @@ def interesting_courses(request):
             department = user_profile.department
 	    q |= Q(department=department)
         
-	for department in favorite_departments:
-	    q |= Q(department=department)
-    except:
-	user_department_id = 0 #Means Nothing
+        for department in favorite_departments:
+            q |= Q(department=department)
 
-    courses = Course.objects.filter(q).distinct()
-    courses_sorted=_get_courses_sorted(courses)	
+    except:
+	    user_department_id = 0 #Means Nothing
+    
+    cache_key = 'dictionary-interesting-course-cache:department=%s:'%((department.id if department!=None else -1))
+    for i in favorite_departments :
+        cache_key = cache_key + 'fovorite:%s'%(i.id)
+    output = cache.get(cache_key)
+    
+    if output is None :
+        courses = Course.objects.filter(q).distinct()
+        courses_sorted=_get_courses_sorted(courses)	
+        output = courses_sorted
+        cache.set(cache_key,output,600)
+    
     return HttpResponse(json.dumps({
-	 'courses_sorted' : courses_sorted[:settings.INTERESTING_COURSE_NUM]}, ensure_ascii=False, indent=4))
+	 'courses_sorted' : output[:settings.INTERESTING_COURSE_NUM]}, ensure_ascii=False, indent=4))
  
 def view_comment_by_professor(request):
     try:

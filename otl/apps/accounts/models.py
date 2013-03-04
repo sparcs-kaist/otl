@@ -4,11 +4,11 @@ from django.contrib import admin
 from django.contrib.auth.models import User
 
 class Department(models.Model):
-    id = models.IntegerField(primary_key=True, help_text=u'세자리 또는 네자리의 숫자로 된 고유 ID')
-    num_id = models.CharField(max_length=4, help_text=u'과목에서 prefix로 사용하는 문자로 된 ID')
-    code = models.CharField(max_length=5, help_text=u'과목에서 prefix로 사용하는 문자열로 된 ID')
-    name = models.CharField(max_length=60)
-    name_en = models.CharField(max_length=60, null=True)
+    id = models.IntegerField(primary_key=True, help_text=u'세자리 또는 네자리의 숫자로 된 고유 ID',db_index=True)
+    num_id = models.CharField(max_length=4, help_text=u'과목에서 prefix로 사용하는 문자로 된 ID',db_index=True)
+    code = models.CharField(max_length=5, help_text=u'과목에서 prefix로 사용하는 문자열로 된 ID',db_index=True)
+    name = models.CharField(max_length=60,db_index=True)
+    name_en = models.CharField(max_length=60, null=True,db_index=True)
     visible = models.BooleanField(default=True)
 
     def __unicode__(self):

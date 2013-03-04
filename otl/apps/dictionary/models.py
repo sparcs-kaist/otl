@@ -8,8 +8,8 @@ from otl.apps.timetable.models import Lecture
 from otl.apps.accounts.models import Department
 
 class Professor(models.Model):
-    professor_name = models.CharField(max_length=100)            # 교수님 이름 (한글)
-    professor_name_en = models.CharField(max_length=100, blank=True, null=True)  # 교수님 이름 (영문)
+    professor_name = models.CharField(max_length=100,db_index=True)            # 교수님 이름 (한글)
+    professor_name_en = models.CharField(max_length=100, blank=True, null=True,db_index=True)  # 교수님 이름 (영문)
     professor_id = models.IntegerField()
 
 class ProfessorInfor(models.Model):
@@ -18,7 +18,7 @@ class ProfessorInfor(models.Model):
     homepage = models.CharField(max_length=200)
     writer = models.ForeignKey(User)
     written_datetime = models.DateTimeField(auto_now=True)
-    professor = models.ForeignKey(Professor)
+    professor = models.ForeignKey(Professor,db_index=True)
 
 class ProfessorAdmin(admin.ModelAdmin):
     list_display = ('professor_name', 'professor_name_en', 'professor_id')
@@ -29,13 +29,13 @@ class ProfessorInforAdmin(admin.ModelAdmin):
 
 class Course(models.Model):
 # *이 붙은 항목은 Lecture가 업데이트될때 함께 업데이트 되어야 할 것
-    old_code = models.CharField(max_length=10)                  # 과목코드 (ABC123 형식) *
-    department = models.ForeignKey(Department)                  # 가장 최근의 department *
-    professors = models.ManyToManyField(Professor)              # 맡았던 교수들 *
+    old_code = models.CharField(max_length=10,db_index=True)                  # 과목코드 (ABC123 형식) *
+    department = models.ForeignKey(Department,db_index=True)                  # 가장 최근의 department *
+    professors = models.ManyToManyField(Professor,db_index=True)              # 맡았던 교수들 *
     type = models.CharField(max_length=12)                      # 가장 최근의 type *
     type_en = models.CharField(max_length=36)                   # 가장 최근의 type_en *
-    title = models.CharField(max_length=100)                    # 가장 최근의 title *
-    title_en = models.CharField(max_length=200)                 # 가장 최근의 title_en *
+    title = models.CharField(max_length=100,db_index=True)                    # 가장 최근의 title *
+    title_en = models.CharField(max_length=200,db_index=True)                 # 가장 최근의 title_en *
     score_average = models.FloatField()
     load_average = models.FloatField()
     gain_average = models.FloatField()
@@ -48,16 +48,16 @@ class Summary(models.Model):
     prerequisite = models.CharField(max_length=512)
     writer = models.ForeignKey(User)
     written_datetime = models.DateTimeField(auto_now=True)
-    course = models.ForeignKey(Course)
+    course = models.ForeignKey(Course,db_index=True)
 
 class SummaryAdmin(admin.ModelAdmin):
     list_display = ('summary', 'prerequisite', 'writer', 'written_datetime', 'course')
 
 class Comment(models.Model):
-    course = models.ForeignKey(Course)                      # 과목
-    lecture = models.ForeignKey(Lecture, null=True, blank=True)  # 시기+과목
+    course = models.ForeignKey(Course,db_index=True)                      # 과목
+    lecture = models.ForeignKey(Lecture, null=True, blank=True,db_index=True)  # 시기+과목
 
-    writer = models.ForeignKey(User, related_name='comment_set') # 수정한 사람
+    writer = models.ForeignKey(User, related_name='comment_set',db_index=True) # 수정한 사람
     written_datetime = models.DateTimeField(auto_now=True)       # 마지막 수정일
     comment = models.CharField(max_length=65536)            # 코멘트
     load = models.SmallIntegerField(choices=LOAD_TYPES)                       # 로드
