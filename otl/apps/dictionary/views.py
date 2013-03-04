@@ -298,19 +298,11 @@ def interesting_courses(request):
     except:
 	    user_department_id = 0 #Means Nothing
     
-    cache_key = 'dictionary-interesting-course-cache:department=%s:'%((department.id if department!=None else -1))
-    for i in favorite_departments :
-        cache_key = cache_key + 'fovorite:%s'%(i.id)
-    output = cache.get(cache_key)
-    
-    if output is None :
-        courses = Course.objects.filter(q).distinct()
-        courses_sorted=_get_courses_sorted(courses)	
-        output = courses_sorted
-        cache.set(cache_key,output,600)
+    courses = Course.objects.filter(q).distinct()
+    courses_sorted=_get_courses_sorted(courses)	
     
     return HttpResponse(json.dumps({
-	 'courses_sorted' : output[:settings.INTERESTING_COURSE_NUM]}, ensure_ascii=False, indent=4))
+	 'courses_sorted' : courses_sorted[:settings.INTERESTING_COURSE_NUM]}, ensure_ascii=False, indent=4))
  
 def view_comment_by_professor(request):
     try:
