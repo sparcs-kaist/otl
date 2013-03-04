@@ -1153,6 +1153,9 @@ var DictionaryCommentList = {
 						professor_box.prepend('<option value=' + item.professor_id + '>' + item.professor_name + '</option>');
 					});
 					professor_box.prepend('<option value=0></option>');
+					if (resObj.professor.length == 1) {
+						$('#new-comment-professor option[value="' + resObj.professor[0].professor_id + '"]').attr('selected', true);
+					}
 				} catch(e) {
 					Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+e.message+')');
 				}
@@ -1175,6 +1178,11 @@ var DictionaryCommentList = {
 			semester_box.prepend('<option value=' + (item.year*10+item.semester) + '>' + item.year + " " + gettext(item.semester==1?"봄":"가을") + '</option>');
 		});
 		semester_box.prepend('<option value=0></option>');
+
+		if (obj.length == 1) {
+			$('#new-comment-semester option[value="' + (obj[0].year*10+obj[0].semester) + '"]').attr("selected", true);
+			DictionaryCommentList.addToProfessor();
+		}
 	},
 	onChangeProfessor:function(e,obj)
 	{
