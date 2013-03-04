@@ -1182,6 +1182,14 @@
     float:left;
     margin-left:10px;
 }
+.course-comment-add-eval div {
+    float:left;
+    display: inline-block;
+}
+.course-comment-add-eval img {
+    width: 16px;
+    height: 16px;
+}
 #new-comment-score
 {
     width:60px;
@@ -1190,7 +1198,7 @@
 }
 #new-comment-load
 {
-    width:60px;
+    width:80px;
     height:20px;
     margin-left:5px;
 }

@@ -424,6 +424,9 @@ var DictionaryCommentList = {
 		this.loading=true;
 		this.last_index=-1;
 		this.last_prof=0;
+		this.new_comment_score=0;
+		this.new_comment_load=0;
+		this.new_comment_gain=0;
 	},
 	onLoad:function()
 	{
@@ -439,15 +442,13 @@ var DictionaryCommentList = {
 				DictionaryCommentList.addToProfessor();
 			}
 		});
-                $(window).scroll(function() {
-                    if(!DictionaryCommentList.loading){
-                    if($(window).scrollTop() + $(window).height() == $(document).height()) {
-			    DictionaryCommentList.showMoreComments();
-
-                    }
-                    }
-                });
-
+		$(window).scroll(function() {
+			if(!DictionaryCommentList.loading){
+				if($(window).scrollTop() + $(window).height() == $(document).height()) {
+					DictionaryCommentList.showMoreComments();
+				}
+			}
+		});
 	},
 
 	showMoreComments:function(forceremove)
@@ -620,13 +621,12 @@ var DictionaryCommentList = {
 		}
 	},
 
-
 	addComment:function()
 	{
 		var new_comment_content = $('#course-comment-add-text').val();
-		var new_comment_load = $('#new-comment-load').val();
-		var new_comment_score = $('#new-comment-score').val();
-		var new_comment_gain = $('#new-comment-gain').val();
+		var new_comment_load = $('#new-comment-load').raty('score') * 2;
+		var new_comment_score = $('#new-comment-score').raty('score') * 2;
+		var new_comment_gain = $('#new-comment-gain').raty('score') * 2;
 		var new_comment_year = parseInt($('#new-comment-semester').val()/10);
 		var new_comment_semester = $('#new-comment-semester').val()%10;
 		var new_comment_professor = Data.current_professor_id;
@@ -650,9 +650,9 @@ var DictionaryCommentList = {
 							DictionaryCommentList.addToFront(resObj.comment);
 							DictionaryCommentList.addNewComment(resObj.comment);
 							$('#course-comment-add-text').val("");
-							$('#new-comment-load').val(0);
-							$('#new-comment-score').val(0);
-							$('#new-comment-gain').val(0);
+							$('#new-comment-load').raty('score', 0);
+							$('#new-comment-score').raty('score', 0);
+							$('#new-comment-gain').raty('score', 0);
 							$('#new-comment-semester').val(0);
 							$('#new-comment-professor').val(0);
 							if(Data.current_professor_id == -1)
