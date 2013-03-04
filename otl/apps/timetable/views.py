@@ -18,7 +18,7 @@ from otl.apps.accounts.models import Department
 from otl.apps.timetable.models import Lecture, ExamTime, ClassTime, Syllabus, Timetable, OverlappingTimeError, OverlappingExamTimeError
 from StringIO import StringIO
 from django.db.models import Q
-
+from otl.apps.dictionary.models import Professor
 from django import template
 template.add_to_builtins('django.templatetags.i18n')
 
@@ -345,9 +345,11 @@ def _search_by_ysdtlw(year, semester, department, type, lang, word):
     if output is None:
         output = _search_by_ysdt(year, semester, department, type)
         if lang == 'ko':
-            output = output.filter(Q(old_code__icontains=word) | Q(title__icontains=word) | Q(professor__professor_name__icontains=word)).distinct() 
+            professor_ids = Professor.objects.filter(professor_name__icontains=word)
+            output = output.filter(Q(old_code__icontains=word) | Q(title__icontains=word) | Q(professor__id__in=professor_ids)).distinct() 
         else:
-            output = output.filter(Q(old_code__icontains=word) | Q(title_en__icontains=word) | Q(professor__professor_name_en__icontains=word)).distinct() 
+            professor_ids = Professor.objects.filter(professor_name_en__icontains=word)
+            output = output.filter(Q(old_code__icontains=word) | Q(title_en__icontains=word) | Q(professor__id__in=professor_ids)).distinct() 
         cache.set(cache_key, output, 3600)
     return output
 

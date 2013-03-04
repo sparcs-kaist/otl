@@ -82,7 +82,7 @@ def department(request, department_id):
         'courses' : courses }, context_instance=RequestContext(request))
 
 def search(request):
-    try:
+    #try:
         q = {}
         for key, value in request.GET.iteritems():
             q[str(key)] = value
@@ -95,8 +95,8 @@ def search(request):
         else:
             professors = [] 
         return HttpResponse(json.dumps({'courses':courses, 'professors':professors}, ensure_ascii=False, indent=4))
-    except:
-        return HttpResponseBadRequest()
+    #except:
+    #    return HttpResponseBadRequest()
 
 def get_autocomplete_list(request):
     try:
@@ -834,13 +834,15 @@ def _search(**conditions):
             words = keyword.split()
             for word in words:
                 if lang=='ko':
-                    courses= courses.filter(Q(old_code__icontains=word) | Q(title__icontains=word) | Q(professors__professor_name__icontains=word)).distinct()
-                    professors= professors.filter(professor_name__icontains=word)
+                    professor_ids = professors.filter(professor_name__icontains=word)
+                    courses= courses.filter(Q(old_code__icontains=word) | Q(title__icontains=word) | Q(professors__id__in=professor_ids)).distinct()
+                    professors= professor_ids 
                 elif lang=='en':
-                    courses= courses.filter(Q(old_code__icontains=word) | Q(title_en__icontains=word) | Q(professors__professor_name_en__icontains=word)).distinct()
-                    professors= professors.filter(professor_name_en__icontains=word)
-	courses = courses.order_by('type','old_code').select_related()
-	output = {'courses':courses, 'professors':professors}
+                    professor_ids = professors.filter(professor_name_en__icontains=word)
+                    courses= courses.filter(Q(old_code__icontains=word) | Q(title_en__icontains=word) | Q(professors__id__in=professor_ids)).distinct()
+                    professors= professor_ids
+        courses = courses.order_by('type','old_code').select_related()
+        output = {'courses':courses, 'professors':professors}
     else:
         raise ValidationError()
 
