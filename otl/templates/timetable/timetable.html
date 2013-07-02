@@ -1,0 +1,59 @@
+{% load yearterm %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	</head>
+	<body>
+		<div id="semester_info"><span id="logo"></span><div id="semester_info_text"><strong>{{view_year}} {{view_semester|term2str}}</strong></div></div>
+        <div id="timetable">
+			<div id="timetable-wrap">
+				<div id="colheaders">
+					<div class="chead"><span>{% trans "월" %}</span></div>
+					<div class="chead"><span>{% trans "화" %}</span></div>
+					<div class="chead"><span>{% trans "수" %}</span></div>
+					<div class="chead"><span>{% trans "목" %}</span></div>
+					<div class="chead" style="width:96px;"><span>{% trans "금" %}</span></div>
+					<div id="col_hd_sel"></div>
+				</div>
+				<div id="tablebody">
+					<div id="rowheaders">
+						<div class="rhead"><span class="rheadtext">{% trans "오전 8시" %}</span></div>
+						<div class="rhead"><span class="rheadtext">{% trans "오전 9시" %}</span></div>
+						<div class="rhead"><span class="rheadtext">{% trans "오전 10시" %}</span></div>
+						<div class="rhead"><span class="rheadtext">{% trans "오전 11시" %}</span></div>
+						<div class="rhead"><span class="rheadtext">{% trans "오후 12시" %}</span></div>
+						<div class="rhead"><span class="rheadtext">{% trans "오후 1시" %}</span></div>
+						<div class="rhead"><span class="rheadtext">{% trans "오후 2시" %}</span></div>
+						<div class="rhead"><span class="rheadtext">{% trans "오후 3시" %}</span></div>
+						<div class="rhead"><span class="rheadtext">{% trans "오후 4시" %}</span></div>
+						<div class="rhead"><span class="rheadtext">{% trans "오후 5시" %}</span></div>
+						<div class="rhead"><span class="rheadtext">{% trans "오후 6시" %}</span></div>
+						<div class="rhead"><span class="rheadtext">{% trans "오후 7시" %}</span></div>
+						<div class="rhead"><span class="rheadtext">{% trans "오후 8시" %}</span></div>
+						<div class="rhead"><span class="rheadtext">{% trans "오후 9시" %}</span></div>
+						<div class="rhead"><span class="rheadtext">{% trans "오후 10시" %}</span></div>
+						<div class="rhead"><span class="rheadtext">{% trans "오후 11시" %}</span></div>
+						<div id="row_hd_sel"></div>
+					</div>
+					<div id="grid-wrap">
+						<div id="grid">
+							<div id="timetable_contents">
+								<div id="timetable{{ table_id }}" class="lmodules">
+									{% for class in my_classes %}
+										<div class="lmodule" id="timetable-item-{{ class.course_no }}-{{ class.in_number }}" style="left: {{ class.left }}px; top: {{ class.top }}px; height: {{ class.height }}px;">
+											<div class="bg" style="background-image: initial; background-attachment: initial; background-origin: initial; background-clip: initial; background-color: {{ class.bgcolor }}; background-position: initial initial; background-repeat: initial initial;"></div>
+											<div class="textbody"><strong>{{ class.title }}</strong><br/>{{ class.prof }}<br/>{{ class.classroom }}<br/></div>
+										</div>
+									{% endfor %}
+								</div>
+							</div>
+							<div id="overlap_modules" class="lmodules"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
+

@@ -3,7 +3,6 @@ from otl.apps.dictionary import views
 
 urlpatterns = patterns('',
     (ur'^$', views.index),
-    (ur'^department/(\w+)$', views.department),
     (ur'^search/$', views.search),
     (ur'^view/(\w+)/$', views.view),
     (ur'^professor/(\d+)/$', views.view_professor),

@@ -1,0 +1,34 @@
+#logo
+{
+    display:inline-block;
+    height:58px;
+    width:103px;
+    background:url('images/otl.jpg') left 2px no-repeat;
+}
+
+@font-face {
+    font-family:"code2000";
+    src:url("fonts/malgun.ttf");
+}
+
+html {
+    font-family:"code2000";
+}
+
+body {
+    font-family:"code2000";
+}
+
+#semester_info
+{
+    background-color:#ffffff;
+    font-size:19px;
+}
+
+#semester_info_text
+{
+    position:absolute;
+    left:120px;
+    top:15px;
+}
+

@@ -54,7 +54,7 @@ $(document).ready(function() {
 						{% for lecture in y.1 %}
 							<li class="taken_lecture">
 								<a class="taken_lecture_name" href={{lecture.url}}>{{lecture.code}} - {{lecture.title}}</a>
-								{% if lecture.written %} <img src="{{MEDIA_URL}}images/dictionary/write.png" class="taken_lecture_image" title="코멘트를 작성한 과목입니다.">  {% else %} <a href = {{lecture.url}}><img src="{{MEDIA_URL}}images/dictionary/not_write.png" class="taken_lecture_image" title="아직 코멘트를 작성하지 않은 과목입니다."></a> {% endif %}
+								{% if lecture.written %} <img src="{{MEDIA_URL}}images/dictionary/write.png" class="taken_lecture_image" title="코멘트를 작성한 과목입니다.">  {% else %} <img src="{{MEDIA_URL}}images/dictionary/not_write.png" class="taken_lecture_image" title="아직 코멘트를 작성하지 않은 과목입니다."> {% endif %}
 							</li>
 						{% endfor %}
 					</ul>

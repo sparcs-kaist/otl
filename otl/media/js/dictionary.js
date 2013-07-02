@@ -438,7 +438,7 @@ var DictionaryCommentList = {
 	{
 		$('#course-comment-add-submit').bind('mousedown', $.proxy(this.addComment, this));
 		$('#new-comment-semester').change(function(){
-			if(Data.current_professor_id == -1){
+			if(Data.current_professor_id == -1 && Data.user_id != null){
 				DictionaryCommentList.addToProfessor();
 			}
 		});
@@ -449,15 +449,18 @@ var DictionaryCommentList = {
 				}
 			}
 		});
+
 	},
 
 	showMoreComments:function(forceremove)
 	{
 		forceremove = (typeof(forceremove) != 'undefined')?forceremove:false;
-		if (Data.comment_id!=0){
-			if(forceremove)
+		if (Data.comment_id!=-2){
+			if(forceremove){
 				Data.comment_id = -1;
-			var conditions = {'course_id': Data.Course.id, 'next_comment_id': Data.comment_id, 'professor_id': Data.current_professor_id};
+				Data.comment_time = "3000-12-31T00:00:00";
+			}
+			var conditions = {'course_id': Data.Course.id, 'next_comment_time' : Data.comment_time, 'next_comment_id': Data.comment_id, 'professor_id': Data.current_professor_id};
 			$.ajax({
 				type: 'GET',
 				url: '/dictionary/show_more_comments/',
@@ -468,6 +471,7 @@ var DictionaryCommentList = {
 						if(forceremove)
 							this.clearComment();
 						Data.comment_id = resObj.next_comment_id;
+						Data.comment_time = resObj.next_comment_time;
 						DictionaryCommentList.addToMultipleComment(resObj.comments);
 						Data.DictionaryComment = Data.DictionaryComment.concat(resObj.comments);
 					} catch(e) {
@@ -621,6 +625,7 @@ var DictionaryCommentList = {
 		}
 	},
 
+
 	addComment:function()
 	{
 		var new_comment_content = $('#course-comment-add-text').val();
@@ -632,7 +637,7 @@ var DictionaryCommentList = {
 		var new_comment_professor = Data.current_professor_id;
 		if(new_comment_professor == -1)
 			new_comment_professor = $('#new-comment-professor').val();
-		if (new_comment_load==-1 || new_comment_score==-1 || new_comment_gain==-1) {
+		if (!(new_comment_load>=0 && new_comment_load<=6) || !(new_comment_score>=0 && new_comment_score<=6) || !(new_comment_gain>=0 && new_comment_gain<=6)){
 			Notifier.setErrorMsg(gettext('학점, 로드, 남는거를 선택하세요.'));
 		}
 		else if(new_comment_semester==0 || new_comment_professor==0){
@@ -764,7 +769,10 @@ var DictionaryCommentList = {
 			var right_top_div_eval = $('<div>',{'class':'dictionary_comment_right_top_eval'});
 
 			right_top_div.appendTo(right_div_comment);
-			$('<div>', {'class': 'dictionary_comment_semester'}).text('<' + item.year + ' ' + gettext(item.semester==1?"봄":"가을") + '>').appendTo(right_top_div);
+			if (item.year==2008)
+				$('<div>', {'class': 'dictionary_comment_semester'}).text('<2009 ' + gettext("이전") + '>').appendTo(right_top_div);
+			else
+				$('<div>', {'class': 'dictionary_comment_semester'}).text('<' + item.year + ' ' + gettext(item.semester==1?"봄":"가을") + '>').appendTo(right_top_div);
 			if(Data.current_professor_id==-1){
 				var prof_info = $('<div>', {'class': 'dictionary_comment_prof_info'});
 				var prof_info_text = "담당교수 : ";
@@ -1149,10 +1157,10 @@ var DictionaryCommentList = {
 			success: $.proxy(function(resObj) {
 				try {
 					var professor_box = $('#new-comment-professor');
+					professor_box.append('<option value=0></option>');
 					$.each(resObj.professor, function(index, item){
-						professor_box.prepend('<option value=' + item.professor_id + '>' + item.professor_name + '</option>');
+						professor_box.append('<option value=' + item.professor_id + '>' + item.professor_name + '</option>');
 					});
-					professor_box.prepend('<option value=0></option>');
 					if (resObj.professor.length == 1) {
 						$('#new-comment-professor option[value="' + resObj.professor[0].professor_id + '"]').attr('selected', true);
 					}
@@ -1174,11 +1182,13 @@ var DictionaryCommentList = {
 	},
 	addToSemester:function(obj){
 		var semester_box = $('#new-comment-semester');
+		semester_box.append('<option value=0></option>');
 	    $.each(obj, function(index, item) {
-			semester_box.prepend('<option value=' + (item.year*10+item.semester) + '>' + item.year + " " + gettext(item.semester==1?"봄":"가을") + '</option>');
+			if (item.year==2008)
+				semester_box.append('<option value=' + (item.year*10+item.semester) + '>' + "2009 이전" + '</option>');
+			else
+				semester_box.append('<option value=' + (item.year*10+item.semester) + '>' + item.year + " " + gettext(item.semester==1?"봄":"가을") + '</option>');
 		});
-		semester_box.prepend('<option value=0></option>');
-
 		if (obj.length == 1) {
 			$('#new-comment-semester option[value="' + (obj[0].year*10+obj[0].semester) + '"]').attr("selected", true);
 			DictionaryCommentList.addToProfessor();
@@ -1187,6 +1197,7 @@ var DictionaryCommentList = {
 	onChangeProfessor:function(e,obj)
 	{
 		Data.comment_id = -1;
+		Data.comment_time = "3000-12-31T00:00:00";
 		$($('.course-professor-tab')[this.getIndexOfProfessor(this.last_index)]).css({"color":"#555555","border-color":"#EEEEEE","background-color":"#FFFFFF"});
 		if(obj==null) {
 			this.last_index=-1;
@@ -1232,7 +1243,8 @@ var DictionaryCommentList = {
 						this.addToLectureRating(resObj.rating_all);
 					}
 					this.showMoreComments(true);
-					this.addToSemester(resObj.semester);
+					if (Data.user_id != null)
+						this.addToSemester(resObj.semester);
 				}
 				catch(e) {
 					Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+e.message+')');
@@ -1272,7 +1284,10 @@ var DictionaryCommentList = {
 			var right_top_div_eval = $('<div>',{'class':'dictionary_comment_right_top_eval'});
 
 			right_top_div.appendTo(right_div_comment);
-			$('<div>', {'class': 'dictionary_comment_semester'}).text('<' + item.year + ' ' + gettext(item.semester==1?"봄":"가을")+ '>').appendTo(right_top_div);
+			if (item.year==2008)
+				$('<div>', {'class': 'dictionary_comment_semester'}).text('<2009 ' + gettext("이전") + '>').appendTo(right_top_div);
+			else
+				$('<div>', {'class': 'dictionary_comment_semester'}).text('<' + item.year + ' ' + gettext(item.semester==1?"봄":"가을")+ '>').appendTo(right_top_div);
 			if(Data.current_professor_id==-1){
 				$('<div>', {'class': 'dictionary_comment_prof'}).text(gettext("담당교수 : ")).appendTo(right_top_div);
 				for(var i=0;i<item.professor.length;i++)
@@ -1630,7 +1645,10 @@ var ProfessorCommentList = {
 
                         var comment_output = item.comment
 
-                        $('<span>', {'class' : 'content_subject'}).text("<"+item.year+" "+(item.semester==1?"봄":"가을")+"학기> ").appendTo(top_div_title);
+						if (item.year==2008)
+	                        $('<span>', {'class' : 'content_subject'}).text("<2009 이전학기> ").appendTo(top_div_title);
+						else
+	                        $('<span>', {'class' : 'content_subject'}).text("<"+item.year+" "+(item.semester==1?"봄":"가을")+"학기> ").appendTo(top_div_title);
                         $('<a>', {'class' : 'content_subject', 'href':'/dictionary/view/'+item.course_code+"/"}).text(item.lecture_title).appendTo(top_div_title);
                         $('<pre>', {'class': 'professor_content_comment'}).text(comment_output).appendTo(mid_div);
 

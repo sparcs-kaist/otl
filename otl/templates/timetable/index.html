@@ -21,6 +21,7 @@
 			{code:'N7',name:'{% trans "기계공학동" %}', x:227,y:247},
 			{code:'W1',name:'{% trans "응용공학동" %}', x:217,y:515},
 			{code:'E11',name:'{% trans "창의학습관" %}', x:368,y:356},
+			{code:'E11',name:'{% trans "창의학습관 " %}', x:368,y:356},
 			{code:'N4',name:'{% trans "대학 1호관" %}', x:432,y:251},
 			{code:'N4',name:'{% trans "인문사회과학부동" %}', x:432,y:251},
 			{code:'N5',name:'{% trans "대학 2호관" %}', x:517,y:243},
@@ -52,6 +53,7 @@
 		Map.initialize();
 		Timetable.initialize();
 		RangeSearch.initialize();
+
 	});
 	//]]>
 	</script>
@@ -229,6 +231,15 @@
 			<div class="right">
 				<a id="action-cleanTable" style="cursor:pointer">{% trans "초기화" %}</a> |
 				<a id="action-print" href="/timetable/print/">{% trans "인쇄" %}</a>
+				{% if user.is_authenticated %}
+				<a id="action-saveAsImage" href="/timetable/save_as_image/" target="_blank"><img src="{{MEDIA_URL}}images/icon_image.png" id="extract_image" title="{% trans "이미지로 저장" %}" alt="{% trans "이미지로 저장" %}" /></a> 
+				<a id="action-saveAsPdf" href="/timetable/save_as_pdf/" target="_blank"><img src="{{MEDIA_URL}}images/icon_pdf.png" id="extract_pdf" title="{% trans "PDF로 저장" %}" alt="{% trans "PDF로 저장" %}" /></a>
+				<a id="action-makeCalendar"><img src="{{MEDIA_URL}}images/icon_schedule.png" id="google_calendar" title="{% trans "구글 캘린더" %}" alt="{% trans "구글 캘린더" %}"></a>
+				{% else %}
+				<a href="/login/"><img src="{{MEDIA_URL}}images/icon_image.png" id="extract_image" title="{% trans "이미지로 저장" %}" alt="{% trans "이미지로 저장" %}" /></a> 
+				<a href="/login/"><img src="{{MEDIA_URL}}images/icon_pdf.png" id="extract_pdf" title="{% trans "PDF로 저장" %}" alt="{% trans "PDF로 저장" %}" /></a>
+				<a href="/login/"><img src="{{MEDIA_URL}}images/icon_schedule.png" id="google_calendar" title="{% trans "구글 캘린더" %}" alt="{% trans "구글 캘린더" %}"></a>
+				{% endif %}
 			</div>
 			&nbsp;
 		</div>
@@ -305,6 +316,29 @@
 						&nbsp;&nbsp;&nbsp;&nbsp;
 						<span id="total_au">0</span>&nbsp;
 						<span id="add_au" class="blue"></span>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div id="dictionaryinfo">
+			<table cellspacing="0" cellpadding="0" border="0">
+				<tr>
+					<th colspan=3 style="width:100%">{% trans "과목평가" %}</th>
+				</tr>
+				<tr>
+					<th style="width:33%">{% trans "학점" %}</th>
+					<th style="width:33%">{% trans "로드" %}</th>
+					<th style="width:33%">{% trans "남는거" %}</th>
+				</tr>
+				<tr>
+					<td style="text-align:center;">
+						<span id="score_average">0</span>
+					</td>
+					<td style="text-align:center;">
+						<span id="load_average">0</span>
+					</td>
+					<td style="text-align:center;" class="end">
+						<span id="gain_average">0</span>
 					</td>
 				</tr>
 			</table>

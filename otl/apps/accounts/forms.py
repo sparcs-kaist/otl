@@ -11,6 +11,7 @@ class LoginForm(forms.Form):
 class ProfileForm(forms.Form):
     favorite_departments = forms.ModelMultipleChoiceField(queryset=Department.objects.all(), required=False, label=u'관심 학과 :', help_text=u'최대 3개까지 선택하실 수 있습니다. (Ctrl키를 누르고 클릭하세요.)')
     language = forms.ChoiceField(choices=LANGUAGES, label=u'Language :')
+    gmail = forms.CharField(max_length=30, required=False)
 
     def clean_favorite_departments(self):
         data = self.cleaned_data['favorite_departments']

@@ -91,6 +91,8 @@ Mootabs.prototype.updateData = function()
 			$('total_credit').highlight('#FFFF00');
 			$('total_au').highlight('#FFFF00');
 			$('#action-print').attr('href', '/timetable/print/?id=' + this.activeKey + '&view_year=' + Data.ViewYear + '&view_semester=' + Data.ViewTerm);
+			$('#action-saveAsImage').attr('href', '/timetable/save_as_image/?id=' + this.activeKey + '&view_year=' + Data.ViewYear + '&view_semester=' + Data.ViewTerm);
+			$('#action-saveAsPdf').attr('href', '/timetable/save_as_pdf/?id=' + this.activeKey + '&view_year=' + Data.ViewYear + '&view_semester=' + Data.ViewTerm);
 		}
 	};
 Mootabs.prototype.activate = function(key)
@@ -669,6 +671,7 @@ var Timetable = {
 		var initData = Data.MyLectures;
 		var have_deleted = false;
 		var deleted_list = '';
+		var change_semester = false;
 		$.each(initData, function(index, item) {
 			var credit=0,au=0;
 			var wrap = Timetable.tabs.getTabByKey(index);
@@ -698,6 +701,7 @@ var Timetable = {
 			Data.Timetables[index] = {credit:credit, au:au};
 		});
 		Timetable.tabs.updateData();
+		$('#action-makeCalendar').bind('click',$.proxy(this.calendar, this));
 		if (have_deleted) {
 			if (USER_LANGUAGE == 'en')
 				Notifier.setErrorMsg('<strong>'+deleted_list+'</strong>, enrolled in your list, is cancelled.');
@@ -855,6 +859,35 @@ var Timetable = {
 			});
 		}
 	},
+	calendar:function(){
+		$.ajax({
+			type: 'GET',
+			url: '/timetable/calendar/',
+			data: {'id':Timetable.tabs.getTableId(),'view_year':Data.ViewYear,'view_semester':Data.ViewTerm},
+			dataType: 'json',
+			beforeSend: $.proxy(function() {
+				Notifier.setLoadingMsg(gettext('처리 중입니다...'));
+			}, this),
+			success: $.proxy(function(resObj) {
+				try {
+					if(resObj.result=='EMPTY'){
+						alert("이메일 정보가 없습니다. 내 정보로 이동합니다.");
+						window.location="/accounts/myinfo/";
+					}
+					else{
+						Notifier.setMsg(gettext('처리 되었습니다.'));
+					}
+				} catch(e) {
+					Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+e.message+')');
+				}
+			}, this),
+			error: $.proxy(function(xhr) {
+				if (suppress_ajax_errors)
+					return;
+				Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+gettext('요청 실패')+':'+xhr.status+')');
+			}, this)
+		});
+	},
 	changeSemester:function()
 	{
 		$.ajax({
@@ -864,6 +897,7 @@ var Timetable = {
 			dataType: 'json',
 			beforeSend: $.proxy(function() {
 				Notifier.showIndicatorSemester();
+				this.change_semester=true;
 			}, this),
 			success: $.proxy(function(resObj) {
 				try {
@@ -875,8 +909,10 @@ var Timetable = {
 				} catch(e) {
 				}
 				Notifier.clearIndicatorSemester();
+				this.change_semester=false;
 			}, this),
 			error: $.proxy(function(xhr) {
+				this.change_semester=false;
 				if (suppress_ajax_errors)
 					return;
 			}, this)
@@ -926,17 +962,19 @@ var Timetable = {
 			};
 			return registerCompRate;
 		};
-		$.ajax({
-			type: 'GET',
-			url: '/timetable/comp_rate/',
-			data: {'year': Data.ViewYear, 'term': Data.ViewTerm, 'course_no': obj['course_no'], 'class_no': obj['class_no']},
-			dataType: 'json',
-			success: registerCompRateTmp(Data.ViewYear, Data.ViewTerm, obj['course_no'], obj['class_no']),
-			error: $.proxy(function(xhr) {
-				if (suppress_ajax_errors)
-					return;
-			}, this)
-		});
+		if(this.change_semester==false){
+			$.ajax({
+				type: 'GET',
+				url: '/timetable/comp_rate/',
+				data: {'year': Data.ViewYear, 'term': Data.ViewTerm, 'course_no': obj['course_no'], 'class_no': obj['class_no']},
+				dataType: 'json',
+				success: registerCompRateTmp(Data.ViewYear, Data.ViewTerm, obj['course_no'], obj['class_no']),
+				error: $.proxy(function(xhr) {
+					if (suppress_ajax_errors)
+						return;
+				}, this)
+			});
+		}
 	},
 	updateInfoPanel: function(obj, is_adding)
 	{
@@ -963,7 +1001,7 @@ var Timetable = {
 						break;
 					case 'title':
 						link_url = 'https://cais.kaist.ac.kr/syllabusInfo?year='+Data.ViewYear+'&term='+Data.ViewTerm+'&subject_no='+obj['code']+'&lecture_class='+obj['class_no']+'&dept_id='+obj['dept_id'];
-						$('#DS_'+key).html('<p><a href="'+link_url+'" target="_blank"><img src="'+Data.MediaUrl+'images/syllabus.png" id="syllabus" title="'+gettext('실라버스')+'" alt="'+gettext('실라버스')+'" /></a> '+item+'</p>');
+						$('#DS_'+key).html('<p><a href="'+link_url+'" target="_blank"><img src="'+Data.MediaUrl+'images/syllabus.png" id="syllabus" title="'+gettext('실라버스')+'" alt="'+gettext('실라버스')+'" /></a> '+'<a href="/dictionary/view/'+obj['course_no']+'" target="_blank">'+item+'</a></p>');
 						break;
 					case 'prof':
 						$('#DS_'+key).html('<p>'+item+'</p>');
@@ -977,6 +1015,15 @@ var Timetable = {
 						}
 						break;
 					case 'limit':
+						break;
+					case 'score_average':
+						$('#score_average').text(obj['score_average']);
+						break;
+					case 'load_average':
+						$('#load_average').text(obj['load_average']);
+						break;
+					case 'gain_average':
+						$('#gain_average').text(obj['gain_average']);
 						break;
 					default:
 						$('#DS_'+key).text(item);
@@ -1008,8 +1055,10 @@ var Timetable = {
 	{
 		this.updateInfoPanel(obj, is_adding);
 		if (obj.classroom != undefined) {
-			var tokens = obj.classroom.trim().split(' ');
+			var tokens = $.trim(obj.classroom).split(' ');
 			var classroom = tokens.slice(0, tokens.length-1).join(' ');
+			if (tokens.length==1)
+				classroom = tokens.slice(0,tokens.length).join(' ');
 			Map.find(classroom);
 		}
 	},

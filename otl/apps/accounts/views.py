@@ -11,6 +11,7 @@ from otl.apps.favorites.models import CourseLink
 from otl.apps.groups.models import GroupBoard
 from otl.apps.calendar.models import Calendar, RepeatedSchedule, Schedule
 from otl.apps.accounts.models import UserProfile, Department
+from otl.apps.dictionary.models import Comment
 from otl.apps.accounts.forms import LoginForm, ProfileForm
 from otl.apps.common import *
 import base64, hashlib, time, random, urllib, re
@@ -23,10 +24,11 @@ from django.utils.translation import ugettext
 def login(request):
 
     num_users = cache_with_default('stat.num_users', lambda: User.objects.count() - 1, 60)
-    num_lectures = cache_with_default('stat.num_lectures', lambda: Lecture.objects.filter(year=settings.NEXT_YEAR, semester=settings.NEXT_SEMESTER).count(), 600)
+    num_lectures = cache_with_default('stat.num_lectures', lambda: Lecture.objects.count(), 600)
     num_favorites = cache_with_default('stat.num_favorites', lambda: CourseLink.objects.count(), 60)
     num_schedules = cache_with_default('stat.num_schedules', lambda: Schedule.objects.filter(one_of=None).count() + RepeatedSchedule.objects.count(), 30)
     num_groups = cache_with_default('stat.num_groups', lambda: GroupBoard.objects.count(), 60)
+    num_comments = cache_with_default('stat.num_comments', lambda: Comment.objects.count(), 60)
 
     next_url = request.GET.get('next', '/')
     if request.method == 'POST':
@@ -46,6 +48,7 @@ def login(request):
                     'num_favorites': num_favorites,
                     'num_schedules': num_schedules,
                     'num_groups': num_groups,
+                    'num_comments': num_comments,
                 }, context_instance=RequestContext(request))
 
             try:
@@ -65,6 +68,7 @@ def login(request):
                     'num_favorites': num_favorites,
                     'num_schedules': num_schedules,
                     'num_groups': num_groups,
+                    'num_comments': num_comments,
                 }, context_instance=RequestContext(request))
             else: # Login OK
                 try:
@@ -121,6 +125,7 @@ def login(request):
                 except:
                     profile.department = Department.objects.get(id__exact=0) # 찾을 수 없는 학과 사람은 일단 무학과로 등록
                 profile.student_id = request.POST['student_id']
+                profile.nickname = user.username
                 profile.save()
                 profile.favorite_departments.add(Department.objects.get(id=2044)) # 인문사회과학부는 기본으로 추가
 
@@ -155,6 +160,7 @@ def login(request):
             'num_favorites': num_favorites,
             'num_schedules': num_schedules,
             'num_groups': num_groups,
+            'num_comments': num_comments,
         }, context_instance=RequestContext(request))
 
 def logout(request):
@@ -169,12 +175,20 @@ def myinfo(request):
         # Modify my account information
         f = ProfileForm(request.POST)
         if f.is_valid():
-            profile.language = f.cleaned_data['language']
-            profile.favorite_departments = f.cleaned_data['favorite_departments']
-            profile.save()
-            msg = ugettext(u'사용자 정보가 변경되었습니다.')
-            request.session['django_language'] = profile.language[:2]
-            return HttpResponseRedirect('/accounts/myinfo/')
+            email = f.cleaned_data['gmail']
+            if email != '' and not _validate_email(email):
+                error = True
+                msg = ugettext(u'올바르지 않은 메일주소입니다.')
+            else:
+                if email == '':
+                    email = None
+                profile.email = email
+                profile.language = f.cleaned_data['language']
+                profile.favorite_departments = f.cleaned_data['favorite_departments']
+                profile.save()
+                msg = ugettext(u'사용자 정보가 변경되었습니다.')
+                request.session['django_language'] = profile.language[:2]
+                return HttpResponseRedirect('/accounts/myinfo/')
         else:
             msg = ugettext(u'올바르지 않은 입력입니다.')
             error = True
@@ -183,6 +197,7 @@ def myinfo(request):
         f = ProfileForm({
             'language': profile.language,
             'favorite_departments': [item.pk for item in profile.favorite_departments.all()],
+            'gmail': profile.email,
         })
         msg = u''
     return render_to_response('accounts/myinfo.html', {
@@ -194,4 +209,11 @@ def myinfo(request):
         'msg': msg,
         'lang' : request.session.get('django_language', 'ko'),
     }, context_instance=RequestContext(request))
+
+def _validate_email(email):
+    if len(email)>=5 and '@' in email:
+        if re.match('(\w+-*[.|\w]*)*@(\w+[.])+\w+', email) != None:
+            return True
+    return False
+
 

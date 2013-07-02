@@ -28,6 +28,8 @@ class UserProfile(models.Model):
     nickname = models.CharField(max_length=15, null=False, blank=True)
     take_lecture_list = models.ManyToManyField('timetable.Lecture', related_name='take_lecture_list', null=True)
     favorite=models.ManyToManyField('dictionary.Course', related_name='favorite_user', null=True)
+    calendar_id = models.TextField(null=True, blank=True)
+    email = models.CharField(max_length=30,null=True,blank=True)
 
     def __unicode__(self):
         return u'%s %s (%s)' % (self.user.username, self.student_id, self.department.code)

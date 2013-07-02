@@ -1,0 +1,9 @@
+{% extends 'layout.html' %}
+{% block headers %}
+<link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}error.css" />
+{% endblock %}
+{% block content %}
+<div>
+	<h3>{{ error_msg }}</h3>
+</div>
+{% endblock %}

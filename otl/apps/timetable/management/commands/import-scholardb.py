@@ -4,6 +4,7 @@ from django.conf import settings
 from django.core.exceptions import *
 from otl.apps.accounts.models import Department
 from otl.apps.timetable.models import Lecture, ClassTime, ExamTime, Syllabus
+from otl.apps.dictionary.models import *
 from optparse import make_option
 from datetime import time
 import sys, getpass, re
@@ -43,6 +44,9 @@ class Command(BaseCommand):
         c = db.cursor()
 
         if not exclude_lecture:
+            c.execute('SELECT * FROM view_OTL_charge WHERE lecture_year = %d AND lecture_term = %d' % (settings.NEXT_YEAR, settings.NEXT_SEMESTER))
+            professors = c.fetchall()
+
             c.execute('SELECT * FROM view_OTL_lecture WHERE lecture_year = %d AND lecture_term = %d ORDER BY dept_id' % (settings.NEXT_YEAR, settings.NEXT_SEMESTER))
             rows = c.fetchall()
             departments = {}
@@ -56,6 +60,14 @@ class Command(BaseCommand):
                     lecture.department.id,
                     lecture.class_no,
                 ))
+            # Make Staff Professor with ID 830
+            try:
+                staff_professor = Professor.objects.get(professor_id=830)
+            except Professor.DoesNotExist:
+                staff_professor = Professor.objects.create(professor_id=830)
+                staff_professor.professor_name = 'Staff'
+                staff_professor.professor_name_en = 'Staff'
+                staff_professor.save()
 
             prev_department = None
             for row in rows:
@@ -74,7 +86,7 @@ class Command(BaseCommand):
                 lecture_no = myrow[2]
                 lecture_code = myrow[20]
                 lecture_class_no = myrow[3].strip()
-                department_no = int(lecture_no[0:2])
+                department_no = lecture_no[0:2]
                 department_id = int(myrow[4])
                 department_code = rx_dept_code.match(lecture_code).group(1)
 
@@ -129,8 +141,6 @@ class Command(BaseCommand):
                 lecture.title_en = myrow[8]
                 lecture.type = myrow[10]        # 과목구분 (한글)
                 lecture.type_en = myrow[11]     # 과목구분 (영문)
-                lecture.professor = myrow[18]       # 교수님 이름 (한글)
-                lecture.professor_en = myrow[22]    # 교수님 이름 (영문)
                 lecture.audience = int(myrow[12])   # 학년 구분
                 lecture.limit= myrow[17]            # 인원제한
                 lecture.credit = myrow[16]          # 학점
@@ -140,16 +150,78 @@ class Command(BaseCommand):
                 lecture.notice = myrow[19]          # 비고
                 lecture.is_english = True if myrow[21] == 'Y' else False # 영어강의 여부
                 lecture.deleted = False
+                # Course save
+                try:
+                    course = Course.objects.get(old_code=lecture.old_code)
+                    course.department = department
+                    course.type = lecture.type
+                    course.type_en = lecture.type_en
+                    course.title = lecture.title.split("<")[0].split("[")[0]
+                    course.title_en = lecture.title_en.split("<")[0].split("[")[0]
+                    course.save() 
+#                    print "Updating Course ... %s" % course.title
+                except Course.DoesNotExist:
+                    course = Course()
+                    course.old_code = lecture.old_code
+                    course.department = department
+                    course.type = lecture.type
+                    course.type_en = lecture.type_en
+                    course.title = lecture.title.split("<")[0].split("[")[0]
+                    course.title_en = lecture.title_en.split("<")[0].split("[")[0]
+                    course.score_average = 0
+                    course.load_average = 0
+                    course.gain_average = 0
+                    course.save()
+#                    print "Making new Course ... %s" % course.title
+                lecture.course = course
                 lecture.save()
                 lecture_count += 1
+                # professor save
+                match_scholar = filter(lambda a: lecture.year == a[0] and lecture.semester == a[1] and lecture.code == a[2] and lecture.class_no.strip() == a[3].strip() and lecture.department_id == a[4], professors)
+                if len(match_scholar) != 0:
+                    professors_not_updated = set()
+                    for prof in lecture.professor.all():
+                        professors_not_updated.add(prof.id)
+                    for i in match_scholar:
+                        try:
+                            prof_id = i[5]
+                            prof_name = unicode(i[6], 'cp949')
+                            if i[8] is None or i[8]=='':
+                                prof_name_en = ''
+                            else:
+                                prof_name_en = unicode(i[8].strip(),'cp949')
+                            professor = Professor.objects.get(professor_id=prof_id)
+                            if professor.professor_name != prof_name and prof_id !=830:
+                                professor.professor_name = prof_name
+                                professor.save()
+                            if professor.professor_name_en != prof_name_en and prof_id != 830 and prof_name_en!='':
+                                professor.professor_name_en = prof_name_en
+                                professor.save()
+                            professors_not_updated.remove(professor.id)
+                        except Professor.DoesNotExist:
+                            professor = Professor.objects.create(professor_id=prof_id)
+                            professor.professor_name = prof_name
+                            professor.professor_name_en = prof_name_en
+                            professor.save()
+#                            print "Making new Professor ... %s" % professor.professor_name
+                        except KeyError:
+                            pass
+                        lecture.professor.add(professor)
+                        if professor.professor_id != 830:
+                            lecture.course.professors.add(professor)
+                else:
+                    lecture.professor.add(staff_professor)
 
+                for key in professors_not_updated:
+                    professor = Professor.objects.get(id=key)
+                    lecture.professor.remove(professor)
                 try:
                     lectures_not_updated.remove(lecture_key_hashable)
                 except KeyError:
                     pass
 
             c.close()
-        
+
         # Extract exam-time, class-time info.
         print 'Extracting exam time information...'
         c = db.cursor()
@@ -219,7 +291,7 @@ class Command(BaseCommand):
                 class_time.save()
             except Lecture.DoesNotExist:
                 print 'Class-time for non-existing lecture %s; skip it...' % myrow[2]
-
+        '''
         c = db.cursor()
         c.execute('SELECT * FROM view_OTL_syllabus WHERE lecture_year = %d AND lecture_term = %d' % (settings.NEXT_YEAR, settings.NEXT_SEMESTER))
         syllabuses = c.fetchall()
@@ -260,7 +332,7 @@ class Command(BaseCommand):
                 syllabus.save()
             except Lecture.DoesNotExist:
                 print 'Syllabus information for non-existing lecture %s; skip it...' % myrow[2]
-
+        '''
         if not exclude_lecture:
             # Mark deleted lectures to notify users.
             print 'Marking deleted lectures...'
@@ -274,7 +346,7 @@ class Command(BaseCommand):
                 }
                 lecture = Lecture.objects.get(**lecture_key)
                 lecture.deleted = True
-                print '%s is marked as deleted...' % lecture
+#                print '%s is marked as deleted...' % lecture
                 lecture.save()
 
         db.close()

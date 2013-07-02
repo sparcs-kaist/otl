@@ -22,6 +22,7 @@ urlpatterns = patterns('',
     (ur'^about/', 'otl.apps.main.views.about'),
     (ur'^help/', 'otl.apps.main.views.help'),
     (ur'^dictionary/', include('otl.apps.dictionary.urls')),
+
     (ur'^favicon.ico$', lambda request: HttpResponseNotFound()),
 
     (ur'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': './media'}),

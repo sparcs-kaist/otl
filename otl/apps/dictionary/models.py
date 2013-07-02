@@ -58,7 +58,7 @@ class Comment(models.Model):
     lecture = models.ForeignKey(Lecture, null=True, blank=True,db_index=True)  # 시기+과목
 
     writer = models.ForeignKey(User, related_name='comment_set',db_index=True) # 수정한 사람
-    written_datetime = models.DateTimeField(auto_now=True)       # 마지막 수정일
+    written_datetime = models.DateTimeField(auto_now=True, db_index=True)       # 마지막 수정일
     comment = models.CharField(max_length=65536)            # 코멘트
     load = models.SmallIntegerField(choices=LOAD_TYPES)                       # 로드
     score = models.SmallIntegerField(choices=SCORE_TYPES)                      # 학점

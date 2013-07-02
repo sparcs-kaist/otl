@@ -1,7 +1,8 @@
-# -*- coding: utf-8
+# -*- coding: utf-8-*-
 
-import os, tempfile
+import os, tempfile, httplib
 from django.shortcuts import render_to_response
+from django.template.loader import render_to_string
 from django.db.models import Count
 from django.db import IntegrityError
 from django.http import *
@@ -11,18 +12,23 @@ from django.conf import settings
 from django.core.exceptions import *
 from django.core.cache import cache
 from django.contrib.auth.decorators import login_required
-from otl.utils import respond_as_attachment
+from otl.utils import respond_as_attachment, get_choice_display
 from otl.utils.decorators import login_required_ajax
 from otl.apps.common import *
-from otl.apps.accounts.models import Department
+from otl.apps.accounts.models import Department, UserProfile
 from otl.apps.timetable.models import Lecture, ExamTime, ClassTime, Syllabus, Timetable, OverlappingTimeError, OverlappingExamTimeError
 from StringIO import StringIO
 from django.db.models import Q
 from otl.apps.dictionary.models import Professor
+from django.core.servers.basehttp import FileWrapper
+import Image
+
 from django import template
 template.add_to_builtins('django.templatetags.i18n')
 
-from django.utils.translation import ugettext
+from django.utils.translation import ugettext,activate
+import hashlib
+import MySQLdb
 
 def index(request):
 
@@ -116,7 +122,7 @@ def get_comp_rate(request):
             json.dump(result, io, ensure_ascii=False, sort_keys=False, separators=(',',':'))
         return HttpResponse(io.getvalue())
     except:
-        raise ValidationError()
+        raise ValidationError('lecture is not exist')
 
 @login_required_ajax
 def add_to_timetable(request):
@@ -252,6 +258,29 @@ def change_semester(request):
         'data': my_lectures,
     }, ensure_ascii=False, indent=4))
 
+def calendar(request):
+    try:
+        user = request.user
+        userprofile = UserProfile.objects.get(user=user)
+        email = userprofile.email
+        if email is None:
+            return HttpResponse(json.dumps({
+                'result': 'EMPTY',
+                }, ensure_ascii=False, indent=4))
+        table_id = int(request.GET.get('id', 0))
+        view_year = int(request.GET.get('view_year', settings.NEXT_YEAR))
+        view_semester = int(request.GET.get('view_semester', settings.NEXT_SEMESTER))
+        start = settings.SEMESTER_RANGES[(view_year,view_semester)][0]
+        end = settings.SEMESTER_RANGES[(view_year,view_semester)][1]
+        calendar_server = httplib.HTTPConnection('localhost',8080)
+        calendar_server.request("GET","/OTL_Calendar/Main?uid=" + str(user.id) + "&start=" + start.strftime("20%y%m%d") + "&end=" + end.strftime("20%y%m%d") + "&email=" + email + "&year=" + str(view_year) + "&semester=" + str(view_semester) + "&table_id=" + str(table_id))
+        calendar_server.getresponse()
+        calendar_server.close()
+        return HttpResponse(json.dumps({
+            'result': 'OK',
+             }, ensure_ascii=False, indent=4))
+    except:
+        raise ValidationError('error on calendar')
 
 # -- Private functions --
 
@@ -276,45 +305,45 @@ def _search(**conditions):
     # This query requires Django 1.1 or newer.
     lectures = _search_by_ys(year, semester)
 
-    try:
-        if year == None or semester == None:
-            raise ValidationError()
-        if day_begin != None and day_end != None and time_begin != None and time_end != None:
-            if int(time_end) == 24*60:
-                # 24:00가 종료시간인 경우 처리
-                day_end = int(day_end)
-                if day_end < 6:
-                    day_end += 1
-                time_end = 0
-            if day_begin == day_end:
-                lectures = lectures.filter(classtime__day__exact=int(day_begin),
-                                           classtime__begin__gte=ClassTime.numeric_time_to_obj(int(time_begin)),
-                                           classtime__end__lte=ClassTime.numeric_time_to_obj(int(time_end)))
-            else:
-                lectures = lectures.filter(classtime__day__gte=int(day_begin), classtime__day__lte=int(day_end),
-                                           classtime__begin__gte=ClassTime.numeric_time_to_obj(int(time_begin)),
-                                           classtime__end__lte=ClassTime.numeric_time_to_obj(int(time_end)))
-            lectures = lectures.order_by('type', 'code').distinct().select_related()
-        elif department != None and type != None and keyword != None:
-            keyword = keyword.strip()
-            if keyword == u'':
-                if department == u'-1' and type == u'전체보기':
-                    raise ValidationError()
-                lectures = _search_by_ysdt(year, semester, department, type)
-            else:
-                words = keyword.split()
-                lectures = None
-                for word in words:
-                    result = _search_by_ysdtlw(year, semester, department, type, lang, unicode(word))
-                    if lectures is None:
-                        lectures = result
-                    else:
-                        lectures = lectures & result
-                lectures = lectures.order_by('type', 'code').distinct().select_related()
+    #try:
+    if year == None or semester == None:
+        raise ValidationError('year or semester is null')
+    if day_begin != None and day_end != None and time_begin != None and time_end != None:
+        if int(time_end) == 24*60:
+            # 24:00가 종료시간인 경우 처리
+            day_end = int(day_end)
+            if day_end < 6:
+                day_end += 1
+            time_end = 0
+        if day_begin == day_end:
+            lectures = lectures.filter(classtime__day__exact=int(day_begin),
+                                       classtime__begin__gte=ClassTime.numeric_time_to_obj(int(time_begin)),
+                                       classtime__end__lte=ClassTime.numeric_time_to_obj(int(time_end)))
         else:
-            raise ValidationError()
-    except (TypeError, ValueError):
-        raise ValidationError()
+            lectures = lectures.filter(classtime__day__gte=int(day_begin), classtime__day__lte=int(day_end),
+                                       classtime__begin__gte=ClassTime.numeric_time_to_obj(int(time_begin)),
+                                       classtime__end__lte=ClassTime.numeric_time_to_obj(int(time_end)))
+        lectures = lectures.order_by('type', 'code').distinct().select_related()
+    elif department != None and type != None and keyword != None:
+        keyword = keyword.strip()
+        if keyword == u'':
+            if department == u'-1' and type == u'전체보기':
+                raise ValidationError('department and type is all')
+            lectures = _search_by_ysdt(year, semester, department, type)
+        else:
+            words = [keyword] #keyword.split()
+            lectures = None
+            for word in words:
+                result = _search_by_ysdtlw(year, semester, department, type, lang, unicode(word))
+                if lectures is None:
+                    lectures = result
+                else:
+                    lectures = lectures & result
+            lectures = lectures.order_by('type', 'code').distinct().select_related()
+    else:
+        raise ValidationError('some key is null')
+    #except (TypeError, ValueError):
+    #    raise ValidationError()
 
     return lectures
 
@@ -340,15 +369,16 @@ def _search_by_ysdt(year, semester, department, type):
     return output
 
 def _search_by_ysdtlw(year, semester, department, type, lang, word):
-    cache_key = 'timetable-search-cache:year=%s:semester=%s:department=%s:type=%s:lang=%s:word=%s' % (year, semester, department, type, lang, word)
+    word_hash = hashlib.md5(word.encode("utf-8")).hexdigest()
+    cache_key = 'timetable-search-cache:year=%s:semester=%s:department=%s:type=%s:lang=%s:word=%s' % (year, semester, department, type, lang, word_hash)
     output = cache.get(cache_key)
     if output is None:
         output = _search_by_ysdt(year, semester, department, type)
         if lang == 'ko':
-            professor_ids = Professor.objects.filter(professor_name__icontains=word)
+            professor_ids = Professor.objects.filter(professor_name__icontains=word).values_list('id',flat=True)
             output = output.filter(Q(old_code__icontains=word) | Q(title__icontains=word) | Q(professor__id__in=professor_ids)).distinct() 
         else:
-            professor_ids = Professor.objects.filter(professor_name_en__icontains=word)
+            professor_ids = Professor.objects.filter(professor_name_en__icontains=word).values_list('id',flat=True)
             output = output.filter(Q(old_code__icontains=word) | Q(title_en__icontains=word) | Q(professor__id__in=professor_ids)).distinct() 
         cache.set(cache_key, output, 3600)
     return output
@@ -394,7 +424,10 @@ def _lectures_to_output(lectures, conv_to_json=True, lang='ko'):
             'remarks': ugettext(u'영어강의') if lecture.is_english else u'',
             'examtime': {'day': exam.day, 'start': exam.get_begin_numeric(), 'end': exam.get_end_numeric()} if exam != None else None,
             'semester' : lecture.semester,
-            'url' : "/dictionary/view/"+lecture.old_code+"/"
+            'url' : "/dictionary/view/"+lecture.old_code+"/",
+            'score_average': round(lecture.course.score_average,2),
+            'load_average': round(lecture.course.load_average,2),
+            'gain_average': round(lecture.course.gain_average,2)
         }
         all.append(item)
     if conv_to_json:
@@ -406,6 +439,93 @@ def _lectures_to_output(lectures, conv_to_json=True, lang='ko'):
         return io.getvalue()
     else:
         return all
+
+def _get_color_by_index(index):
+    modulecolors = ['#FFC7FE','#FFCECE','#DFE8F3','#D1E9FF','#D2F1EE','#FFEAD1','#E1D1FF','#FAFFC1','#D4FFC1','#DEDEDE','#BDBDBD']
+
+    return modulecolors[ index % len(modulecolors) ]
+
+def _render_html(request):
+    table_id = int(request.GET.get('id', 0))
+    view_year = int(request.GET.get('view_year', settings.NEXT_YEAR))
+    view_semester = int(request.GET.get('view_semester', settings.NEXT_SEMESTER))
+
+    my_lectures = _lectures_to_output(Lecture.objects.filter(year=view_year, semester=view_semester, timetable__user=request.user, timetable__table_id=table_id).select_related(), False, request.session.get('django_language', 'ko'))
+
+    my_classes = []
+
+    for i in xrange(len(my_lectures)):
+        bgcolor = _get_color_by_index(i)
+
+        lecture = my_lectures[i]
+
+        if not lecture['deleted']:
+            in_number = 0
+            for time in lecture['times']:
+                in_number += 1
+                item = {
+                    'bgcolor': bgcolor,
+                    'course_no': lecture['course_no'],
+                    'title': lecture['title'],
+                    'classroom': lecture['classroom'],
+                    'prof': lecture['prof'],
+                    'left': time['day'] * 100 + 3,
+                    'top': int((time['start'] - 480) / 30) * 21,
+                    'height': int((time['end'] - time['start']) / 30) * 21 - 2,
+                    'in_number': in_number,
+                }
+
+                my_classes.append(item)
+
+    render_result = render_to_string('timetable/timetable.html', {
+        'table_id': table_id,
+        'my_classes': my_classes,
+        'lang': request.session.get('django_language', 'ko'),
+        'view_year': view_year,
+        'view_semester': view_semester
+    }, context_instance=RequestContext(request))
+
+    return render_result
+
+def _get_pdf(rendered_string):
+    html_num, html_path = tempfile.mkstemp(suffix='.html', dir='/tmp')
+    html_file = open(html_path, 'w')
+    html_file.write(rendered_string.encode('utf-8'))
+    html_file.close()
+
+    pdf_num, pdf_path = tempfile.mkstemp(suffix='.pdf', dir='/tmp')
+
+    cmd = 'prince -i=html --media=screen '
+
+    css_list = ['default.css', 'layout.css', 'timetable.css', 'pdf_timetable.css', 'table.css']
+    for css in css_list:
+        cmd += '-s '
+        cmd += os.path.join(settings.MEDIA_ROOT, css)
+        cmd += ' '
+
+    cmd += html_path
+    cmd += ' -o ' + pdf_path
+
+    os.system(cmd)
+
+    return pdf_path
+
+
+def _get_image(rendered_string):
+    pdf_path = _get_pdf(rendered_string)
+
+    img_tmp_num, img_tmp_path = tempfile.mkstemp(suffix='.png', dir='/tmp')
+    img_num, img_path = tempfile.mkstemp(suffix='.png', dir='/tmp')
+
+    os.system('gs -q -sDEVICE=png16m -dBATCH -dNOPAUSE -r400 -sOutputFile=%s %s' % (img_tmp_path, pdf_path))
+
+    image = Image.open(img_tmp_path)
+    result = image.resize((850, 1100), Image.ANTIALIAS).crop((120, 90, 730, 900))
+    result.save(img_path, 'png')
+
+    os.system('rm %s' % img_tmp_path)
+
+    return img_path
 
 @login_required
 def print_as_pdf(request):
@@ -479,7 +599,6 @@ def print_as_pdf(request):
                 return L[i]
             def brak(lo, hi):
                 i = (lo + hi) >> 1
-                print lo, hi, i, width(i)
                 if lo == i:
                     return lo
                 if width(i) >= max_width:
@@ -520,5 +639,38 @@ def print_as_pdf(request):
     c.save()
     response = respond_as_attachment(request, temp_path, 'Timetable.pdf', True)
     os.remove(temp_path)
+    return response
+
+@login_required
+def save_as_pdf(request):
+    table_id = int(request.GET.get('id', 0))
+    view_year = int(request.GET.get('view_year', settings.NEXT_YEAR))
+    view_semester = int(request.GET.get('view_semester', settings.NEXT_SEMESTER))
+    old_lang = request.session.get('django_language', 'ko')
+
+    f = open(_get_pdf(_render_html(request)), 'rb')
+
+    response = HttpResponse(FileWrapper(f), content_type='application/pdf')
+    activate('en')
+    response['Content-Disposition'] = 'attachment; filename=timetable%d_%d_%s.pdf' % (table_id + 1, view_year, ugettext(get_choice_display(SEMESTER_TYPES, view_semester)))
+    activate(old_lang)
+
+    return response
+
+
+@login_required
+def save_as_image(request):
+    table_id = int(request.GET.get('id', 0))
+    view_year = int(request.GET.get('view_year', settings.NEXT_YEAR))
+    view_semester = int(request.GET.get('view_semester', settings.NEXT_SEMESTER))
+    old_lang = request.session.get('django_language', 'ko')
+
+    f = open(_get_image(_render_html(request)), 'rb')
+
+    response = HttpResponse(FileWrapper(f), content_type='image/png')
+    activate('en')
+    response['Content-Disposition'] = 'attachment; filename=timetable%d_%d_%s.png' % (table_id + 1, view_year, ugettext(get_choice_display(SEMESTER_TYPES, view_semester)))
+    activate(old_lang)
+
     return response
 

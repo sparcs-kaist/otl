@@ -4,7 +4,7 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
-    ('OTL-Project Team', 'otlsysop@sparcs.kaist.ac.kr'),
+    ('OTL-Bug Report', 'otl@sparcs.org'),
 )
 
 MANAGERS = ADMINS
@@ -148,6 +148,14 @@ START_SEMESTER = 1
 SEMESTER_RANGES = {
     (2009,1): (date(2009,2,2), date(2009,5,22)),
     (2009,3): (date(2009,9,1), date(2009,12,21)),
+    (2010,1): (date(2010,2,1), date(2010,5,21)),
+    (2010,3): (date(2010,9,1), date(2010,12,21)),
+    (2011,1): (date(2011,2,7), date(2011,5,27)),
+    (2011,3): (date(2011,9,1), date(2011,12,21)),
+    (2012,1): (date(2012,2,6), date(2012,5,25)),
+    (2012,3): (date(2012,9,1), date(2012,12,21)),
+    (2013,1): (date(2013,3,2), date(2013,6,21)),
+    (2013,3): (date(2013,9,2), date(2013,12,20)),
 }
 EXAM_PERIODS = {
     (2009,1): ((date(2009,3,23), date(2009,3,27)), (date(2009,5,18), date(2009,5,22))),

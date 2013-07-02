@@ -16,5 +16,8 @@ urlpatterns = patterns('',
     (ur'^jsi18n/$', 'django.views.i18n.javascript_catalog', js_info_dict),
     (ur'^autocomplete/$', views.get_autocomplete_list),
     (ur'^comp_rate/$', views.get_comp_rate),
+    (ur'^save_as_image/$', views.save_as_image),
+    (ur'^save_as_pdf/$', views.save_as_pdf),
+    (ur'^calendar/$', views.calendar),
 )
 
