@@ -113,6 +113,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'otl',
     'otl.utils',
+    'otl.apps.credit',
     'otl.apps.dictionary',
     'otl.apps.timetable',
     'otl.apps.calendar',
