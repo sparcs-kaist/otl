@@ -39,6 +39,7 @@ class Course(models.Model):
     score_average = models.FloatField()
     load_average = models.FloatField()
     gain_average = models.FloatField()
+    same_course = models.ManyToManyField('self',null=True)
 
 class CourseAdmin(admin.ModelAdmin):
     list_display = ('old_code', 'department', 'type', 'title', 'score_average', 'load_average', 'gain_average')

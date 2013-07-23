@@ -137,15 +137,16 @@ def show_more_comments(request):
         next_comment_time = datetime.datetime.strptime(next_comment_time,"%Y-%m-%dT%H:%M:%S")
     prof_id = int(request.GET.get('professor_id', -1))
     course = Course.objects.get(id=course_id)
+    neighbor_courses = course.same_course.all().values_list('id',flat=True)
     if prof_id == -1 : #General
-        comments = Comment.objects.filter(course=course,written_datetime__lte=next_comment_time).order_by('-written_datetime', '-id').exclude(written_datetime=next_comment_time, id__gte=next_comment_id)[:settings.COMMENT_NUM]
+        comments = Comment.objects.filter((Q(course=course) | Q(course__id__in=neighbor_courses)) & Q(written_datetime__lte=next_comment_time)).order_by('-written_datetime', '-id').exclude(written_datetime=next_comment_time, id__gte=next_comment_id)[:settings.COMMENT_NUM]
     else:
         professor = Professor.objects.get(professor_id=prof_id)
         lectures = professor.lecture_professor.all()
         q = Q()
         for lecture in lectures:
             q |= Q(lecture=lecture)
-        q &= Q(course=course)
+        q &= Q(course=course) | Q(course__id__in=neighbor_courses)
         q &= Q(written_datetime__lte=next_comment_time)
         comments = Comment.objects.filter(q).order_by('-written_datetime', '-id').exclude(written_datetime=next_comment_time, id__gte=next_comment_id)[:settings.COMMENT_NUM]
 
@@ -165,7 +166,7 @@ def show_more_comments(request):
 def view(request, course_code):
     course = None
     summary_output = None
-
+    same_name = ''
     try:
         dept = int(request.GET.get('dept', -1))
         classification = int(request.GET.get('classification', 0))
@@ -178,7 +179,8 @@ def view(request, course_code):
 
         course = Course.objects.get(old_code=course_code.upper())
         lang=request.session.get('django_language','ko')
-
+        for code in course.same_course.all().values_list('old_code',flat=True):
+            same_name = same_name + code + ' '
         course_output = _courses_to_output(course,True,lang)
         lectures_output = _lectures_to_output(Lecture.objects.filter(course=course), True, lang)
         professors_output = _professors_to_output(course.professors,True,lang)
@@ -203,6 +205,7 @@ def view(request, course_code):
         'select_year':select_year,
         'select_semester':select_semester,
         'select_professor':select_professor,
+        'same_name':same_name,
         }, context_instance=RequestContext(request))
 
 @korean_required
