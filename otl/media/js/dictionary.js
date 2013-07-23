@@ -710,50 +710,53 @@ var DictionaryCommentList = {
 	},
 	deleteComment:function(e,obj, comment) 
 	{
-		$.ajax({
-			type: 'POST',
-			url: '/dictionary/delete_comment/',
-			data: {'comment_id': obj.comment_id, 'prof_id':Data.current_professor_id},
-			dataType: 'json',
-			success: $.proxy(function(resObj) {
-				try {
-					if (resObj.result=='DELETE') {
-						comment.remove();
-						if(Data.current_professor_id == -1)
-						{
-							$($($($("#course-eval").children()[0]).children()[1]).children()[0]).css('width',resObj.average['avg_score'].toFixed(1)*7.5);
-							$($($($("#course-eval").children()[1]).children()[1]).children()[0]).css('width',resObj.average['avg_load'].toFixed(1)*7.5);
-							$($($($("#course-eval").children()[2]).children()[1]).children()[0]).css('width',resObj.average['avg_gain'].toFixed(1)*7.5);
-							$("#course-eval-average").text(((resObj.average['avg_score']+resObj.average['avg_load']+resObj.average['avg_gain'])/6).toFixed(1));
-							$("#course-eval-count").text(gettext("평가자 수 : ") + resObj.comment_num + gettext("명"));
+		var confirm_register = confirm("코멘트를 삭제하시겠습니까?");
+		if (confirm_register == true){
+			$.ajax({
+				type: 'POST',
+				url: '/dictionary/delete_comment/',
+				data: {'comment_id': obj.comment_id, 'prof_id':Data.current_professor_id},
+				dataType: 'json',
+				success: $.proxy(function(resObj) {
+					try {
+						if (resObj.result=='DELETE') {
+							comment.remove();
+							if(Data.current_professor_id == -1)
+							{
+								$($($($("#course-eval").children()[0]).children()[1]).children()[0]).css('width',resObj.average['avg_score'].toFixed(1)*7.5);
+								$($($($("#course-eval").children()[1]).children()[1]).children()[0]).css('width',resObj.average['avg_load'].toFixed(1)*7.5);
+								$($($($("#course-eval").children()[2]).children()[1]).children()[0]).css('width',resObj.average['avg_gain'].toFixed(1)*7.5);
+								$("#course-eval-average").text(((resObj.average['avg_score']+resObj.average['avg_load']+resObj.average['avg_gain'])/6).toFixed(1));
+								$("#course-eval-count").text(gettext("평가자 수 : ") + resObj.comment_num + gettext("명"));
+							}
+							else
+							{
+								$($($($("#lecture-eval").children()[0]).children()[1]).children()[0]).css('width',resObj.average['avg_score'].toFixed(1)*7.5);
+								$($($($("#lecture-eval").children()[1]).children()[1]).children()[0]).css('width',resObj.average['avg_load'].toFixed(1)*7.5);
+								$($($($("#lecture-eval").children()[2]).children()[1]).children()[0]).css('width',resObj.average['avg_gain'].toFixed(1)*7.5);
+								$("#lecture-eval-average").text(((resObj.average['avg_score']+resObj.average['avg_load']+resObj.average['avg_gain'])/6).toFixed(1));
+								$("#lecture-eval-count").text(gettext("평가자 수 : ") + resObj.comment_num + gettext("명"));
+							}
+						} else if (resObj=='REMOVE_NOT_EXIST') {
+							Notifier.setErrorMsg(gettext('잘못된 접근입니다.'));
 						}
-						else
-						{
-							$($($($("#lecture-eval").children()[0]).children()[1]).children()[0]).css('width',resObj.average['avg_score'].toFixed(1)*7.5);
-							$($($($("#lecture-eval").children()[1]).children()[1]).children()[0]).css('width',resObj.average['avg_load'].toFixed(1)*7.5);
-							$($($($("#lecture-eval").children()[2]).children()[1]).children()[0]).css('width',resObj.average['avg_gain'].toFixed(1)*7.5);
-							$("#lecture-eval-average").text(((resObj.average['avg_score']+resObj.average['avg_load']+resObj.average['avg_gain'])/6).toFixed(1));
-							$("#lecture-eval-count").text(gettext("평가자 수 : ") + resObj.comment_num + gettext("명"));
-						}
-					} else if (resObj=='REMOVE_NOT_EXIST') {
-						Notifier.setErrorMsg(gettext('잘못된 접근입니다.'));
+					}
+					catch(e) {
+						Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+e.message+')');
+					}
+				}, this),
+				error: function(xhr) {
+					if (suppress_ajax_errors)
+						return;
+					if (xhr.status == 403) {
+						Notifier.setErrorMsg(gettext('로그인해야 합니다.'));
+					}
+					else {
+						Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+gettext('요청 실패')+':'+xhr.status+')');
 					}
 				}
-				catch(e) {
-					Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+e.message+')');
-				}
-			}, this),
-			error: function(xhr) {
-				if (suppress_ajax_errors)
-					return;
-				if (xhr.status == 403) {
-					Notifier.setErrorMsg(gettext('로그인해야 합니다.'));
-				}
-				else {
-					Notifier.setErrorMsg(gettext('오류가 발생하였습니다.')+' ('+gettext('요청 실패')+':'+xhr.status+')');
-				}
-			}
-		});
+			});
+		}
 	},
 	addToMultipleComment:function(obj)
 	{
