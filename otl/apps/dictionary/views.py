@@ -172,6 +172,9 @@ def view(request, course_code):
         keyword = request.GET.get('keyword', "")
         in_category = request.GET.get('in_category', json.dumps(False))
         active_tab = int(request.GET.get('active_tab', -1))
+        select_year = int(request.GET.get('year', -1))
+        select_semester = int(request.GET.get('semester', -1))
+        select_professor = int(request.GET.get('prof_id', -1))
 
         course = Course.objects.get(old_code=course_code.upper())
         lang=request.session.get('django_language','ko')
@@ -197,6 +200,9 @@ def view(request, course_code):
         'in_category': in_category,
         'active_tab': active_tab,
         'next':request.path,
+        'select_year':select_year,
+        'select_semester':select_semester,
+        'select_professor':select_professor,
         }, context_instance=RequestContext(request))
 
 @korean_required
@@ -768,7 +774,7 @@ def _taken_lectures_to_output(user, lecture_list, lang='ko'):
         if lecture.code in written_list:
             written=True
         item= {
-                'url': "/dictionary/view/" + lecture.old_code + "/",
+                'url': "/dictionary/view/" + lecture.old_code + "/?year=" + str(lecture.year) + "&semester=" + str(lecture.semester) + "&prof_id=" + str(lecture.professor.all()[0].professor_id) ,
                 'title': _trans(lecture.title,lecture.title_en,lang),
                 'code': lecture.old_code,
                 'written':written

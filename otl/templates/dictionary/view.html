@@ -15,7 +15,9 @@ $(document).ready(function () {
 	Data.Course = {{course|safe}};
 	Data.Lectures = {{lectures|safe}};
     Data.Professors = {{professors|safe}};
-	Data.current_professor_id = -1;
+	Data.current_professor_id = {{select_professor}};
+	Data.select_year = {{select_year}};
+	Data.select_semester = {{select_semester}};
 	Data.comment_id = -1;
 	DictionaryCommentList.initialize();
 	FavoriteController.initialize();

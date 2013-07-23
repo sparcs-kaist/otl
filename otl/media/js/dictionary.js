@@ -419,11 +419,11 @@ var DictionaryCommentList = {
 		this.lecture_summary = $('#lecture-summary');
 		this.comments = $('#course-comment-view');
 		this.lecture_rating = $('#lecture-rating');
-		this.onLoad();
-		this.registerHandles();
-		this.loading=true;
 		this.last_index=-1;
 		this.last_prof=0;
+		this.loading=true;
+		this.onLoad();
+		this.registerHandles();
 		this.new_comment_score=0;
 		this.new_comment_load=0;
 		this.new_comment_gain=0;
@@ -431,7 +431,17 @@ var DictionaryCommentList = {
 	onLoad:function()
 	{
 		this.addToMultipleProfessor(Data.Professors);
-		this.onChangeProfessor(DictionaryCommentList, null);
+		var item = null;
+		if(Data.current_professor_id != -1){
+			for(var i=0;i<Data.Professors.length;i++){
+				if(Data.Professors[i].professor_id == Data.current_professor_id){
+					item = Data.Professors[i];
+					for(var j=0;j<parseInt(i/NUM_PROF_PER_LIST);j++)
+						DictionaryCommentList.onChangePageRight();
+				}
+			}
+		}
+		this.onChangeProfessor(DictionaryCommentList, item);
 
 	},
 	registerHandles:function()
@@ -1188,6 +1198,10 @@ var DictionaryCommentList = {
 				semester_box.append('<option value=' + (item.year*10+item.semester) + '>' + "2009 이전" + '</option>');
 			else
 				semester_box.append('<option value=' + (item.year*10+item.semester) + '>' + item.year + " " + gettext(item.semester==1?"봄":"가을") + '</option>');
+			if (Data.select_year==item.year && Data.select_semester==item.semester){
+				$('#new-comment-semester option[value="' + (item.year*10+item.semester) + '"]').attr("selected", true);
+				Data.select_year=-1;
+			}
 		});
 		if (obj.length == 1) {
 			$('#new-comment-semester option[value="' + (obj[0].year*10+obj[0].semester) + '"]').attr("selected", true);
