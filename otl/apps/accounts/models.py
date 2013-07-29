@@ -30,6 +30,8 @@ class UserProfile(models.Model):
     favorite=models.ManyToManyField('dictionary.Course', related_name='favorite_user', null=True)
     calendar_id = models.TextField(null=True, blank=True)
     email = models.CharField(max_length=30,null=True,blank=True)
+    grad_credit = models.OneToOneField('credit.GradCredit')
+    minor = models.ForeignKey('Department',related_name='minor_user',null=True)
 
     def __unicode__(self):
         return u'%s %s (%s)' % (self.user.username, self.student_id, self.department.code)

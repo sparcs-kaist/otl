@@ -177,7 +177,7 @@
 	{
 		"pk": "1",
 		"model": "accounts.userprofile",
-		"fields": {"user": "2", "student_id": "20990001", "language": "ko-KR", "department": "532", "favorite_departments": ["2044"], "nickname":"kuss", "take_lecture_list":[1],"favorite":[1,2,4]}
+		"fields": {"user": "2", "student_id": "20990001", "language": "ko-KR", "department": "532", "favorite_departments": ["2044"], "nickname":"kuss", "take_lecture_list":[1],"favorite":[1,2,4], "grad_credit": 1}
 	},
 	{
 		"pk": "2",
@@ -192,6 +192,6 @@
 	{
 		"pk": "2",
 		"model": "accounts.userprofile",
-		"fields": {"user": "3", "student_id": "20110846", "language": "ko-KR", "department": 532, "favorite_departments": ["2044"], "nickname":"rodumani", "take_lecture_list":[2,3,6,7], "favorite":[]}
+		"fields": {"user": "3", "student_id": "20110846", "language": "ko-KR", "department": 532, "favorite_departments": ["2044"], "nickname":"rodumani", "take_lecture_list":[2,3,6,7], "favorite":[], "grad_credit": 2}
 	}
 ]
