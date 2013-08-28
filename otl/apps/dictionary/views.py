@@ -1124,29 +1124,58 @@ def _favorites_to_output(favorites,conv_to_json=True,lang='ko'):
 
 
 def _get_courses_sorted(courses):
-    all = []
+    selected_courses = []
+    lim = settings.INTERESTING_COURSE_NUM
     for course in courses:
         lectures = Lecture.objects.filter(course=course,year=settings.NEXT_YEAR,semester=settings.NEXT_SEMESTER, deleted=False)
         if lectures.count()==0:
             continue
+        # 필수 = (전공필수, 교양필수), 선택(인문사회, 전공) (1~3점)
+        types = 2
+        if course.type.count(u'필수')==1: types = 6
+        elif course.type.count(u'선택')==1: types = 4
+        # 전공 여부
+        major = course.type.count(u'전공')*3
+        for lecture in lectures:
+            Prof = lecture.professor.all()[0]
+            comments = Comment.objects.filter(course=course,lecture__professor=Prof)
+            count = comments.count()
+            if count == 0: # comment 가 존재하지 않아 평가 불가능
+                continue
+            
+            average=comments.aggregate(avg_score=Avg('score'),avg_gain=Avg('gain'),avg_load=Avg('load'))
 
-        lecture = lectures[0]
-        num_people = lecture.num_people
-        professor_name = lecture.professor.all()[0].professor_name
-        professor_id = lecture.professor.all()[0].professor_id
-        average_sum = (course.score_average + course.load_average + course.gain_average) / 3
+            #Lecture 요소를 적절히 분배 (1~6점)
+            lecture_score = 0.5*average['avg_score']+0.3*average['avg_gain']+0.2*average['avg_load']
 
-        interesting_score = average_sum * num_people
+            interesting_score = major+types+lecture_score+float(lecture.num_people+count)/50
+            item = {
+                 'course_code': course.old_code,
+                 'interesting_score': interesting_score,
+                 'course_title': course.title,
+                 'professor_name': Prof.professor_name,
+                 'professor_id': Prof.professor_id,
+            }
+            flag = 0
+            for sel_course in selected_courses: # 같은 Course, 같은 Prof. 중복 방지
+                if course.old_code==sel_course['course_code'] and Prof.professor_name==sel_course['professor_name']:
+                    flag = 1
+                    break
+            if flag == 1: #이미 code, 교수이름이 바뀐 것이 존재. 
+                continue
 
-        item = {
-             'course_code': course.old_code,
-             'interesting_score': interesting_score,
-             'course_title':course.title,
-             'professor_name':professor_name,
-             'professor_id':professor_id,
-             }
-        all.append(item)
+            # Selected_courses 에는 그 때까지의 상위  setting.INTERESTING_COURSE_NUM Lectures 가 들어있다
+            if len(selected_courses)==lim:
+                if selected_courses[-1]['interesting_score'] > interesting_score:
+                    continue
+                for i in range(lim):
+                    if interesting_score>selected_courses[i]['interesting_score']: #Insertion Sort를 생각하면 된다. item이 어디에 들어가는 것이 옳은지, 위치를 생각하는 것
+                        selected_courses.pop(lim-1) # 마지막 원소를 제거하고, item 을 위한 자리를 남겨놓는다.
+                        selected_courses.insert(i,item)
+                        break
+            else:
+                selected_courses.append(item)
+                if len(selected_courses)==lim: #처음으로 setting.I_C_N 개가 채워지면 미리 정렬
+                    selected_courses = sorted(selected_courses, key=lambda k:-k['interesting_score'])
 
-    sorted_courses = sorted(all, key=lambda k:-k['interesting_score'])
-
-    return sorted_courses
+    return selected_courses
