@@ -1,0 +1,6 @@
+# OTL Git Ignore list 
+# Last Updated : 20140204
+
+*.pyc
+*.db
+.*.swp
