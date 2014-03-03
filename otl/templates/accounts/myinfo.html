@@ -1,16 +1,41 @@
 {% extends 'layout.html' %}
 {% block headers %}
 <link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}accounts.css" />
+<script type="text/javascript">
+function submitMyInfo(){
+		var url = this.action;
+		console.log(url);
+		$.ajax({
+			type:"POST",
+			url:url,
+			data:$("#account-modify").serialize(),
+			success: function(data){
+				console.log(data);
+				if (data['status']=='ok'){
+					$('.msg').fadeIn();
+					$('.msg').removeClass('error').text(data.message);
+				} else {
+					$('.msg').fadeIn();
+					$('.msg').addClass('error').text(data.message);	
+				}
+				setTimeout(function(){
+					$('.msg').fadeOut();
+				},5000);
+			}
+		});
+		return false;
+	};
+</script>
 {% endblock %}
 {% block content %}
 	<h2>{% trans "내 계정 정보" %}</h2>
-	{% if msg %}<div class="msg{% if error %} error{% endif %}">{{msg}}</div>{% endif %}
+	<div class="msg" style="display:none;"></div>
 	<ul id="myinfo">
 		<li>{% trans "Portal ID" %}: {{user.username}}</li>
 		<li>{% trans "학번" %}: {{user_profile.student_id}}</li>
 		<li>{% trans "학과" %}: {{department}}</li>
 	</ul>
-	<form id="account-modify" method="post" action="/accounts/myinfo/">
+	<form id="account-modify" action="/accounts/myinfo/" onsubmit="submitMyInfo();return false;">
 		<p><span class="help">{% trans "참고 : 비밀번호는 Portal에서 변경하셔야 합니다." %}</span></p>
 		{% for field in form_profile %}
 		<p>
