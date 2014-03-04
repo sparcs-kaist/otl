@@ -14,9 +14,17 @@ OTL은 django, javascript의 frontend와 python backend로 구성되어 있습�
 -----
 
 	$ cd otl
-	$ python syncdb
-	$ python loaddata test
+	$ python manage.py syncdb
+	$ python manage.py loaddata test
 	$ python manage.py runserver
+
+Dependencies
+-----
+
+* Django >= 1.2
+* MySQL-python
+* PIL (Python Imaging Library)
+* django-extensions
 
 Links
 -----
