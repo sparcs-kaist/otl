@@ -1,0 +1,5 @@
+django==1.4
+python-memcached
+django-extensions
+mysql-python
+pil

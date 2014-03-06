@@ -1,6 +1,7 @@
 # OTL Git Ignore list 
-# Last Updated : 20140204
+# Last Updated : 20140307
 
 *.pyc
 *.db
 .*.swp
+venv
