@@ -75,8 +75,19 @@ def search(request):
         for key, value in request.GET.iteritems():
             q[str(key)] = value
 
-        output = _lectures_to_output(_search(**q), True, request.session.get('django_language', 'ko'))
+        if (set(q.keys()) == set(('dept', 'type', 'lang', 'keyword', 'year', 'term'))
+                and q['keyword'] == u''):
+            cache_key = ('search:year=%s:semester=%s:department=%s:type=%s:lang=%s:' %
+                         (q['year'], q['term'], q['dept'], q['type'], q['lang']))
+            output = cache.get(cache_key)
+            if output is None:
+                output = _lectures_to_output(_search(**q), True, request.session.get('django_language', 'ko'))
+                cache.set(cache_key, output, 3600)
+        else:
+            output = _lectures_to_output(_search(**q), True, request.session.get('django_language', 'ko'))
+
         return HttpResponse(output)
+
     except ValidationError:
         return HttpResponseBadRequest()
 
@@ -302,10 +313,6 @@ def _search(**conditions):
     time_begin = conditions.get('start_time', None)
     time_end = conditions.get('end_time', None)
 
-    # This query requires Django 1.1 or newer.
-    lectures = _search_by_ys(year, semester)
-
-    #try:
     if year == None or semester == None:
         raise ValidationError('year or semester is null')
     if day_begin != None and day_end != None and time_begin != None and time_end != None:
@@ -342,8 +349,6 @@ def _search(**conditions):
             lectures = lectures.order_by('type', 'code').distinct().select_related()
     else:
         raise ValidationError('some key is null')
-    #except (TypeError, ValueError):
-    #    raise ValidationError()
 
     return lectures
 
