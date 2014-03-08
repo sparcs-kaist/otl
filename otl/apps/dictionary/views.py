@@ -20,6 +20,7 @@ from otl.apps.accounts.models import Department, UserProfile
 from otl.apps.timetable.models import Lecture
 from otl.apps.dictionary.models import *
 from otl.apps.timetable.views import _lectures_to_output
+from django.contrib.auth.models import AnonymousUser
 
 from django import template
 template.add_to_builtins('django.templatetags.i18n')
@@ -87,8 +88,8 @@ def search(request):
     #try:
         q = {}
         for key, value in request.GET.iteritems():
-            q[str(key)] = value
-        output = _search(**q)
+            q[str(key)] = value 
+	output = _search(**q)
         lang = request.session.get('django_language','ko') 
         
         courses = _courses_to_output(output['courses'],False,lang)
@@ -259,9 +260,9 @@ def add_professor_info(request):
         if len(major) > 70 :
                 major = major[:70]
         email = request.POST.get('email', None)
-        email = email.replace("\n"," ")
-        if len(email) > 50 :
-                email = email[:50]
+	email = email.replace("\n"," ")
+	if len(email) > 50 :
+		email = email[:50]
         homepage = request.POST.get('homepage', None)
         prof_id = int(request.POST.get('prof_id', -1))
         if major == None or email == None or homepage == None or prof_id < 0:
@@ -287,21 +288,22 @@ def interesting_courses(request):
         q |= Q(department=dept)
     try:
         user = request.user
-        userprofile = UserProfile.objects.get(user=user)
-        favorite_departments = userprofile.favorite_departments.all()
+    	userprofile = UserProfile.objects.get(user=user)
+	favorite_departments = userprofile.favorite_departments.all()
         user_department_id = 0
 
         department = userprofile.department
-        q |= Q(department=department)
+	q |= Q(department=department)
         
-        for department in favorite_departments:
-            q |= Q(department=department)
-    except:
-        user_department_id = 0 #Means Nothing
+	for department in favorite_departments:
+	    q |= Q(department=department)
+    except:	
+	user_department_id = 0 #Means Nothing
+
     courses = Course.objects.filter(q).distinct()
-    courses_sorted=_get_courses_sorted(courses)	
+    courses_sorted=_get_courses_sorted(courses,request.user) 
     return HttpResponse(json.dumps({
-	 'courses_sorted' : courses_sorted[:settings.INTERESTING_COURSE_NUM]}, ensure_ascii=False, indent=4))
+     'courses_sorted' : courses_sorted[:settings.INTERESTING_COURSE_NUM]}, ensure_ascii=False, indent=4))
  
 def view_comment_by_professor(request):
     try:
@@ -331,7 +333,7 @@ def add_comment(request):
         year = int(request.POST.get('year',-1))
         semester = int(request.POST.get('semester',-1))
         professor_id = int(request.POST.get('professor_id',-1))
-        status = int(request.POST.get('status',-1))
+	status = int(request.POST.get('status',-1))
         if course_id >= 0 and year >=0 and semester >=0 and professor_id >=0:
             course = Course.objects.get(id=course_id)
         else:
@@ -359,16 +361,16 @@ def add_comment(request):
 
         new_comment = Comment(course=course, lecture=lecture, writer=writer, comment=comment, load=load, score=score, gain=gain)
         new_comment.save()
-        
-        lectures = Lecture.objects.filter(course=course, professor=professor, deleted=False).order_by('class_no')
-        if status == -1:
-            q = Q(course=course)
-        else:
-            q=Q()
-            for lec in lectures:
-                q |= Q(lecture=lec)
-            q &= Q(course=course) 
-        comments = Comment.objects.filter(q) 
+	
+	lectures = Lecture.objects.filter(course=course, professor=professor, deleted=False).order_by('class_no')
+	if status == -1:
+	    q = Q(course=course)
+	else:
+	    q=Q()
+	    for lec in lectures:
+		q |= Q(lecture=lec)
+	    q &= Q(course=course) 
+	comments = Comment.objects.filter(q) 
         new_comment = Comment.objects.filter(id=new_comment.id)  
         average = comments.aggregate(avg_score=Avg('score'),avg_gain=Avg('gain'),avg_load=Avg('load'))
         Course.objects.filter(id=course.id).update(score_average=average['avg_score'], load_average=average['avg_load'], gain_average=average['avg_gain'])
@@ -396,24 +398,24 @@ def delete_comment(request):
     try:
         user = request.user
         comment_id = int(request.POST.get('comment_id', -1))
-        prof_id = int(request.POST.get('prof_id', -1))
+	prof_id = int(request.POST.get('prof_id', -1))
         if comment_id < 0:
             raise ValidationError('Comment is wrong')
         comment = Comment.objects.get(pk=comment_id, writer=user)
         comment.delete()
-        course = comment.course
+	course = comment.course
         
-        result = 'DELETE'
+	result = 'DELETE'
         q=Q()
-        if prof_id == -1:
-            q=Q(course=course)
-        else:
+	if prof_id == -1:
+	    q=Q(course=course)
+	else:
             professor= Professor.objects.get(professor_id = prof_id)
             lectures = Lecture.objects.filter(course=course, professor=professor, deleted=False).order_by('class_no')
-            for lec in lectures:
-                q |= Q(lecture=lec)
-            q &= Q(course=course)
-        comments = Comment.objects.filter(q)
+	    for lec in lectures:
+		q |= Q(lecture=lec)
+	    q &= Q(course=course)
+	comments = Comment.objects.filter(q)
         average = {'score':0, 'gain':0, 'load':0}
         comment_num = comments.count()
         if comments.count() != 0 :
@@ -472,8 +474,8 @@ def update_comment(request):
             q['dept'] = hss[0]
             if len(hss)>1:
                 q['fav_dept'] = hss[1:]
-        comments = _update_comment(count, **q)
-        result = 'OK'
+	comments = _update_comment(count, **q)
+	result = 'OK'
 
     except ObjectDoesNotExist:
         raise ValidationError('UserProfile is not exist')
@@ -546,7 +548,7 @@ def add_lecture_summary(request):
         course_id = int(request.POST.get('course_id', -1))
         prof_id = int(request.POST.get('professor_id', -1))
         course = Course.objects.get(id=course_id)
-        if homepage == None or mainbook == None or course == None  or course_id < 0 or prof_id < 0:        
+        if homepage == None or mainbook == None or course == None  or course_id < 0 or prof_id < 0:	
             raise ValidationError('homepage or mainbook or course is null')
         professor = Professor.objects.get(professor_id=prof_id) 
         lectures = Lecture.objects.filter(professor=professor, course=course, deleted=False).order_by('-year','-semester')
@@ -576,15 +578,15 @@ def get_year_list(request):
         course = Course.objects.get(id=course_id)
         lang=request.session.get('django_language','ko')
         lectures = Lecture.objects.filter(course=course,year=year,semester=semester,deleted=False)
-        professor = []
+	professor = []
         names = []
         if lectures.count()>0:
-            for lecture in lectures:
-                prof = lecture.professor.all()
-                name = (', '.join(prof.values_list('professor_name', flat=True)))
+	    for lecture in lectures:
+		prof = lecture.professor.all()
+		name = (', '.join(prof.values_list('professor_name', flat=True)))
                 if names.count(name)==0:
                     names.append(name)
-                    professor.append(Professor(professor_id=prof[0].professor_id,professor_name=name))
+ 		    professor.append(Professor(professor_id=prof[0].professor_id,professor_name=name))
         result = 'OK'
     except ObjectDoesNotExist:
         raise ValidationError('Course is not exist')
@@ -607,13 +609,13 @@ def get_summary_and_semester(request):
         prof_id = int(request.POST.get('professor_id',-1))
         course_id = int(request.POST.get('course_id',-1))
         course = Course.objects.get(id=course_id)
-        if prof_id == -1:       # General
+	if prof_id == -1:       # General
             summary = Summary.objects.filter(course=course).order_by('-id')
             semester = Lecture.objects.filter(course=course, deleted=False).order_by('year','semester').values('year', 'semester').distinct()
-            comments = Comment.objects.filter(course=course)
-            comment_num = comments.count()
-            if comments.count() != 0:
-                average=comments.aggregate(avg_score=Avg('score'),avg_gain=Avg('gain'),avg_load=Avg('load'))
+	    comments = Comment.objects.filter(course=course)
+	    comment_num = comments.count()
+	    if comments.count() != 0:
+		average=comments.aggregate(avg_score=Avg('score'),avg_gain=Avg('gain'),avg_load=Avg('load'))
             if summary.count() > 0:
                 recent_summary = summary[0]
                 summary_output = _summary_to_output(recent_summary,False,lang);
@@ -621,10 +623,10 @@ def get_summary_and_semester(request):
             else:
                 result = 'GEN_EMPTY'
         else:
-            professor = Professor.objects.get(professor_id=prof_id)
-            semester = Lecture.objects.filter(course=course,professor=professor, deleted=False).order_by('year','semester').values('year', 'semester').distinct()
-            professor_name = professor.professor_name
-            lectures = Lecture.objects.filter(professor=professor, course=course, deleted=False).order_by('-year','-semester')
+	    professor = Professor.objects.get(professor_id=prof_id)
+	    semester = Lecture.objects.filter(course=course,professor=professor, deleted=False).order_by('year','semester').values('year', 'semester').distinct()
+	    professor_name = professor.professor_name
+	    lectures = Lecture.objects.filter(professor=professor, course=course, deleted=False).order_by('-year','-semester')
             for lecture in lectures:
                 if not lecture.rating is None:
                     item = {'year':lecture.year,
@@ -647,34 +649,34 @@ def get_summary_and_semester(request):
             index = 0
             if lectures[0].year == settings.NEXT_YEAR and lectures[0].semester == settings.NEXT_SEMESTER and lectures.count() > 1:
                 index = 1
-            lecture = lectures[index]
+	    lecture = lectures[index]
             lecture_output = {'year':lecture.year,
                     'semester':lecture.semester,
                     'code':lecture.code,
                     'class_no':lecture.class_no,
                     'dept_id':lecture.department.id
                     }
-            summary = LectureSummary.objects.filter(lecture=lecture).order_by('-id')
-            q=Q()
-            for lec in lectures:
-                q |= Q(lecture=lec)
-            comments = Comment.objects.filter(q)
-            comment_num = comments.count()
-            if comments.count() != 0:
-                average=comments.aggregate(avg_score=Avg('score'),avg_gain=Avg('gain'),avg_load=Avg('load'))
-            if summary.count() > 0:
-                recent_summary = summary[0]
-                summary_output = _lecture_summary_to_output(recent_summary,False,lang)
-                result = 'PROF'
+	    summary = LectureSummary.objects.filter(lecture=lecture).order_by('-id')
+	    q=Q()
+	    for lec in lectures:
+		q |= Q(lecture=lec)
+	    comments = Comment.objects.filter(q)
+	    comment_num = comments.count()
+	    if comments.count() != 0:
+		average=comments.aggregate(avg_score=Avg('score'),avg_gain=Avg('gain'),avg_load=Avg('load'))
+	    if summary.count() > 0:
+		recent_summary = summary[0]
+		summary_output = _lecture_summary_to_output(recent_summary,False,lang)
+		result = 'PROF'
             else:
-                result = 'PROF_EMPTY'
-            if lectures.count() > index+1:
-                past_summary = LectureSummary.objects.filter(lecture=lectures[index+1]).order_by('-id')
-                if past_summary.count() > 0:
-                    new_summary = LectureSummary(homepage=past_summary[0].homepage, main_material=past_summary[0].main_material, sub_material=past_summary[0].sub_material, writer=past_summary[0].writer, written_datetime=past_summary[0].written_datetime, lecture=lecture)
-                    new_summary.save()
-                    summary_output = _lecture_summary_to_output(new_summary,False,lang)
-                    result = 'PROF'
+            	result = 'PROF_EMPTY'
+                if lectures.count() > index+1:
+                    past_summary = LectureSummary.objects.filter(lecture=lectures[index+1]).order_by('-id')
+                    if past_summary.count() > 0:
+                        new_summary = LectureSummary(homepage=past_summary[0].homepage, main_material=past_summary[0].main_material, sub_material=past_summary[0].sub_material, writer=past_summary[0].writer, written_datetime=past_summary[0].written_datetime, lecture=lecture)
+                        new_summary.save()
+                        summary_output = _lecture_summary_to_output(new_summary,False,lang)
+                        result = 'PROF'
 
     except ObjectDoesNotExist:
         raise ValidationError()
@@ -684,9 +686,9 @@ def get_summary_and_semester(request):
         'result': result,
         'semester': _semesters_to_output(semester,False,lang),
         'lecture': lecture_output,
-        'average': average,
-        'comment_num': comment_num,
-        'prof_name': professor_name,
+	'average': average,
+	'comment_num': comment_num,
+	'prof_name': professor_name,
         'summary': summary_output,
         'rating': lecture_rating,
         'rating_all': rating_all}))
@@ -1021,7 +1023,7 @@ def _lecture_summary_to_output(summary,conv_to_json=True,lang='ko'):
     item = {
         'homepage': summary.homepage,
         'main_material': summary.main_material,
-        'sub_material': summary.sub_material,
+	'sub_material': summary.sub_material,
         'writer': UserProfile.objects.get(user = summary.writer).nickname[:3] + '*'*4,
         'written_datetime': summary.written_datetime.isoformat()[:10],
         'lecture_id': summary.lecture.id,
@@ -1122,19 +1124,11 @@ def _favorites_to_output(favorites,conv_to_json=True,lang='ko'):
 
 
 
-def _get_courses_sorted(courses):
+def _get_courses_sorted(courses,user):
     selected_courses = []
     lim = settings.INTERESTING_COURSE_NUM
 
     from django.db import connection
-    def dictfetchall(cursor):
-        "Returns all rows from a cursor as a dict"
-        desc = cursor.description
-        return [
-            dict(zip([col[0] for col in desc], row))
-            for row in cursor.fetchall()
-        ]
-
     cursor = connection.cursor()
     
     courses_str = "("
@@ -1159,12 +1153,16 @@ FROM (
     FROM dictionary_comment dc join (select lecture_id,professor_id from `timetable_lecture_professor` GROUP BY lecture_id) tlp on dc.lecture_id=tlp.lecture_id
     GROUP BY course_id,professor_id) d 
     ON c.id=d.course_id and l.professor_id=d.professor_id
-ORDER BY point desc;
-""".format(courses_str,settings.NEXT_YEAR,settings.NEXT_SEMESTER)
+ORDER BY point desc
+LIMIT {3};
+""".format(courses_str,settings.NEXT_YEAR,settings.NEXT_SEMESTER,lim)
 
     cursor.execute(raw_query)
-    selected_courses_raw = dictfetchall(cursor)
-    print selected_courses_raw
+    desc = cursor.description
+    selected_courses_raw = [
+        dict(zip([col[0] for col in desc], row))
+        for row in cursor.fetchall()
+    ]
     for course in selected_courses_raw:
         lecture = Lecture.objects.get(id=course['lectureid'])
         Prof = lecture.professor.get()
@@ -1176,7 +1174,7 @@ ORDER BY point desc;
         major = coursetype.count(u'전공')*3
         item = {
                 'course_code':course['coursecode'],
-                'interesting_score':course['point'],
+                'interesting_score':float(course['point']),
                 'course_title':course['coursetitle'],
                 'professor_name':Prof.professor_name,
                 'professor_id':Prof.professor_id
