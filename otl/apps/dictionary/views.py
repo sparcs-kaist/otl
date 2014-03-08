@@ -20,7 +20,6 @@ from otl.apps.accounts.models import Department, UserProfile
 from otl.apps.timetable.models import Lecture
 from otl.apps.dictionary.models import *
 from otl.apps.timetable.views import _lectures_to_output
-from django.contrib.auth.models import AnonymousUser
 
 from django import template
 template.add_to_builtins('django.templatetags.i18n')
@@ -1125,23 +1124,42 @@ def _favorites_to_output(favorites,conv_to_json=True,lang='ko'):
 
 
 def _get_courses_sorted(courses,user):
-    selected_courses = []
-    lim = settings.INTERESTING_COURSE_NUM
-
     from django.db import connection
     cursor = connection.cursor()
+
+    def dictfetchall(cursor):
+        desc = cursor.description
+        return [
+            dict(zip([col[0] for col in desc], row))
+            for row in cursor.fetchall()
+        ]
+
+    selected_courses = []
+    lim = settings.INTERESTING_COURSE_NUM
+    
+    try :
+        profile_id = UserProfile.objects.get(user=user).id
+    except Exception,e:
+        profile_id = -1
+    
+    taken_lectures_list = []
+    if profile_id != -1:
+        taken_lectures_list_query='select course_id from `timetable_lecture` where id in (select lecture_id from `accounts_userprofile_take_lecture_list` where userprofile_id={0}) group by course_id'.format(profile_id)
+        cursor.execute(taken_lectures_list_query)
+        taken_lectures_list = map(lambda x:int(x['course_id']),dictfetchall(cursor))
     
     courses_str = "("
     for i in xrange(len(courses)):
         course = courses[i]
-        courses_str = courses_str + str(course.id) + (')' if i == len(courses)-1 else ',')
+        if not course.id in taken_lectures_list:
+            courses_str = courses_str + str(course.id) + (')' if i == len(courses)-1 else ',')
     
     raw_query="""
 SELECT c.id coursecode,c.type coursetype,c.title coursetitle,(point+l.num_people/50+ (CASE WHEN c.type like '%%선택%%' THEN 4 WHEN c.type like '%%필수%%' THEN 6 ELSE 2 END) +(CASE WHEN c.type like '%%전공%%' THEN 3 ELSE 0 END)) point,l.lecture_id lectureid
 FROM (
     SELECT id,type,title 
     FROM dictionary_course
-    WHERE id IN {0} 
+    WHERE id IN {0}
     ) c
     LEFT OUTER JOIN
     (SELECT tl.id lecture_id,course_id,num_people,year,semester,professor_id 
@@ -1156,13 +1174,9 @@ FROM (
 ORDER BY point desc
 LIMIT {3};
 """.format(courses_str,settings.NEXT_YEAR,settings.NEXT_SEMESTER,lim)
-
+    
     cursor.execute(raw_query)
-    desc = cursor.description
-    selected_courses_raw = [
-        dict(zip([col[0] for col in desc], row))
-        for row in cursor.fetchall()
-    ]
+    selected_courses_raw = dictfetchall(cursor)
     for course in selected_courses_raw:
         lecture = Lecture.objects.get(id=course['lectureid'])
         Prof = lecture.professor.get()
