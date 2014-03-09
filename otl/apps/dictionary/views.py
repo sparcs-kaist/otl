@@ -87,7 +87,7 @@ def search(request):
     #try:
         q = {}
         for key, value in request.GET.iteritems():
-            q[str(key)] = value
+            q[str(key)] = value 
 	output = _search(**q)
         lang = request.session.get('django_language','ko') 
         
@@ -296,13 +296,13 @@ def interesting_courses(request):
         
 	for department in favorite_departments:
 	    q |= Q(department=department)
-    except:
+    except:	
 	user_department_id = 0 #Means Nothing
 
     courses = Course.objects.filter(q).distinct()
-    courses_sorted=_get_courses_sorted(courses)	
+    courses_sorted=_get_courses_sorted(courses,request.user) 
     return HttpResponse(json.dumps({
-	 'courses_sorted' : courses_sorted[:settings.INTERESTING_COURSE_NUM]}, ensure_ascii=False, indent=4))
+     'courses_sorted' : courses_sorted[:settings.INTERESTING_COURSE_NUM]}, ensure_ascii=False, indent=4))
  
 def view_comment_by_professor(request):
     try:
@@ -364,7 +364,7 @@ def add_comment(request):
 	lectures = Lecture.objects.filter(course=course, professor=professor, deleted=False).order_by('class_no')
 	if status == -1:
 	    q = Q(course=course)
-        else:
+	else:
 	    q=Q()
 	    for lec in lectures:
 		q |= Q(lecture=lec)
@@ -1123,59 +1123,75 @@ def _favorites_to_output(favorites,conv_to_json=True,lang='ko'):
 
 
 
-def _get_courses_sorted(courses):
+def _get_courses_sorted(courses,user):
+    from django.db import connection
+    cursor = connection.cursor()
+
+    def dictfetchall(cursor):
+        desc = cursor.description
+        return [
+            dict(zip([col[0] for col in desc], row))
+            for row in cursor.fetchall()
+        ]
+
     selected_courses = []
     lim = settings.INTERESTING_COURSE_NUM
-    for course in courses:
-        lectures = Lecture.objects.filter(course=course,year=settings.NEXT_YEAR,semester=settings.NEXT_SEMESTER, deleted=False)
-        if lectures.count()==0:
-            continue
-        # 필수 = (전공필수, 교양필수), 선택(인문사회, 전공) (1~3점)
+    
+    try :
+        profile_id = UserProfile.objects.get(user=user).id
+    except Exception,e:
+        profile_id = -1
+    
+    taken_lectures_list = []
+    if profile_id != -1:
+        taken_lectures_list_query='select course_id from `timetable_lecture` where id in (select lecture_id from `accounts_userprofile_take_lecture_list` where userprofile_id={0}) group by course_id'.format(profile_id)
+        cursor.execute(taken_lectures_list_query)
+        taken_lectures_list = map(lambda x:int(x['course_id']),dictfetchall(cursor))
+    
+    courses_str = "("
+    for i in xrange(len(courses)):
+        course = courses[i]
+        if not course.id in taken_lectures_list:
+            courses_str = courses_str + str(course.id) + (')' if i == len(courses)-1 else ',')
+    
+    raw_query="""
+SELECT c.id coursecode,c.type coursetype,c.title coursetitle,(point+l.num_people/50+ (CASE WHEN c.type like '%%선택%%' THEN 4 WHEN c.type like '%%필수%%' THEN 6 ELSE 2 END) +(CASE WHEN c.type like '%%전공%%' THEN 3 ELSE 0 END)) point,l.lecture_id lectureid
+FROM (
+    SELECT id,type,title 
+    FROM dictionary_course
+    WHERE id IN {0}
+    ) c
+    LEFT OUTER JOIN
+    (SELECT tl.id lecture_id,course_id,num_people,year,semester,professor_id 
+        FROM (select * from timetable_lecture where year={1} and semester={2}) tl LEFT OUTER JOIN timetable_lecture_professor tlp ON tl.id=tlp.lecture_id
+    ) l
+    ON c.id=l.course_id
+    JOIN
+    (SELECT course_id,professor_id,(ifnull(avg(`load`),0) *0.2 + ifnull(avg(score)*0.5,0) +ifnull(avg(gain),0) * 0.3+count(*)/50) AS point 
+    FROM dictionary_comment dc join (select lecture_id,professor_id from `timetable_lecture_professor` GROUP BY lecture_id) tlp on dc.lecture_id=tlp.lecture_id
+    GROUP BY course_id,professor_id) d 
+    ON c.id=d.course_id and l.professor_id=d.professor_id
+ORDER BY point desc
+LIMIT {3};
+""".format(courses_str,settings.NEXT_YEAR,settings.NEXT_SEMESTER,lim)
+    
+    cursor.execute(raw_query)
+    selected_courses_raw = dictfetchall(cursor)
+    for course in selected_courses_raw:
+        lecture = Lecture.objects.get(id=course['lectureid'])
+        Prof = lecture.professor.get()
         types = 2
-        if course.type.count(u'필수')==1: types = 6
-        elif course.type.count(u'선택')==1: types = 4
+        coursetype = course['coursetype']
+        if coursetype.count(u'필수')==1: types = 6
+        elif coursetype.count(u'선택')==1: types = 4
         # 전공 여부
-        major = course.type.count(u'전공')*3
-        for lecture in lectures:
-            Prof = lecture.professor.all()[0]
-            comments = Comment.objects.filter(course=course,lecture__professor=Prof)
-            count = comments.count()
-            if count == 0: # comment 가 존재하지 않아 평가 불가능
-                continue
-            
-            average=comments.aggregate(avg_score=Avg('score'),avg_gain=Avg('gain'),avg_load=Avg('load'))
-
-            #Lecture 요소를 적절히 분배 (1~6점)
-            lecture_score = 0.5*average['avg_score']+0.3*average['avg_gain']+0.2*average['avg_load']
-
-            interesting_score = major+types+lecture_score+float(lecture.num_people+count)/50
-            item = {
-                 'course_code': course.old_code,
-                 'interesting_score': interesting_score,
-                 'course_title': course.title,
-                 'professor_name': Prof.professor_name,
-                 'professor_id': Prof.professor_id,
+        major = coursetype.count(u'전공')*3
+        item = {
+                'course_code':course['coursecode'],
+                'interesting_score':float(course['point']),
+                'course_title':course['coursetitle'],
+                'professor_name':Prof.professor_name,
+                'professor_id':Prof.professor_id
             }
-            flag = 0
-            for sel_course in selected_courses: # 같은 Course, 같은 Prof. 중복 방지
-                if course.old_code==sel_course['course_code'] and Prof.professor_name==sel_course['professor_name']:
-                    flag = 1
-                    break
-            if flag == 1: #이미 code, 교수이름이 바뀐 것이 존재. 
-                continue
-
-            # Selected_courses 에는 그 때까지의 상위  setting.INTERESTING_COURSE_NUM Lectures 가 들어있다
-            if len(selected_courses)==lim:
-                if selected_courses[-1]['interesting_score'] > interesting_score:
-                    continue
-                for i in range(lim):
-                    if interesting_score>selected_courses[i]['interesting_score']: #Insertion Sort를 생각하면 된다. item이 어디에 들어가는 것이 옳은지, 위치를 생각하는 것
-                        selected_courses.pop(lim-1) # 마지막 원소를 제거하고, item 을 위한 자리를 남겨놓는다.
-                        selected_courses.insert(i,item)
-                        break
-            else:
-                selected_courses.append(item)
-                if len(selected_courses)==lim: #처음으로 setting.I_C_N 개가 채워지면 미리 정렬
-                    selected_courses = sorted(selected_courses, key=lambda k:-k['interesting_score'])
-
+        selected_courses.append(item)
     return selected_courses

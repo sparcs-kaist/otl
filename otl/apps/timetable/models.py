@@ -20,8 +20,8 @@ class Lecture(models.Model):
     """특정 년도·학기에 개설된 과목 instance를 가리키는 모델"""
     code = models.CharField(max_length=10,db_index=True)                  # 과목코드 (12.123 형식)
     old_code = models.CharField(max_length=10, db_index=True)              # 과목코드 (ABC123 형식)
-    year = models.IntegerField()                            # 개설년도 (4자리 숫자)
-    semester = models.SmallIntegerField(choices=SEMESTER_TYPES) # 개설학기 (1=봄, 2=여름, 3=가을, 4=겨울)
+    year = models.IntegerField(db_index=True)                            # 개설년도 (4자리 숫자)
+    semester = models.SmallIntegerField(choices=SEMESTER_TYPES,db_index=True) # 개설학기 (1=봄, 2=여름, 3=가을, 4=겨울)
     department = models.ForeignKey(Department)              # 학과
     class_no = models.CharField(max_length=4, blank=True)   # 분반
     title = models.CharField(max_length=100, db_index=True)                # 과목이름 (한글)
