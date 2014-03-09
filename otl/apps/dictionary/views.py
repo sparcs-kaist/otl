@@ -1155,9 +1155,9 @@ def _get_courses_sorted(courses,user):
             courses_str = courses_str + str(course.id) + (')' if i == len(courses)-1 else ',')
     
     raw_query="""
-SELECT c.id coursecode,c.type coursetype,c.title coursetitle,(point+l.num_people/50+ (CASE WHEN c.type like '%%선택%%' THEN 4 WHEN c.type like '%%필수%%' THEN 6 ELSE 2 END) +(CASE WHEN c.type like '%%전공%%' THEN 3 ELSE 0 END)) point,l.lecture_id lectureid
+SELECT c.old_code coursecode,c.type coursetype,c.title coursetitle,(point+l.num_people/50+ (CASE WHEN c.type like '%%선택%%' THEN 4 WHEN c.type like '%%필수%%' THEN 6 ELSE 2 END) +(CASE WHEN c.type like '%%전공%%' THEN 3 ELSE 0 END)) point,l.lecture_id lectureid
 FROM (
-    SELECT id,type,title 
+    SELECT id,type,title,old_code
     FROM dictionary_course
     WHERE id IN {0}
     ) c
