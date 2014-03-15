@@ -1017,13 +1017,13 @@ var Timetable = {
 					case 'limit':
 						break;
 					case 'score_average':
-						$('#score_average').text(obj['score_average']);
+						$('#score_average').text(obj['score_average']/2);
 						break;
 					case 'load_average':
-						$('#load_average').text(obj['load_average']);
+						$('#load_average').text(obj['load_average']/2);
 						break;
 					case 'gain_average':
-						$('#gain_average').text(obj['gain_average']);
+						$('#gain_average').text(obj['gain_average']/2);
 						break;
 					default:
 						$('#DS_'+key).text(item);
