@@ -75,8 +75,19 @@ def search(request):
         for key, value in request.GET.iteritems():
             q[str(key)] = value
 
-        output = _lectures_to_output(_search(**q), True, request.session.get('django_language', 'ko'))
+        if (set(q.keys()) == set(('dept', 'type', 'lang', 'keyword', 'year', 'term'))
+                and q['keyword'] == u''):
+            cache_key = ('search:year=%s:semester=%s:department=%s:type=%s:lang=%s:' %
+                         (q['year'], q['term'], q['dept'], q['type'], q['lang']))
+            output = cache.get(cache_key)
+            if output is None:
+                output = _lectures_to_output(_search(**q), True, request.session.get('django_language', 'ko'))
+                cache.set(cache_key, output, 3600)
+        else:
+            output = _lectures_to_output(_search(**q), True, request.session.get('django_language', 'ko'))
+
         return HttpResponse(output)
+
     except ValidationError:
         return HttpResponseBadRequest()
 

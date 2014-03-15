@@ -20,6 +20,7 @@ from django import template
 template.add_to_builtins('django.templatetags.i18n')
 
 from django.utils.translation import ugettext
+import json
 
 def login(request):
 
@@ -188,10 +189,10 @@ def myinfo(request):
                 profile.save()
                 msg = ugettext(u'사용자 정보가 변경되었습니다.')
                 request.session['django_language'] = profile.language[:2]
-                return HttpResponseRedirect('/accounts/myinfo/')
+                return HttpResponse(json.dumps({'status':'ok','message':msg}),mimetype="application/json")
         else:
             msg = ugettext(u'올바르지 않은 입력입니다.')
-            error = True
+        return HttpResponse(json.dumps({'status':'error','message':msg}),mimetype="application/json")
     else:
         # View my account information
         f = ProfileForm({
