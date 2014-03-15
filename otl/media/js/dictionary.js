@@ -409,7 +409,7 @@ var CourseList = {
 		var sendData = {'dept':dept, 'classification':classification, 'keyword':keyword, 'in_category':in_category, 'active_tab':active_tab};
 
 		Utils.post_to_url(url, sendData, 'GET');
-	},
+	}
 };
 
 var DictionaryCommentList = {
@@ -648,7 +648,7 @@ var DictionaryCommentList = {
 		if(new_comment_professor == -1)
 			new_comment_professor = $('#new-comment-professor').val();
 		if (!(new_comment_load>=0 && new_comment_load<=6) || !(new_comment_score>=0 && new_comment_score<=6) || !(new_comment_gain>=0 && new_comment_gain<=6)){
-			Notifier.setErrorMsg(gettext('학점, 로드, 남는거를 선택하세요.'));
+			Notifier.setErrorMsg(gettext('학점, 널널함, 남는거를 선택하세요.'));
 		}
 		else if(new_comment_semester==0 || new_comment_professor==0){
 			Notifier.setErrorMsg(gettext('학기, 담당교수를 선택하세요.'));
@@ -802,7 +802,7 @@ var DictionaryCommentList = {
 			var comment_eval = $('<div>', {'class': 'dictionary_comment_eval'});
 			$('<div>',{'class':'dictionary_comment_names'}).text(gettext("학점 :")).appendTo(comment_eval);
 			get_star_picture(item.score,comment_eval);
-			$('<div>',{'class':'dictionary_comment_names'}).text(gettext("로드 :")).appendTo(comment_eval);
+			$('<div>',{'class':'dictionary_comment_names'}).text(gettext("널널함 :")).appendTo(comment_eval);
 			get_star_picture(item.load,comment_eval);
 			$('<div>',{'class':'dictionary_comment_names'}).text(gettext("남는거 :")).appendTo(comment_eval);
 			get_star_picture(item.gain,comment_eval);
@@ -1319,7 +1319,7 @@ var DictionaryCommentList = {
 			var comment_eval = $('<div>', {'class': 'dictionary_comment_eval'});
 			$('<div>',{'class':'dictionary_comment_names'}).text(gettext("학점 :")).appendTo(comment_eval);
 			get_star_picture(item.score,comment_eval);
-			$('<div>',{'class':'dictionary_comment_names'}).text(gettext("로드 :")).appendTo(comment_eval);
+			$('<div>',{'class':'dictionary_comment_names'}).text(gettext("널널함 :")).appendTo(comment_eval);
 			get_star_picture(item.load,comment_eval);
 			$('<div>',{'class':'dictionary_comment_names'}).text(gettext("남는거 :")).appendTo(comment_eval);
 			get_star_picture(item.gain,comment_eval);
@@ -1341,7 +1341,7 @@ var DictionaryCommentList = {
 
 			$('<hr>',{'class': 'dictionary_comment_line'}).appendTo(comment);
 	    });
-	},
+	}
 };
 
 var IndexLectureList = {
@@ -1386,7 +1386,7 @@ var IndexCommentList = {
 		$.ajax ({
 			type: 'POST',
 			url: '/dictionary/update_comment/',
-			data: {'count': max,},
+			data: {'count': max},
 			dataType: 'json',
 			success: function (resObj) {
 				//try {
@@ -1447,7 +1447,7 @@ var IndexCommentList = {
 			var comment_eval = $('<div>', {'class': 'comment_eval'});
 			$('<div>',{'class':'a_spec'}).text(gettext("학점 :")).appendTo(comment_eval);
 			get_star_picture(item.score,comment_eval);
-			$('<div>',{'class':'a_spec'}).text(gettext("로드 :")).appendTo(comment_eval);
+			$('<div>',{'class':'a_spec'}).text(gettext("널널함 :")).appendTo(comment_eval);
 			get_star_picture(item.load,comment_eval);
 			$('<div>',{'class':'a_spec'}).text(gettext("남는거 :")).appendTo(comment_eval);
 			get_star_picture(item.gain,comment_eval);
@@ -1672,7 +1672,7 @@ var ProfessorCommentList = {
 			var comment_eval = $('<div>', {'class': 'comment_eval'});
 			$('<div>',{'class':'a_spec'}).text(gettext("학점 :")).appendTo(comment_eval);
 			get_star_picture(item.score,comment_eval);
-			$('<div>',{'class':'a_spec'}).text(gettext("로드 :")).appendTo(comment_eval);
+			$('<div>',{'class':'a_spec'}).text(gettext("널널함 :")).appendTo(comment_eval);
 			get_star_picture(item.load,comment_eval);
 			$('<div>',{'class':'a_spec'}).text(gettext("남는거 :")).appendTo(comment_eval);
 			get_star_picture(item.gain,comment_eval);
@@ -1805,7 +1805,7 @@ var FavoriteController = {
 				}
 			});
 		}
-	},
+	}
 
 };
 
