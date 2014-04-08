@@ -1179,7 +1179,7 @@ LIMIT {3};
     selected_courses_raw = dictfetchall(cursor)
     for course in selected_courses_raw:
         lecture = Lecture.objects.get(id=course['lectureid'])
-        Prof = lecture.professor.get()
+        Prof = lecture.professor.all()[0]
         types = 2
         coursetype = course['coursetype']
         if coursetype.count(u'필수')==1: types = 6
