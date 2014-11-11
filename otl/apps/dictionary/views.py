@@ -865,7 +865,7 @@ def _comments_to_output(comments,conv_to_json=True, lang='ko',preview=True):
             if profile.nickname=="lkin":
                 nickname = "lkin"
             else:
-                nickname = profile.nickname[:3] + '*'*4
+                nickname = profile.nickname[:2] + '*'*5
         except:
             nickname = ''
         if comment.lecture == None:
@@ -1002,7 +1002,7 @@ def _summary_to_output(summary,conv_to_json=True,lang='ko'):
     item = {
         'summary': summary.summary,
         'prerequisite': summary.prerequisite,
-        'writer': UserProfile.objects.get(user = summary.writer).nickname[:3] + '*'*4,
+        'writer': UserProfile.objects.get(user = summary.writer).nickname[:2] + '*'*5,
         'written_datetime': summary.written_datetime.isoformat()[:10],
         'course_id': summary.course.id
         }
@@ -1021,7 +1021,7 @@ def _lecture_summary_to_output(summary,conv_to_json=True,lang='ko'):
         'homepage': summary.homepage,
         'main_material': summary.main_material,
 	'sub_material': summary.sub_material,
-        'writer': UserProfile.objects.get(user = summary.writer).nickname[:3] + '*'*4,
+        'writer': UserProfile.objects.get(user = summary.writer).nickname[:2] + '*'*5,
         'written_datetime': summary.written_datetime.isoformat()[:10],
         'lecture_id': summary.lecture.id,
         }
@@ -1050,7 +1050,7 @@ def _professor_info_to_output(prof_info,conv_to_json=True,lang='ko'):
                 'major': prof_info.major,
                 'email': prof_info.email,
                 'homepage': prof_info.homepage,
-                'writer': UserProfile.objects.get(user = prof_info.writer).nickname[:3] + '*'*4,
+                'writer': UserProfile.objects.get(user = prof_info.writer).nickname[:2] + '*'*5,
                 'written_datetime': prof_info.written_datetime.isoformat()[:10],
                 'professor_id': prof_info.professor.professor_id
                 }
