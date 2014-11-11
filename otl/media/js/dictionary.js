@@ -1089,9 +1089,6 @@ var DictionaryCommentList = {
 		var right_div_lec_eval = $('<div>', {'id': 'lecture-lec-eval'});
 		$('<div>', {'id': 'lecture-lec-eval-title'}).text(gettext("강의평가결과")).appendTo(right_right_div);
 
-		$('<div>', {'class': 'lecture-lec-eval-score'}).text(gettext("응답률 ")+obj.rating.rate+gettext(" (")+obj.rating.num_effective+gettext("/")+obj.rating.num_students+gettext(")")).appendTo(right_div_lec_eval);
-		$('<div>', {'class': 'lecture-lec-eval-score'}).text(gettext("표준편차 ")+obj.rating.deviation).appendTo(right_div_lec_eval);
-
 		right_div_lec_eval.appendTo(right_right_div);
 
 		var lecture_rating_href = $('<a>', {'id': 'lecture-lec-eval-rating'}).text(obj.rating.score);

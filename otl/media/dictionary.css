@@ -1239,12 +1239,12 @@
 #lecture-intro
 {
     margin-left:20px;
-    width:415px;
+    width:445px;
     float:left;
 }
 #lecture-subject
 {
-    width:415px;
+    width:445px;
     height:32px;
 }
 #lecture-subject-title
@@ -1280,7 +1280,7 @@
     margin-right:0px;
     height:3px;
     background:black;
-    width:415px;
+    width:445px;
 }
 #lecture-prof-photo
 {
@@ -1306,7 +1306,7 @@
 }
 #lecture-homepage
 {
-    width:342px;
+    width:372px;
     margin-left:0px;
     margin-top:6px;
     height:18px;
@@ -1326,7 +1326,7 @@
 }
 #lecture-homepage-html
 {
-    width:255px;
+    width:285px;
     height:18px;
     font-size:11px;
     max-width:260px;
@@ -1335,14 +1335,14 @@
 #lecture-homepage-add
 {
     height:18px;
-    width:255px;
+    width:285px;
     max-height:18px;
-    max-width:255px;
+    max-width:285px;
     float:left;
 }
 #lecture-mainbook
 {
-    width:342px;
+    width:372px;
     margin-left:0px;
     margin-top:6px;
     height:40px;
@@ -1362,7 +1362,7 @@
 }
 #lecture-mainbook-html
 {
-    width:255px;
+    width:285px;
     height:40px;
     font-size:11px;
     float:left;
@@ -1371,14 +1371,14 @@
 #lecture-mainbook-add
 {
     height:40px;
-    width:255px;
+    width:285px;
     max-height:42px;
-    max-width:255px;
+    max-width:285px;
     float:left;
 }
 #lecture-subbook
 {
-    width:342px;
+    width:372px;
     margin-left:0px;
     margin-bottom:4px;
     margin-top:6px;
@@ -1399,7 +1399,7 @@
 }
 #lecture-subbook-html
 {
-    width:255px;
+    width:285px;
     height:40px;
     font-size:11px;
     float:left;
@@ -1408,9 +1408,9 @@
 #lecture-subbook-add
 {
     height:40px;
-    width:255px;
+    width:285px;
     max-height:40px;
-    max-width:255px;
+    max-width:285px;
     float:left;
 }
 #lecture-score
@@ -1495,7 +1495,7 @@
 #lecture-lec-score
 {
     display: inline;
-    width:130px;
+    width:100px;
     float:left;
 }
 #lecture-lec-score a:hover
@@ -1510,7 +1510,7 @@
     font-family:돋움;
     font-weight:bold;
     font-size:11px;
-    width:130px;
+    width:100px;
     height:25px;
     text-align:center;
     background: #C3DAFB;
@@ -1518,20 +1518,6 @@
     float:left;
     border-radius:5px;
     box-shadow: 2px 2px 2px #000;
-}
-#lecture-lec-eval
-{
-    margin:0px;
-    float:left;
-    margin-top:17px;
-    margin-left:0px;
-    width:70px;
-}
-.lecture-lec-eval-score
-{
-    margin:0px;
-    font-weight:bold;
-    font-size:10px;
 }
 #lecture-lec-eval-rating
 {
@@ -1542,6 +1528,7 @@
     text-align: center;
     width:60px;
     margin-top:11px;
+    margin-right:20px;
     font-size:18px;
     font-weight:bold;
     font-family:tahoma;
