@@ -1089,9 +1089,6 @@ var DictionaryCommentList = {
 		var right_div_lec_eval = $('<div>', {'id': 'lecture-lec-eval'});
 		$('<div>', {'id': 'lecture-lec-eval-title'}).text(gettext("강의평가결과")).appendTo(right_right_div);
 
-		$('<div>', {'class': 'lecture-lec-eval-score'}).text(gettext("응답률 ")+obj.rating.rate+gettext(" (")+obj.rating.num_effective+gettext("/")+obj.rating.num_students+gettext(")")).appendTo(right_div_lec_eval);
-		$('<div>', {'class': 'lecture-lec-eval-score'}).text(gettext("표준편차 ")+obj.rating.deviation).appendTo(right_div_lec_eval);
-
 		right_div_lec_eval.appendTo(right_right_div);
 
 		var lecture_rating_href = $('<a>', {'id': 'lecture-lec-eval-rating'}).text(obj.rating.score);
@@ -1143,6 +1140,7 @@ var DictionaryCommentList = {
 		$('<td>').text(gettext("창의적 사고 장려")).appendTo(first_row);
 		$('<td>').text(gettext("강의의 도움정도")).appendTo(first_row);
 		$('<td>').text(gettext("평균")).appendTo(first_row);
+		$('<td>').text(gettext("응답률")).appendTo(first_row);
 		first_row.appendTo(table);
 	    $.each(obj, function(index, item) {
 			var row = $('<tr>', {'class':'lecture-rating-table-row'});
@@ -1154,6 +1152,7 @@ var DictionaryCommentList = {
 			$('<td>').text(item.creative).appendTo(row);
 			$('<td>').text(item.support).appendTo(row);
 			$('<td>').text(item.average).appendTo(row);
+			$('<td>').text(item.effective_rate).appendTo(row);
 			row.appendTo(table);
 		});
 		table.appendTo(this.lecture_rating);
