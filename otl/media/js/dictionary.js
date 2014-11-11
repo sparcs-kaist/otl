@@ -1140,6 +1140,7 @@ var DictionaryCommentList = {
 		$('<td>').text(gettext("창의적 사고 장려")).appendTo(first_row);
 		$('<td>').text(gettext("강의의 도움정도")).appendTo(first_row);
 		$('<td>').text(gettext("평균")).appendTo(first_row);
+		$('<td>').text(gettext("응답률")).appendTo(first_row);
 		first_row.appendTo(table);
 	    $.each(obj, function(index, item) {
 			var row = $('<tr>', {'class':'lecture-rating-table-row'});
@@ -1151,6 +1152,7 @@ var DictionaryCommentList = {
 			$('<td>').text(item.creative).appendTo(row);
 			$('<td>').text(item.support).appendTo(row);
 			$('<td>').text(item.average).appendTo(row);
+			$('<td>').text(item.effective_rate).appendTo(row);
 			row.appendTo(table);
 		});
 		table.appendTo(this.lecture_rating);

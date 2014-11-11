@@ -631,6 +631,7 @@ def get_summary_and_semester(request):
                     item = {'year':lecture.year,
                             'semester':lecture.semester,
                             'class_no':lecture.class_no,
+                            'effective_rate':lecture.rating.rate_of_effective_responds(),
                             'composition':round(lecture.rating.rated_score.composition,1),
                             'understand':round(lecture.rating.rated_score.understand,1),
                             'creative':round(lecture.rating.rated_score.creative,1),
@@ -640,10 +641,7 @@ def get_summary_and_semester(request):
             for lecture in lectures:
                 if not lecture.rating is None:
                     lecture_rating = {'rate':lecture.rating.rate_of_effective_responds(),
-                            'score':round(lecture.rating.rating,1),
-                            'num_effective':lecture.rating.number_of_effective_respondents,
-                            'num_students':lecture.rating.number_of_students,
-                            'deviation':round(lecture.rating.standard_deviation,1)}
+                            'score':round(lecture.rating.rating,1)}
                     break
             index = 0
             if lectures[0].year == settings.NEXT_YEAR and lectures[0].semester == settings.NEXT_SEMESTER and lectures.count() > 1:
