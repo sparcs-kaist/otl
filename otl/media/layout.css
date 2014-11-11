@@ -77,6 +77,7 @@ body
 	height:38px;
 	width:103px;
 	background:url('images/otl.jpg') left 2px no-repeat;
+	background-size:contain;
 }
 
 #content

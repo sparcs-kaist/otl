@@ -967,7 +967,7 @@ var DictionaryCommentList = {
 		$('<div>', {'class': 'course-eval-score-title'}).text(gettext("학 점")).appendTo(avg_score_div);
 		var score_star = $('<div>', {'class': 'course-eval-score-star'}).appendTo(avg_score_div);
 		$('<div>',{'class':'star_full','width':obj.average['avg_score']*7.5}).appendTo(score_star);
-		$('<div>', {'class': 'course-eval-score-title'}).text(gettext("로 드")).appendTo(avg_load_div);
+		$('<div>', {'class': 'course-eval-score-title'}).text(gettext("널널함")).appendTo(avg_load_div);
 		var load_star = $('<div>', {'class': 'course-eval-score-star'}).appendTo(avg_load_div);
 		$('<div>',{'class':'star_full','width':obj.average['avg_load']*7.5}).appendTo(load_star);
 		$('<div>', {'class': 'course-eval-score-title'}).text(gettext("남는거")).appendTo(avg_gain_div);
@@ -1071,7 +1071,7 @@ var DictionaryCommentList = {
 		var avg_load_div = $('<div>', {'class': 'lecture-eval-score'}).appendTo(right_div_eval);
 		var avg_gain_div = $('<div>', {'class': 'lecture-eval-score'}).appendTo(right_div_eval);
 
-        $('<div>', {'class': 'lecture-eval-score-title'}).text(gettext("로 드")).appendTo(avg_load_div);
+        $('<div>', {'class': 'lecture-eval-score-title'}).text(gettext("널널함")).appendTo(avg_load_div);
         var load_star = $('<div>', {'class': 'lecture-eval-score-star'}).appendTo(avg_load_div);
         $('<div>',{'class':'star_full','width':obj.average['avg_load']*7.5}).appendTo(load_star);
         $('<div>', {'class': 'lecture-eval-score-title'}).text(gettext("학 점")).appendTo(avg_score_div);
