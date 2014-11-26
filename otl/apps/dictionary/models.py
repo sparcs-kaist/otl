@@ -78,22 +78,12 @@ class CommentAdmin(admin.ModelAdmin):
     list_display = ('course', 'comment', 'load', 'score', 'gain')
     ordering = ('-id',)
 
-class Score(models.Model):
-    composition = models.FloatField()
-    understand = models.FloatField()
-    creative = models.FloatField()
-    support = models.FloatField()
-
-class ScoreAdmin(admin.ModelAdmin):
-    list_display = ('composition','understand','creative','support')
-
 class LectureRating(models.Model):
     number_of_students = models.IntegerField()                      # 평가자 수
     number_of_respondents = models.IntegerField()                   # 응답자 수
     number_of_effective_respondents = models.IntegerField()         # 유효응답자 수
-    rating = models.FloatField()                                    # 점수
-    standard_deviation = models.FloatField()                        # 표준편가
-    rated_score = models.ForeignKey(Score, null=True, blank=True)   # 강의평가 항목별 점수
+    rating = models.FloatField()                                    # 평균점수
+    standard_deviation = models.FloatField()                        # 표준편차
 
     def rate_of_responds(self):
         return str(100 * self.number_of_respondents / self.number_of_students) + "%"
@@ -110,7 +100,7 @@ class LectureSummary(models.Model):
     lecture = models.ForeignKey(Lecture)
 
 class LectureRatingAdmin(admin.ModelAdmin):
-    list_display = ('number_of_students', 'number_of_respondents', 'number_of_effective_respondents','rating', 'standard_deviation', 'rated_score')
+    list_display = ('number_of_students', 'number_of_respondents', 'number_of_effective_respondents','rating', 'standard_deviation')
 
 class LectureSummaryAdmin(admin.ModelAdmin):
     list_display = ('lecture', 'homepage', 'main_material', 'sub_material', 'writer', 'written_datetime')
@@ -124,6 +114,5 @@ admin.site.register(ProfessorInfor, ProfessorInforAdmin)
 admin.site.register(Comment, CommentAdmin)
 admin.site.register(Course, CourseAdmin)
 admin.site.register(Summary, SummaryAdmin)
-admin.site.register(Score, ScoreAdmin)
 admin.site.register(LectureRating, LectureRatingAdmin)
 admin.site.register(LectureSummary, LectureSummaryAdmin)
