@@ -1091,7 +1091,7 @@ var DictionaryCommentList = {
 
 		right_div_lec_eval.appendTo(right_right_div);
 
-		var lecture_rating_href = $('<a>', {'id': 'lecture-lec-eval-rating'}).text(obj.rating.score);
+		var lecture_rating_href = $('<a>', {'id': 'lecture-lec-eval-rating'}).text(obj.rating);
 		lecture_rating_href.appendTo(right_right_div);
 		lecture_rating_href.bind('click',function() {
 			$('#lecture-rating').show();});
@@ -1135,11 +1135,8 @@ var DictionaryCommentList = {
 		$('<td>').text(gettext("연도")).appendTo(first_row);
 		$('<td>').text(gettext("학기")).appendTo(first_row);
 		$('<td>').text(gettext("분반")).appendTo(first_row);
-		$('<td>').text(gettext("체계적 구성")).appendTo(first_row);
-		$('<td>').text(gettext("강의의 이해도")).appendTo(first_row);
-		$('<td>').text(gettext("창의적 사고 장려")).appendTo(first_row);
-		$('<td>').text(gettext("강의의 도움정도")).appendTo(first_row);
 		$('<td>').text(gettext("평균")).appendTo(first_row);
+		$('<td>').text(gettext("표준편차")).appendTo(first_row);
 		$('<td>').text(gettext("응답률")).appendTo(first_row);
 		first_row.appendTo(table);
 	    $.each(obj, function(index, item) {
@@ -1147,11 +1144,8 @@ var DictionaryCommentList = {
 			$('<td>').text(item.year).appendTo(row);
 			$('<td>').text(gettext(item.semester==1?"봄":"가을")).appendTo(row);
 			$('<td>').text(item.class_no).appendTo(row);
-			$('<td>').text(item.composition).appendTo(row);
-			$('<td>').text(item.understand).appendTo(row);
-			$('<td>').text(item.creative).appendTo(row);
-			$('<td>').text(item.support).appendTo(row);
 			$('<td>').text(item.average).appendTo(row);
+			$('<td>').text(item.standard_deviation).appendTo(row);
 			$('<td>').text(item.effective_rate).appendTo(row);
 			row.appendTo(table);
 		});

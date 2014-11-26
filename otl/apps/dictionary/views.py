@@ -623,26 +623,32 @@ def get_summary_and_semester(request):
                 result = 'GEN_EMPTY'
         else:
 	    professor = Professor.objects.get(professor_id=prof_id)
-	    semester = Lecture.objects.filter(course=course,professor=professor, deleted=False).order_by('year','semester').values('year', 'semester').distinct()
 	    professor_name = professor.professor_name
 	    lectures = Lecture.objects.filter(professor=professor, course=course, deleted=False).order_by('-year','-semester')
+	    semester = lectures.values('year', 'semester').distinct()
+            semester.reverse()
             for lecture in lectures:
                 if not lecture.rating is None:
                     item = {'year':lecture.year,
                             'semester':lecture.semester,
                             'class_no':lecture.class_no,
                             'effective_rate':lecture.rating.rate_of_effective_responds(),
-                            'composition':round(lecture.rating.rated_score.composition,1),
-                            'understand':round(lecture.rating.rated_score.understand,1),
-                            'creative':round(lecture.rating.rated_score.creative,1),
-                            'support':round(lecture.rating.rated_score.support,1),
+                            'standard_deviation':lecture.rating.standard_deviation,
                             'average':round(lecture.rating.rating,1)}
                     rating_all.append(item)
+
+            rating_sum = 0.0
+            rating_sum_respondents = 0
             for lecture in lectures:
                 if not lecture.rating is None:
-                    lecture_rating = {'rate':lecture.rating.rate_of_effective_responds(),
-                            'score':round(lecture.rating.rating,1)}
-                    break
+                    rating_sum += lecture.rating.rating * lecture.rating.number_of_effective_respondents
+                    rating_sum_respondents += lecture.rating.number_of_effective_respondents
+            
+            if rating_sum_respondents != 0:
+                lecture_rating = round(rating_sum / rating_sum_respondents, 1)
+            else:
+                lecture_rating = 0.0
+
             index = 0
             if lectures[0].year == settings.NEXT_YEAR and lectures[0].semester == settings.NEXT_SEMESTER and lectures.count() > 1:
                 index = 1
