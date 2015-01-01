@@ -16,6 +16,7 @@ from otl.apps.dictionary.models import Comment
 from otl.apps.accounts.forms import LoginForm, ProfileForm
 from otl.apps.common import *
 import base64, hashlib, time, random, urllib, httplib, re
+from xml.etree.ElementTree import fromstring
 
 from django import template
 template.add_to_builtins('django.templatetags.i18n')
@@ -239,7 +240,17 @@ def auth(request):
     conn.request("POST","/iamps/services/singlauth","",headers)
     conn.send(encoded_data)
     response = conn.getresponse()
-    user_info = response.read()
+    root = fromstring(response.read())
+    response_data = root[0][0][0]
+
+    kuser_info = {}
+    kuser_info['student_id'] = response_data.find("ku_std_no").text
+    kuser_info['department'] = response_data.find("ou").text
+    kuser_info['department_no'] = response_data.find("ku_kaist_org_id").text
+    portal_id = response_data.find("uid").text
+    last_name = response_data.find("sn").text
+    first_name = response_data.find("givenname").text
+    mail_address = response_data.find("mail").text
 
     return HttpResponse(reponse)
 
