@@ -5,16 +5,17 @@ from django.contrib import auth
 from django.shortcuts import render_to_response
 from django.contrib.admin.models import User
 from django.contrib.auth.decorators import login_required
+from django.conf import settings
 from otl.utils import cache_with_default
-from otl.apps.timetable.models import Lecture
 from otl.apps.favorites.models import CourseLink
 from otl.apps.groups.models import GroupBoard
 from otl.apps.calendar.models import Calendar, RepeatedSchedule, Schedule
 from otl.apps.accounts.models import UserProfile, Department
+from otl.apps.timetable.models import Lecture
 from otl.apps.dictionary.models import Comment
 from otl.apps.accounts.forms import LoginForm, ProfileForm
 from otl.apps.common import *
-import base64, hashlib, time, random, urllib, re
+import base64, hashlib, time, random, urllib, httplib, re
 
 from django import template
 template.add_to_builtins('django.templatetags.i18n')
@@ -211,10 +212,40 @@ def myinfo(request):
         'lang' : request.session.get('django_language', 'ko'),
     }, context_instance=RequestContext(request))
 
+def auth(request):
+    token = request.COOKIES.get('SATHTOKEN', None)
+    if token == None: # TODO
+        return HttpResponse("no token")
+    #referer check!
+    data = """
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://server.com">
+    <soapenv:Header/>
+    <soapenv:Body>
+        <ser:verification>
+        <cookieValue>{token}</cookieValue>
+        <publicKeyStr>{publickey}</publicKeyStr>
+        <adminVO>
+            <adminId>{id}</adminId>
+            <password>{password}</password>
+        </adminVO>
+        </ser:verification>
+    </soapenv:Body>
+</soapenv:Envelope>
+""".format(token=token, publickey=settings.PORTAL_SSO_PUBLICKEY, id=settings.PORTAL_SSO_ADMIN_ID, password=settings.PORTAL_SSO_ADMIN_PASSWORD)
+    encoded_data = data.encode('utf-8')
+
+    conn = httplib.HTTPSConnection("iam.kaist.ac.kr")
+    headers = {"Content-type": "text/xml","Content-Length": "%d" % len(encoded_data)}
+    conn.request("POST","/iamps/services/singlauth","",headers)
+    conn.send(encoded_data)
+    response = conn.getresponse()
+    user_info = response.read()
+
+    return HttpResponse(reponse)
+
 def _validate_email(email):
     if len(email)>=5 and '@' in email:
         if re.match('(\w+-*[.|\w]*)*@(\w+[.])+\w+', email) != None:
             return True
     return False
-
 
