@@ -130,7 +130,7 @@ def login(request):
                 profile.student_id = request.POST['student_id']
                 profile.nickname = user.username
                 profile.save()
-                profile.favorite_departments.add(Department.objects.get(id=2044)) # 인문사회과학부는 기본으로 추가
+                profile.favorite_departments.add(Department.objects.get(id=3894)) # 인문사회과학부는 기본으로 추가
 
                 # Create user's default system calendars
                 color = 1
@@ -213,7 +213,7 @@ def myinfo(request):
         'lang' : request.session.get('django_language', 'ko'),
     }, context_instance=RequestContext(request))
 
-def auth(request):
+def SSO_authenticate(request):
     token = request.COOKIES.get('SATHTOKEN', None)
     if token == None: # TODO
         return HttpResponse("no token")
@@ -240,19 +240,72 @@ def auth(request):
     conn.request("POST","/iamps/services/singlauth","",headers)
     conn.send(encoded_data)
     response = conn.getresponse()
-    root = fromstring(response.read())
-    response_data = root[0][0][0]
+    try:
+        root = fromstring(response.read())
+        response_data = root[0][0][0]
+        temp=response_data.find("ku_std_no").text
+    except:
+        return HttpResponseBadRequest('Bad Request. Please Retry.')
 
-    kuser_info = {}
-    kuser_info['student_id'] = response_data.find("ku_std_no").text
-    kuser_info['department'] = response_data.find("ou").text
-    kuser_info['department_no'] = response_data.find("ku_kaist_org_id").text
-    portal_id = response_data.find("uid").text
-    last_name = response_data.find("sn").text
-    first_name = response_data.find("givenname").text
-    mail_address = response_data.find("mail").text
+    user_info = {}
+    user_info['ku_std_no'] = response_data.find("ku_std_no").text
+    user_info['ou'] = response_data.find("ou").text
+    user_info['ku_kaist_org_id'] = response_data.find("ku_kaist_org_id").text
+    user_info['uid'] = response_data.find("uid").text
+    user_info['sn'] = response_data.find("sn").text
+    user_info['givenname'] = response_data.find("givenname").text
+    user_info['mail'] = response_data.find("mail").text
 
-    return HttpResponse(reponse)
+    user = auth.authenticate(user_info=user_info)
+    if user is None: # Login Failed
+        return HttpResponseBadRequest('Bad Request. Please Retry.')
+
+    try:
+        temp = user.first_login
+    except AttributeError:
+        user.first_login = False
+    if user.first_login:
+        return render_to_response('login_agreement.html', {
+            'username': user.username,
+            'title': ugettext(u'로그인'),
+            'kuser_info': user.kuser_info,
+            'form_profile': ProfileForm(),
+        }, context_instance=RequestContext(request))
+    else: # Login OK
+        # Already existing user
+        if not user.is_superuser:
+            profile = UserProfile.objects.get(user=user)
+        auth.login(request, user)
+        request.session['django_language'] = user.userprofile.language[:2]
+        return HttpResponseRedirect("/")
+
+def after_agreement(request):
+    # Show privacy agreement form after confirming this is a valid user in KAIST.
+    if request.POST['agree'] == 'yes':
+        user = User.objects.get(username = request.POST['username'])
+        user.backend = 'otl.apps.accounts.backends.KAISTSSOBackend'
+
+        # Create user's profile
+        try:
+            profile = UserProfile.objects.get(user__exact = user)
+        except UserProfile.DoesNotExist:
+            profile = UserProfile()
+        profile.user = user
+        profile.language = request.POST['language']
+        try:
+            profile.department = Department.objects.get(id__exact=int(request.POST['department_no']))
+        except:
+            profile.department = Department.objects.get(id__exact=0) # 찾을 수 없는 학과 사람은 일단 무학과로 등록
+        profile.student_id = request.POST['student_id']
+        profile.nickname = user.username
+        profile.save()
+        profile.favorite_departments.add(Department.objects.get(id=3894)) # 인문사회과학부는 기본으로 추가
+
+        # Registration finished!
+        auth.login(request, user)
+        return HttpResponseRedirect("/")
+    else:
+        return HttpResponse((u'개인정보 활용에 동의하셔야 서비스를 이용하실 수 있습니다. 죄송합니다.').encode('utf-8'))
 
 def _validate_email(email):
     if len(email)>=5 and '@' in email:

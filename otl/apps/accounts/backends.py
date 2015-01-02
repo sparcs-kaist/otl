@@ -26,7 +26,7 @@ class myHTTPTransport(HTTPTransport):
 
         return HTTPTransport.call(self, addr, data, namespace, soapaction, encoding, http_proxy, config)
 
-class KAISTIAMBackend:
+class KAISTSSOBackend:
     
     def authenticate(self, user_info=None):
         if user_info == None:
