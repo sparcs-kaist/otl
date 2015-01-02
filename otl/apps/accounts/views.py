@@ -215,9 +215,9 @@ def myinfo(request):
 
 def SSO_authenticate(request):
     token = request.COOKIES.get('SATHTOKEN', None)
-    if token == None: # TODO
-        return HttpResponse("no token")
-    #referer check!
+    if token == None:
+        return HttpResponseForbidden("Invalid access.")
+
     data = """
 <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://server.com">
     <soapenv:Header/>
@@ -245,7 +245,7 @@ def SSO_authenticate(request):
         response_data = root[0][0][0]
         temp=response_data.find("ku_std_no").text
     except:
-        return HttpResponseBadRequest('Bad Request. Please Retry.')
+        return HttpResponseBadRequest('Bad Request. Please retry.')
 
     user_info = {}
     user_info['ku_std_no'] = response_data.find("ku_std_no").text
@@ -258,7 +258,7 @@ def SSO_authenticate(request):
 
     user = auth.authenticate(user_info=user_info)
     if user is None: # Login Failed
-        return HttpResponseBadRequest('Bad Request. Please Retry.')
+        return HttpResponseBadRequest('Bad Request. Please retry.')
 
     try:
         temp = user.first_login
