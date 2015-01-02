@@ -26,21 +26,12 @@ class myHTTPTransport(HTTPTransport):
 
         return HTTPTransport.call(self, addr, data, namespace, soapaction, encoding, http_proxy, config)
 
-class KAISTSSOBackend:
+class KAISTIAMBackend:
     
-    def authenticate(self, username=None, password=None):
-
-        try:
-            myHTTPTransport.set_authentication(settings.PORTAL_SSO_ADMIN_ID, settings.PORTAL_SSO_ADMIN_PASSWORD)
-            server = WSDL.Proxy(settings.PORTAL_SSO_WSDL_ADDRESS, transport=myHTTPTransport)
-            #print server.authentication(username.encode('base64').strip(), password.encode('base64').strip(), PORTAL_SSO_TOKEN)
-            user_info = server.authentication(username.encode('base64').strip(), password.encode('base64').strip(), settings.PORTAL_SSO_TOKEN)
-            if user_info['uid'] == None: # Login Failed
-                return None
-        except:
-            # Failed to access portal page
+    def authenticate(self, user_info=None):
+        if user_info == None:
             return None
-        
+
         kuser_info = {}
         kuser_info['student_id'] = user_info['ku_std_no']
         kuser_info['department'] = user_info['ou']
