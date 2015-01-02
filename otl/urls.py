@@ -8,7 +8,7 @@ from django.http import *
 
 urlpatterns = patterns('',
     (ur'^$', lambda request: HttpResponseRedirect('/timetable/')),
-    (ur'^login/', 'otl.apps.accounts.views.login'),
+#    (ur'^login/', 'otl.apps.accounts.views.login'),
     (ur'^logout/', 'otl.apps.accounts.views.logout'),
     (ur'^changelanguage/', 'otl.apps.main.views.changelanguage'),
 

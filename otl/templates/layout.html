@@ -37,7 +37,7 @@
 					{% if user.is_authenticated %}
 					{{ user }}{% if user.is_superuser %} ({% trans "관리자" %}){% endif %} | <a href="/accounts/myinfo">{% trans "내 계정" %}</a> | <a href="/logout/">{% trans "로그아웃" %}</a>
 					{% else %}
-					<a href="/login/{% if next %}?next={{next}}{% endif %}">{% trans "로그인" %}</a>
+					<a href="https://ksso.kaist.ac.kr/iamps/requestLogin.do">{% trans "로그인" %}</a>
 					{% endif %}
 					 | <a href="/changelanguage/">{% trans "English" %}</a>
 				</div>
