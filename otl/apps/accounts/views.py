@@ -113,7 +113,8 @@ def SSO_authenticate(request):
     user_info['uid'] = response_data.find("uid").text
     user_info['sn'] = response_data.find("sn").text
     user_info['givenname'] = response_data.find("givenname").text
-    user_info['mail'] = response_data.find("mail").text
+    if response_data.find("mail") != None:
+        user_info['mail'] = response_data.find("mail").text
 
     user = auth.authenticate(user_info=user_info)
     if user is None: # Login Failed
