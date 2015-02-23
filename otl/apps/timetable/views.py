@@ -30,6 +30,15 @@ from django.utils.translation import ugettext,activate
 import hashlib
 import MySQLdb
 
+import gflags
+import httplib2
+import json
+
+from apiclient.discovery import build
+from oauth2client.file import Storage
+from oauth2client.client import OAuth2WebServerFlow
+from oauth2client.tools import run
+
 def index(request):
 
     #Make the semester info to make users select the semester which they want to view.
@@ -270,28 +279,51 @@ def change_semester(request):
     }, ensure_ascii=False, indent=4))
 
 def calendar(request):
+    user = request.user
     try:
-        user = request.user
         userprofile = UserProfile.objects.get(user=user)
-        email = userprofile.email
-        if email is None:
-            return HttpResponse(json.dumps({
-                'result': 'EMPTY',
-                }, ensure_ascii=False, indent=4))
-        table_id = int(request.GET.get('id', 0))
-        view_year = int(request.GET.get('view_year', settings.NEXT_YEAR))
-        view_semester = int(request.GET.get('view_semester', settings.NEXT_SEMESTER))
-        start = settings.SEMESTER_RANGES[(view_year,view_semester)][0]
-        end = settings.SEMESTER_RANGES[(view_year,view_semester)][1]
-        calendar_server = httplib.HTTPConnection('localhost',8080)
-        calendar_server.request("GET","/OTL_Calendar/Main?uid=" + str(user.id) + "&start=" + start.strftime("20%y%m%d") + "&end=" + end.strftime("20%y%m%d") + "&email=" + email + "&year=" + str(view_year) + "&semester=" + str(view_semester) + "&table_id=" + str(table_id))
-        calendar_server.getresponse()
-        calendar_server.close()
-        return HttpResponse(json.dumps({
-            'result': 'OK',
-             }, ensure_ascii=False, indent=4))
     except:
-        raise ValidationError('error on calendar')
+        raise ValidationError('no user profile')
+
+    email = userprofile.email
+    if email is None:
+        return HttpResponse(json.dumps({
+            'result': 'EMPTY',
+            }, ensure_ascii=False, indent=4))
+    table_id = int(request.GET.get('id', 0))
+    view_year = int(request.GET.get('view_year', settings.NEXT_YEAR))
+    view_semester = int(request.GET.get('view_semester', settings.NEXT_SEMESTER))
+    start = settings.SEMESTER_RANGES[(view_year,view_semester)][0]
+    end = settings.SEMESTER_RANGES[(view_year,view_semester)][1]
+
+    FLAGS = gflags.FLAGS
+    FLAGS.auth_local_webserver = False
+
+    json_data = open('/home/chaos/calendar/client_secrets.json')
+    data = json.load(json_data)
+    client_id = data['installed']['client_id']
+    client_secret = data['installed']['client_secret']
+    api_key = data['api_key']
+    FLOW = OAuth2WebServerFlow(
+        client_id=client_id,
+        client_secret=client_secret,
+        scope='https://www.googleapis.com/auth/calendar',
+        user_agent='')
+
+    storage = Storage('/home/chaos/calendar/calendar.dat')
+    credentials = storage.get()
+    if credentials is None or credentials.invalid == True:
+      credentials = run(FLOW, storage)
+
+    http = httplib2.Http()
+    http = credentials.authorize(http)
+    service = build(serviceName='calendar', version='v3', http=http,
+           developerKey=api_key)
+
+
+    return HttpResponse(json.dumps({
+        'result': 'OK',
+         }, ensure_ascii=False, indent=4))
 
 # -- Private functions --
 
