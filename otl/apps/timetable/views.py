@@ -320,6 +320,54 @@ def calendar(request):
     service = build(serviceName='calendar', version='v3', http=http,
            developerKey=api_key)
 
+    calendar_name = "[OTL]" + userprofile.nickname + "'s calendar"
+    calendar = None
+    if userprofile.calendar_id != None:
+        try:
+            calendar = service.calendars().get(calendarId = userprofile.calendar_id).execute()
+            if calendar != None and calendar['summary'] != calendar_name:
+                calendar['summary'] = calendar_name
+                calendar = service.calendars().update(calendarId = calendar['id'], body = calendar).execute()
+        except:
+            pass
+
+    if calendar == None:
+        calendar_entry = {
+                'summary' : calendar_name,
+                'timeZone' : 'Asia/Seoul'
+                }
+        calendar = service.calendars().insert(body = calendar_entry).execute()
+
+        calendar_list = service.calendarList().insert(calendarId = calendar['id']).execute()
+        calendar_list['hidden'] = True
+        reminder = {
+                'method' : 'popup',
+                'minutes' : 10
+                }
+        calendar_list['defaultReminders']=[reminder]
+        calendar_list = service.calendarList().update(calendarId = calendar['id'], body = calendar_list).execute()
+
+        userprofile.calendar_id = calendar['id']
+        userprofile.save()
+
+    acl_list = service.acl().list(calendarId = calendar['id']).execute()
+    is_email_exist = False
+    for old_rule in acl['items']:
+        if old_rule['scope']['value'] == userprofile.email:
+            is_email_exist = True
+            break
+
+    if not is_email_exist:
+        rule = {
+                'scope' : {
+                    'type' : 'user',
+                    'value' : userprofile.email
+                    },
+                'role' : 'owner'
+                }
+        service.acl().insert(calendarId = calendar['id'], rule = rule).execute()
+
+    #TODO google calendar invitation email
 
     return HttpResponse(json.dumps({
         'result': 'OK',
