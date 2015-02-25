@@ -21,6 +21,7 @@ from StringIO import StringIO
 from django.db.models import Q
 from otl.apps.dictionary.models import Professor
 from django.core.servers.basehttp import FileWrapper
+from datetime import timedelta
 import Image
 
 from django import template
@@ -368,6 +369,12 @@ def calendar(request):
         service.acl().insert(calendarId = calendar['id'], rule = rule).execute()
 
     #TODO google calendar invitation email
+    start = date(2015,2,25)
+    end = date(2015,2,27)
+    events = service.events().list(calendarId = calendar['id'], maxResults=2000, timeMin = start.isoformat(),
+            timeMax = (end + timedelta(days=1)).isoformat())
+    for event in events['items']:
+        service.events().delete(calendarId = calendar['id'], eventId = event['id']).execute()
 
     return HttpResponse(json.dumps({
         'result': 'OK',
