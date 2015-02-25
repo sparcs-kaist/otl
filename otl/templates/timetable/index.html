@@ -236,9 +236,11 @@
 				<a id="action-saveAsPdf" href="/timetable/save_as_pdf/" target="_blank"><img src="{{MEDIA_URL}}images/icon_pdf.png" id="extract_pdf" title="{% trans "PDF로 저장" %}" alt="{% trans "PDF로 저장" %}" /></a>
 				<a id="action-makeCalendar"><img src="{{MEDIA_URL}}images/icon_schedule.png" id="google_calendar" title="{% trans "구글 캘린더" %}" alt="{% trans "구글 캘린더" %}"></a>
 				{% else %}
-				<a href="/login/"><img src="{{MEDIA_URL}}images/icon_image.png" id="extract_image" title="{% trans "이미지로 저장" %}" alt="{% trans "이미지로 저장" %}" /></a> 
-				<a href="/login/"><img src="{{MEDIA_URL}}images/icon_pdf.png" id="extract_pdf" title="{% trans "PDF로 저장" %}" alt="{% trans "PDF로 저장" %}" /></a>
-				<a href="/login/"><img src="{{MEDIA_URL}}images/icon_schedule.png" id="google_calendar" title="{% trans "구글 캘린더" %}" alt="{% trans "구글 캘린더" %}"></a>
+				<a href="https://ksso.kaist.ac.kr/iamps/requestLogin.do">
+					<img src="{{MEDIA_URL}}images/icon_image.png" id="extract_image" title="{% trans "이미지로 저장" %}" alt="{% trans "이미지로 저장" %}" />
+					<img src="{{MEDIA_URL}}images/icon_pdf.png" id="extract_pdf" title="{% trans "PDF로 저장" %}" alt="{% trans "PDF로 저장" %}" />
+					<img src="{{MEDIA_URL}}images/icon_schedule.png" id="google_calendar" title="{% trans "구글 캘린더" %}" alt="{% trans "구글 캘린더" %}">
+				</a>
 				{% endif %}
 			</div>
 			&nbsp;

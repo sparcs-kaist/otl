@@ -74,10 +74,10 @@ class KAISTSSOBackend:
             user = User(username=user_info['uid'])
             user.first_name = user_info['givenname']
             user.last_name = user_info['sn']
-            if user_info['mail'] == None:
-                user.email = user_info['uid'] + "@kaist.ac.kr"
-            else:
+            if user_info.get('mail') != None:
                 user.email = user_info['mail']
+            else:
+                user.email = user_info['uid'] + "@kaist.ac.kr"
             user.set_unusable_password() # We don't save the password.
             user.save()
 

@@ -141,7 +141,7 @@ def SSO_authenticate(request):
 
 def after_agreement(request):
     # Show privacy agreement form after confirming this is a valid user in KAIST.
-    if request.POST['agree'] == 'yes':
+    if request.POST.get('agree') == 'yes':
         user = User.objects.get(username = request.POST['username'])
         user.backend = 'otl.apps.accounts.backends.KAISTSSOBackend'
 
