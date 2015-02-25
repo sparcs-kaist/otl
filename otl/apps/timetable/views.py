@@ -295,7 +295,7 @@ def calendar(request):
     view_year = int(request.GET.get('view_year', settings.NEXT_YEAR))
     view_semester = int(request.GET.get('view_semester', settings.NEXT_SEMESTER))
     start = settings.SEMESTER_RANGES[(view_year,view_semester)][0]
-    end = settings.SEMESTER_RANGES[(view_year,view_semester)][1]
+    end = settings.SEMESTER_RANGES[(view_year,view_semester)][1] + timedelta(days=1)
 
     FLAGS = gflags.FLAGS
     FLAGS.auth_local_webserver = False
@@ -339,7 +339,7 @@ def calendar(request):
                 }
         calendar = service.calendars().insert(body = calendar_entry).execute()
 
-        calendar_list = service.calendarList().insert(calendarId = calendar['id']).execute()
+        calendar_list = service.calendarList().get(calendarId = calendar['id']).execute()
         calendar_list['hidden'] = True
         reminder = {
                 'method' : 'popup',
@@ -353,7 +353,7 @@ def calendar(request):
 
     acl_list = service.acl().list(calendarId = calendar['id']).execute()
     is_email_exist = False
-    for old_rule in acl['items']:
+    for old_rule in acl_list['items']:
         if old_rule['scope']['value'] == userprofile.email:
             is_email_exist = True
             break
@@ -366,13 +366,12 @@ def calendar(request):
                     },
                 'role' : 'owner'
                 }
-        service.acl().insert(calendarId = calendar['id'], rule = rule).execute()
+        service.acl().insert(calendarId = calendar['id'], body = rule).execute()
 
     #TODO google calendar invitation email
-    start = date(2015,2,25)
-    end = date(2015,2,27)
-    events = service.events().list(calendarId = calendar['id'], maxResults=2000, timeMin = start.isoformat(),
-            timeMax = (end + timedelta(days=1)).isoformat())
+    events = service.events().list(calendarId = calendar['id'], maxResults=2000,
+            timeMin = str(start) + "T00:00:00+09:00",
+            timeMax = str(end) + "T00:00:00+09:00").execute()
     for event in events['items']:
         service.events().delete(calendarId = calendar['id'], eventId = event['id']).execute()
 
