@@ -279,6 +279,7 @@ def change_semester(request):
         'data': my_lectures,
     }, ensure_ascii=False, indent=4))
 
+@login_required_ajax
 def calendar(request):
     user = request.user
     try:
