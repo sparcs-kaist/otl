@@ -246,12 +246,13 @@ a#myfavorites:hover
 {
 	text-align:center;
 	margin-top: 18px;
-	color: #333;
+	color: #ddd;
+	font-size: 15px;
 }
 
 #feedbacks a
 {
-	color: #666;
+	color: #ddd;
 }
 
 #copyright
