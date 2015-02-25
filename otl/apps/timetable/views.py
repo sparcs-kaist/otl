@@ -21,6 +21,7 @@ from StringIO import StringIO
 from django.db.models import Q
 from otl.apps.dictionary.models import Professor
 from django.core.servers.basehttp import FileWrapper
+from datetime import timedelta, datetime
 import Image
 
 from django import template
@@ -29,6 +30,15 @@ template.add_to_builtins('django.templatetags.i18n')
 from django.utils.translation import ugettext,activate
 import hashlib
 import MySQLdb
+
+import gflags
+import httplib2
+import json
+
+from apiclient.discovery import build
+from oauth2client.file import Storage
+from oauth2client.client import OAuth2WebServerFlow
+from oauth2client.tools import run
 
 def index(request):
 
@@ -269,29 +279,132 @@ def change_semester(request):
         'data': my_lectures,
     }, ensure_ascii=False, indent=4))
 
+@login_required_ajax
 def calendar(request):
+    user = request.user
     try:
-        user = request.user
         userprofile = UserProfile.objects.get(user=user)
-        email = userprofile.email
-        if email is None:
-            return HttpResponse(json.dumps({
-                'result': 'EMPTY',
-                }, ensure_ascii=False, indent=4))
-        table_id = int(request.GET.get('id', 0))
-        view_year = int(request.GET.get('view_year', settings.NEXT_YEAR))
-        view_semester = int(request.GET.get('view_semester', settings.NEXT_SEMESTER))
-        start = settings.SEMESTER_RANGES[(view_year,view_semester)][0]
-        end = settings.SEMESTER_RANGES[(view_year,view_semester)][1]
-        calendar_server = httplib.HTTPConnection('localhost',8080)
-        calendar_server.request("GET","/OTL_Calendar/Main?uid=" + str(user.id) + "&start=" + start.strftime("20%y%m%d") + "&end=" + end.strftime("20%y%m%d") + "&email=" + email + "&year=" + str(view_year) + "&semester=" + str(view_semester) + "&table_id=" + str(table_id))
-        calendar_server.getresponse()
-        calendar_server.close()
-        return HttpResponse(json.dumps({
-            'result': 'OK',
-             }, ensure_ascii=False, indent=4))
     except:
-        raise ValidationError('error on calendar')
+        raise ValidationError('no user profile')
+
+    email = userprofile.email
+    if email is None:
+        return HttpResponse(json.dumps({
+            'result': 'EMPTY',
+            }, ensure_ascii=False, indent=4))
+    table_id = int(request.GET.get('id', 0))
+    view_year = int(request.GET.get('view_year', settings.NEXT_YEAR))
+    view_semester = int(request.GET.get('view_semester', settings.NEXT_SEMESTER))
+    start = settings.SEMESTER_RANGES[(view_year,view_semester)][0]
+    end = settings.SEMESTER_RANGES[(view_year,view_semester)][1] + timedelta(days=1)
+    lang = request.session.get('django_language', 'ko')
+
+    FLAGS = gflags.FLAGS
+    FLAGS.auth_local_webserver = False
+
+    json_data = open('/home/chaos/calendar/client_secrets.json')
+    data = json.load(json_data)
+    client_id = data['installed']['client_id']
+    client_secret = data['installed']['client_secret']
+    api_key = data['api_key']
+    FLOW = OAuth2WebServerFlow(
+        client_id=client_id,
+        client_secret=client_secret,
+        scope='https://www.googleapis.com/auth/calendar',
+        user_agent='')
+
+    storage = Storage('/home/chaos/calendar/calendar.dat')
+    credentials = storage.get()
+    if credentials is None or credentials.invalid == True:
+      credentials = run(FLOW, storage)
+
+    http = httplib2.Http()
+    http = credentials.authorize(http)
+    service = build(serviceName='calendar', version='v3', http=http,
+           developerKey=api_key)
+
+    calendar_name = "[OTL]" + userprofile.nickname + "'s calendar"
+    calendar = None
+    if userprofile.calendar_id != None:
+        try:
+            calendar = service.calendars().get(calendarId = userprofile.calendar_id).execute()
+            if calendar != None and calendar['summary'] != calendar_name:
+                calendar['summary'] = calendar_name
+                calendar = service.calendars().update(calendarId = calendar['id'], body = calendar).execute()
+        except:
+            pass
+
+    if calendar == None:
+        calendar_entry = {
+                'summary' : calendar_name,
+                'timeZone' : 'Asia/Seoul'
+                }
+        calendar = service.calendars().insert(body = calendar_entry).execute()
+
+        calendar_list = service.calendarList().get(calendarId = calendar['id']).execute()
+        calendar_list['hidden'] = True
+        reminder = {
+                'method' : 'popup',
+                'minutes' : 10
+                }
+        calendar_list['defaultReminders']=[reminder]
+        calendar_list = service.calendarList().update(calendarId = calendar['id'], body = calendar_list).execute()
+
+        userprofile.calendar_id = calendar['id']
+        userprofile.save()
+
+    acl_list = service.acl().list(calendarId = calendar['id']).execute()
+    is_email_exist = False
+    for old_rule in acl_list['items']:
+        if old_rule['scope']['value'] == userprofile.email:
+            is_email_exist = True
+            break
+
+    if not is_email_exist:
+        rule = {
+                'scope' : {
+                    'type' : 'user',
+                    'value' : userprofile.email
+                    },
+                'role' : 'owner'
+                }
+        service.acl().insert(calendarId = calendar['id'], body = rule).execute()
+
+    #TODO google calendar invitation email
+    events = service.events().list(calendarId = calendar['id'], maxResults=2000,
+            timeMin = str(start) + "T00:00:00+09:00",
+            timeMax = str(end) + "T00:00:00+09:00").execute()
+    for event in events['items']:
+        service.events().delete(calendarId = calendar['id'], eventId = event['id']).execute()
+
+    my_lectures = Lecture.objects.filter(year=view_year, semester=view_semester, timetable__user=user, timetable__table_id=table_id).select_related()
+    for lecture in my_lectures:
+        classtimes = ClassTime.objects.filter(lecture=lecture)
+        for classtime in classtimes:
+            days_ahead = classtime.day - start.weekday()
+            if days_ahead < 0:
+                days_ahead += 7
+            class_date = start + timedelta(days = days_ahead)
+
+            event = {
+                    'summary' : lecture.title,
+                    'location' : _trans(classtime.room_ko, classtime.room_en, lang) + " " + classtime.room,
+                    'start' : {
+                        'dateTime' : datetime.combine(class_date, classtime.begin).isoformat(),
+                        'timeZone' : 'Asia/Seoul'
+                        },
+                    'end' : {
+                        'dateTime' : datetime.combine(class_date, classtime.end).isoformat(),
+                        'timeZone' : 'Asia/Seoul'
+                        },
+                    'recurrence' : ['RRULE:FREQ=WEEKLY;UNTIL=' + end.strftime("%Y%m%d")],
+                    }
+
+            service.events().insert(calendarId = calendar['id'], body = event).execute()
+
+    return HttpResponse(json.dumps({
+        'result': 'OK',
+         }, ensure_ascii=False, indent=4))
 
 # -- Private functions --
 
