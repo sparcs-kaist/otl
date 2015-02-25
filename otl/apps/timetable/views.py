@@ -21,7 +21,7 @@ from StringIO import StringIO
 from django.db.models import Q
 from otl.apps.dictionary.models import Professor
 from django.core.servers.basehttp import FileWrapper
-from datetime import timedelta
+from datetime import timedelta, datetime
 import Image
 
 from django import template
@@ -296,6 +296,7 @@ def calendar(request):
     view_semester = int(request.GET.get('view_semester', settings.NEXT_SEMESTER))
     start = settings.SEMESTER_RANGES[(view_year,view_semester)][0]
     end = settings.SEMESTER_RANGES[(view_year,view_semester)][1] + timedelta(days=1)
+    lang = request.session.get('django_language', 'ko')
 
     FLAGS = gflags.FLAGS
     FLAGS.auth_local_webserver = False
@@ -374,6 +375,31 @@ def calendar(request):
             timeMax = str(end) + "T00:00:00+09:00").execute()
     for event in events['items']:
         service.events().delete(calendarId = calendar['id'], eventId = event['id']).execute()
+
+    my_lectures = Lecture.objects.filter(year=view_year, semester=view_semester, timetable__user=user, timetable__table_id=table_id).select_related()
+    for lecture in my_lectures:
+        classtimes = ClassTime.objects.filter(lecture=lecture)
+        for classtime in classtimes:
+            days_ahead = classtime.day - start.weekday()
+            if days_ahead < 0:
+                days_ahead += 7
+            class_date = start + timedelta(days = days_ahead)
+
+            event = {
+                    'summary' : lecture.title,
+                    'location' : _trans(classtime.room_ko, classtime.room_en, lang) + " " + classtime.room,
+                    'start' : {
+                        'dateTime' : datetime.combine(class_date, classtime.begin).isoformat(),
+                        'timeZone' : 'Asia/Seoul'
+                        },
+                    'end' : {
+                        'dateTime' : datetime.combine(class_date, classtime.end).isoformat(),
+                        'timeZone' : 'Asia/Seoul'
+                        },
+                    'recurrence' : ['RRULE:FREQ=WEEKLY;UNTIL=' + end.strftime("%Y%m%d")],
+                    }
+
+            service.events().insert(calendarId = calendar['id'], body = event).execute()
 
     return HttpResponse(json.dumps({
         'result': 'OK',
