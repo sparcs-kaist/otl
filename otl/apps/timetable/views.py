@@ -302,7 +302,7 @@ def calendar(request):
     FLAGS = gflags.FLAGS
     FLAGS.auth_local_webserver = False
 
-    json_data = open('/home/chaos/calendar/client_secrets.json')
+    json_data = open('/opt/google_calendar/client_secrets.json')
     data = json.load(json_data)
     client_id = data['installed']['client_id']
     client_secret = data['installed']['client_secret']
@@ -313,7 +313,7 @@ def calendar(request):
         scope='https://www.googleapis.com/auth/calendar',
         user_agent='')
 
-    storage = Storage('/home/chaos/calendar/calendar.dat')
+    storage = Storage('/opt/google_calendar/calendar.dat')
     credentials = storage.get()
     if credentials is None or credentials.invalid == True:
       credentials = run(FLOW, storage)
@@ -353,24 +353,15 @@ def calendar(request):
         userprofile.calendar_id = calendar['id']
         userprofile.save()
 
-    acl_list = service.acl().list(calendarId = calendar['id']).execute()
-    is_email_exist = False
-    for old_rule in acl_list['items']:
-        if old_rule['scope']['value'] == userprofile.email:
-            is_email_exist = True
-            break
+    rule = {
+            'scope' : {
+                'type' : 'user',
+                'value' : userprofile.email
+                },
+            'role' : 'owner'
+            }
+    service.acl().insert(calendarId = calendar['id'], body = rule).execute()
 
-    if not is_email_exist:
-        rule = {
-                'scope' : {
-                    'type' : 'user',
-                    'value' : userprofile.email
-                    },
-                'role' : 'owner'
-                }
-        service.acl().insert(calendarId = calendar['id'], body = rule).execute()
-
-    #TODO google calendar invitation email
     events = service.events().list(calendarId = calendar['id'], maxResults=2000,
             timeMin = str(start) + "T00:00:00+09:00",
             timeMax = str(end) + "T00:00:00+09:00").execute()
@@ -388,7 +379,7 @@ def calendar(request):
 
             event = {
                     'summary' : lecture.title,
-                    'location' : _trans(classtime.room_ko, classtime.room_en, lang) + " " + classtime.room,
+                    'location' : (_trans(classtime.room_ko, classtime.room_en, lang) or '') + " " + (classtime.room or ''),
                     'start' : {
                         'dateTime' : datetime.combine(class_date, classtime.begin).isoformat(),
                         'timeZone' : 'Asia/Seoul'
