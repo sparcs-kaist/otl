@@ -302,7 +302,7 @@ def calendar(request):
     FLAGS = gflags.FLAGS
     FLAGS.auth_local_webserver = False
 
-    json_data = open('/home/chaos/calendar/client_secrets.json')
+    json_data = open('/opt/google_calendar/client_secrets.json')
     data = json.load(json_data)
     client_id = data['installed']['client_id']
     client_secret = data['installed']['client_secret']
@@ -313,7 +313,7 @@ def calendar(request):
         scope='https://www.googleapis.com/auth/calendar',
         user_agent='')
 
-    storage = Storage('/home/chaos/calendar/calendar.dat')
+    storage = Storage('/opt/google_calendar/calendar.dat')
     credentials = storage.get()
     if credentials is None or credentials.invalid == True:
       credentials = run(FLOW, storage)
