@@ -53,13 +53,7 @@ class Command(BaseCommand):
             lectures_not_updated = set()
 
             for lecture in Lecture.objects.filter(year = settings.NEXT_YEAR, semester = settings.NEXT_SEMESTER):
-                lectures_not_updated.add((
-                    lecture.code,
-                    lecture.year,
-                    lecture.semester,
-                    lecture.department.id,
-                    lecture.class_no,
-                ))
+                lectures_not_updated.add(lecture.id)
             # Make Staff Professor with ID 830
             try:
                 staff_professor = Professor.objects.get(professor_id=830)
@@ -92,17 +86,26 @@ class Command(BaseCommand):
 
                 # Update department info.
                 if prev_department != department_id:
+                    new_flag = False
                     try:
                         department = Department.objects.get(id = department_id)
                         print 'Updating department: %s' % department
                     except Department.DoesNotExist:
                         department = Department(id = department_id)
+                        new_flag = True
                         print 'Adding department: %s(%d)...' % (department_code, department_id)
                     department.num_id = department_no
                     department.code = department_code
                     department.name = myrow[5]
                     department.name_en = myrow[6]
                     department.save()
+
+                    if new_flag:
+                        departments = Department.objects.filter(code = department_code, visible=True)
+                        for dept in departments:
+                            if dept.id != department.id:
+                                dept.visible = False
+                                dept.save()
 
                 prev_department = department_id
 
@@ -116,19 +119,14 @@ class Command(BaseCommand):
                     'code': lecture_no,
                     'year': int(myrow[0]),
                     'semester': int(myrow[1]),
-                    'department': Department.objects.get(id = department_id),
+                    'deleted': False,
                     'class_no': lecture_class_no,
                 }
-                # Convert the key to a hashable object (tuple).
-                lecture_key_hashable = (
-                    lecture_no,
-                    int(myrow[0]),
-                    int(myrow[1]),
-                    department_id,
-                    lecture_class_no,
-                )
+                # Convert the key to a hashable object
+                lecture_key_hashable = -1
                 try:
                     lecture = Lecture.objects.get(**lecture_key)
+                    lecture_key_hashable = lecture.id
                     print 'Updating existing lecture...'
                 except Lecture.DoesNotExist:
                     lecture = Lecture(**lecture_key)
@@ -136,6 +134,7 @@ class Command(BaseCommand):
                     print 'Creating new lecture...'
 
                 # Update lecture info.
+                lecture.department = department
                 lecture.old_code = myrow[20]
                 lecture.title = myrow[7]
                 lecture.title_en = myrow[8]
@@ -147,6 +146,8 @@ class Command(BaseCommand):
                 lecture.credit_au = myrow[13]       # AU
                 lecture.num_classes = int(myrow[14])    # 강의시수
                 lecture.num_labs = int(myrow[15])       # 실험시수
+                if myrow[19] != None and len(myrow[19]) >= 190:
+                    myrow[19] = myrow[19][:190]
                 lecture.notice = myrow[19]          # 비고
                 lecture.is_english = True if myrow[21] == 'Y' else False # 영어강의 여부
                 lecture.deleted = False
@@ -337,14 +338,7 @@ class Command(BaseCommand):
             # Mark deleted lectures to notify users.
             print 'Marking deleted lectures...'
             for key in lectures_not_updated:
-                lecture_key = {
-                    'code': key[0],
-                    'year': key[1],
-                    'semester': key[2],
-                    'department': Department.objects.get(id = key[3]),
-                    'class_no': key[4],
-                }
-                lecture = Lecture.objects.get(**lecture_key)
+                lecture = Lecture.objects.get(id = key)
                 lecture.deleted = True
 #                print '%s is marked as deleted...' % lecture
                 lecture.save()
