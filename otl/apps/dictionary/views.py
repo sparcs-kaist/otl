@@ -281,7 +281,7 @@ def add_professor_info(request):
 
 def interesting_courses(request):
     # login이 되있든, 안되있든 교양과목은 추천에 들어간다
-    hss = Department.objects.filter(code=settings.HSS_DEPARTMENT_CODE)
+    hss = Department.objects.filter(code=settings.HSS_DEPARTMENT_CODE, visible=True)
     q = Q()
     for dept in hss:
         q |= Q(department=dept)
@@ -461,7 +461,7 @@ def update_comment(request):
     try:
         count = int(request.POST.get('count', -1))
         q = {}
-        hss = list(Department.objects.filter(code=settings.HSS_DEPARTMENT_CODE))
+        hss = list(Department.objects.filter(code=settings.HSS_DEPARTMENT_CODE, visible = True))
         if request.user.is_authenticated():
             user = request.user
             userprofile = UserProfile.objects.get(user=user)
