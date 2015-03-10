@@ -159,7 +159,7 @@ def after_agreement(request):
         profile.student_id = request.POST['student_id']
         profile.nickname = user.username
         profile.save()
-        profile.favorite_departments.add(Department.objects.get(id=3894)) # 인문사회과학부는 기본으로 추가
+        profile.favorite_departments.add(Department.objects.filter(code="HSS").order_by('-id')[0]) # 인문사회과학부는 기본으로 추가
 
         # Registration finished!
         auth.login(request, user)
