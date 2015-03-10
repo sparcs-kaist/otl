@@ -353,24 +353,15 @@ def calendar(request):
         userprofile.calendar_id = calendar['id']
         userprofile.save()
 
-    acl_list = service.acl().list(calendarId = calendar['id']).execute()
-    is_email_exist = False
-    for old_rule in acl_list['items']:
-        if old_rule['scope']['value'] == userprofile.email:
-            is_email_exist = True
-            break
+    rule = {
+            'scope' : {
+                'type' : 'user',
+                'value' : userprofile.email
+                },
+            'role' : 'owner'
+            }
+    service.acl().insert(calendarId = calendar['id'], body = rule).execute()
 
-    if not is_email_exist:
-        rule = {
-                'scope' : {
-                    'type' : 'user',
-                    'value' : userprofile.email
-                    },
-                'role' : 'owner'
-                }
-        service.acl().insert(calendarId = calendar['id'], body = rule).execute()
-
-    #TODO google calendar invitation email
     events = service.events().list(calendarId = calendar['id'], maxResults=2000,
             timeMin = str(start) + "T00:00:00+09:00",
             timeMax = str(end) + "T00:00:00+09:00").execute()
