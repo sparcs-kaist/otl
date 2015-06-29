@@ -20,7 +20,7 @@ var LayoutMgr;
 var COLOR_BOX =    ['#E67399', '#668CD9','#D96666','#4CB052', '#B373B3', '#8C66D9', '#668CB3', '#59BFB3', '#65AD89',  '#4CB052', '#528800', '#88880E', '#F2A640', '#E6804D', '#BE9494', '#A992A9', '#A992A9', '#94A2BE', '#85AAA5', '#A7A77D', '#C4A883'];
 var COLOR_BORDER = ['#B1365F', '#2952A3','#A32929','#0D7813', '#7A367A', '#5229A3', '#29527A', '#1B887A', '#28754E',  '#528800', '#88880E', '#AB8B00', '#BE6D00', '#B1440E', '#865A5A', '#705770', '#4E5D6C', '#5A6986', '#4A716C', '#6E6E41', '#8D6F47'];
 
-Message = 
+Message =
 {
 initialize:
 	function()
@@ -48,7 +48,7 @@ onLoad:
 		this.block=Builder.node('div',{'class':'block-drag'});
 		this.block.style.width=(this.grid.offsetWidth/7-3)+'px';
 		this.block.hide();
-		this.grid.appendChild(this.block); 
+		this.grid.appendChild(this.block);
 	},
 registHandlers:
 	function(){
@@ -60,12 +60,12 @@ getPosition:
 	function(wrap,e)
 	{
 		var  wrapOffsets = Position.cumulativeOffset(wrap);
-		while( wrap.nodeName != 'BODY' ) 
+		while( wrap.nodeName != 'BODY' )
 		{
 			wrapOffsets[1] -= wrap.scrollTop  || 0;
 			wrapOffsets[0] -= wrap.scrollLeft || 0;
 			wrap = wrap.parentNode;
-		}           
+		}
 		return {
 			x : (Event.pointerX(e)-wrapOffsets[0]),
 			y : (Event.pointerY(e)-wrapOffsets[1])
@@ -144,7 +144,7 @@ onEnd:
 
 
 
-MWCalendar = 
+MWCalendar =
 {
 initialize:
 	function(){
@@ -157,7 +157,7 @@ onLoad:
 		var options ={
 			oncalchange:this.onChange.bindAsEventListener(this),
 			titleformat:'mmmm yyyy',
-			updateformat:'yyyy-mm-dd',	
+			updateformat:'yyyy-mm-dd',
 			dayheadlength:2,
 			weekdaystart:0,
 			tabular:false,
@@ -236,7 +236,7 @@ updateSchedules:
 	function(arr){
 		for(var i=0;i<7;i++) $('day'+i).update('');
 		var hash  = {};
-		arr.each(function(item){ 
+		arr.each(function(item){
 			if (typeof hash[item.date] == 'undefined')
 				hash[item.date]=[];
 			hash[item.date].push(item);
@@ -246,21 +246,21 @@ updateSchedules:
 		{
 			this.week.each(function(item,index){
 				if(item.fulldate == fulldate) this.updateDay($('day'+index), hash[fulldate]);
-			}.bind(this))	
+			}.bind(this))
 		}
 	},
 updateDay:
 	function(wrap, items)
 	{
-		var assigned_items = 0; 
+		var assigned_items = 0;
 		var index_of_column = 0;
 		var margin_percent = 20;
 
 		items.sort(function(a,b) { return a.time_end-b.time_end;});
 
-		while(assigned_items < items.length) 
+		while(assigned_items < items.length)
 		{
-			index_of_column += 1;	
+			index_of_column += 1;
 			var column_end_time = -1;
 			for(i = 0 ; i < items.length; i ++)
 			{
@@ -269,18 +269,18 @@ updateDay:
 					column_end_time = items[i].time_end;
 					items[i].column = index_of_column;
 					assigned_items ++;
-				}	
+				}
 			}
 		}
 
-		for(var i = 0; i < items.length ; i ++) {	
+		for(var i = 0; i < items.length ; i ++) {
 			items[i].nextColumn = items[i].column+1;
 			for(var j = i-1; j >= 0 ; j --){
 				if(items[i].time_start < items[j].time_end) {
 					if(items[i].column < items[j].column ) {
 						if(items[i].nextColumn > items[j].column && items[j].column > items[i].column)
 							items[i].nextColumn = items[j].column;
-					}	
+					}
 					else {
 						if(items[j].nextColumn > items[i].column && items[i].column > items[j].column)
 							items[j].nextColumn = items[i].column;
@@ -388,7 +388,7 @@ show:
 		this.arrow.show();
 		var x= (pos.x+30);
 		var y= (pos.y-340);
-		if ((document.body.offsetWidth-x)<370) 
+		if ((document.body.offsetWidth-x)<370)
 		{
 			x= (document.body.offsetWidth-370);
 			this.arrow.hide();
@@ -447,7 +447,7 @@ update:
 	}
 };
 
-	Event.observe(window, "load", function() { 
+	Event.observe(window, "load", function() {
 		Message.initialize();
 		BrowserDetect.init();
 		var resizeHandler = function()
@@ -458,7 +458,7 @@ update:
 				$('grid').style.width = ($('grid').offsetWidth-18)+'px';
 			}
 		};
-		LayoutMgr = new LayoutManager(null,{resizeHandler:resizeHandler}); 
+		LayoutMgr = new LayoutManager(null,{resizeHandler:resizeHandler});
 		Popup.initialize();
 		DrawBlock.initialize();
 		MWCalendar.initialize();
@@ -478,7 +478,7 @@ update:
                     <div class="none">
                     <small><span style="color:#FF3399">S</span><span style="color:#33CC66">P</span><span style="color:#00CCFF">A</span><span style="color:#FF9900">R</span><span style="color:#33CCCC">C</span><span style="color:#9966FF">S</span></small>
                     </div>
-                </h1> 
+                </h1>
                 <div id="global-info">
 					{% if user.is_authenticated %}
 					{{ user }}{% if user.is_superuser %} (관리자){% endif %} | <a href="/accounts/myinfo">내 계정</a> | <a href="/logout/">로그아웃</a>
@@ -644,7 +644,7 @@ update:
 			<tbody>
 				<tr>
 					<td class="west"></td>
-					<td class="middle">	
+					<td class="middle">
 						<form id="popup-form" onSubmit="return false;">
 						<table>
 							<tr>

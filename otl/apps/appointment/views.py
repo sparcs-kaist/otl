@@ -29,7 +29,7 @@ def view(request, hash):
         appointment = Appointment.objects.get(hash=hash)
     except Appointment.DoesNotExist:
         return HttpResponseNotFound()
-    
+
     # Determine the mode.
     if appointment.completed:
         mode = 'completed'
@@ -38,7 +38,7 @@ def view(request, hash):
             mode = 'owner'
         else:
             mode = 'participant'
-    
+
     # Initialize variables according to the current mode.
     all_confirmed = False
     final_appointment_schedule = None
@@ -46,7 +46,7 @@ def view(request, hash):
     time_ranges_of_others = []
     submit_caption = u'참여 가능 시간 확정하기'
     submit_operation = u'participate-confirm'
-    
+
     # The owner is also a participant, so we just create the relationship.
     try:
         p = Participating.objects.get(participant=request.user, appointment=appointment)
@@ -65,7 +65,7 @@ def view(request, hash):
             'time_start': item.time_start.hour * 60 + item.time_start.minute,
             'time_end': item.time_end.hour * 60 + item.time_end.minute,
         })
-    
+
     # Collect the candidate time ranges.
     for item in CandidateTimeRange.objects.filter(belongs_to=appointment):
         candidate_time_ranges.append({
@@ -112,7 +112,7 @@ def change(request):
     Request: use POST parameters
     - operation : string; "participate-confirm" | "finalize"
     - time_ranges : string repr of array of DateTimeRange
-    
+
     """
     if request.method == 'POST':
         f = ChangeForm(request.POST)

@@ -20,12 +20,12 @@ def cache_with_default(key, default, timeout=300):
     """
     cache.get() 메소드에도 default 인자가 있지만, 호출 당시 이미 evaluate되므로
     항상 다음과 같은 구조를 사용해야 한다.
-    
+
     value = cache.get(key)
     if value is None:
         value = calculate()
         cache.set(key, value)
-    
+
     그러나 Python에서 제공되는 lambda 함수를 사용하면 인자로 넘길 때 바로
     evaluate되지 않고 명시적으로 호출해야만 하므로 cache가 있는 경우 그냥
     무시하고 없는 경우에만 호출하여 default 인자를 바로 연산값으로 사용할
@@ -77,10 +77,10 @@ def date_range(start, end):
     """
     if not isinstance(start, date) or not isinstance(end, date):
         raise TypeError('Arguments should be python date.')
-    
+
     if start > end:
         raise ValueError('Ending date should be later than starting date.')
-    
+
     current = start
     one_day = timedelta(days=1)
     while True:

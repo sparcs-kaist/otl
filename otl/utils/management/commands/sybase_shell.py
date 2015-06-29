@@ -32,7 +32,7 @@ class Command(BaseCommand):
         cur = db.cursor()
         while True:
             try:
-                command = raw_input('>> ') 
+                command = raw_input('>> ')
             except (EOFError, KeyboardInterrupt):
                 print ''
                 break
