@@ -1,25 +1,25 @@
 [
   {
-	"pk": 1, 
-	"model": "dictionary.professor", 
+	"pk": 1,
+	"model": "dictionary.professor",
 	"fields":{
-		"professor_name":"\uc548\uc7ac\ub9cc", 
+		"professor_name":"\uc548\uc7ac\ub9cc",
 		"professor_name_en":"Jaeman An", "professor_id":284
 	}
   },
   {
-   	"pk": 1, 
-	"model": "dictionary.course", 
+   	"pk": 1,
+	"model": "dictionary.course",
 	"fields":{
-		"old_code":"CS330", 
-		"department":532, 
-		"professors": [1,2,3], 
-		"type":"\uc804\uacf5\ud544\uc218", 
-		"type_en":"Major Required", 
+		"old_code":"CS330",
+		"department":532,
+		"professors": [1,2,3],
+		"type":"\uc804\uacf5\ud544\uc218",
+		"type_en":"Major Required",
 		"title":"\uc6b4\uc601\uccb4\uc81c \ubc0f \uc2e4\ud5d8",
-		"title_en":"Operating Systems & Experiment", 
-		"score_average":0, 
-		"load_average":0, 
+		"title_en":"Operating Systems & Experiment",
+		"score_average":0,
+		"load_average":0,
 		"gain_average":0
 	}
   },
@@ -30,9 +30,9 @@
 		"old_code": "HS297",
 		"department": 2044,
 		"professors": [1,2],
-		"type": "\uad50\uc591\uc120\ud0dd", 
+		"type": "\uad50\uc591\uc120\ud0dd",
 		"type_en": "Humanities & Social Elective",
-		"title": "\ud55c\uad6d\ubb38\ud654\uc0ac", 
+		"title": "\ud55c\uad6d\ubb38\ud654\uc0ac",
 		"title_en": "Korean Cultural History",
 		"score_average": 0,
 		"load_average": 0,
@@ -46,9 +46,9 @@
 		"old_code": "PH141",
 		"department": 110,
 		"professors": [2],
-		"type": "\uae30\ucd08\ud544\uc218", 
+		"type": "\uae30\ucd08\ud544\uc218",
 		"type_en": "Basic Required",
-		"title": "\uc77c\ubc18\ubb3c\ub9ac\ud559I", 
+		"title": "\uc77c\ubc18\ubb3c\ub9ac\ud559I",
 		"title_en": "General Physics I",
 		"score_average": 0,
 		"load_average": 0,
@@ -62,9 +62,9 @@
 		"old_code": "BEP492",
 		"department": 3540,
 		"professors": [3],
-		"type": "\uc790\uc720\uc120\ud0dd", 
+		"type": "\uc790\uc720\uc120\ud0dd",
 		"type_en": "Major Elective",
-		"title": "CEO \uc138\ubbf8\ub098", 
+		"title": "CEO \uc138\ubbf8\ub098",
 		"title_en": "CEO Seminar",
 		"score_average": 0,
 		"load_average": 0,
@@ -72,48 +72,48 @@
 	}
   },
   {
-	"pk": 1, 
-	"model": "dictionary.summary", 
+	"pk": 1,
+	"model": "dictionary.summary",
 	"fields":{
-		"summary":"\uc6b0\uc655\u314b\uad73\u314b", 
+		"summary":"\uc6b0\uc655\u314b\uad73\u314b",
 		"prerequisite":"cs101",
-		"writer":2, 
-		"written_datetime": "2012-06-10 20:00:00", 
+		"writer":2,
+		"written_datetime": "2012-06-10 20:00:00",
 		"course":1
 	}
   },
   {
-	"pk": 2, 
-	"model": "dictionary.professor", 
+	"pk": 2,
+	"model": "dictionary.professor",
 	"fields":{
-		"professor_name":"\uc815\ucc3d\uc81c", 
+		"professor_name":"\uc815\ucc3d\uc81c",
 		"professor_name_en":"Changje Jeong", "professor_id":285
 	}
   },
   {
-   	"pk": 2, 
-	"model": "dictionary.course", 
+   	"pk": 2,
+	"model": "dictionary.course",
 	"fields":{
-		"old_code":"MAS101", 
-		"department":151, 
-		"professors":[2], 
-		"type":"\uc804\uacf5\ud544\uc218", 
-		"type_en":"Major Required", 
+		"old_code":"MAS101",
+		"department":151,
+		"professors":[2],
+		"type":"\uc804\uacf5\ud544\uc218",
+		"type_en":"Major Required",
 		"title":"\ubbf8\uc801\ubd84\ud559I",
-		"title_en":"Calculus I", 
-		"score_average":0, 
-		"load_average":0, 
+		"title_en":"Calculus I",
+		"score_average":0,
+		"load_average":0,
 		"gain_average":0
 	}
   },
   {
-	"pk": 2, 
-	"model": "dictionary.summary", 
+	"pk": 2,
+	"model": "dictionary.summary",
 	"fields":{
-		"summary":"\u3141\u3134\u3147\u3139", 
+		"summary":"\u3141\u3134\u3147\u3139",
 		"prerequisite":"",
-		"writer":2, 
-		"written_datetime": "2012-06-10 20:00:00", 
+		"writer":2,
+		"written_datetime": "2012-06-10 20:00:00",
 		"course":2
 	}
   },

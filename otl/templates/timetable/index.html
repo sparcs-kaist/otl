@@ -16,7 +16,7 @@
 	<script type="text/javascript">
 	//<![CDATA[
 	$(document).ready(function() {
-		Data.Map = 
+		Data.Map =
 		[
 			{code:'N7',name:'{% trans "기계공학동" %}', x:227,y:247},
 			{code:'W1',name:'{% trans "응용공학동" %}', x:217,y:515},
@@ -232,7 +232,7 @@
 				<a id="action-cleanTable" style="cursor:pointer">{% trans "초기화" %}</a> |
 				<a id="action-print" href="/timetable/print/">{% trans "인쇄" %}</a>
 				{% if user.is_authenticated %}
-				<a id="action-saveAsImage" href="/timetable/save_as_image/" target="_blank"><img src="{{MEDIA_URL}}images/icon_image.png" id="extract_image" title="{% trans "이미지로 저장" %}" alt="{% trans "이미지로 저장" %}" /></a> 
+				<a id="action-saveAsImage" href="/timetable/save_as_image/" target="_blank"><img src="{{MEDIA_URL}}images/icon_image.png" id="extract_image" title="{% trans "이미지로 저장" %}" alt="{% trans "이미지로 저장" %}" /></a>
 				<a id="action-saveAsPdf" href="/timetable/save_as_pdf/" target="_blank"><img src="{{MEDIA_URL}}images/icon_pdf.png" id="extract_pdf" title="{% trans "PDF로 저장" %}" alt="{% trans "PDF로 저장" %}" /></a>
 				<a id="action-makeCalendar"><img src="{{MEDIA_URL}}images/icon_schedule.png" id="google_calendar" title="{% trans "구글 캘린더" %}" alt="{% trans "구글 캘린더" %}"></a>
 				{% else %}
@@ -292,7 +292,7 @@
 		<div id="timetable-footer"><div></div></div>
 	</div><!--center-->
 	<div id="right-side">
-		<div id="map" style="margin-bottom:10px"> 
+		<div id="map" style="margin-bottom:10px">
 			<h4>{% trans "강의실 장소" %}</h4>
 			<div id="map-wrap">
 				<div id="map-drag-container">

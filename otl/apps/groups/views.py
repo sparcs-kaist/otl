@@ -26,7 +26,7 @@ def index(request):
         group_list = GroupBoard.objects.filter(year=settings.CURRENT_YEAR, semester=settings.CURRENT_SEMESTER, group_in__exact=request.user)
     else:
         group_list = None
-    
+
     group_pages = GroupBoard.objects.filter(year=settings.CURRENT_YEAR, semester=settings.CURRENT_SEMESTER).order_by('-made')[0:RECENTLY_PER_PAGE]
 
     return render_to_response('groups/index.html', {
@@ -75,7 +75,7 @@ def search(request):
         group_list = GroupBoard.objects.filter(year=settings.CURRENT_YEAR, semester=settings.CURRENT_SEMESTER, group_in__exact=request.user)
     else:
         group_list = None
-    
+
     group_pages = GroupBoard.objects.filter(year=settings.CURRENT_YEAR, semester=settings.CURRENT_SEMESTER).order_by('-made')[0:RECENTLY_PER_PAGE]
     search_code = request.GET.get('query')
     search_list = Paginator(GroupBoard.objects.filter(Q(year=settings.CURRENT_YEAR),Q(semester=settings.CURRENT_SEMESTER), Q(comment__icontains = search_code)|Q(group_name__icontains = search_code)).order_by('-made'),NUM_PER_PAGE)
@@ -89,7 +89,7 @@ def search(request):
         'group_list': group_list,
         'recently_added_list': group_pages,
     }, context_instance=RequestContext(request))
-        
+
 def morelist(request):
     if request.user.is_authenticated():
         group_list = GroupBoard.objects.filter(year=settings.CURRENT_YEAR, semester=settings.CURRENT_SEMESTER, group_in__exact=request.user)
@@ -111,7 +111,7 @@ def list(request):
     if request.user.is_authenticated():
         group_id=request.GET.get('id')
         user = request.user
-        group =user.group_set.filter(id__exact = group_id) 
+        group =user.group_set.filter(id__exact = group_id)
         if group:
             page = request.GET.get('page',1)
             article_pages = Paginator(GroupArticle.objects.filter(group__id__exact = group_id).order_by('-written'), NUM_PER_PAGE)
@@ -170,7 +170,7 @@ def article_search(request):
             current_page = article_pages.page(page)
             if request.GET.get('query'):
                 search_code = request.GET.get('query')
-            else : 
+            else :
                 search_code = request.POST.get('query')
             search_list = Paginator(GroupArticle.objects.filter(Q(group__id__exact = group_id), (Q(writer__username__icontains = search_code)|Q(tag__icontains = search_code))).order_by('-written'),NUM_PER_PAGE)
             search_page = request.GET.get('search-page',1)
@@ -186,5 +186,5 @@ def article_search(request):
                 'search_list': current_search_page.object_list,
             }, context_instance=RequestContext(request))
 
-            
+
     return HttpResponseRedirect('/groups/');

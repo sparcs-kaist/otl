@@ -204,7 +204,7 @@ service BlacklistManager {
     void modify(1:string session_key, 2:BlacklistRequest blacklist_info)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
-    list<BlacklistInformation> list_(1:string session_key) 
+    list<BlacklistInformation> list_(1:string session_key)
         throws (1:InvalidOperation invalid,
                 2:InternalError ouch, 3:NotLoggedIn not_logged_in),
 }

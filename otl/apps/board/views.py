@@ -42,7 +42,7 @@ def list_ara(request):
             article.author_username = ''
             article.author_nickname = ''
         article.date = datetime.fromtimestamp(article.date)
-    
+
     # Pagination with page groups containing 10 pages per group
     page_groups = Paginator([x+1 for x in xrange(article_result.last_page)], PAGES_PER_PAGEGROUP)
     pages = {}
@@ -51,7 +51,7 @@ def list_ara(request):
     if page_groups.page(page_range_no).has_previous():
         pages['prev_page_group'] = page_groups.page(page_groups.page(page_range_no).previous_page_number()).end_index()
     pages['current_page_indices'] = page_groups.page(page_range_no).object_list
-    
+
     return render_to_response('board/index_ara.html', {
         'section': 'board',
         'title': u'과목 Q&A',

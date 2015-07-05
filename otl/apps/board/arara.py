@@ -53,7 +53,7 @@ class Server(object):
         client = dict(HANDLER_MAPPING)[name].Client(protocol)
         transport.open()
         return client
-    
+
     def __getattr__(self, name):
         if name in dict(HANDLER_MAPPING):
             return self._connect(name)

@@ -99,7 +99,7 @@ class Schedule(models.Model):
         self.location = self.one_of.location
         self.one_of = None
         self.save()
-    
+
     def __unicode__(self):
         return u'%d-%d %d:%d-%d:%d "%s"' % (self.date.month, self.date.day, self.begin.hour, self.begin.minute, self.end.hour, self.end.minute, self.summary)
 
@@ -145,7 +145,7 @@ def is_holiday(someday):
         return True
     # TODO: add more holidays!
     # TODO: 강성훈의 Python 음력 변환기를 사용하여 추석, 설, 초파일도 자동 처리?
-    
+
     return False
 
 def fetch_assignments(student_id):
@@ -168,7 +168,7 @@ def fetch_assignments(student_id):
     cursor = moodle_db.cursor()
     for lecture in taking_courses:
         cursor.execute("""SELECT c.shortname, a.name, a.description, a.format, a.assignmenttype, a.timedue, a.timeavailable, a.grade, a.timemodified
-        FROM mdl_assignment a, mdl_course c WHERE c.id = a.course AND c.shortname LIKE '%s%%'""" % lecture.old_code) 
+        FROM mdl_assignment a, mdl_course c WHERE c.id = a.course AND c.shortname LIKE '%s%%'""" % lecture.old_code)
         # TODO: moodle 조교와 협의하여 shortname에 과목 코드뿐만 아니라 분반, 개설년도/개설학기 정보도 포함시켜 정확한 과목 matching이 이루어지게 한다.
         #       현재 같은 과목이라도 분반에 따라 moodle을 이용하기도 하고 이용하지 않기도 하는 경우가 있어 과목코드만으로 가져오면 실제로 자기하고는
         #       상관 없는 과제 정보를 얻어오는 경우가 있다.
