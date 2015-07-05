@@ -375,7 +375,10 @@ def calendar(request):
             timeMin = str(start) + "T00:00:00+09:00",
             timeMax = str(end) + "T00:00:00+09:00").execute()
     for event in events['items']:
-        service.events().delete(calendarId = calendar['id'], eventId = event['id']).execute()
+        try:
+            service.events().delete(calendarId = calendar['id'], eventId = event['id']).execute()
+        except Exception as e:
+            pass
 
     my_lectures = Lecture.objects.filter(year=view_year, semester=view_semester, timetable__user=user, timetable__table_id=table_id).select_related()
     for lecture in my_lectures:
