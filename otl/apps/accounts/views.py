@@ -93,30 +93,35 @@ def SSO_authenticate(request):
 """.format(token=token, publickey=settings.PORTAL_SSO_PUBLICKEY, id=settings.PORTAL_SSO_ADMIN_ID, password=settings.PORTAL_SSO_ADMIN_PASSWORD)
     encoded_data = data.encode('utf-8')
 
-    conn = httplib.HTTPSConnection("iam.kaist.ac.kr")
-    headers = {"Content-type": "text/xml","Content-Length": "%d" % len(encoded_data)}
-    conn.request("POST","/iamps/services/singlauth","",headers)
-    conn.send(encoded_data)
-    response = conn.getresponse()
-    save=response.read()
-    try:
-        root = fromstring(save)
-        response_data = root[0][0][0]
-        temp=response_data.find("ku_std_no").text
-    except:
-        return HttpResponseBadRequest('Bad Request. Please retry.')
+    user = None
+    for retry in range(2):
+        conn = httplib.HTTPSConnection("iam.kaist.ac.kr")
+        headers = {"Content-type": "text/xml","Content-Length": "%d" % len(encoded_data)}
+        conn.request("POST","/iamps/services/singlauth","",headers)
+        conn.send(encoded_data)
+        response = conn.getresponse()
+        save=response.read()
+        try:
+            root = fromstring(save)
+            response_data = root[0][0][0]
+            temp=response_data.find("ku_std_no").text
+            user_info = {}
+            user_info['ku_std_no'] = response_data.find("ku_std_no").text
+            user_info['ou'] = response_data.find("ou").text
+            user_info['ku_kaist_org_id'] = response_data.find("ku_kaist_org_id").text
+            user_info['uid'] = response_data.find("uid").text
+            user_info['sn'] = response_data.find("sn").text
+            user_info['givenname'] = response_data.find("givenname").text
+            if response_data.find("mail") != None:
+                user_info['mail'] = response_data.find("mail").text
 
-    user_info = {}
-    user_info['ku_std_no'] = response_data.find("ku_std_no").text
-    user_info['ou'] = response_data.find("ou").text
-    user_info['ku_kaist_org_id'] = response_data.find("ku_kaist_org_id").text
-    user_info['uid'] = response_data.find("uid").text
-    user_info['sn'] = response_data.find("sn").text
-    user_info['givenname'] = response_data.find("givenname").text
-    if response_data.find("mail") != None:
-        user_info['mail'] = response_data.find("mail").text
+            user = auth.authenticate(user_info=user_info)
+        except:
+            pass
 
-    user = auth.authenticate(user_info=user_info)
+        if not user is None:
+            break
+
     if user is None: # Login Failed
         return HttpResponseBadRequest('Bad Request. Please retry.')
 
