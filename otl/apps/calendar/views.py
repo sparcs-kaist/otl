@@ -50,7 +50,7 @@ def list_calendar(request):
     ]
     """
 
-    items = Calendar.objects.filter(owner=request.user) 
+    items = Calendar.objects.filter(owner=request.user)
     result = []
     for item in items:
         result.append({
@@ -104,7 +104,7 @@ def list_schedule(request):
     Request: use GET parameters
     - date_start : "YYYY-MM-DD"
     - date_end : "YYYY-MM-DD"
-    
+
     Response: use JSON string
     [
         {
@@ -125,7 +125,7 @@ def list_schedule(request):
     f = ScheduleListForm(request.GET)
     print 'processing list_schedule()'
     if f.is_valid():
-        
+
         date_start = f.cleaned_data['date_start']
         date_end = f.cleaned_data['date_end']
         if date_start > date_end:
@@ -385,6 +385,6 @@ def get_assignments(request):
         }
     except DatabaseError, e:
         result = {'result': 'FAILED', 'error': e.message, 'assignments': []}
-    
+
     return respond_as_json(request, result)
 

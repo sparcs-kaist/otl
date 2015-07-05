@@ -1,4 +1,4 @@
-﻿Scal.addMethods({
+Scal.addMethods({
 /*------------------------------- INTERNAL -------------------------------*/    
     _setupPlanner: function(planner) {
         this.planner = {};		

@@ -24,7 +24,7 @@ class CachedAuthMiddleware(object):
             # 사용자가 다르면 session을 flush하고 그렇지 않으면 키만 바꾸므로 캐시는
             # 영향을 받지 않는다.
             request.user = AnonymousUser()
-            return None 
+            return None
 
         user = cache.get(key)
         if user is None:

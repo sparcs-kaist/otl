@@ -87,7 +87,7 @@ function CheckNull(form)
 	{% if myfavorites %}
 		{% for item in myfavorites %}
 		<li>
-			<a class="favorite-link" href="{{item.url}}" target="_blank" >	
+			<a class="favorite-link" href="{{item.url}}" target="_blank" >
 				<h4>{{item.course_name}} ({% trans "등록수" %} : {{item.favored_count}})</h4>
 				{{item.url}}
 			</a>
@@ -107,7 +107,7 @@ function CheckNull(form)
 	<form id="create-form" method="get" onSubmit="return CheckNull(this);" action="/favorites/create/">
 		<div id="add-public-favorite">
 			<strong>{% trans "즐겨찾기 등록" %}</strong>&nbsp;|&nbsp;
-			&nbsp;{% trans "제목" %}: <input type="text" id="create-form-name" name="name" value="" size="5" maxlength="60"/>	
+			&nbsp;{% trans "제목" %}: <input type="text" id="create-form-name" name="name" value="" size="5" maxlength="60"/>
 			&nbsp;{% trans "주소" %}: <input type="text" id="create-form-url" name="url" value="" size="5" maxlength="100"/>
 			<input id="create-form" type="submit" value="{% trans "등록" %}" />
 		</div>
@@ -119,7 +119,7 @@ function CheckNull(form)
 				<h4>{{item.course_name}} ({% trans "등록수" %} : {{item.favored_count}})</h4>
 				{{item.url}}
 			</a>
-			<span class="submitter">{% trans "올린이" %} : <a href="/accounts/view/{{item.writer.username}}">{{item.writer.username}}</a></span>	
+			<span class="submitter">{% trans "올린이" %} : <a href="/accounts/view/{{item.writer.username}}">{{item.writer.username}}</a></span>
 			<a class="control-add" href="/favorites/add/{{item.id}}">Add</a>
 		</li>
 	{% endfor %}

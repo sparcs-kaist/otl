@@ -13,7 +13,7 @@ class MultipleDateTimeRangeField(forms.Field):
 
     def __init__(self, *args, **kwargs):
         super(MultipleDateTimeRangeField, self).__init__(*args, **kwargs)
-    
+
     def clean(self, value):
         super(MultipleDateTimeRangeField, self).clean(value)
         if value in forms.fields.EMPTY_VALUES:
@@ -38,7 +38,7 @@ class MultipleDateTimeRangeField(forms.Field):
 # MultiSelectField customization from http://www.djangosnippets.org/snippets/1200/
 class MultiSelectFormField(forms.MultipleChoiceField):
     widget = forms.CheckboxSelectMultiple
-    
+
     def __init__(self, *args, **kwargs):
         self.max_choices = kwargs.pop('max_choices', 0)
         super(MultiSelectFormField, self).__init__(*args, **kwargs)

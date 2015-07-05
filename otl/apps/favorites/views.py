@@ -92,7 +92,7 @@ def morelist(request):
     page = request.GET.get('page', 1)
     courselink_pages = Paginator(CourseLink.objects.filter(year=settings.CURRENT_YEAR, semester=settings.CURRENT_SEMESTER).order_by('-written'), NUM_PER_PAGE)
     current_page = courselink_pages.page(page)
-    
+
     return render_to_response('favorites/index.html', {
         'section': 'favorites',
         'title': ugettext(u'과목 즐겨찾기'),

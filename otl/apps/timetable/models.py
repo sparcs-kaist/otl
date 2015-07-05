@@ -39,7 +39,7 @@ class Lecture(models.Model):
     notice = models.CharField(max_length=200, blank=True, null=True)        # 비고
     is_english = models.BooleanField()                      # 영어강의 여부
     deleted = models.BooleanField(default=False)            # 과목이 닫혔는지 여부
-    rating = models.ForeignKey('dictionary.LectureRating', related_name='lecture_rating', null=True, blank=True) 
+    rating = models.ForeignKey('dictionary.LectureRating', related_name='lecture_rating', null=True, blank=True)
     #''' lecture에서 rating찾아갈때 null인경우 고려 '''
     course = models.ForeignKey('dictionary.Course', related_name='lecture_course')
 
@@ -52,7 +52,7 @@ class Lecture(models.Model):
         self.num_people = len(set(self.timetable_relation.all()))
         self.save()
         return self.num_people
-    
+
     def check_classtime_overlapped(self, another_lecture):
         """이 과목과 주어진 다른 과목의 강의 시간 중 겹치는 것이 있는지 검사한다."""
         my_times = self.classtime_set.all()
@@ -115,7 +115,7 @@ class ExamTimeAdmin(admin.ModelAdmin):
 
 class ClassTime(models.Model):
     """Lecture에 배정된 강의 시간. 보통 하나의 Lecture가 여러 개의 강의 시간을 가진다."""
-    lecture = models.ForeignKey(Lecture)            
+    lecture = models.ForeignKey(Lecture)
     day = models.SmallIntegerField(choices=WEEKDAYS)
     begin = models.TimeField()
     end = models.TimeField()
@@ -139,7 +139,7 @@ class ClassTime(models.Model):
         if t % 30 != 0:
             t = t + (30 - (t % 30))
         return t
-    
+
     def get_location(self):
         if self.room is None:
             return u'%s' % (self.room_ko)
@@ -148,7 +148,7 @@ class ClassTime(models.Model):
             return u'%s %s호' % (self.room_ko, self.room)
         except ValueError:
             return u'%s %s' % (self.room_ko, self.room)
-    
+
     def get_location_en(self):
         if self.room is None:
             return u'%s' % (self.room_en)
@@ -161,7 +161,7 @@ class ClassTime(models.Model):
     @staticmethod
     def numeric_time_to_str(numeric_time):
         return u'%s:%s' % (numeric_time // 60, numeric_time % 60)
-    
+
     @staticmethod
     def numeric_time_to_obj(numeric_time):
         return time(hour = numeric_time // 60, minute = numeric_time % 60)

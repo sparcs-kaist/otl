@@ -57,7 +57,7 @@ function CheckNull(form)
 	<a href="/groups/morelist">{% trans "더보기" %}</a>
 	<form id="create-form" method="post" onSubmit="return CheckNull(this);" action="/groups/create/">
 		<div id="create-group">
-			{% trans "조모임 생성" %} : 
+			{% trans "조모임 생성" %} :
 			{% trans "조모임 이름" %} : <input type="text" id="groupname" name="gname" value="" size="15" maxlength="60"/>
 			{% trans "비밀번호" %} : <input type="password" id="passwd" name="passwd" value="" size="8" maxlength="32"/>
 			{% trans "코멘트" %} : <input type="text" id="comment" name="comment" value="" size="30" maxlength="100"/>

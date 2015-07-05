@@ -27,7 +27,7 @@ class myHTTPTransport(HTTPTransport):
         return HTTPTransport.call(self, addr, data, namespace, soapaction, encoding, http_proxy, config)
 
 class KAISTSSOBackend:
-    
+
     def authenticate(self, username=None, password=None):
 
         try:
@@ -40,7 +40,7 @@ class KAISTSSOBackend:
         except:
             # Failed to access portal page
             return None
-        
+
         kuser_info = {}
         kuser_info['student_id'] = user_info['ku_std_no']
         kuser_info['department'] = user_info['ou']

@@ -158,7 +158,7 @@ class Command(BaseCommand):
                     course.type_en = lecture.type_en
                     course.title = lecture.title.split("<")[0].split("[")[0]
                     course.title_en = lecture.title_en.split("<")[0].split("[")[0]
-                    course.save() 
+                    course.save()
 #                    print "Updating Course ... %s" % course.title
                 except Course.DoesNotExist:
                     course = Course()

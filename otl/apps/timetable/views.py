@@ -63,7 +63,7 @@ def index(request):
         my_lectures_output = json.dumps(my_lectures, indent=4, ensure_ascii=False)
     else:
         my_lectures_output = json.dumps(my_lectures, ensure_ascii=False, sort_keys=False, separators=(',',':'))
-    
+
     # Delete the timetable item if the corresponding lecture is marked as deleted.
     # However, we already added this item to my_lectures to notify the user at least once.
     if request.user.is_authenticated():
@@ -115,9 +115,9 @@ def get_autocomplete_list(request):
         output = cache.get(cache_key)
         if output is None:
             if lang == 'ko':
-                func = lambda x:[[x.title,x.old_code], map(lambda y:y.professor_name,x.professor.all())] 
+                func = lambda x:[[x.title,x.old_code], map(lambda y:y.professor_name,x.professor.all())]
             elif lang == 'en':
-                func = lambda x:[[x.title_en,x.old_code],map(lambda y:y.professor_name_en,x.professor.all())] 
+                func = lambda x:[[x.title_en,x.old_code],map(lambda y:y.professor_name_en,x.professor.all())]
             result = list(set(reduce(map(func, _search_by_ysdt(year, semester, department, type)))))
             while None in result:
                 result[result.index(None)] = 'None'
@@ -152,7 +152,7 @@ def add_to_timetable(request):
     lecture_id = request.GET.get('lecture_id', None)
     view_year = request.GET.get('view_year', unicode(settings.NEXT_YEAR))
     view_semester = request.GET.get('view_semester', unicode(settings.NEXT_SEMESTER))
-    
+
     lectures = []
     try:
         lecture = Lecture.objects.get(pk=lecture_id)
@@ -162,7 +162,7 @@ def add_to_timetable(request):
         else:
             session_key = 'lectures_%s_%s_%s' % (table_id, view_year, view_semester)
             lecture_ids = request.session.get(session_key, [])
-            lectures = Lecture.objects.filter(year=view_year, semester=view_semester,id__in=lecture_ids) 
+            lectures = Lecture.objects.filter(year=view_year, semester=view_semester,id__in=lecture_ids)
 
 
         for existing_lecture in lectures:
@@ -179,7 +179,7 @@ def add_to_timetable(request):
         else:
             session_key = 'lectures_%s_%s_%s' % (table_id, view_year, view_semester)
             lecture_ids = request.session.get(session_key, [])
-            lectures = Lecture.objects.filter(year=view_year, semester=view_semester,id__in=lecture_ids) 
+            lectures = Lecture.objects.filter(year=view_year, semester=view_semester,id__in=lecture_ids)
 
         result = 'OK'
     except ObjectDoesNotExist:
@@ -224,7 +224,7 @@ def delete_from_timetable(request):
                 lecture_list = request.session.get(session_key, [])
                 lecture_list.remove(int(lecture_id))
                 request.session[session_key] = lecture_list
-            lectures = Lecture.objects.filter(year=view_year, semester=view_semester,id__in=lecture_list) 
+            lectures = Lecture.objects.filter(year=view_year, semester=view_semester,id__in=lecture_list)
         result = 'OK'
     except ObjectDoesNotExist:
         result = 'NOT_EXIST'
@@ -500,10 +500,10 @@ def _search_by_ysdtlw(year, semester, department, type, lang, word):
         output = _search_by_ysdt(year, semester, department, type)
         if lang == 'ko':
             professor_ids = Professor.objects.filter(professor_name__icontains=word).values_list('id',flat=True)
-            output = output.filter(Q(old_code__icontains=word) | Q(title__icontains=word) | Q(professor__id__in=professor_ids)).distinct() 
+            output = output.filter(Q(old_code__icontains=word) | Q(title__icontains=word) | Q(professor__id__in=professor_ids)).distinct()
         else:
             professor_ids = Professor.objects.filter(professor_name_en__icontains=word).values_list('id',flat=True)
-            output = output.filter(Q(old_code__icontains=word) | Q(title_en__icontains=word) | Q(professor__id__in=professor_ids)).distinct() 
+            output = output.filter(Q(old_code__icontains=word) | Q(title_en__icontains=word) | Q(professor__id__in=professor_ids)).distinct()
         cache.set(cache_key, output, 3600)
     return output
 

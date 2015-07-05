@@ -15,7 +15,7 @@ from django.utils import simplejson as json
 from otl.apps.favorites.models import CourseLink
 from otl.apps.common import *
 from otl.utils import respond_as_attachment
-from otl.utils.decorators import * 
+from otl.utils.decorators import *
 from otl.apps.accounts.models import Department, UserProfile
 from otl.apps.timetable.models import Lecture
 from otl.apps.dictionary.models import *
@@ -56,7 +56,7 @@ def index(request):
 
     taken_lectures = taken_lecture_list(request)
     taken_lectures.reverse()
-    
+
     return render_to_response('dictionary/index.html', {
         'section': 'dictionary',
         'title': ugettext(u'과목 사전'),
@@ -66,7 +66,7 @@ def index(request):
         'semester_info' : semester_info,
         'dept': -1,
         'classification': 0,
-        'keyword': json.dumps('',ensure_ascii=False,indent=4), 
+        'keyword': json.dumps('',ensure_ascii=False,indent=4),
         'in_category': json.dumps(False),
         'active_tab': -1,
         'favorite':favorites(request),
@@ -87,15 +87,15 @@ def search(request):
     #try:
         q = {}
         for key, value in request.GET.iteritems():
-            q[str(key)] = value 
+            q[str(key)] = value
 	output = _search(**q)
-        lang = request.session.get('django_language','ko') 
-        
+        lang = request.session.get('django_language','ko')
+
         courses = _courses_to_output(output['courses'],False,lang)
         if output['professors'] != None:
             professors = _professors_to_output(output['professors'],False,lang)
         else:
-            professors = [] 
+            professors = []
         return HttpResponse(json.dumps({'courses':courses, 'professors':professors}, ensure_ascii=False, indent=4))
     #except:
     #    return HttpResponseBadRequest()
@@ -115,9 +115,9 @@ def get_autocomplete_list(request):
         output = cache.get(cache_key)
         if output is None:
             if lang == 'ko':
-                func = lambda x:[[x.title, x.old_code],map(lambda y : y.professor_name,x.professors.all())] 
+                func = lambda x:[[x.title, x.old_code],map(lambda y : y.professor_name,x.professors.all())]
             elif lang == 'en':
-                func = lambda x:[[x.title_en,x.old_code], map(lambda y: y.professor_name_en,x.professors.all())] 
+                func = lambda x:[[x.title_en,x.old_code], map(lambda y: y.professor_name_en,x.professors.all())]
             result = list(set(reduce(map(func, _search_by_dt(department, type)))))
             while None in result:
                 result[result.index(None)] = 'None'
@@ -152,7 +152,7 @@ def show_more_comments(request):
 
     lang=request.session.get('django_language','ko')
     comments_output = _comments_to_output(comments,False,lang,False)
-   
+
     if len(comments)==0:
         return HttpResponse(json.dumps({
             'next_comment_id': -2,
@@ -293,17 +293,17 @@ def interesting_courses(request):
 
         department = userprofile.department
 	q |= Q(department=department)
-        
+
 	for department in favorite_departments:
 	    q |= Q(department=department)
-    except:	
+    except:
 	user_department_id = 0 #Means Nothing
 
     courses = Course.objects.filter(q).distinct()
-    courses_sorted=_get_courses_sorted(courses,request.user) 
+    courses_sorted=_get_courses_sorted(courses,request.user)
     return HttpResponse(json.dumps({
      'courses_sorted' : courses_sorted[:settings.INTERESTING_COURSE_NUM]}, ensure_ascii=False, indent=4))
- 
+
 def view_comment_by_professor(request):
     try:
         professor_id = int(request.GET.get('professor_id', -1))
@@ -312,7 +312,7 @@ def view_comment_by_professor(request):
             raise ValidationError('Professor or Course is wrong')
         professor = Professor.objects.get(professor_id=professor_id)
         course = Course.objects.get(id=course_id)
-        lecture = Lecture.objects.filter(professor=professor, course=course) 
+        lecture = Lecture.objects.filter(professor=professor, course=course)
         if not lecture.count() == 1:
             raise ValidationError('There are multiple lecture')
         comments = Comment.objects.filter(course=course, lecture=lecture)
@@ -345,13 +345,13 @@ def add_comment(request):
             raise ValidationError('Lecture does not exist')
         else:
             lecture = lectures[0]   # 여러번 들었을 경우 가장 최근에 들은 과목 기준으로 한다.
-        
+
         comment = request.POST.get('comment', None)
         load = int(request.POST.get('load', -1))
         gain = int(request.POST.get('gain', -1))
         score = int(request.POST.get('score', -1))
         writer = request.user
-        
+
         if load < 0 or gain < 0 or score < 0:
             raise ValidationError('load or gain or score is wrong')
 
@@ -360,7 +360,7 @@ def add_comment(request):
 
         new_comment = Comment(course=course, lecture=lecture, writer=writer, comment=comment, load=load, score=score, gain=gain)
         new_comment.save()
-	
+
 	lectures = Lecture.objects.filter(course=course, professor=professor, deleted=False).order_by('class_no')
 	if status == -1:
 	    q = Q(course=course)
@@ -368,9 +368,9 @@ def add_comment(request):
 	    q=Q()
 	    for lec in lectures:
 		q |= Q(lecture=lec)
-	    q &= Q(course=course) 
-	comments = Comment.objects.filter(q) 
-        new_comment = Comment.objects.filter(id=new_comment.id)  
+	    q &= Q(course=course)
+	comments = Comment.objects.filter(q)
+        new_comment = Comment.objects.filter(id=new_comment.id)
         average = comments.aggregate(avg_score=Avg('score'),avg_gain=Avg('gain'),avg_load=Avg('load'))
         Course.objects.filter(id=course.id).update(score_average=average['avg_score'], load_average=average['avg_load'], gain_average=average['avg_gain'])
         comment_num = comments.count()
@@ -389,7 +389,7 @@ def add_comment(request):
         'average': average,
         'comment_num': comment_num,
         'comment': _comments_to_output(new_comment, False, request.session.get('django_language','ko'),False)}, ensure_ascii=False, indent=4))
-            
+
 @login_required_ajax
 def delete_comment(request):
     average = {'avg_score':0, 'avg_gain':0, 'avg_load':0}
@@ -403,7 +403,7 @@ def delete_comment(request):
         comment = Comment.objects.get(pk=comment_id, writer=user)
         comment.delete()
 	course = comment.course
-        
+
 	result = 'DELETE'
         q=Q()
 	if prof_id == -1:
@@ -430,19 +430,19 @@ def delete_comment(request):
     #    return HttpResponseServerError()
 
     return HttpResponse(json.dumps({
-        'result': result, 'average': average, 'comment_num': comment_num}, ensure_ascii=False, indent=4)) 
+        'result': result, 'average': average, 'comment_num': comment_num}, ensure_ascii=False, indent=4))
 
 @login_required_ajax
 def delete_favorite(request):
     try:
         user = request.user
         course_id = int(request.POST.get('course_id', -1))
-        
+
         if course_id < 0:
             raise ValidationError()
-        
+
         course = Course.objects.get(id=course_id)
-        UserProfile.objects.get(user=user).favorite.remove(course) 
+        UserProfile.objects.get(user=user).favorite.remove(course)
 
         result = 'DELETE'
     except ValidationError:
@@ -453,7 +453,7 @@ def delete_favorite(request):
         return HttpResponseServerError()
 
     return HttpResponse(json.dumps({
-        'result': result}, ensure_ascii=False, indent=4)) 
+        'result': result}, ensure_ascii=False, indent=4))
 
 def update_comment(request):
     comments = []
@@ -508,7 +508,7 @@ def add_summary(request):
         content = request.POST.get('content', None)
         content = content.replace("\n"," ")
         if len(content) >150 :
-            content = content[:150]     
+            content = content[:150]
 
         require = request.POST.get('require', None)
         require = require.replace("\n"," ")
@@ -547,9 +547,9 @@ def add_lecture_summary(request):
         course_id = int(request.POST.get('course_id', -1))
         prof_id = int(request.POST.get('professor_id', -1))
         course = Course.objects.get(id=course_id)
-        if homepage == None or mainbook == None or course == None  or course_id < 0 or prof_id < 0:	
+        if homepage == None or mainbook == None or course == None  or course_id < 0 or prof_id < 0:
             raise ValidationError('homepage or mainbook or course is null')
-        professor = Professor.objects.get(professor_id=prof_id) 
+        professor = Professor.objects.get(professor_id=prof_id)
         lectures = Lecture.objects.filter(professor=professor, course=course, deleted=False).order_by('-year','-semester')
         if lectures.count() == 0 :
             raise ValidationError('Lecture is not exist')
@@ -563,7 +563,7 @@ def add_lecture_summary(request):
         raise ValidationError(e)
     except:
         return HttpResponseServerError()
-    
+
     return HttpResponse(json.dumps({
         'result': result,
         'summary': _lecture_summary_to_output(new_summary,False,'ko')}))
@@ -697,15 +697,15 @@ def add_favorite(request):
         if request.user.is_authenticated():
             user= request.user
             userprofile= UserProfile.objects.get(user=user)
-            
+
             result = "ADD"
 
             course_id = int(request.POST.get('course_id',-1))
             course = Course.objects.get(id=course_id)
-         
+
             if course_id < 0:
                 raise ValidationError()
-            
+
             if course in UserProfile.objects.get(user=user).favorite.all():
                 result = "ALEADY_ADDED"
             else:
@@ -724,14 +724,14 @@ def add_favorite(request):
 def favorites(request):
     """dictionary의 즐겨찾기 정보를 가지고 있는다."""
     if request.user.is_authenticated():
-        try: 
+        try:
             favorite_list = _favorites_to_output(UserProfile.objects.get(user=request.user).favorite.all(), True, request.session.get('django_language','ko'))
         except ObjectDoesNotExist:
             favorite_list = []
     else:
         favorite_list = []
-    
-    return favorite_list 
+
+    return favorite_list
 
 def taken_lecture_list(request):
     """dictionary의 들었던 과목 정보를 가지고 있는다."""
@@ -761,7 +761,7 @@ def taken_lecture_list(request):
     result = zip(take_year_list,result)
     return result
 
-# -- Private functions   
+# -- Private functions
 def _taken_lectures_to_output(user, lecture_list, lang='ko'):
     try:
         written_list=[comment.lecture.code for comment in Comment.objects.filter(writer=user,lecture__year__exact=lecture_list[0].year,lecture__semester__exact=lecture_list[0].semester)]
@@ -817,7 +817,7 @@ def _search(**conditions):
     output = None
     if department != None and type != None and keyword != None:
         keyword = keyword.strip()
-        courses= _search_by_dt(department, type) 
+        courses= _search_by_dt(department, type)
         professors = Professor.objects.all()
         if keyword == u'':
             professors = None
@@ -883,7 +883,7 @@ def _comments_to_output(comments,conv_to_json=True, lang='ko',preview=True):
         item = {
             'comment_id': comment.id,
             'course_id': comment.course.id,
-            'course_code': comment.course.old_code, 
+            'course_code': comment.course.old_code,
             'course_title': _trans(comment.course.title,comment.course.title_en,lang),
             'lecture_title': _trans(comment.lecture.title,comment.lecture.title_en,lang),
             'lecture_id': lecture_id,
@@ -1090,7 +1090,7 @@ def _get_unwritten_lecture_by_db(user):
         comment_list = Comment.objects.filter(writer=user)
     except ObjectDoesNotExist :
         comment_list = []
-   
+
     ret_list = list(take_lecture_list)
     for comment in comment_list:
         if comment.lecture in ret_list:
@@ -1108,7 +1108,7 @@ def _favorites_to_output(favorites,conv_to_json=True,lang='ko'):
             'title': _trans(favorite.title,favorite.title_en,lang),
             'url': "/dictionary/view/" + favorite.old_code + "/"
             }
-        all.append(item) 
+        all.append(item)
     if conv_to_json:
         io = StringIO()
         if settings.DEBUG:
@@ -1134,24 +1134,24 @@ def _get_courses_sorted(courses,user):
 
     selected_courses = []
     lim = settings.INTERESTING_COURSE_NUM
-    
+
     try :
         profile_id = UserProfile.objects.get(user=user).id
     except Exception,e:
         profile_id = -1
-    
+
     taken_lectures_list = []
     if profile_id != -1:
         taken_lectures_list_query='select course_id from `timetable_lecture` where id in (select lecture_id from `accounts_userprofile_take_lecture_list` where userprofile_id={0}) group by course_id'.format(profile_id)
         cursor.execute(taken_lectures_list_query)
         taken_lectures_list = map(lambda x:int(x['course_id']),dictfetchall(cursor))
-    
+
     courses_str = "("
     for i in xrange(len(courses)):
         course = courses[i]
         if not course.id in taken_lectures_list:
             courses_str = courses_str + str(course.id) + (')' if i == len(courses)-1 else ',')
-    
+
     raw_query="""
 SELECT c.old_code coursecode,c.type coursetype,c.title coursetitle,(point+l.num_people/50+ (CASE WHEN c.type like '%%선택%%' THEN 4 WHEN c.type like '%%필수%%' THEN 6 ELSE 2 END) +(CASE WHEN c.type like '%%전공%%' THEN 3 ELSE 0 END)) point,l.lecture_id lectureid
 FROM (
@@ -1160,19 +1160,19 @@ FROM (
     WHERE id IN {0}
     ) c
     LEFT OUTER JOIN
-    (SELECT tl.id lecture_id,course_id,num_people,year,semester,professor_id 
+    (SELECT tl.id lecture_id,course_id,num_people,year,semester,professor_id
         FROM (select * from timetable_lecture where year={1} and semester={2}) tl LEFT OUTER JOIN timetable_lecture_professor tlp ON tl.id=tlp.lecture_id
     ) l
     ON c.id=l.course_id
     JOIN
-    (SELECT course_id,professor_id,(ifnull(avg(`load`),0) *0.2 + ifnull(avg(score)*0.5,0) +ifnull(avg(gain),0) * 0.3+count(*)/50) AS point 
+    (SELECT course_id,professor_id,(ifnull(avg(`load`),0) *0.2 + ifnull(avg(score)*0.5,0) +ifnull(avg(gain),0) * 0.3+count(*)/50) AS point
     FROM dictionary_comment dc join (select lecture_id,professor_id from `timetable_lecture_professor` GROUP BY lecture_id) tlp on dc.lecture_id=tlp.lecture_id
-    GROUP BY course_id,professor_id) d 
+    GROUP BY course_id,professor_id) d
     ON c.id=d.course_id and l.professor_id=d.professor_id
 ORDER BY point desc
 LIMIT {3};
 """.format(courses_str,settings.NEXT_YEAR,settings.NEXT_SEMESTER,lim)
-    
+
     cursor.execute(raw_query)
     selected_courses_raw = dictfetchall(cursor)
     for course in selected_courses_raw:

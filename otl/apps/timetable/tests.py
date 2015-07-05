@@ -18,7 +18,7 @@ class TimetableTestCase(BaseTestCase):
         dep = Department.objects.get(id=532)
         course = Course(old_code='CS330', department=dep, type='전필', type_en='Major Required', title='운영체제 및 실험', score_average=0, load_average=0, gain_average=0)
         course.save()
-        
+
         ''' Create Lecture 1 '''
         lecture1 = Lecture(code='36.330', old_code='CS330', class_no ='A', title='운영체제 및 실험', type='전필', type_en='Major Required', audience=0, credit=4, semester=3,year=2009, is_english=True, department=dep, course=course)
         lecture1.save()
@@ -159,28 +159,28 @@ class TimetableTestCase(BaseTestCase):
         # Search for time
         response = self.client.get('/timetable/search/', {'year': 2009, 'term': 3, 'start_day': 0, 'end_day': 0, 'start_time': 480, 'end_time': 1320, 'type':u'전체보기'})
         result = json.loads(response.content)
-        
+
         self.assertEqual(response.status_code, 200, 'Status check')
         self.assertEqual(len(result), 2, 'Searched data check')
 
         # Search for department
         response = self.client.get('/timetable/search/', {'year': 2009, 'term': 3, 'dept': 532, 'type': u'전체보기', 'keyword':''})
         result = json.loads(response.content)
-        
+
         self.assertEqual(response.status_code, 200, 'Status check')
         self.assertEqual(len(result), 3, 'Searched data check')
-        
+
         # Search for keyword
         response = self.client.get('/timetable/search/', {'year': 2010, 'term': 1, 'dept': -1, 'type': u'전체보기', 'keyword': u'운영체제'})
         result = json.loads(response.content)
-        
+
         self.assertEqual(response.status_code, 200, 'Status check')
         self.assertEqual(len(result), 1, 'Searched data check')
 
         # Search for professor
         response = self.client.get('/timetable/search/', {'year': 2009, 'term': 3, 'dept': -1, 'type': u'전체보기', 'keyword': u'테스트교수'})
         result = json.loads(response.content)
-        
+
         self.assertEqual(response.status_code, 200, 'Status check')
         self.assertEqual(len(result), 1, 'Searched data check')
 

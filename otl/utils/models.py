@@ -16,7 +16,7 @@ class MultiSelectField(models.Field):
 
     def formfield(self, **kwargs):
         # don't call super, as that overrides default widget if it has choices
-        defaults = {'required': not self.blank, 'label': self.verbose_name, 
+        defaults = {'required': not self.blank, 'label': self.verbose_name,
                     'help_text': self.help_text, 'choices':self.choices}
         if self.has_default():
             defaults['initial'] = self.get_default()
