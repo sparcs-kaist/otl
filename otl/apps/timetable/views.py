@@ -1,4 +1,4 @@
-# -*- coding: utf-8-*-
+# -*- coding: utf-8 -*-
 
 import os, tempfile, httplib
 from django.shortcuts import render_to_response
