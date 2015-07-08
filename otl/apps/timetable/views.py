@@ -770,7 +770,7 @@ def save_as_pdf(request):
 
     response = HttpResponse(FileWrapper(f), content_type='application/pdf')
     activate('en')
-    response['Content-Disposition'] = 'attachment; filename=timetable%d_%d_%s.pdf' % (table_id + 1, view_year, ugettext(get_choice_display(SEMESTER_TYPES, view_semester)))
+    response['Content-Disposition'] = 'attachment; filename=timetable%d_%d_%d.pdf' % (table_id + 1, view_year, view_semester)
     activate(old_lang)
 
     return response
@@ -787,7 +787,7 @@ def save_as_image(request):
 
     response = HttpResponse(FileWrapper(f), content_type='image/png')
     activate('en')
-    response['Content-Disposition'] = 'attachment; filename=timetable%d_%d_%s.png' % (table_id + 1, view_year, ugettext(get_choice_display(SEMESTER_TYPES, view_semester)))
+    response['Content-Disposition'] = 'attachment; filename=timetable%d_%d_%d.png' % (table_id + 1, view_year, view_semester)
     activate(old_lang)
 
     return response
